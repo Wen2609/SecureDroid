@@ -5,4 +5,5 @@
     <item android:id="@+id/nav_audit" android:icon="@drawable/ic_grid" android:title="@string/tab_audit" />
     <item android:id="@+id/nav_lock" android:icon="@drawable/ic_lock" android:title="@string/tab_lock" />
     <item android:id="@+id/nav_trojan" android:icon="@drawable/ic_bug" android:title="@string/tab_trojan" />
+    <item android:id="@+id/nav_tools" android:icon="@drawable/ic_tool" android:title="@string/tab_tools" />
 </menu>

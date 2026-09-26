@@ -47,14 +47,56 @@ class LockActivity : AppCompatActivity() {
     }
 
     private fun check() {
+        // 防暴力破解:锁定窗口内拒绝输入
+        val remaining = AppLockStore.lockoutRemainingMs(this)
+        if (remaining > 0) {
+            Toast.makeText(
+                this,
+                getString(R.string.lock_too_many_attempts, (remaining / 1000 + 1)),
+                Toast.LENGTH_SHORT
+            ).show()
+            input.clear()
+            refresh()
+            return
+        }
         if (AppLockStore.verifyPin(this, input.toString())) {
+            AppLockStore.resetAttempts(this)
             AppLockStore.markUnlocked(this)
             Toast.makeText(this, R.string.lock_unlock_ok, Toast.LENGTH_SHORT).show()
             finish()
         } else {
+            val attempts = AppLockStore.registerFailedAttempt(this)
+            // 暴力破解告警:每满 5 次错误鸣响警报
+            if (attempts >= 5 && attempts % 5 == 0) {
+                try {
+                    android.media.RingtoneManager.getRingtone(
+                        this,
+                        android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)
+                    )?.play()
+                } catch (_: Exception) {
+                }
+                Toast.makeText(this, R.string.lock_alarm_triggered, Toast.LENGTH_LONG).show()
+            }
+            // 假崩溃诱骗:让偷窥者以为应用已崩溃
+            if (AppLockStore.isDecoyEnabled(this) && attempts % 2 == 0) {
+                showDecoyCrash()
+            }
             Toast.makeText(this, R.string.lock_wrong_pin, Toast.LENGTH_SHORT).show()
             input.clear()
             refresh()
         }
+    }
+
+    /** 假崩溃诱骗:模拟系统崩溃对话框,2 秒后自动消失回到键盘 */
+    private fun showDecoyCrash() {
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("SecureDroid")
+            .setMessage("很抱歉,\"SecureDroid\" 已停止运行。")
+            .setCancelable(false)
+            .show()
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            try { dialog.dismiss() } catch (_: Exception) {
+            }
+        }, 2000)
     }
 }

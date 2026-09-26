@@ -37,6 +37,9 @@ interface ScanRecordDao {
     @Query("SELECT * FROM scan_records ORDER BY scannedAt DESC")
     fun observeAll(): Flow<List<ScanRecordEntity>>
 
+    @Query("SELECT * FROM scan_records ORDER BY scannedAt DESC")
+    suspend fun getAll(): List<ScanRecordEntity>
+
     @Query("SELECT COUNT(*) FROM scan_records WHERE threatName IS NOT NULL")
     suspend fun threatCount(): Int
 }

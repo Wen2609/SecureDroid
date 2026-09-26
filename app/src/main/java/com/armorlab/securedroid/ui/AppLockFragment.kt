@@ -52,6 +52,11 @@ class AppLockFragment : Fragment() {
 
     private fun refreshHeader() {
         val ctx = requireContext()
+        binding.swDecoy.setOnCheckedChangeListener(null)
+        binding.swDecoy.isChecked = AppLockStore.isDecoyEnabled(ctx)
+        binding.swDecoy.setOnCheckedChangeListener { _, checked ->
+            AppLockStore.setDecoyEnabled(ctx, checked)
+        }
         binding.tvPinState.setText(
             if (AppLockStore.hasPin(ctx)) R.string.lock_pin_state_set
             else R.string.lock_pin_state_unset

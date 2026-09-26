@@ -3,6 +3,7 @@ package com.armorlab.securedroid
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import com.armorlab.securedroid.feature.ScanScheduler
 import com.armorlab.securedroid.realtime.SecureGuardAppRefs
 
 class SecureGuardApp : Application() {
@@ -24,5 +25,6 @@ class SecureGuardApp : Application() {
                 NotificationManager.IMPORTANCE_HIGH
             )
         )
+        ScanScheduler.sync(this)
     }
 }

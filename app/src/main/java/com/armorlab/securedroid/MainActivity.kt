@@ -13,6 +13,7 @@ import com.armorlab.securedroid.ui.AppLockFragment
 import com.armorlab.securedroid.ui.DashboardFragment
 import com.armorlab.securedroid.ui.PermissionAuditFragment
 import com.armorlab.securedroid.ui.ScannerFragment
+import com.armorlab.securedroid.ui.ToolsFragment
 import com.armorlab.securedroid.ui.TrojanFragment
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_audit -> PermissionAuditFragment()
                 R.id.nav_lock -> AppLockFragment()
                 R.id.nav_trojan -> TrojanFragment()
+                R.id.nav_tools -> ToolsFragment()
                 else -> DashboardFragment()
             }
             supportFragmentManager.beginTransaction()
@@ -51,6 +53,11 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             binding.bottomNav.selectedItemId = R.id.nav_home
+        }
+
+        // 快捷设置磁贴 / 小部件跳转直达扫描页
+        if (intent?.getStringExtra("goto") == "scan") {
+            binding.bottomNav.selectedItemId = R.id.nav_scanner
         }
     }
 

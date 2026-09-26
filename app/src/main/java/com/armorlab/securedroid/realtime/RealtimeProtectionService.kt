@@ -47,7 +47,39 @@ class RealtimeProtectionService : Service() {
         scope.launch { guardLoop() }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_SCHEDULED_SCAN) {
+            scope.launch { scheduledScan() }
+        }
+        return START_STICKY
+    }
+
+    /** 每日定时查杀:全盘多引擎扫描并汇总通知 */
+    private suspend fun scheduledScan() {
+        try {
+            val pm = packageManager
+            val pkgs = pm.getInstalledPackages(0)
+            var infected = 0
+            val dao = AppDatabase.get(applicationContext).scanRecordDao()
+            val now = System.currentTimeMillis()
+            for (info in pkgs) {
+                val r = TrojanScanner.scanPackage(applicationContext, info.packageName)
+                if (r.isInfected) infected++
+                dao.insert(
+                    ScanRecordEntity(
+                        packageName = r.packageName,
+                        appName = r.appName,
+                        sha256 = "",
+                        threatName = r.detections.maxByOrNull { it.level.ordinal }?.name,
+                        riskScore = 0,
+                        scannedAt = now
+                    )
+                )
+            }
+            notifyAutoAction("每日查杀完成: 扫描 " + pkgs.size + " 个应用, 发现 " + infected + " 个感染项")
+        } catch (_: Exception) {
+        }
+    }
 
     override fun onDestroy() {
         receiver?.let { unregisterReceiver(it) }
@@ -210,6 +242,7 @@ class RealtimeProtectionService : Service() {
 
     companion object {
         const val NOTIF_ID = 1001
+        const val ACTION_SCHEDULED_SCAN = "com.armorlab.securedroid.SCHEDULED_SCAN"
         private const val GUARD_INTERVAL_MS = 5L * 60 * 1000
 
         fun start(context: Context) {

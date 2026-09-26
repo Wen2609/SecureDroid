@@ -22,6 +22,37 @@ object AppLockStore {
     private const val KEY_UNLOCK_AT = "last_unlock_at"
     private const val PIN_LENGTH = 4
     private const val UNLOCK_WINDOW_MS = 60_000L
+    private const val KEY_ATTEMPTS = "pin_attempts"
+    private const val KEY_LOCKOUT_UNTIL = "pin_lockout_until"
+    private const val KEY_DECOY = "decoy_enabled"
+
+    /** 防暴力破解:记录失败次数,每 3 次错误递增锁定(attempts x 10 秒) */
+    fun registerFailedAttempt(context: Context): Int {
+        val p = prefs(context)
+        val attempts = p.getInt(KEY_ATTEMPTS, 0) + 1
+        val edit = p.edit().putInt(KEY_ATTEMPTS, attempts)
+        if (attempts % 3 == 0) {
+            edit.putLong(KEY_LOCKOUT_UNTIL, System.currentTimeMillis() + attempts * 10_000L)
+        }
+        edit.apply()
+        return attempts
+    }
+
+    fun resetAttempts(context: Context) {
+        prefs(context).edit().putInt(KEY_ATTEMPTS, 0).putLong(KEY_LOCKOUT_UNTIL, 0L).apply()
+    }
+
+    fun lockoutRemainingMs(context: Context): Long {
+        val until = prefs(context).getLong(KEY_LOCKOUT_UNTIL, 0L)
+        return (until - System.currentTimeMillis()).coerceAtLeast(0L)
+    }
+
+    fun isDecoyEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_DECOY, false)
+
+    fun setDecoyEnabled(context: Context, value: Boolean) {
+        prefs(context).edit().putBoolean(KEY_DECOY, value).apply()
+    }
 
     private fun prefs(context: Context): SharedPreferences {
         val masterKey = MasterKey.Builder(context)

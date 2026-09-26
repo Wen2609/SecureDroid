@@ -18,6 +18,13 @@
         android:layout_marginTop="8dp"
         android:text="@string/lock_set_pin" />
 
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/swDecoy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/lock_decoy_sw" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAccessibility"
         android:layout_width="match_parent"
