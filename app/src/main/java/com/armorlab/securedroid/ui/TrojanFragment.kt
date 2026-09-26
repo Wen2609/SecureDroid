@@ -58,11 +58,13 @@ class TrojanFragment : Fragment() {
 
         binding.btnTrojanScan.setOnClickListener { viewModel.startScan() }
         binding.btnRootkit.setOnClickListener { viewModel.startRootkit() }
+        binding.btnModules.setOnClickListener { viewModel.startModuleScan() }
     }
 
     private fun setBusy(busy: Boolean) {
         binding.btnTrojanScan.isEnabled = !busy
         binding.btnRootkit.isEnabled = !busy
+        binding.btnModules.isEnabled = !busy
     }
 
     override fun onDestroyView() {

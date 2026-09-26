@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.databinding.ItemTrojanBinding
+import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ThreatLevel
 
 class TrojanAdapter : ListAdapter<TrojanAdapter.UiItem, TrojanAdapter.VH>(DIFF) {
@@ -52,6 +54,34 @@ class TrojanAdapter : ListAdapter<TrojanAdapter.UiItem, TrojanAdapter.VH>(DIFF) 
             holder.binding.tvSuggestion.visibility = View.VISIBLE
             holder.binding.tvSuggestion.text =
                 ctx.getString(R.string.trojan_suggestion_label) + " " + item.suggestion
+        }
+
+        // 处置按钮:禁用模块 / 删除恶意脚本(经 su 执行,需用户确认)
+        if (item.fixCommand.isNullOrEmpty()) {
+            holder.binding.btnFix.visibility = View.GONE
+        } else {
+            holder.binding.btnFix.visibility = View.VISIBLE
+            holder.binding.btnFix.text = item.fixLabel ?: ctx.getString(R.string.fix_run)
+            holder.binding.btnFix.setOnClickListener {
+                val cmd = item.fixCommand
+                AlertDialog.Builder(ctx)
+                    .setTitle(R.string.fix_confirm_title)
+                    .setMessage(ctx.getString(R.string.fix_confirm_msg) + "\n\n" + cmd)
+                    .setPositiveButton(R.string.fix_run) { _, _ ->
+                        Thread {
+                            val out = ShellBridge.runSu(cmd)
+                            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                                Toast.makeText(
+                                    ctx,
+                                    if (out != null) R.string.fix_done else R.string.fix_failed,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }.start()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
         }
 
         if (item.uninstallPkg.isNullOrEmpty()) {

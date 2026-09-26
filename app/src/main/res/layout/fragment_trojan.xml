@@ -19,6 +19,14 @@
         style="?attr/materialButtonOutlinedStyle"
         android:text="@string/rootkit_btn" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnModules"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="@string/modules_btn" />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="match_parent"

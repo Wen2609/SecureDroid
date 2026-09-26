@@ -59,4 +59,14 @@
     <string name="rootkit_scanning">正在检测 Rootkit 痕迹…</string>
     <string name="rootkit_done">Rootkit 检测完成:发现 %1$d 项可疑痕迹</string>
     <string name="rootkit_clean">未发现 Rootkit 痕迹</string>
+    <string name="modules_btn">恶意模块 / SU 脚本检测</string>
+    <string name="modules_scanning">正在扫描模块与 su 脚本…(读取 /data/adb 需 su 授权)</string>
+    <string name="modules_done">模块扫描完成:发现 %1$d 项可疑 / 恶意</string>
+    <string name="modules_clean">模块与 su 脚本未发现恶意行为</string>
+    <string name="modules_no_access">未检测到可读的模块目录;如已 root,请在 KernelSU / APatch / SukiSU / Magisk 管理器中为本应用授予 su 权限</string>
+    <string name="fix_confirm_title">执行处置命令</string>
+    <string name="fix_confirm_msg">将通过 su 执行以下命令:</string>
+    <string name="fix_run">执行</string>
+    <string name="fix_done">处置完成</string>
+    <string name="fix_failed">处置失败(未授权或命令执行出错)</string>
 </resources>

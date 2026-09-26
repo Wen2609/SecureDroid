@@ -15,6 +15,7 @@
 | 实时防护 | 前台服务监听应用安装 / 更新广播,新应用自动扫描,命中特征时发送高优先级告警通知;开机自启 |
 | 应用锁 | 加密存储 PIN(仅存加盐 SHA-256);无障碍服务检测前台应用,受保护应用启动时弹出 PIN 锁屏 |
 | 木马查杀 | 多引擎:ClamAV 兼容签名(.hsb/.ndb)+ DEX 行为规则(YARA 风格)+ rkhunter 式 Rootkit 检测;发现感染应用支持一键卸载引导 |
+| 恶意模块防护 | 针对 KernelSU / APatch / SukiSU-Ultra / Magisk:扫描模块启动脚本与 su 开机脚本,加权评分判定恶意行为,支持一键禁用模块、删除恶意 su 脚本 |
 
 ## 技术栈
 
@@ -67,7 +68,11 @@
   (格式:hash|名称|级别0-3|描述)进行本地扩充;真实产品应接入
   自有云端特征下发通道(带签名校验),此处未包含以避免公开攻击面;
 - 解锁后 60 秒内再次进入受保护应用不再要求 PIN(简单宽限窗口,
-  生产版建议改为"灭屏即失效")。
+  生产版建议改为"灭屏即失效");
+- 恶意模块 / SU 脚本检测需要读取 /data/adb(仅 root 可读):应用先尝试直接读取,
+  失败后通过 su 执行**只读命令**(cat / ls / test),首次会弹出管理器授权;
+  处置命令(禁用模块 touch disable / 删除恶意脚本 rm)仅在用户点击按钮并
+  二次确认后才执行,应用不会静默执行任何写操作;
 
 ## 木马查杀引擎与开源致谢
 
@@ -78,6 +83,7 @@
 | ClamAV | GPL(未复用代码,仅格式互操作) | 签名文件格式 | 兼容 .hsb(整文件 SHA-256)与 .ndb(十六进制字节特征,支持 ? 半字节通配),可直接加载 ClamAV 特征文件 |
 | YARA | BSD-3(仅借鉴规则思想) | 多模式组合规则 | DEX 字符串级规则引擎,7 条内置规则(短信扣费 / 提权 / 反向 Shell / 勒索 / 动态加载 / 间谍 / 伪装),minHits 组合命中 |
 | rkhunter / chkrootkit | GPL(仅借鉴检测项思路) | Rootkit 检查清单 | su 二进制路径、Magisk/KernelSU 指纹、/proc/mounts 覆盖挂载与可写 /system、SELinux 宽容模式、root 管理器应用 |
+| KernelSU / APatch / SukiSU-Ultra | GPL(仅兼容模块规范,未复用代码) | 模块目录与启动脚本规范 | 扫描 /data/adb/modules、/data/adb/ksu/modules、/data/adb/ap/modules 及 service.d / post-fs-data.d 脚本;Shell 加权评分引擎识别恶意模块;利用各框架通用的 disable 文件机制一键禁用 |
 
 ### 更新特征库(接入 ClamAV 官方数据)
 
