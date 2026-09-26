@@ -40,18 +40,16 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
             )
             val dao = AppDatabase.get(context).scanRecordDao()
             val now = System.currentTimeMillis()
-            results.forEach { r ->
-                dao.insert(
-                    ScanRecordEntity(
-                        packageName = r.packageName,
-                        appName = r.appName,
-                        sha256 = r.sha256,
-                        threatName = r.threat?.name,
-                        riskScore = r.permissionRiskScore,
-                        scannedAt = now
-                    )
+            dao.insertAll(results.map { r ->
+                ScanRecordEntity(
+                    packageName = r.packageName,
+                    appName = r.appName,
+                    sha256 = r.sha256,
+                    threatName = r.threat?.name,
+                    riskScore = r.permissionRiskScore,
+                    scannedAt = now
                 )
-            }
+            })
             dao.trim()
             _state.postValue(ScanUiState.Done(results))
         }

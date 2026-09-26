@@ -84,7 +84,9 @@ class RealtimeProtectionService : Service() {
                     )
                 )
             })
-            entities.forEach { if (it.threatName != null) infected++; dao.insert(it) }
+            val list = entities.toList()
+            dao.insertAll(list)
+            infected = list.count { it.threatName != null }
             dao.trim()
             notifyAutoAction("每日查杀完成: 扫描 " + entities.size + " 个应用, 发现 " + infected + " 个感染项")
         } catch (_: Exception) {

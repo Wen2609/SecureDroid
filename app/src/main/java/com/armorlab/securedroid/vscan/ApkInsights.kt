@@ -23,6 +23,33 @@ object ApkInsights {
 
     data class Finding(val name: String, val level: ThreatLevel, val detail: String)
 
+    /** 结果缓存:key = 路径|最后更新时间|大小,APK 未更新直接回放上次结构结论 */
+    fun analyzeCached(context: Context, info: PackageInfo): List<Finding> {
+        val app = info.applicationInfo ?: return emptyList()
+        val path = app.sourceDir ?: return emptyList()
+        val key = path + "|" + info.lastUpdateTime + "|" + java.io.File(path).length()
+        val prefs = context.getSharedPreferences("insights_cache", Context.MODE_PRIVATE)
+        prefs.getString(key, null)?.let { s ->
+            try {
+                val arr = org.json.JSONArray(s)
+                return (0 until arr.length()).map { i ->
+                    val o = arr.getJSONObject(i)
+                    Finding(o.getString("n"), ThreatLevel.entries[o.getInt("l")], o.getString("d"))
+                }
+            } catch (_: Exception) { }
+        }
+        val findings = analyze(context, info.packageName)
+        try {
+            val arr = org.json.JSONArray()
+            for (f in findings) {
+                arr.put(org.json.JSONObject().put("n", f.name).put("l", f.level.ordinal).put("d", f.detail))
+            }
+            prefs.edit().putString(key, arr.toString()).apply()
+            if (prefs.all.size > 800) prefs.edit().clear().apply()
+        } catch (_: Exception) { }
+        return findings
+    }
+
     fun analyze(context: Context, pkg: String): List<Finding> {
         val findings = mutableListOf<Finding>()
         val pm = context.packageManager

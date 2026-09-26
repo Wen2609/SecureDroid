@@ -1,6 +1,7 @@
 package com.armorlab.securedroid.trojan
 
 import android.content.Context
+import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ThreatLevel
 import java.io.File
 
@@ -44,7 +45,7 @@ object RootkitDetector {
 
         // 1. su 二进制
         for (p in suPaths) {
-            if (exists(p)) findings.add(
+            if (p in found) findings.add(
                 RootFinding(
                     "Rootkit.SuBinary", ThreatLevel.HIGH,
                     "发现 su 二进制: " + p,
@@ -53,9 +54,25 @@ object RootkitDetector {
             )
         }
 
+        // 1+2 预探测:su 路径直接 File.exists,不可读路径批量单次 su 兜底
+        val found = HashSet<String>()
+        val needSu = mutableListOf<String>()
+        for (p in suPaths + magiskPaths) {
+            if (exists(p)) found.add(p) else needSu.add(p)
+        }
+        if (needSu.isNotEmpty()) {
+            val probeOut = ShellBridge.runSu(
+                needSu.joinToString(" ") { "[ -e '" + it + "' ] && echo '" + it + "';" },
+                15_000L
+            ) ?: ""
+            probeOut.lines().map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .forEach { found.add(it) }
+        }
+
         // 2. Magisk / KernelSU 隐藏框架
         for (p in magiskPaths) {
-            if (exists(p)) findings.add(
+            if (p in found) findings.add(
                 RootFinding(
                     "Rootkit.MagiskLike", ThreatLevel.HIGH,
                     "发现 root 框架指纹: " + p,

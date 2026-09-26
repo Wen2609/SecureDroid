@@ -15,10 +15,16 @@ object NetKill {
         context.packageManager.getApplicationInfo(pkg, 0)?.uid
     } catch (_: Exception) { null }
 
+    private fun blockedUids(): Set<Int>? {
+        val out = ShellBridge.runSu("iptables -S OUTPUT 2>/dev/null") ?: return null
+        return Regex("--uid-owner (\\d+)").findAll(out)
+            .mapNotNull { it.groupValues[1].toIntOrNull() }
+            .toSet()
+    }
+
     fun isBlocked(context: Context, pkg: String): Boolean {
         val uid = uidOf(context, pkg) ?: return false
-        return ShellBridge.runSu("iptables -S OUTPUT 2>/dev/null")
-            ?.contains("--uid-owner " + uid) == true
+        return blockedUids()?.contains(uid) == true
     }
 
     fun block(context: Context, pkg: String): Boolean {
@@ -35,9 +41,11 @@ object NetKill {
         val pm = context.packageManager
         val items = mutableListOf<TrojanAdapter.UiItem>()
         var blockedCount = 0
+        // 单次拉取 iptables 规则表,内存匹配(避免每应用一次 su)
+        val blockedUids = blockedUids() ?: emptySet()
         for (info in pm.getInstalledApplications(0).take(100)) {
             if (info.packageName == context.packageName) continue
-            val blocked = isBlocked(context, info.packageName)
+            val blocked = info.uid in blockedUids
             val label = info.loadLabel(pm).toString()
             if (blocked) blockedCount++
             items.add(

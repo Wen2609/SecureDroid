@@ -20,13 +20,20 @@ object CustomRules {
     )
 
     private const val KEY = "custom_rules"
+    private const val KEY_VERSION = "custom_rules_version"
+
+    @Volatile private var cacheVersion = -1
+    @Volatile private var cacheList: List<Rule> = emptyList()
 
     private fun prefs(context: Context) =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
+    /** 记忆化:仅在规则版本变更时重新解析 JSON(并行扫描每应用调用,避免重复解析) */
     fun list(context: Context): List<Rule> {
-        val json = prefs(context).getString(KEY, null) ?: return emptyList()
-        return try {
+        val version = prefs(context).getInt(KEY_VERSION, 0)
+        if (version == cacheVersion) return cacheList
+        val json = prefs(context).getString(KEY, null) ?: ""
+        val parsed = if (json.isEmpty()) emptyList() else try {
             val arr = JSONArray(json)
             (0 until arr.length()).map { i ->
                 val o = arr.getJSONObject(i)
@@ -41,6 +48,14 @@ object CustomRules {
                 )
             }
         } catch (_: Exception) { emptyList() }
+        cacheVersion = version
+        cacheList = parsed
+        return parsed
+    }
+
+    private fun bump(context: Context) {
+        val p = prefs(context)
+        p.edit().putInt(KEY_VERSION, p.getInt(KEY_VERSION, 0) + 1).apply()
     }
 
     fun add(context: Context, name: String, level: ThreatLevel, patterns: List<String>, minHits: Int): Boolean {
@@ -62,6 +77,7 @@ object CustomRules {
         o.put("minHits", minHits)
         arr.put(o)
         prefs(context).edit().putString(KEY, arr.toString()).apply()
+        bump(context)
         return true
     }
 
@@ -77,6 +93,7 @@ object CustomRules {
             arr.put(o)
         }
         prefs(context).edit().putString(KEY, arr.toString()).apply()
+        bump(context)
     }
 
     /** 转为内置规则引擎格式,供 TrojanScanner 合并 */

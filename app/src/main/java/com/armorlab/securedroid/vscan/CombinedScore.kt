@@ -25,7 +25,8 @@ object CombinedScore {
         val parts = mutableListOf<String>()
         val pm = context.packageManager
         val info = try {
-            pm.getPackageInfo(pkg, PackageManager.GET_PERMISSIONS)
+            pm.getPackageInfo(pkg,
+                PackageManager.GET_PERMISSIONS or PackageManager.GET_SIGNATURES)
         } catch (_: Exception) { return Result(0, ThreatLevel.LOW, emptyList()) }
 
         // 权限证据(权重上限 30)
@@ -50,8 +51,8 @@ object CombinedScore {
             parts.add(d.engine + ":" + d.name + "(+" + add + ")")
         }
 
-        // 元数据证据(上限 40)
-        for (f in ApkInsights.analyze(context, pkg)) {
+        // 元数据证据(上限 40,走结构结论缓存)
+        for (f in ApkInsights.analyzeCached(context, info)) {
             val add = when (f.level) {
                 ThreatLevel.CRITICAL -> 30
                 ThreatLevel.HIGH -> 20

@@ -30,10 +30,12 @@ object FilesystemScanner {
 
     fun quickTmpProbe(): List<TmpFile> {
         val out = mutableListOf<TmpFile>()
-        for (d in tmpDirs) {
-            val entries = ShellBridge.runSu(
-                "find '" + d + "' -maxdepth 2 -type f 2>/dev/null | head -200", 20_000L
-            ) ?: continue
+        // 单次 find 覆盖全部临时目录(减少 su 往返)
+        val entries = ShellBridge.runSu(
+            "find " + tmpDirs.joinToString(" ") { "'" + it + "'" } +
+                " -maxdepth 2 -type f 2>/dev/null | head -300", 20_000L
+        ) ?: return out
+        run {
             for (line in entries.lines()) {
                 val path = line.trim()
                 if (path.isEmpty()) continue

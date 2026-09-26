@@ -28,6 +28,9 @@ interface ScanRecordDao {
     @Insert
     suspend fun insert(record: ScanRecordEntity)
 
+    @Insert
+    suspend fun insertAll(records: List<ScanRecordEntity>)
+
     @Query("DELETE FROM scan_records")
     suspend fun clear()
 

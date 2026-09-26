@@ -75,12 +75,12 @@ object TrojanScanner {
                 } else {
                     val strings = DexScanner.dexStringsFromApk(apkPath)
                     val dets = BehaviorRules.match(strings, CustomRules.asRules(context))
+                    // 引擎 4:ClamAV .ndb 字节码特征(与行为判定一并纳入指纹缓存)
+                    val clam = ClamAvSignatures.scanApk(apkPath)
                     detections.addAll(dets)
-                    DexVerdictCache.store(context, sha, dets)
+                    detections.addAll(clam)
+                    DexVerdictCache.store(context, sha, dets + clam)
                 }
-
-                // 引擎 4:ClamAV .ndb 字节码特征
-                detections.addAll(ClamAvSignatures.scanApk(apkPath))
             }
         }
         return Report(pkg, appName, detections)
