@@ -69,4 +69,11 @@
     <string name="fix_run">执行</string>
     <string name="fix_done">处置完成</string>
     <string name="fix_failed">处置失败(未授权或命令执行出错)</string>
+    <string name="root_mode_on">Root 模式:已启用(即时检测 + 自动杀毒可用)</string>
+    <string name="root_mode_off">Root 模式:未启用(开启下方开关将请求 su 授权)</string>
+    <string name="sw_auto_disinfect">自动杀毒:自动禁用恶意模块 / 删除恶意 su 脚本</string>
+    <string name="sw_auto_uninstall">自动卸载恶意应用(root pm uninstall)</string>
+    <string name="toast_root_enabled">Root 模式已启用,自动杀毒生效中</string>
+    <string name="toast_need_root">未取得 root 授权,无法开启</string>
+    <string name="auto_disinfect_title">自动杀毒</string>
 </resources>

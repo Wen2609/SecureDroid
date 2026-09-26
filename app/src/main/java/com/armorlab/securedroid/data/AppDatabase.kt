@@ -41,10 +41,35 @@ interface ScanRecordDao {
     suspend fun threatCount(): Int
 }
 
-@Database(entities = [ScanRecordEntity::class], version = 1, exportSchema = false)
+@Entity(tableName = "auto_actions")
+data class AutoActionEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val actionType: String,
+    val target: String,
+    val reason: String,
+    val success: Boolean,
+    val actedAt: Long
+)
+
+@Dao
+interface AutoActionDao {
+
+    @Insert
+    suspend fun insert(action: AutoActionEntity)
+
+    @Query("SELECT * FROM auto_actions ORDER BY actedAt DESC LIMIT 100")
+    fun observeRecent(): Flow<List<AutoActionEntity>>
+
+    @Query("SELECT COUNT(*) FROM auto_actions WHERE success = 1")
+    suspend fun successCount(): Int
+}
+
+@Database(entities = [ScanRecordEntity::class, AutoActionEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun scanRecordDao(): ScanRecordDao
+
+    abstract fun autoActionDao(): AutoActionDao
 
     companion object {
         @Volatile

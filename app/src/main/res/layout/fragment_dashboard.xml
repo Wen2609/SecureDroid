@@ -63,5 +63,27 @@
             android:layout_height="wrap_content"
             style="?attr/materialButtonOutlinedStyle"
             android:text="@string/btn_realtime_start" />
+
+        <TextView
+            android:id="@+id/tvRootState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/root_mode_off"
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swAutoDisinfect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/sw_auto_disinfect" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swAutoUninstall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/sw_auto_uninstall" />
     </LinearLayout>
 </ScrollView>

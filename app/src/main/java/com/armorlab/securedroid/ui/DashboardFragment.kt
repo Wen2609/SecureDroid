@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,7 @@ import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.databinding.FragmentDashboardBinding
 import com.armorlab.securedroid.permissions.PermissionAuditor
 import com.armorlab.securedroid.realtime.RealtimeProtectionService
+import com.armorlab.securedroid.root.RootGuard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,6 +39,8 @@ class DashboardFragment : Fragment() {
         binding.btnGoLock.setOnClickListener { (activity as? MainActivity)?.navigateTo(R.id.nav_lock) }
         binding.btnRealtime.setOnClickListener { toggleRealtime(ctx) }
         refreshRealtimeButton()
+        initRootPanel(ctx)
+        refreshRootState()
         refreshScore()
     }
 
@@ -73,6 +77,54 @@ class DashboardFragment : Fragment() {
         refreshRealtimeButton()
     }
 
+    /** ===== Root 模式面板(即时检测 + 自动杀毒)===== */
+
+    private fun initRootPanel(ctx: Context) {
+        binding.swAutoDisinfect.setOnCheckedChangeListener { _, checked ->
+            if (!checked) {
+                RootGuard.setAutoDisinfect(ctx, false)
+                return@setOnCheckedChangeListener
+            }
+            enableWithRoot(ctx) { RootGuard.setAutoDisinfect(ctx, true) }
+        }
+        binding.swAutoUninstall.setOnCheckedChangeListener { _, checked ->
+            if (!checked) {
+                RootGuard.setAutoUninstall(ctx, false)
+                return@setOnCheckedChangeListener
+            }
+            enableWithRoot(ctx) { RootGuard.setAutoUninstall(ctx, true) }
+        }
+    }
+
+    private fun enableWithRoot(ctx: Context, apply: () -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val ok = RootGuard.probeRoot(ctx)
+            withContext(Dispatchers.Main) {
+                if (ok) {
+                    RootGuard.setRootMode(ctx, true)
+                    apply()
+                    Toast.makeText(ctx, R.string.toast_root_enabled, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(ctx, R.string.toast_need_root, Toast.LENGTH_SHORT).show()
+                }
+                refreshRootState()
+            }
+        }
+    }
+
+    private fun refreshRootState() {
+        val ctx = requireContext()
+        binding.tvRootState.setText(
+            if (RootGuard.isRootMode(ctx)) R.string.root_mode_on else R.string.root_mode_off
+        )
+        // 先摘掉监听再回填状态,避免误触发
+        binding.swAutoDisinfect.setOnCheckedChangeListener(null)
+        binding.swAutoDisinfect.isChecked = RootGuard.isAutoDisinfect(ctx)
+        binding.swAutoUninstall.setOnCheckedChangeListener(null)
+        binding.swAutoUninstall.isChecked = RootGuard.isAutoUninstall(ctx)
+        initRootPanel(ctx)
+    }
+
     private fun refreshRealtimeButton() {
         val enabled = requireContext()
             .getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -85,6 +137,7 @@ class DashboardFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         refreshRealtimeButton()
+        refreshRootState()
     }
 
     override fun onDestroyView() {
