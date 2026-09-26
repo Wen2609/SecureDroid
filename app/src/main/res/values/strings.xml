@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">安卫安全助手</string>
+    <string name="tab_home">首页</string>
+    <string name="tab_scan">病毒扫描</string>
+    <string name="tab_audit">权限审计</string>
+    <string name="tab_lock">应用锁</string>
+
+    <string name="dashboard_score_label">安全评分</string>
+    <string name="dashboard_state_good">当前设备状态良好,未发现明显威胁</string>
+    <string name="dashboard_state_warn">发现风险项,建议尽快处理</string>
+    <string name="dashboard_state_bad">发现恶意应用,请立即处理!</string>
+    <string name="btn_go_scan">病毒扫描</string>
+    <string name="btn_go_audit">权限审计</string>
+    <string name="btn_go_lock">应用锁</string>
+    <string name="btn_realtime_start">开启实时防护</string>
+    <string name="btn_realtime_stop">关闭实时防护</string>
+
+    <string name="scan_idle">点击下方按钮开始扫描</string>
+    <string name="scan_start">开始全盘扫描</string>
+    <string name="scan_scanning">正在扫描,请稍候…</string>
+    <string name="scan_done">扫描完成:%1$d 个应用,发现 %2$d 个威胁</string>
+    <string name="status_safe">安全</string>
+    <string name="status_risky">存在风险权限</string>
+    <string name="status_malicious">发现威胁</string>
+
+    <string name="audit_summary">发现 %1$d 个应用存在敏感权限使用</string>
+
+    <string name="lock_pin_state_set">PIN 码:已设置</string>
+    <string name="lock_pin_state_unset">PIN 码:未设置</string>
+    <string name="lock_set_pin">设置 / 修改 PIN 码</string>
+    <string name="lock_accessibility_go">开启无障碍权限(用于应用锁)</string>
+    <string name="lock_accessibility_on">无障碍权限已开启</string>
+    <string name="lock_pin_title">设置 4 位 PIN 码</string>
+    <string name="lock_pin_hint">请输入 4 位数字</string>
+    <string name="lock_pin_confirm_hint">请再次输入</string>
+    <string name="lock_save">保存</string>
+    <string name="lock_pin_saved">PIN 码已保存</string>
+    <string name="lock_pin_mismatch">两次输入不一致或不是 4 位数字</string>
+    <string name="lock_unlock_title">应用已锁定</string>
+    <string name="lock_unlock_hint">请输入 PIN 码解锁</string>
+    <string name="lock_unlock_ok">解锁成功</string>
+    <string name="lock_wrong_pin">PIN 码错误</string>
+
+    <string name="channel_realtime_name">实时防护通知</string>
+    <string name="channel_alert_name">威胁告警通知</string>
+    <string name="realtime_title">实时防护运行中</string>
+    <string name="realtime_text">正在监控应用安装与更新</string>
+    <string name="threat_found_title">发现恶意应用!</string>
+    <string name="accessibility_desc">安卫应用锁使用无障碍服务检测前台应用,在受保护应用启动时要求输入 PIN 码。</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#0B57D0</color>
+    <color name="ic_launcher_background">#0B57D0</color>
+    <color name="status_safe">#2E7D32</color>
+    <color name="status_risky">#F9A825</color>
+    <color name="status_malicious">#C62828</color>
+</resources>
