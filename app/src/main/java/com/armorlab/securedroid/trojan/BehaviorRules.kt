@@ -62,12 +62,40 @@ object BehaviorRules {
             "Trojan.Hider.Disguise", ThreatLevel.LOW,
             "疑似伪装隐藏:动态隐藏图标或伪装桌面",
             listOf("setComponentEnabledSetting", "android.intent.category.HOME"), 2
+        ),
+        Rule(
+            "Virus.WebViewRce", ThreatLevel.HIGH,
+            "WebView 远程代码执行面:addJavascriptInterface + JS 开启",
+            listOf("addJavascriptInterface", "setJavaScriptEnabled"), 2
+        ),
+        Rule(
+            "Virus.DexStager", ThreatLevel.HIGH,
+            "DexClassLoader + loadDex 组合(载荷落地执行)",
+            listOf("Ldalvik/system/DexClassLoader;", "loadDex"), 2
+        ),
+        Rule(
+            "Virus.ClipSpy", ThreatLevel.MEDIUM,
+            "监听剪贴板(密码/验证码窃取面)",
+            listOf("OnPrimaryClipChangedListener", "getPrimaryClip"), 2
+        ),
+        Rule(
+            "Virus.HiddenApi", ThreatLevel.MEDIUM,
+            "调用隐藏/受限 API(VMRuntime/SystemProperties/Unsafe)",
+            listOf("Ldalvik/system/VMRuntime;", "Landroid/os/SystemProperties;", "Lsun/misc/Unsafe;"), 2
+        ),
+        Rule(
+            "Virus.HookFramework", ThreatLevel.MEDIUM,
+            "携带 Hook 框架特征(Xposed/Substrate/Riru)",
+            listOf("xposed", "substrate", "riru"), 1
         )
     )
 
-    fun match(strings: Set<String>): List<TrojanScanner.Detection> {
+    fun match(
+        strings: Set<String>,
+        extra: List<Rule> = emptyList()
+    ): List<TrojanScanner.Detection> {
         val detections = mutableListOf<TrojanScanner.Detection>()
-        for (rule in rules) {
+        for (rule in rules + extra) {
             val matched = mutableListOf<String>()
             for (p in rule.patterns) {
                 if (strings.any { it.contains(p) }) matched.add(p)

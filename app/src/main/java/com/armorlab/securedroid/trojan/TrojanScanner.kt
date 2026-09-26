@@ -4,6 +4,7 @@ import android.content.Context
 import com.armorlab.securedroid.scan.ScannerEngine
 import com.armorlab.securedroid.scan.SignatureDatabase
 import com.armorlab.securedroid.scan.ThreatLevel
+import com.armorlab.securedroid.vscan.CustomRules
 import java.io.File
 
 /**
@@ -59,7 +60,7 @@ object TrojanScanner {
 
             // 引擎 3:DEX 行为规则
             val strings = DexScanner.dexStringsFromApk(apkPath)
-            detections.addAll(BehaviorRules.match(strings))
+            detections.addAll(BehaviorRules.match(strings, CustomRules.asRules(context)))
 
             // 引擎 4:ClamAV .ndb 字节码特征
             detections.addAll(ClamAvSignatures.scanApk(apkPath))

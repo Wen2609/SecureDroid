@@ -4,6 +4,7 @@ import android.content.Context
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ThreatLevel
+import com.armorlab.securedroid.vscan.IocStore
 import com.armorlab.securedroid.ui.TrojanAdapter
 import java.io.File
 import java.util.regex.Pattern
@@ -63,6 +64,10 @@ object ProcessScanner {
             if (p.pid in hidden) {
                 dets.add(Triple("Proc.Hidden", ThreatLevel.CRITICAL,
                     "进程对普通视角隐藏(root ps 可见),疑似 Rootkit 隐匿"))
+            }
+            if (IocStore.matches(context, p.name)) {
+                dets.add(Triple("Proc.IocMatch", ThreatLevel.HIGH,
+                    "进程名命中自定义 IOC 模式"))
             }
             if (exe != null) {
                 if (exe.contains("(deleted)")) {

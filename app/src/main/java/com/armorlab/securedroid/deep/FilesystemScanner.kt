@@ -6,6 +6,7 @@ import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.root.ScriptAnalyzer
 import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ClamAvSignatures
+import com.armorlab.securedroid.vscan.IocStore
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
 import java.io.File
@@ -160,6 +161,22 @@ object FilesystemScanner {
                     null, null, null, null
                 )
             )
+        }
+
+        // 自定义 IOC 模式匹配
+        val iocPatterns = IocStore.patterns(context)
+        if (iocPatterns.isNotEmpty() && rootMode) {
+            for (p in found.lines().map { it.trim() }.filter { it.isNotEmpty() }) {
+                if (IocStore.matches(context, p.substringAfterLast('/'))) {
+                    items.add(
+                        TrojanAdapter.UiItem(
+                            "FS.IocMatch", p, "文件名命中自定义 IOC 模式",
+                            ThreatLevel.HIGH, "命中用户自定义 IOC,请人工确认",
+                            null, null, null, null
+                        )
+                    )
+                }
+            }
         }
 
         onPhase("ClamAV 字节码特征扫描…")

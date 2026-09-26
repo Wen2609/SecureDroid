@@ -15,7 +15,11 @@ import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.AutoActionEntity
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.deep.FilesystemScanner
+import com.armorlab.securedroid.vscan.ActionPolicy
+import com.armorlab.securedroid.vscan.AdminSnapshot
+import com.armorlab.securedroid.vscan.BatteryAware
 import com.armorlab.securedroid.vscan.ProcessBaseline
+import com.armorlab.securedroid.vscan.Quarantine
 import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
 import com.armorlab.securedroid.root.RootGuard
@@ -56,8 +60,12 @@ class RealtimeProtectionService : Service() {
         return START_STICKY
     }
 
-    /** 每日定时查杀:全盘多引擎扫描并汇总通知 */
+    /** 每日定时查杀:全盘多引擎扫描并汇总通知(低电量省电模式自动跳过) */
     private suspend fun scheduledScan() {
+        if (BatteryAware.eco(this)) {
+            notifyAutoAction("电量低,本次定时查杀已跳过(省电模式)")
+            return
+        }
         try {
             val pm = packageManager
             val pkgs = pm.getInstalledPackages(0)
@@ -191,9 +199,13 @@ class RealtimeProtectionService : Service() {
         val result = ModuleScanner.scan(this)
         for (f in result.findings) {
             val cmd = f.fixCommand ?: continue
-            // 仅自动处置高危 / 严重项,轻微项只报告
-            if (f.level != ThreatLevel.HIGH && f.level != ThreatLevel.CRITICAL) continue
-            val ok = ShellBridge.runSu(cmd) != null
+            // 处置阈值策略:低于阈值只报告;隔离模式下文件类处置改为进隔离区
+            if (f.level.ordinal < ActionPolicy.level(this).ordinal) continue
+            val ok = if (ActionPolicy.autoQuarantine(this) && cmd.startsWith("rm -f '")) {
+                Quarantine.quarantine(this, cmd.removePrefix("rm -f '").removeSuffix("'"))
+            } else {
+                ShellBridge.runSu(cmd) != null
+            }
             RootGuard.record(
                 this,
                 if (cmd.startsWith("touch")) "DISABLE_MODULE" else "REMOVE_SCRIPT",
@@ -230,6 +242,12 @@ class RealtimeProtectionService : Service() {
                 notifyAutoAction("发现 " + newOnes.size + " 个基线外新进程: " +
                     newOnes.take(5).joinToString(", "))
             }
+        }
+
+        // 设备管理员快照:新管理员激活即时告警(锁机木马前置信号)
+        val newAdmins = AdminSnapshot.diffAndStore(this)
+        if (AdminSnapshot.hasSnapshot(this) && newAdmins.isNotEmpty()) {
+            notifyAutoAction("检测到新激活的设备管理员: " + newAdmins.joinToString(", "))
         }
     }
 
