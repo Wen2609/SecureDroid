@@ -48,4 +48,15 @@
     <string name="realtime_text">正在监控应用安装与更新</string>
     <string name="threat_found_title">发现恶意应用!</string>
     <string name="accessibility_desc">安卫应用锁使用无障碍服务检测前台应用,在受保护应用启动时要求输入 PIN 码。</string>
+    <string name="tab_trojan">木马查杀</string>
+    <string name="trojan_idle">点击开始,多引擎检测木马与后门</string>
+    <string name="trojan_start">开始木马查杀</string>
+    <string name="trojan_scanning">正在深度扫描,请稍候…</string>
+    <string name="trojan_done">查杀完成:%1$d 个应用,发现 %2$d 个感染项</string>
+    <string name="trojan_uninstall">立即卸载</string>
+    <string name="trojan_suggestion_label">处理建议:</string>
+    <string name="rootkit_btn">Rootkit / 提权后门检测</string>
+    <string name="rootkit_scanning">正在检测 Rootkit 痕迹…</string>
+    <string name="rootkit_done">Rootkit 检测完成:发现 %1$d 项可疑痕迹</string>
+    <string name="rootkit_clean">未发现 Rootkit 痕迹</string>
 </resources>

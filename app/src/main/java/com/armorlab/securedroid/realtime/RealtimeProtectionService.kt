@@ -14,6 +14,7 @@ import com.armorlab.securedroid.R
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.scan.ScannerEngine
+import com.armorlab.securedroid.trojan.TrojanScanner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -77,6 +78,8 @@ class RealtimeProtectionService : Service() {
                         )
                     )
                     if (result.isMalicious) notifyThreat(result)
+                    val trojan = TrojanScanner.scanPackage(applicationContext, pkg)
+                    if (trojan.isInfected) notifyTrojan(trojan)
                 }
             }
         }
@@ -96,6 +99,21 @@ class RealtimeProtectionService : Service() {
                     NotificationCompat.BigTextStyle()
                         .bigText(result.appName + " — " + threat.name + "\n" + threat.description)
                 )
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build()
+        )
+    }
+
+    private fun notifyTrojan(report: TrojanScanner.Report) {
+        val nm = getSystemService(NotificationManager::class.java) ?: return
+        val names = report.detections.joinToString("; ") { it.name }
+        nm.notify(
+            ("trojan" + report.packageName).hashCode(),
+            NotificationCompat.Builder(this, SecureGuardAppRefs.CHANNEL_ALERT)
+                .setSmallIcon(R.drawable.ic_shield)
+                .setContentTitle(getString(R.string.threat_found_title))
+                .setContentText(report.appName + " — " + names)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .build()

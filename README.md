@@ -14,6 +14,7 @@
 | 权限审计 | 枚举全部应用,按敏感权限(短信、通讯录、定位、麦克风、安装包等)权重累加评分,分级展示 |
 | 实时防护 | 前台服务监听应用安装 / 更新广播,新应用自动扫描,命中特征时发送高优先级告警通知;开机自启 |
 | 应用锁 | 加密存储 PIN(仅存加盐 SHA-256);无障碍服务检测前台应用,受保护应用启动时弹出 PIN 锁屏 |
+| 木马查杀 | 多引擎:ClamAV 兼容签名(.hsb/.ndb)+ DEX 行为规则(YARA 风格)+ rkhunter 式 Rootkit 检测;发现感染应用支持一键卸载引导 |
 
 ## 技术栈
 
@@ -34,8 +35,10 @@
     │  ├─ permissions/               # 权限风险审计
     │  ├─ realtime/                  # 实时防护前台服务、开机自启
     │  ├─ lock/                      # 应用锁:安全存储、无障碍服务、锁屏
-    │  └─ ui/                        # 仪表盘 / 扫描 / 审计 / 应用锁页面
+    │  ├─ trojan/                    # 木马查杀:ClamAV 签名兼容 / DEX 行为规则 / Rootkit 检测
+    │  └─ ui/                        # 仪表盘 / 扫描 / 审计 / 应用锁 / 木马查杀页面
     ├─ app/src/main/res/             # 布局、字符串、图标、无障碍配置
+    ├─ app/src/main/assets/signatures/  # 内置演示签名(ClamAV .hsb/.ndb 格式)
     ├─ app/build.gradle.kts
     └─ LICENSE                       # Apache-2.0 开源许可
 
@@ -66,10 +69,33 @@
 - 解锁后 60 秒内再次进入受保护应用不再要求 PIN(简单宽限窗口,
   生产版建议改为"灭屏即失效")。
 
+## 木马查杀引擎与开源致谢
+
+木马查杀模块借鉴了三个经典开源 Linux 安全软件的思路(只借鉴设计与文件格式,均未复用其代码,故与本项目 Apache-2.0 无许可证冲突):
+
+| 借鉴来源 | 许可证 | 借鉴内容 | 本项目实现 |
+| --- | --- | --- | --- |
+| ClamAV | GPL(未复用代码,仅格式互操作) | 签名文件格式 | 兼容 .hsb(整文件 SHA-256)与 .ndb(十六进制字节特征,支持 ? 半字节通配),可直接加载 ClamAV 特征文件 |
+| YARA | BSD-3(仅借鉴规则思想) | 多模式组合规则 | DEX 字符串级规则引擎,7 条内置规则(短信扣费 / 提权 / 反向 Shell / 勒索 / 动态加载 / 间谍 / 伪装),minHits 组合命中 |
+| rkhunter / chkrootkit | GPL(仅借鉴检测项思路) | Rootkit 检查清单 | su 二进制路径、Magisk/KernelSU 指纹、/proc/mounts 覆盖挂载与可写 /system、SELinux 宽容模式、root 管理器应用 |
+
+### 更新特征库(接入 ClamAV 官方数据)
+
+1. 从 ClamAV 官方下载 daily.cvd(CVD 为压缩归档,可用 7-Zip / tar 解包);
+2. 取出其中的 .hsb / .ndb 文件;
+3. 推入应用私有目录(需 debug 包或 root):
+
+       adb push daily.hsb /data/data/com.armorlab.securedroid/files/clamav/
+       adb push daily.ndb /data/data/com.armorlab.securedroid/files/clamav/
+
+4. 重新进入"木马查杀"页点击扫描,特征即热加载。
+
+> 说明:行为规则为字符串级启发式,可能存在误报;生产部署建议叠加云端多引擎与人工复核。
+
 ## 后续路线建议
 
 - 云端特征库与增量更新(签名校验 + Certificate Pinning);
-- APK 静态深度检测(DEX 指令特征、嵌入子 APK、证书链异常);
+- APK 深度静态分析(Smali 指令级、嵌入子 APK、证书链异常检测);
 - 网络流量与 DNS 防护(VpnService);
 - 反钓鱼短信 / 骚扰拦截模块;
 - Crash 与安全事件上报(私有后端)。

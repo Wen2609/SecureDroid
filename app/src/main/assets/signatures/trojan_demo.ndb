@@ -1,0 +1,3 @@
+# ClamAV 兼容签名(.ndb:十六进制字节特征)格式:名称;偏移;HEX(支持?通配);严重度;目标
+# 该特征解码为 ASCII 标记串 "APK-TROJAN-TEST-SIGNATURE",用于自检字节码扫描链路
+Test.Trojan.Marker;0;41504B2D54524F4A414E2D544553542D5349474E4154555245;70;*

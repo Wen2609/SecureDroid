@@ -1,0 +1,3 @@
+# ClamAV 兼容签名(.hsb:整文件 SHA-256)格式:hash:文件大小:名称
+# 大小为 0 表示忽略大小;演示特征用于自检,真实库可从 ClamAV daily.cvd 解包获取
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855:0:Trojan.Test.EmptySha256

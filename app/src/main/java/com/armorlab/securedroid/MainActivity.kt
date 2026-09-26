@@ -13,6 +13,7 @@ import com.armorlab.securedroid.ui.AppLockFragment
 import com.armorlab.securedroid.ui.DashboardFragment
 import com.armorlab.securedroid.ui.PermissionAuditFragment
 import com.armorlab.securedroid.ui.ScannerFragment
+import com.armorlab.securedroid.ui.TrojanFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_scanner -> ScannerFragment()
                 R.id.nav_audit -> PermissionAuditFragment()
                 R.id.nav_lock -> AppLockFragment()
+                R.id.nav_trojan -> TrojanFragment()
                 else -> DashboardFragment()
             }
             supportFragmentManager.beginTransaction()
