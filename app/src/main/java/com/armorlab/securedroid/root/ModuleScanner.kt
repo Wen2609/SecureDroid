@@ -49,6 +49,107 @@ object ModuleScanner {
         "uninstall.sh", "boot-completed.sh"
     )
 
+    /**
+     * root 批量采集:单次 su 调用完成全部模块 / su 脚本读取,
+     * 将 N 次 su 往返压缩为 1 次,守护循环延迟下降一个数量级。
+     */
+    fun scanBatched(context: Context): ScanResult {
+        val findings = mutableListOf<Finding>()
+        val cmd = "for d in /data/adb/modules/*/ /data/adb/ksu/modules/*/ " +
+            "/data/adb/ap/modules/*/ /data/adb/apatch/modules/*/; do " +
+            "[ -d \"\$d\" ] || continue; [ -f \"\$d\"disable ] && continue; " +
+            "echo ===MODULE \"\$d\"; cat \"\$d\"module.prop 2>/dev/null; " +
+            "for s in service.sh post-fs-data.sh action.sh customize.sh uninstall.sh boot-completed.sh; do " +
+            "if [ -f \"\$d\$s\" ]; then echo ===SCRIPT \"\$s\"; cat \"\$d\$s\"; fi; done; done; " +
+            "echo ===SUDIRS; for f in /data/adb/service.d/*.sh /data/adb/post-fs-data.d/*.sh; do " +
+            "[ -f \"\$f\" ] || continue; echo ===SUFILE \"\$f\"; cat \"\$f\"; done"
+        val out = ShellBridge.runSu(cmd, 60_000L) ?: return ScanResult(findings, 0)
+
+        // 第一遍:切分为段
+        data class Seg(val kind: String, val path: String, val content: String)
+        val segs = mutableListOf<Seg>()
+        var kind = ""
+        var path = ""
+        val buf = StringBuilder()
+        fun flushSeg() {
+            if (kind.isNotEmpty()) segs.add(Seg(kind, path, buf.toString()))
+            buf.setLength(0)
+        }
+        for (raw in out.lines()) {
+            val line = raw.trimEnd()
+            when {
+                line.startsWith("===MODULE ") -> { flushSeg(); kind = "MODULE"; path = line.removePrefix("===MODULE ").trim().trimEnd('/') }
+                line.startsWith("===SCRIPT ") -> { flushSeg(); kind = "SCRIPT"; path = line.removePrefix("===SCRIPT ").trim() }
+                line.startsWith("===SUFILE ") -> { flushSeg(); kind = "SUFILE"; path = line.removePrefix("===SUFILE ").trim() }
+                line.startsWith("===SUDIRS") -> { flushSeg(); kind = "" }
+                else -> if (kind.isNotEmpty()) buf.append(line).append('\n')
+            }
+        }
+        flushSeg()
+
+        // 第二遍:按模块聚合评分
+        val propByDir = LinkedHashMap<String, String>()
+        val scriptsByDir = LinkedHashMap<String, MutableList<Pair<String, String>>>()
+        val suFiles = mutableListOf<Pair<String, String>>()
+        for (seg in segs) {
+            when (seg.kind) {
+                "MODULE" -> { propByDir[seg.path] = seg.content }
+                "SCRIPT" -> {
+                    val dir = seg.path.substringBeforeLast('/')
+                    scriptsByDir.getOrPut(dir) { mutableListOf() }
+                        .add(seg.path.substringAfterLast('/') to seg.content)
+                }
+                "SUFILE" -> suFiles.add(seg.path to seg.content)
+            }
+        }
+
+        for ((dir, prop) in propByDir) {
+            val meta = parseProp(prop)
+            val id = meta["id"] ?: dir.substringAfterLast('/')
+            val name = (meta["name"] ?: id).trim()
+            var worst: ScriptAnalyzer.Verdict? = null
+            val hits = mutableListOf<String>()
+            for ((scriptName, content) in scriptsByDir[dir] ?: emptyList()) {
+                val v = ScriptAnalyzer.analyze(content)
+                if (v.hasFindings) {
+                    hits.add("[" + scriptName + "] " + v.hits.joinToString("; ") { it.label })
+                    if (worst == null || v.score > worst.score) worst = v
+                }
+            }
+            val w = worst
+            if (w != null) {
+                findings.add(
+                    Finding(
+                        name + " (" + id + "), " + "Root 模块 · " + dir,
+                        dir,
+                        "脚本风险评分 " + w.score + "/100\n" + hits.joinToString("\n"),
+                        w.level,
+                        "模块启动脚本包含风险行为;可禁用后人工审查,确认恶意再删除整个模块目录",
+                        "touch '" + dir + "/disable'", "禁用模块"
+                    )
+                )
+            }
+        }
+
+        for ((path, content) in suFiles) {
+            val v = ScriptAnalyzer.analyze(content)
+            if (v.hasFindings) {
+                findings.add(
+                    Finding(
+                        "SuScript." + (if (v.isMalicious) "Malicious" else "Suspicious"),
+                        path,
+                        "风险评分 " + v.score + "/100 — " + v.hits.joinToString("; ") { it.label },
+                        v.level,
+                        "开机脚本包含风险行为;确认来源后删除(删除前建议先备份脚本内容)",
+                        "rm -f '" + path + "'", "删除脚本"
+                    )
+                )
+            }
+        }
+
+        return ScanResult(findings, propByDir.size)
+    }
+
     fun scan(context: Context): ScanResult {
         val findings = mutableListOf<Finding>()
         var scannedRoots = 0

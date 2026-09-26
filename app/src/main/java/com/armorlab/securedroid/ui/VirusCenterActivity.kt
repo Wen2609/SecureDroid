@@ -146,8 +146,7 @@ class VirusCenterActivity : AppCompatActivity() {
             val name = info.applicationInfo?.loadLabel(pm)?.toString() ?: pkg
             val score = CombinedScore.evaluate(this, pkg)
             // #18 多引擎仲裁:单一引擎高危降级为待观察
-            val highEngines = score.parts.count { it.contains("+2") || it.contains("+3") }
-            val verdict = VerdictArbiter.arbitrate(highEngines, score.score)
+            val verdict = VerdictArbiter.arbitrate(score.highEngineHits, score.score)
             val finalLevel = VerdictArbiter.levelFor(verdict, score.level)
             val fixable = finalLevel == ThreatLevel.CRITICAL || finalLevel == ThreatLevel.HIGH
             items.add(
@@ -458,7 +457,7 @@ class VirusCenterActivity : AppCompatActivity() {
                 listOf(TrojanAdapter.UiItem("Error", e.message ?: "执行异常", "", ThreatLevel.MEDIUM, null, null))
             }
             runOnUiThread {
-                resultsAdapter.submitList(items)
+                resultsAdapter.submitList(items.sortedByDescending { it.level?.ordinal ?: -1 })
                 binding.tvPhase.text = getString(R.string.vc_done_fmt, items.size)
                 binding.progress.isIndeterminate = false
                 running = false

@@ -17,12 +17,14 @@ object InstallerOrigin {
             val pkg = info.packageName
             val app = info.applicationInfo ?: continue
             if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) continue
-            val installer = try {
-                if (Build.VERSION.SDK_INT >= 30)
-                    pm.getInstallSourceInfo(pkg).installingPackageName
-                else
-                    @Suppress("DEPRECATION") pm.getInstallerPackageName(pkg)
-            } catch (_: Exception) { null }
+            val installer: String? = if (Build.VERSION.SDK_INT >= 30) {
+                try { pm.getInstallSourceInfo(pkg).installingPackageName } catch (_: Exception) { null }
+            } else {
+                try {
+                    @Suppress("DEPRECATION")
+                    pm.getInstallerPackageName(pkg)
+                } catch (_: Exception) { null }
+            }
             val label = app.loadLabel(pm).toString()
             if (installer == null) {
                 sideloaded++

@@ -42,6 +42,11 @@ class LockActivity : AppCompatActivity() {
         binding.btnDel.setOnClickListener(listener)
     }
 
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        // 拦截返回键:锁定期间不允许绕过(解锁窗口仍由 60 秒逻辑控制)
+    }
+
     private fun refresh() {
         binding.tvDots.text = "●".repeat(input.length)
     }

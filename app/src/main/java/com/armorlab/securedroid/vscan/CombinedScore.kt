@@ -12,10 +12,16 @@ import com.armorlab.securedroid.trojan.TrojanScanner
  */
 object CombinedScore {
 
-    data class Result(val score: Int, val level: ThreatLevel, val parts: List<String>)
+    data class Result(
+        val score: Int,
+        val level: ThreatLevel,
+        val parts: List<String>,
+        val highEngineHits: Int = 0
+    )
 
     fun evaluate(context: Context, pkg: String): Result {
         var score = 0
+        var highEngineHits = 0
         val parts = mutableListOf<String>()
         val pm = context.packageManager
         val info = try {
@@ -40,6 +46,7 @@ object CombinedScore {
                 ThreatLevel.LOW -> 3
             }
             score += add
+            if (d.level == ThreatLevel.CRITICAL || d.level == ThreatLevel.HIGH) highEngineHits++
             parts.add(d.engine + ":" + d.name + "(+" + add + ")")
         }
 
@@ -53,6 +60,7 @@ object CombinedScore {
             }
             if (add > 0) {
                 score += add
+                if (f.level == ThreatLevel.CRITICAL || f.level == ThreatLevel.HIGH) highEngineHits++
                 parts.add(f.name + "(+" + add + ")")
             }
         }
@@ -64,6 +72,6 @@ object CombinedScore {
             score >= 15 -> ThreatLevel.MEDIUM
             else -> ThreatLevel.LOW
         }
-        return Result(score, level, parts)
+        return Result(score, level, parts, highEngineHits)
     }
 }

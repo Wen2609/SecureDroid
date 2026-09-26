@@ -40,6 +40,10 @@ interface ScanRecordDao {
     @Query("SELECT * FROM scan_records ORDER BY scannedAt DESC")
     suspend fun getAll(): List<ScanRecordEntity>
 
+    @Query("DELETE FROM scan_records WHERE id NOT IN " +
+        "(SELECT id FROM scan_records ORDER BY scannedAt DESC LIMIT 2000)")
+    suspend fun trim()
+
     @Query("SELECT COUNT(*) FROM scan_records WHERE threatName IS NOT NULL")
     suspend fun threatCount(): Int
 }

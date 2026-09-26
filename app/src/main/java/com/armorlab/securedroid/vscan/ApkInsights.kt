@@ -64,36 +64,43 @@ object ApkInsights {
                 "同时请求\"安装应用\"与\"短信\"权限,典型扣费/木马组合"))
         }
 
-        // 4/5/6) 结构检测(读 APK 字节,上限 64MB)
+        // 4/5/6) 结构检测(1MB 分块流式计数,避免整包读入内存)
         val apkPath = app.sourceDir ?: return findings
-        val bytes = try {
-            val f = java.io.File(apkPath)
-            if (f.length() <= 64L * 1024 * 1024) f.readBytes() else return findings
-        } catch (_: Exception) { return findings }
-
+        var pkCount = 0
+        var dexCount = 0
         var entryCount = 0
         var dexEntries = 0
         var assetsSo = mutableListOf<String>()
         try {
+            java.io.File(apkPath).inputStream().use { ins ->
+                val buf = ByteArray(1 shl 20)
+                var prev = ByteArray(0)
+                while (true) {
+                    val n = ins.read(buf)
+                    if (n <= 0) break
+                    val chunk = prev + buf.copyOf(n)
+                    pkCount += countOf(chunk, PK)
+                    dexCount += countOf(chunk, DEX)
+                    prev = chunk.copyOfRange(chunk.size - 3, chunk.size)
+                }
+            }
             java.util.zip.ZipFile(apkPath).use { zip ->
                 val e = zip.entries()
                 while (e.hasMoreElements()) {
-                    val n = e.nextElement().name
+                    val nm = e.nextElement().name
                     entryCount++
-                    if (n.endsWith(".dex")) dexEntries++
-                    if (n.startsWith("assets/") && n.endsWith(".so") && assetsSo.size < 5) {
-                        assetsSo.add(n)
+                    if (nm.endsWith(".dex")) dexEntries++
+                    if (nm.startsWith("assets/") && nm.endsWith(".so") && assetsSo.size < 5) {
+                        assetsSo.add(nm)
                     }
                 }
             }
         } catch (_: Exception) { }
 
-        val pkCount = countOf(bytes, PK)
         if (entryCount > 0 && pkCount > entryCount + 5) {
             findings.add(Finding("Virus.EmbeddedZip", ThreatLevel.HIGH,
                 "PK 头 " + pkCount + " 远多于 zip 条目 " + entryCount + ",疑有嵌入式压缩载荷"))
         }
-        val dexCount = countOf(bytes, DEX)
         if (dexEntries > 0 && dexCount > dexEntries) {
             findings.add(Finding("Virus.HiddenDex", ThreatLevel.HIGH,
                 "原始 dex magic 出现 " + dexCount + " 次但仅 " + dexEntries +

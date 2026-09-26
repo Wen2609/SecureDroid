@@ -44,24 +44,37 @@ class DashboardFragment : Fragment() {
         refreshScore()
     }
 
+    private var scoreCacheAt = 0L
+    private var scoreCacheScore = 0
+    private var scoreCacheState = 0
+
     private fun refreshScore() {
+        // 5 分钟缓存:避免仪表盘频繁刷新时重复全量权限审计
+        if (System.currentTimeMillis() - scoreCacheAt < 300_000L && scoreCacheScore > 0) {
+            applyScore(scoreCacheScore, scoreCacheState)
+            return
+        }
         val ctx = requireContext()
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val threats = AppDatabase.get(ctx).scanRecordDao().threatCount()
             val risky = PermissionAuditor.audit(ctx).count { it.score >= 40 }
             val score = (100 - threats * 20 - risky * 5).coerceIn(5, 100)
-            withContext(Dispatchers.Main) {
-                val b = _binding ?: return@withContext
-                b.tvScore.text = score.toString()
-                b.tvState.setText(
-                    when {
-                        threats > 0 -> R.string.dashboard_state_bad
-                        risky > 0 -> R.string.dashboard_state_warn
-                        else -> R.string.dashboard_state_good
-                    }
-                )
+            val stateRes = when {
+                threats > 0 -> R.string.dashboard_state_bad
+                risky > 0 -> R.string.dashboard_state_warn
+                else -> R.string.dashboard_state_good
             }
+            scoreCacheAt = System.currentTimeMillis()
+            scoreCacheScore = score
+            scoreCacheState = stateRes
+            withContext(Dispatchers.Main) { applyScore(score, stateRes) }
         }
+    }
+
+    private fun applyScore(score: Int, stateRes: Int) {
+        val b = _binding ?: return
+        b.tvScore.text = score.toString()
+        b.tvState.setText(stateRes)
     }
 
     private fun toggleRealtime(ctx: Context) {

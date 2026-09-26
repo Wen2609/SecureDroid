@@ -19,6 +19,7 @@ import com.armorlab.securedroid.vscan.ActionPolicy
 import com.armorlab.securedroid.vscan.AdminSnapshot
 import com.armorlab.securedroid.vscan.BatteryAware
 import com.armorlab.securedroid.vscan.ProcessBaseline
+import com.armorlab.securedroid.vscan.ParallelScanner
 import com.armorlab.securedroid.vscan.Quarantine
 import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
@@ -67,26 +68,25 @@ class RealtimeProtectionService : Service() {
             return
         }
         try {
-            val pm = packageManager
-            val pkgs = pm.getInstalledPackages(0)
             var infected = 0
             val dao = AppDatabase.get(applicationContext).scanRecordDao()
             val now = System.currentTimeMillis()
-            for (info in pkgs) {
-                val r = TrojanScanner.scanPackage(applicationContext, info.packageName)
-                if (r.isInfected) infected++
-                dao.insert(
+            val entities = java.util.concurrent.ConcurrentLinkedQueue<ScanRecordEntity>()
+            ParallelScanner.scanAll(applicationContext, 4, { _, _ -> }, { r ->
+                entities.add(
                     ScanRecordEntity(
                         packageName = r.packageName,
                         appName = r.appName,
-                        sha256 = "",
+                        sha256 = r.sha256,
                         threatName = r.detections.maxByOrNull { it.level.ordinal }?.name,
                         riskScore = 0,
                         scannedAt = now
                     )
                 )
-            }
-            notifyAutoAction("每日查杀完成: 扫描 " + pkgs.size + " 个应用, 发现 " + infected + " 个感染项")
+            })
+            entities.forEach { if (it.threatName != null) infected++; dao.insert(it) }
+            dao.trim()
+            notifyAutoAction("每日查杀完成: 扫描 " + entities.size + " 个应用, 发现 " + infected + " 个感染项")
         } catch (_: Exception) {
         }
     }
@@ -116,6 +116,7 @@ class RealtimeProtectionService : Service() {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 val pkg = intent.data?.schemeSpecificPart ?: return
+                if (pkg == packageName) return
                 scope.launch {
                     val result = ScannerEngine.scanPackage(applicationContext, pkg)
                     AppDatabase.get(applicationContext).scanRecordDao().insert(
@@ -191,7 +192,8 @@ class RealtimeProtectionService : Service() {
                 if (RootGuard.isAutoDisinfect(this)) runRootGuardPass()
             } catch (_: Exception) {
             }
-            delay(GUARD_INTERVAL_MS)
+            // 自适应间隔:省电模式拉长巡检周期 3 倍
+            delay(if (BatteryAware.eco(this)) GUARD_INTERVAL_MS * 3 else GUARD_INTERVAL_MS)
         }
     }
 
@@ -263,7 +265,15 @@ class RealtimeProtectionService : Service() {
         )
     }
 
+    private var lastNotifyText = ""
+    private var lastNotifyAt = 0L
+
     private fun notifyAutoAction(text: String) {
+        // 60 秒内同文本去重,防止巡检刷屏
+        val now = System.currentTimeMillis()
+        if (text == lastNotifyText && now - lastNotifyAt < 60_000L) return
+        lastNotifyText = text
+        lastNotifyAt = now
         val nm = getSystemService(NotificationManager::class.java) ?: return
         nm.notify(
             ("auto" + text).hashCode(),

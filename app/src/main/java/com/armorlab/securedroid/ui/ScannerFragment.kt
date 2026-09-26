@@ -51,7 +51,10 @@ class ScannerFragment : Fragment() {
                 is ScanUiState.Done -> {
                     binding.btnStartScan.isEnabled = true
                     binding.progress.isIndeterminate = false
-                    adapter.submitList(state.results)
+                    adapter.submitList(state.results.sortedWith(
+                        compareByDescending<com.armorlab.securedroid.scan.ScannerEngine.ScanResult> { it.isMalicious }
+                            .thenByDescending { it.permissionRiskScore }
+                    ))
                     val threats = state.results.count { it.isMalicious }
                     binding.tvStatus.text =
                         getString(R.string.scan_done, state.results.size, threats)

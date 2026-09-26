@@ -37,7 +37,7 @@ class DeepScanActivity : AppCompatActivity() {
                 emptyList<TrojanAdapter.UiItem>()
             }
             runOnUiThread {
-                adapter.submitList(items)
+                adapter.submitList(items.sortedByDescending { it.level?.ordinal ?: -1 })
                 binding.tvPhase.text = getString(R.string.deep_done_fmt, items.size)
                 binding.progress.isIndeterminate = false
                 binding.btnStart.isEnabled = true

@@ -8,8 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.scan.ScannerEngine
+import com.armorlab.securedroid.vscan.ParallelScanner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentLinkedQueue
 
 sealed class ScanUiState {
     data object Idle : ScanUiState()
@@ -26,12 +28,16 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
         if (_state.value is ScanUiState.Scanning) return
         viewModelScope.launch(Dispatchers.IO) {
             val context = getApplication<Application>()
-            val packages = context.packageManager.getInstalledPackages(0)
-            val results = mutableListOf<ScannerEngine.ScanResult>()
-            packages.forEachIndexed { index, info ->
-                results.add(ScannerEngine.scanPackage(context, info.packageName))
-                _state.postValue(ScanUiState.Scanning(index + 1, packages.size))
-            }
+            val collected = ConcurrentLinkedQueue<ScannerEngine.ScanResult>()
+            // 并行加速:4 线程并发多引擎扫描,实时进度
+            ParallelScanner.scanAll(context, 4,
+                { done, total -> _state.postValue(ScanUiState.Scanning(done, total)) },
+                { r -> collected.add(r) }
+            )
+            val results = collected.sortedWith(
+                compareByDescending<ScannerEngine.ScanResult> { it.isMalicious }
+                    .thenByDescending { it.permissionRiskScore }
+            )
             val dao = AppDatabase.get(context).scanRecordDao()
             val now = System.currentTimeMillis()
             results.forEach { r ->
@@ -46,6 +52,7 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
                     )
                 )
             }
+            dao.trim()
             _state.postValue(ScanUiState.Done(results))
         }
     }

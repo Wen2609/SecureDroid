@@ -16,7 +16,8 @@ object ParallelScanner {
     fun scanAll(
         context: Context,
         workers: Int = 4,
-        onProgress: (done: Int, total: Int) -> Unit
+        onProgress: (done: Int, total: Int) -> Unit,
+        onEachResult: ((TrojanScanner.ScanResult) -> Unit)? = null
     ): List<TrojanAdapter.UiItem> {
         ScanControl.reset()
         val pkgs = context.packageManager.getInstalledPackages(0)
@@ -34,7 +35,9 @@ object ParallelScanner {
         for (pkg in pkgs) {
             pool.execute {
                 try {
-                    results.add(TrojanScanner.scanPackage(context, pkg))
+                    val r = TrojanScanner.scanPackage(context, pkg)
+                    results.add(r)
+                    onEachResult?.invoke(r)
                 } catch (_: Exception) {
                 } finally {
                     done.incrementAndGet()

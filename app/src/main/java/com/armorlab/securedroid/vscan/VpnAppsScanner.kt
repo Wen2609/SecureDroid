@@ -23,7 +23,8 @@ object VpnAppsScanner {
         return services.map { s ->
             val app = s.serviceInfo.applicationInfo
             val label = try { app?.loadLabel(pm)?.toString() } catch (_: Exception) { null }
-            val isSystem = (app?.flags ?: 0) and android.content.pm.ApplicationInfo.FLAG_SYSTEM != 0
+            val isSystem = ((app?.flags ?: 0) and
+                android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
             TrojanAdapter.UiItem(
                 (if (isSystem) "Vpn.System · " else "Vpn.ThirdParty · ") + (label ?: s.serviceInfo.packageName),
                 s.serviceInfo.packageName + " · " + s.serviceInfo.name,
