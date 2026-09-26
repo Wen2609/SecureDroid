@@ -156,5 +156,15 @@ object ClamAvSignatures {
         return false
     }
 
+    /** 对任意字节流做字节码特征匹配(内存 / 分区扫描用) */
+    fun scanBytes(data: ByteArray): List<String> {
+        val sigs = synchronized(lock) { byteSigs.toList() }
+        val hits = mutableListOf<String>()
+        for (sig in sigs) {
+            if (contains(data, sig)) hits.add(sig.name)
+        }
+        return hits
+    }
+
     fun signatureCount(): Int = synchronized(lock) { hashSigs.size + byteSigs.size }
 }

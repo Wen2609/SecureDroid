@@ -14,6 +14,7 @@ import com.armorlab.securedroid.R
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.AutoActionEntity
 import com.armorlab.securedroid.data.ScanRecordEntity
+import com.armorlab.securedroid.deep.FilesystemScanner
 import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
 import com.armorlab.securedroid.root.RootGuard
@@ -211,6 +212,14 @@ class RealtimeProtectionService : Service() {
                 this, "REMOVE_LOCKER", f.sub, f.detail.take(200), ok
             )
             notifyAutoAction((if (ok) "已自动移除锁机软件: " else "移除失败: ") + f.title)
+        }
+
+        // 极速巡检:临时目录恶意载荷自动清除(CRITICAL)
+        for (f in FilesystemScanner.quickTmpProbe()) {
+            if (f.level != ThreatLevel.CRITICAL) continue
+            val ok = ShellBridge.runSu("rm -f '" + f.path + "'") != null
+            RootGuard.record(this, "REMOVE_FILE", f.path, f.reason, ok)
+            notifyAutoAction((if (ok) "已自动清除恶意文件: " else "清除失败: ") + f.path)
         }
     }
 

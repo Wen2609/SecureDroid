@@ -139,4 +139,9 @@
     <string name="lock_decoy_sw">应用锁假崩溃诱骗模式</string>
     <string name="lock_too_many_attempts">尝试次数过多,请等待 %1$d 秒后再试</string>
     <string name="lock_alarm_triggered">检测到暴力破解尝试,已鸣响警报!</string>
+    <string name="deep_scan_btn">深度查杀(内存 · 全盘 · 分区)</string>
+    <string name="deep_scan_title">深度查杀</string>
+    <string name="deep_btn_start">开始深度查杀</string>
+    <string name="deep_done_fmt">深度查杀完成:发现 %1$d 项</string>
+    <string name="deep_note">三阶段:进程内存 → 全设备目录 → 底层分区。Root 模式下效果完整,耗时较长。</string>
 </resources>

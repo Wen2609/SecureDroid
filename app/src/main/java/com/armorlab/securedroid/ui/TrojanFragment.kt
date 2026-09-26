@@ -60,6 +60,9 @@ class TrojanFragment : Fragment() {
         binding.btnRootkit.setOnClickListener { viewModel.startRootkit() }
         binding.btnModules.setOnClickListener { viewModel.startModuleScan() }
         binding.btnLocker.setOnClickListener { viewModel.startLockerScan() }
+        binding.btnDeepScan.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), DeepScanActivity::class.java))
+        }
     }
 
     private fun setBusy(busy: Boolean) {
