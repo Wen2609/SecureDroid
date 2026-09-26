@@ -63,6 +63,9 @@ class TrojanFragment : Fragment() {
         binding.btnDeepScan.setOnClickListener {
             startActivity(android.content.Intent(requireContext(), DeepScanActivity::class.java))
         }
+        binding.btnVirusCenter.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), VirusCenterActivity::class.java))
+        }
     }
 
     private fun setBusy(busy: Boolean) {

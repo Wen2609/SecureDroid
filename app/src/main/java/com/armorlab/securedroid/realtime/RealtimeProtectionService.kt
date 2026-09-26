@@ -15,6 +15,7 @@ import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.AutoActionEntity
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.deep.FilesystemScanner
+import com.armorlab.securedroid.vscan.ProcessBaseline
 import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
 import com.armorlab.securedroid.root.RootGuard
@@ -220,6 +221,15 @@ class RealtimeProtectionService : Service() {
             val ok = ShellBridge.runSu("rm -f '" + f.path + "'") != null
             RootGuard.record(this, "REMOVE_FILE", f.path, f.reason, ok)
             notifyAutoAction((if (ok) "已自动清除恶意文件: " else "清除失败: ") + f.path)
+        }
+
+        // 进程基线:基线外新增进程即时提示(不自动终止)
+        if (ProcessBaseline.hasBaseline(this)) {
+            val newOnes = ProcessBaseline.newProcesses(this)
+            if (newOnes.isNotEmpty()) {
+                notifyAutoAction("发现 " + newOnes.size + " 个基线外新进程: " +
+                    newOnes.take(5).joinToString(", "))
+            }
         }
     }
 

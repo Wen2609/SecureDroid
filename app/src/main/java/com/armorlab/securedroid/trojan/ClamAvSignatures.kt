@@ -166,5 +166,19 @@ object ClamAvSignatures {
         return hits
     }
 
+    fun hashCount(): Int = synchronized(lock) { hashSigs.size }
+
+    fun byteCount(): Int = synchronized(lock) { byteSigs.size }
+
+    /** 热重载:清空已加载签名并重新从 assets / files/clamav 加载 */
+    fun reload(context: Context) {
+        synchronized(lock) {
+            hashSigs.clear()
+            byteSigs.clear()
+            loaded = false
+        }
+        ensureLoaded(context)
+    }
+
     fun signatureCount(): Int = synchronized(lock) { hashSigs.size + byteSigs.size }
 }

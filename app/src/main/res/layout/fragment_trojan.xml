@@ -43,6 +43,14 @@
         style="?attr/materialButtonOutlinedStyle"
         android:text="@string/deep_scan_btn" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnVirusCenter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="@string/vc_open_btn" />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="match_parent"

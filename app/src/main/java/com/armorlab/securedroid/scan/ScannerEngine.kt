@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.armorlab.securedroid.permissions.PermissionAuditor
+import com.armorlab.securedroid.vscan.HashCache
+import com.armorlab.securedroid.vscan.TrustStore
 import java.io.File
 import java.io.FileInputStream
 import java.security.MessageDigest
@@ -42,8 +44,15 @@ object ScannerEngine {
         }
         val appInfo = info.applicationInfo
         val appName = appInfo?.loadLabel(pm)?.toString() ?: pkg
+        // 信任列表:跳过所有检测链路
+        if (TrustStore.isTrusted(context, pkg)) {
+            return ScanResult(pkg, appName, "", null, 0, emptyList())
+        }
         val apkPath = appInfo?.sourceDir
-        val sha = if (apkPath != null) hashFile(apkPath) else ""
+        // 哈希缓存:APK 未更新则复用上次 SHA-256
+        val sha = if (apkPath != null)
+            HashCache.cachedSha256(context, apkPath, info.lastUpdateTime, java.io.File(apkPath).length())
+        else ""
         val threat = SignatureDatabase.lookup(sha)
         val audit = PermissionAuditor.scoreFor(info)
         return ScanResult(pkg, appName, sha, threat, audit.first, audit.second)
