@@ -17,6 +17,7 @@
 | 木马查杀 | 多引擎:ClamAV 兼容签名(.hsb/.ndb)+ DEX 行为规则(YARA 风格)+ rkhunter 式 Rootkit 检测;发现感染应用支持一键卸载引导 |
 | 恶意模块防护 | 针对 KernelSU / APatch / SukiSU-Ultra / Magisk:扫描模块启动脚本与 su 开机脚本,加权评分判定恶意行为,支持一键禁用模块、删除恶意 su 脚本 |
 | Root 即时检测 / 自动杀毒 | Root 模式下:Root 守护循环(开机即扫 + 每 5 分钟巡检)即时检测恶意模块与 su 脚本;命中高危 / 严重项自动禁用模块、删除恶意脚本;应用安装即检,恶意应用经 root 自动卸载;全部处置写入审计表(auto_actions)并发通知 |
+| 防锁机软件 | 检测第三方设备管理员 + lockNow / resetPassword / wipeData 组合行为;Root 模式下守护循环即时检测,判定锁机木马即自动执行 dpm remove-active-admin 解除管理员并卸载;普通模式提供一键解除处置按钮 |
 
 ## 技术栈
 

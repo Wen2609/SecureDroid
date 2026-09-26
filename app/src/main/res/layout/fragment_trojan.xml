@@ -27,6 +27,14 @@
         style="?attr/materialButtonOutlinedStyle"
         android:text="@string/modules_btn" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLocker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="@string/locker_btn" />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="match_parent"

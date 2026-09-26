@@ -14,6 +14,7 @@ import com.armorlab.securedroid.R
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.AutoActionEntity
 import com.armorlab.securedroid.data.ScanRecordEntity
+import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.root.ShellBridge
@@ -167,6 +168,17 @@ class RealtimeProtectionService : Service() {
                 ok
             )
             notifyAutoAction((if (ok) "已自动处置: " else "处置失败: ") + f.title)
+        }
+
+        // 锁机软件即时检测:第三方管理员 + 锁屏 API 组合(CRITICAL)自动解除
+        for (f in LockerDetector.scan(this)) {
+            if (f.level != ThreatLevel.CRITICAL) continue
+            val cmd = f.fixCommand ?: continue
+            val ok = ShellBridge.runSu(cmd) != null
+            RootGuard.record(
+                this, "REMOVE_LOCKER", f.sub, f.detail.take(200), ok
+            )
+            notifyAutoAction((if (ok) "已自动移除锁机软件: " else "移除失败: ") + f.title)
         }
     }
 

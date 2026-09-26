@@ -39,6 +39,16 @@ object BehaviorRules {
             listOf("Ljavax/crypto/Cipher;", ".locked", "bitcoin", "BTC", "readme.txt"), 2
         ),
         Rule(
+            "Trojan.Lock.Ransom", ThreatLevel.CRITICAL,
+            "疑似锁机木马:设备管理员锁屏 + 重置锁屏密码组合",
+            listOf("lockNow", "resetPassword", "Landroid/app/admin/DevicePolicyManager;"), 2
+        ),
+        Rule(
+            "Trojan.Lock.Keyguard", ThreatLevel.LOW,
+            "使用按键守卫 API(常见于锁机 / 整蛊类软件)",
+            listOf("disableKeyguard"), 1
+        ),
+        Rule(
             "Trojan.Header.DynaLoad", ThreatLevel.MEDIUM,
             "动态加载 + 解密执行代码(木马常用免杀手法)",
             listOf("Ldalvik/system/DexClassLoader;", "Ljavax/crypto/Cipher;", "Ljava/net/HttpURLConnection;"), 2

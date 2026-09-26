@@ -76,4 +76,8 @@
     <string name="toast_root_enabled">Root 模式已启用,自动杀毒生效中</string>
     <string name="toast_need_root">未取得 root 授权,无法开启</string>
     <string name="auto_disinfect_title">自动杀毒</string>
+    <string name="locker_btn">锁机软件检测</string>
+    <string name="locker_scanning">正在检测设备管理员与锁机行为…</string>
+    <string name="locker_done">锁机检测完成:发现 %1$d 项风险</string>
+    <string name="locker_clean">未发现锁机软件与可疑设备管理员</string>
 </resources>

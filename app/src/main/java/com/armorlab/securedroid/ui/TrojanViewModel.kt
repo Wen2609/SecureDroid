@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.scan.ThreatLevel
+import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
 import com.armorlab.securedroid.trojan.ClamAvSignatures
 import com.armorlab.securedroid.trojan.RootkitDetector
@@ -70,6 +71,33 @@ class TrojanViewModel(app: Application) : AndroidViewModel(app) {
                 context.getString(R.string.rootkit_clean)
             else
                 context.getString(R.string.rootkit_done, findings.size)
+            _state.postValue(TrojanUiState.Done(items, summary))
+        }
+    }
+
+    fun startLockerScan() {
+        if (_state.value is TrojanUiState.Scanning) return
+        viewModelScope.launch(Dispatchers.IO) {
+            val context = getApplication<Application>()
+            _state.postValue(TrojanUiState.Scanning(0, 0,
+                context.getString(R.string.locker_scanning)))
+            val findings = LockerDetector.scan(context)
+            val items = findings.map {
+                TrojanAdapter.UiItem(
+                    title = it.title,
+                    sub = it.sub,
+                    detail = it.detail,
+                    level = it.level,
+                    suggestion = it.suggestion,
+                    uninstallPkg = null,
+                    fixCommand = it.fixCommand,
+                    fixLabel = it.fixLabel
+                )
+            }
+            val summary = if (findings.isEmpty())
+                context.getString(R.string.locker_clean)
+            else
+                context.getString(R.string.locker_done, findings.size)
             _state.postValue(TrojanUiState.Done(items, summary))
         }
     }
