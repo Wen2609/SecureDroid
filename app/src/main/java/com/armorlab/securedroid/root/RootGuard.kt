@@ -46,9 +46,12 @@ object RootGuard {
         prefs(context).edit().putBoolean(KEY_AUTO_UNINSTALL, value).apply()
     }
 
-    /** 探测 root:经 su 执行 id,确认 uid=0(会触发管理器授权框) */
+    /**
+     * 探测最高权限:统一走 PrivilegeManager(缓存层级 + 能力矩阵),
+     * 经 su 执行 id 确认 uid=0(首次会触发管理器授权框)。
+     */
     fun probeRoot(context: Context): Boolean =
-        ShellBridge.runSu("id", 10_000L)?.contains("uid=0") == true
+        PrivilegeManager.probe(context) == PrivLevel.ROOT
 
     /** 禁用模块:各 Root 框架通用的 disable 文件机制 */
     fun disableModule(dir: String): Boolean =

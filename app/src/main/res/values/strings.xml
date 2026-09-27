@@ -241,4 +241,16 @@
     <string name="va_phase_origin">正在检测安装来源…</string>
     <string name="va_phase_cert">正在审计证书指纹…</string>
     <string name="va_phase_netkill">正在读取断网状态…</string>
+    <string name="va_priv">最高权限防护</string>
+    <string name="va_priv_sub">获取并校验 Root 权限,查看能力矩阵与提权审计</string>
+    <string name="va_integrity">系统完整性监控</string>
+    <string name="va_integrity_sub">系统文件基线比对:新增 / 删除 / 篡改</string>
+    <string name="va_lockfiles">锁定关键文件</string>
+    <string name="va_lockfiles_sub">chattr +i 锁定 hosts 与提权组件,防静默篡改</string>
+    <string name="va_unlockfiles">解除文件锁定</string>
+    <string name="va_unlockfiles_sub">恢复关键文件可写,便于系统更新与维护</string>
+    <string name="va_phase_priv">正在探测最高权限…</string>
+    <string name="va_phase_integrity">正在校验系统文件完整性…</string>
+    <string name="va_phase_lockfiles">正在锁定关键文件…</string>
+    <string name="va_phase_unlockfiles">正在解除锁定…</string>
 </resources>

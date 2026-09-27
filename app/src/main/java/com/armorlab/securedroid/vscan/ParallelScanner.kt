@@ -6,12 +6,23 @@ import com.armorlab.securedroid.trojan.TrojanScanner
 import com.armorlab.securedroid.ui.TrojanAdapter
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
-/** 并行全盘查杀:多线程池并发跑多引擎扫描,支持取消与进度回报 */
+/** 并行全盘查杀:共享线程池并发跑多引擎扫描,支持取消与进度回报 */
 object ParallelScanner {
+
+    /**
+     * 共享扫描线程池(跨扫描复用,避免每次扫描新建/销毁线程池的开销)。
+     * 核心线程 0、峰值 6:空闲自动回收,扫描时按需扩张。
+     */
+    private val pool: ThreadPoolExecutor = ThreadPoolExecutor(
+        0, 6, 30L, TimeUnit.SECONDS,
+        LinkedBlockingQueue(),
+        { r -> Thread(r, "sd-scan").apply { isDaemon = true } }
+    )
 
     /** 自适应并发度:按 CPU 核数取 2-6,小设备省电、大设备提速 */
     fun defaultWorkers(): Int =
@@ -31,20 +42,29 @@ object ParallelScanner {
         onEachResult: ((TrojanScanner.Report) -> Unit)? = null
     ): Outcome {
         ScanControl.reset()
+        val trusted = TrustStore.trusted(context).toHashSet()
         val pkgs = context.packageManager.getInstalledPackages(0)
             .map { it.packageName }
-            .filter { !TrustStore.isTrusted(context, it) }
+            .filter { it !in trusted }
         val total = pkgs.size
         if (total == 0) return Outcome(emptyList(), false, 0)
 
+        // 并发上限随本次请求收敛到共享池(取较小值,避免过度并发抢占 CPU)
+        pool.maximumPoolSize = workers.coerceIn(2, 6)
+
         val results = ConcurrentLinkedQueue<TrojanScanner.Report>()
         val done = AtomicInteger(0)
-        val pool = Executors.newFixedThreadPool(workers)
         val latch = CountDownLatch(total)
         var cancelled = false
 
         for (pkg in pkgs) {
             pool.execute {
+                // 协作式取消:已取消时不再启动新扫描,直接计入完成
+                if (ScanControl.cancelled) {
+                    done.incrementAndGet()
+                    latch.countDown()
+                    return@execute
+                }
                 try {
                     val r = TrojanScanner.scanPackage(context, pkg)
                     results.add(r)
@@ -57,16 +77,20 @@ object ParallelScanner {
             }
         }
 
-        while (!latch.await(500, TimeUnit.MILLISECONDS)) {
+        while (!latch.await(400, TimeUnit.MILLISECONDS)) {
             if (ScanControl.cancelled) {
                 cancelled = true
-                pool.shutdownNow()
                 break
             }
             onProgress(done.get(), total)
         }
-        if (!cancelled) pool.shutdown()
         onProgress(done.get(), total)
+
+        // 本轮命中的哈希指纹批量落盘(单次 apply,替代逐包写盘)
+        try {
+            HashCache.flush(context)
+        } catch (_: Exception) {
+        }
 
         return Outcome(results.toList(), cancelled, total)
     }

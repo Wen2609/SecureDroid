@@ -14,6 +14,10 @@ import com.armorlab.securedroid.R
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.databinding.ActivityVirusCenterBinding
 import com.armorlab.securedroid.feature.NetAudit
+import com.armorlab.securedroid.root.Capability
+import com.armorlab.securedroid.root.PrivLevel
+import com.armorlab.securedroid.root.PrivilegeManager
+import com.armorlab.securedroid.root.SystemIntegrity
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.trojan.TrojanScanner
 import com.armorlab.securedroid.vscan.ActionPolicy
@@ -96,6 +100,10 @@ class VirusCenterActivity : AppCompatActivity() {
         VirusActionAdapter.Action("policy", getString(R.string.va_policy), getString(R.string.va_policy_sub)),
         VirusActionAdapter.Action("autq", getString(R.string.va_autq), getString(R.string.va_autq_sub)),
         VirusActionAdapter.Action("update", getString(R.string.vc_update), getString(R.string.vc_update_sub)),
+        VirusActionAdapter.Action("priv", getString(R.string.va_priv), getString(R.string.va_priv_sub)),
+        VirusActionAdapter.Action("integrity", getString(R.string.va_integrity), getString(R.string.va_integrity_sub)),
+        VirusActionAdapter.Action("lockfiles", getString(R.string.va_lockfiles), getString(R.string.va_lockfiles_sub)),
+        VirusActionAdapter.Action("unlockfiles", getString(R.string.va_unlockfiles), getString(R.string.va_unlockfiles_sub)),
         VirusActionAdapter.Action("trust", getString(R.string.vc_trust), getString(R.string.vc_trust_sub)),
         VirusActionAdapter.Action("report", getString(R.string.vc_report), getString(R.string.vc_report_sub))
     )
@@ -128,6 +136,10 @@ class VirusCenterActivity : AppCompatActivity() {
             "newproc" -> runTask(getString(R.string.vc_phase_newproc)) { newProcCheck() }
             "quarantine" -> runTask(getString(R.string.vc_phase_quarantine)) { quarantineList() }
             "netkill" -> runTask(getString(R.string.va_phase_netkill)) { NetKill.items(this) }
+            "priv" -> runTask(getString(R.string.va_phase_priv)) { privilegePanel() }
+            "integrity" -> runTask(getString(R.string.va_phase_integrity)) { SystemIntegrity.scan(this) }
+            "lockfiles" -> runTask(getString(R.string.va_phase_lockfiles)) { lockPanel(true) }
+            "unlockfiles" -> runTask(getString(R.string.va_phase_unlockfiles)) { lockPanel(false) }
         }
     }
 
@@ -253,6 +265,82 @@ class VirusCenterActivity : AppCompatActivity() {
             runOnUiThread { binding.tvPhase.text = "对比扫描中… " + done + "/" + total }
         })
         return ResultDiff.compare(this, outcome.reports)
+    }
+
+    /** 最高权限面板:主动探测提权,展示层级与能力矩阵 */
+    private fun privilegePanel(): List<TrojanAdapter.UiItem> {
+        val before = PrivilegeManager.level(this)
+        val after = PrivilegeManager.probe(this)
+        val caps = PrivilegeManager.capabilities(this)
+        val items = mutableListOf<TrojanAdapter.UiItem>()
+        items.add(
+            TrojanAdapter.UiItem(
+                "Priv.Level", "权限层级: " + after.title,
+                if (after == PrivLevel.ROOT)
+                    "已取得系统最高权限,全部防护能力(实时监控 / 静默处置 / 底层查杀)已解锁"
+                else
+                    "未取得 Root 授权。请在 Magisk / KernelSU / APatch / SukiSU 管理器中为本应用授予 su 权限后重试",
+                if (after == PrivLevel.ROOT) ThreatLevel.LOW else ThreatLevel.MEDIUM,
+                if (before != after) "本次层级变化: " + before.title + " → " + after.title else null,
+                null
+            )
+        )
+        for (cap in Capability.entries) {
+            val ok = cap in caps
+            items.add(
+                TrojanAdapter.UiItem(
+                    (if (ok) "Priv.Cap.OK · " else "Priv.Cap.NO · ") + cap.label,
+                    if (cap.needRoot) "需要 Root 最高权限" else "基础能力",
+                    if (ok) "当前可用" else "当前层级不可用",
+                    if (ok) ThreatLevel.LOW else ThreatLevel.MEDIUM,
+                    null, null
+                )
+            )
+        }
+        val audit = PrivilegeManager.auditTail(10)
+        if (audit.isNotEmpty()) {
+            items.add(
+                TrojanAdapter.UiItem(
+                    "Priv.Audit", "最近 " + audit.size + " 条提权命令审计",
+                    audit.joinToString("\n") { (if (it.denied) "[拒绝] " else if (it.ok) "[成功] " else "[失败] ") + it.cmd.take(60) },
+                    ThreatLevel.LOW, null, null
+                )
+            )
+        }
+        return items
+    }
+
+    /** 关键文件锁定 / 解锁 */
+    private fun lockPanel(lock: Boolean): List<TrojanAdapter.UiItem> {
+        if (!PrivilegeManager.isRoot(this)) {
+            return listOf(
+                TrojanAdapter.UiItem(
+                    "Integrity.Lock.NeedRoot", "需要最高权限才能锁定关键文件",
+                    "先在『最高权限』动作中完成提权", ThreatLevel.MEDIUM, null, null
+                )
+            )
+        }
+        return if (lock) {
+            val mech = SystemIntegrity.lockCriticalFiles(this)
+            listOf(
+                TrojanAdapter.UiItem(
+                    if (mech != null) "Integrity.Lock.OK" else "Integrity.Lock.Fail",
+                    if (mech != null) "关键文件已锁定: " + mech else "锁定失败(文件不存在或 chattr/chmod 不可用)",
+                    "锁定后 hosts 与提权组件无法被静默替换,可阻断域名劫持与 root 组件替换类攻击",
+                    if (mech != null) ThreatLevel.LOW else ThreatLevel.HIGH, null, null
+                )
+            )
+        } else {
+            val ok = SystemIntegrity.unlockCriticalFiles(this)
+            listOf(
+                TrojanAdapter.UiItem(
+                    if (ok) "Integrity.Unlock.OK" else "Integrity.Unlock.Fail",
+                    if (ok) "已解除关键文件锁定" else "解锁失败",
+                    "解除锁定后系统更新与手动维护不受影响,但篡改防护同时失效",
+                    if (ok) ThreatLevel.LOW else ThreatLevel.MEDIUM, null, null
+                )
+            )
+        }
     }
 
     private fun newProcCheck(): List<TrojanAdapter.UiItem> {

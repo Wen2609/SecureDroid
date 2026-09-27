@@ -22,12 +22,43 @@ import java.util.zip.ZipFile
  */
 object ClamAvSignatures {
 
-    class ByteSig(val name: String, val lo: ByteArray, val hi: ByteArray)
+    class ByteSig(val name: String, val lo: ByteArray, val hi: ByteArray) {
+        /** 最后一个两个半字节都固定(非通配)的字节下标;整条全通配时为 -1 */
+        val anchorIdx: Int = run {
+            var i = lo.size - 1
+            while (i >= 0) {
+                if (lo[i].toInt() >= 0 && hi[i].toInt() >= 0) return@run i
+                i--
+            }
+            -1
+        }
+
+        /** 锚点字节值;无锚点返回 -1 */
+        val anchorByte: Int =
+            if (anchorIdx >= 0) ((lo[anchorIdx].toInt() shl 4) or hi[anchorIdx].toInt()) else -1
+    }
+
+    /** 不可变签名索引:按锚点字节分桶,扫描时单遍即可定位候选 */
+    private class SigIndex(val byAnchor: Array<List<ByteSig>>, val unanchored: List<ByteSig>)
 
     private val lock = Any()
     private val hashSigs = HashMap<String, Pair<Long, String>>()
     private val byteSigs = mutableListOf<ByteSig>()
+
+    @Volatile
+    private var index: SigIndex? = null
+
     private var loaded = false
+
+    /** 重建不可变索引(调用方需持有 lock);整表原子替换,扫描侧无需加锁 */
+    private fun rebuildIndex() {
+        val buckets = Array(256) { mutableListOf<ByteSig>() }
+        val loose = mutableListOf<ByteSig>()
+        for (s in byteSigs) {
+            if (s.anchorByte >= 0) buckets[s.anchorByte].add(s) else loose.add(s)
+        }
+        index = SigIndex(Array(256) { buckets[it].toList() }, loose.toList())
+    }
 
     fun ensureLoaded(context: Context) {
         synchronized(lock) {
@@ -78,7 +109,10 @@ object ClamAvSignatures {
         val parts = t.split(';')
         if (parts.size < 3) return
         val nib = parseHex(parts[2]) ?: return
-        synchronized(lock) { byteSigs.add(ByteSig(parts[0], nib.first, nib.second)) }
+        synchronized(lock) {
+            byteSigs.add(ByteSig(parts[0], nib.first, nib.second))
+            rebuildIndex()
+        }
     }
 
     /** 解析十六进制串为半字节期望值数组,-1 表示该半字节为通配(?) */
@@ -124,15 +158,13 @@ object ClamAvSignatures {
                     if (e.size > 8L * 1024 * 1024 || used > 24L * 1024 * 1024) continue
                     val data = zip.getInputStream(e).use { it.readBytes() }
                     used += data.size
-                    for (sig in sigs) {
-                        if (contains(data, sig)) {
-                            hits.add(
-                                TrojanScanner.Detection(
-                                    "ClamAV 字节码", sig.name, ThreatLevel.HIGH,
-                                    "在 " + n + " 中命中字节特征"
-                                )
+                    for (name in scanBytes(data)) {
+                        hits.add(
+                            TrojanScanner.Detection(
+                                "ClamAV 字节码", name, ThreatLevel.HIGH,
+                                "在 " + n + " 中命中字节特征"
                             )
-                        }
+                        )
                     }
                 }
             }
@@ -141,29 +173,50 @@ object ClamAvSignatures {
         return hits
     }
 
-    /** 半字节级通配匹配 */
+    /** 半字节级通配校验:在 start 处整条匹配 */
+    private fun matchesAt(data: ByteArray, start: Int, sig: ByteSig): Boolean {
+        val n = sig.lo.size
+        for (j in 0 until n) {
+            val v = data[start + j].toInt() and 0xFF
+            if (sig.lo[j].toInt() >= 0 && (v ushr 4) != sig.lo[j].toInt()) return false
+            if (sig.hi[j].toInt() >= 0 && (v and 0x0F) != sig.hi[j].toInt()) return false
+        }
+        return true
+    }
+
+    /** 单签名匹配(内部使用) */
     private fun contains(data: ByteArray, sig: ByteSig): Boolean {
         val n = sig.lo.size
         if (data.size < n) return false
-        outer@ for (i in 0..data.size - n) {
-            for (j in 0 until n) {
-                val v = data[i + j].toInt() and 0xFF
-                if (sig.lo[j].toInt() >= 0 && (v ushr 4) != sig.lo[j].toInt()) continue@outer
-                if (sig.hi[j].toInt() >= 0 && (v and 0x0F) != sig.hi[j].toInt()) continue@outer
-            }
-            return true
+        for (i in 0..data.size - n) {
+            if (matchesAt(data, i, sig)) return true
         }
         return false
     }
 
-    /** 对任意字节流做字节码特征匹配(内存 / 分区扫描用) */
+    /**
+     * 对任意字节流做字节码特征匹配(内存 / 分区扫描用)。
+     *
+     * 性能:改造为单遍扫描 + 锚点分桶。原实现是 O(签名数 × 数据长度),
+     * 现在是 O(数据长度 × 命中桶内候选数),在数百条签名 × 数 MB 分区数据
+     * 的场景下可减少一到两个数量级的比较次数。
+     */
     fun scanBytes(data: ByteArray): List<String> {
-        val sigs = synchronized(lock) { byteSigs.toList() }
-        val hits = mutableListOf<String>()
-        for (sig in sigs) {
+        val idx = index ?: return emptyList()
+        val hits = LinkedHashSet<String>()
+        for (i in data.indices) {
+            val bucket = idx.byAnchor[data[i].toInt() and 0xFF]
+            if (bucket.isEmpty()) continue
+            for (sig in bucket) {
+                val start = i - sig.anchorIdx
+                if (start < 0 || start + sig.lo.size > data.size) continue
+                if (matchesAt(data, start, sig)) hits.add(sig.name)
+            }
+        }
+        for (sig in idx.unanchored) {
             if (contains(data, sig)) hits.add(sig.name)
         }
-        return hits
+        return hits.toList()
     }
 
     fun hashCount(): Int = synchronized(lock) { hashSigs.size }
@@ -175,6 +228,7 @@ object ClamAvSignatures {
         synchronized(lock) {
             hashSigs.clear()
             byteSigs.clear()
+            rebuildIndex()
             loaded = false
         }
         ensureLoaded(context)

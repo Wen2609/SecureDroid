@@ -23,8 +23,10 @@ import com.armorlab.securedroid.vscan.ParallelScanner
 import com.armorlab.securedroid.vscan.Quarantine
 import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
+import com.armorlab.securedroid.root.PrivilegeManager
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.root.ShellBridge
+import com.armorlab.securedroid.root.SystemIntegrity
 import com.armorlab.securedroid.scan.ScannerEngine
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.trojan.TrojanScanner
@@ -253,6 +255,12 @@ class RealtimeProtectionService : Service() {
         if (AdminSnapshot.hasSnapshot(this) && newAdmins.isNotEmpty()) {
             notifyAutoAction("检测到新激活的设备管理员: " + newAdmins.joinToString(", "))
         }
+
+        // 系统完整性监控(最高权限):系统文件新增/删除/篡改即时告警
+        SystemIntegrity.quickGuardSummary(this)?.let { notifyAutoAction(it) }
+
+        // 提权审计批量落盘(单次写盘)
+        PrivilegeManager.flushAudit(this)
     }
 
     private suspend fun recordAction(type: String, target: String, reason: String, ok: Boolean) {

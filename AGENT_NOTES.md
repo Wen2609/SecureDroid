@@ -14,6 +14,13 @@
 - 父类泛型里引用本类嵌套类必须用限定名:ListAdapter<ToolsAdapter.ToolEntry,...>
 - KeyguardManager 在 android.app 不是 android.os;FileOutputStream 才有 .fd
 
+## 最高权限层(新增,改动前先读)
+- PrivilegeManager: PrivLevel(NONE/LOCAL_SHELL/ROOT) 分级;probe(ctx) 主动提权(触发 su 授权框),level(ctx) 读缓存,ensureFresh 过期自动刷新
+- 所有防护命令必须走 PrivilegeManager.exec(ctx,cmd) / execBatch(cmds) —— 内置 PrivilegedPolicy 拦截灾害级命令(整根删除/格式化/写分区/恢复出厂),并自动审计
+- Capability 枚举 = 能力矩阵(12 项),has(ctx,cap) 判断某防护功能当前是否可用
+- SystemIntegrity: captureBaseline/diff/scan(UI)/lockCriticalFiles/unlockCriticalFiles,守护循环用 quickGuardSummary
+- 法规约束:不要实现任何漏洞利用或静默提权;提权只能经用户授权 su(符合 Magisk/KernelSU 规范)
+
 ## 核心架构速查
 - TrojanScanner.Report = 全库统一的扫描结果(detections/isInfected/worstLevel),别用旧名 ScanResult
 - ParallelScanner.scanReports(ctx,workers,onProgress,onEachResult)->Outcome(数据层) / toUiItems(Outcome)(UI) / scanAll(兼容)
