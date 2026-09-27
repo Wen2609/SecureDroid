@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.databinding.ActivityVirusCenterBinding
-import com.armorlab.securedroid.vscan.NetAudit
+import com.armorlab.securedroid.feature.NetAudit
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.trojan.TrojanScanner
 import com.armorlab.securedroid.vscan.ActionPolicy
@@ -34,8 +34,10 @@ import com.armorlab.securedroid.vscan.ResultDiff
 import com.armorlab.securedroid.vscan.ScanControl
 import com.armorlab.securedroid.vscan.SignatureStats
 import com.armorlab.securedroid.vscan.Timeline
+import com.armorlab.securedroid.vscan.ThreatReport
 import com.armorlab.securedroid.vscan.TrustStore
 import com.armorlab.securedroid.vscan.VerdictArbiter
+import java.util.Date
 import kotlinx.coroutines.runBlocking
 
 class VirusCenterActivity : AppCompatActivity() {
@@ -115,7 +117,7 @@ class VirusCenterActivity : AppCompatActivity() {
             "diff" -> runTask(getString(R.string.vc_phase_diff)) { diffScan() }
             "embedded" -> runTask(getString(R.string.vc_phase_embedded)) { embeddedScan() }
             "resultdiff" -> runTask(getString(R.string.va_phase_resultdiff)) { resultDiff() }
-            "family" -> runTask(getString(R.string.va_phase_family)) { runBlocking { familyClassify() } }
+            "family" -> runTask(getString(R.string.va_phase_family)) { familyClassify() }
             "timeline" -> runTask(getString(R.string.va_phase_timeline)) { runBlocking { Timeline.items(this@VirusCenterActivity) } }
             "netblock" -> runTask(getString(R.string.va_phase_netblock)) { BlocklistEngine.items(this) }
             "vpnapps" -> runTask(getString(R.string.va_phase_vpn)) { com.armorlab.securedroid.vscan.VpnAppsScanner.items(this) }
@@ -170,11 +172,11 @@ class VirusCenterActivity : AppCompatActivity() {
     }
 
     private fun parallelScan(): List<TrojanAdapter.UiItem> {
-        val results = ParallelScanner.scanAll(this) { done, total ->
+        val outcome = ParallelScanner.scanReports(this, 4, { done, total ->
             runOnUiThread { binding.tvPhase.text = "并行查杀中… " + done + "/" + total }
-        }
-        ResultDiff.save(this, results)
-        return results
+        })
+        ResultDiff.save(this, outcome.reports)
+        return ParallelScanner.toUiItems(outcome)
     }
 
     private fun diffScan(): List<TrojanAdapter.UiItem> {
@@ -239,18 +241,18 @@ class VirusCenterActivity : AppCompatActivity() {
         return items
     }
 
-    private suspend fun familyClassify(): List<TrojanAdapter.UiItem> {
-        val results = ParallelScanner.scanAll(this) { done, total ->
+    private fun familyClassify(): List<TrojanAdapter.UiItem> {
+        val outcome = ParallelScanner.scanReports(this, 4, { done, total ->
             runOnUiThread { binding.tvPhase.text = "家族分类扫描中… " + done + "/" + total }
-        }
-        return FamilyClassifier.items(this, results)
+        })
+        return FamilyClassifier.items(this, outcome.reports)
     }
 
-    private suspend fun resultDiff(): List<TrojanAdapter.UiItem> {
-        val results = ParallelScanner.scanAll(this) { done, total ->
+    private fun resultDiff(): List<TrojanAdapter.UiItem> {
+        val outcome = ParallelScanner.scanReports(this, 4, { done, total ->
             runOnUiThread { binding.tvPhase.text = "对比扫描中… " + done + "/" + total }
-        }
-        return ResultDiff.compare(this, results)
+        })
+        return ResultDiff.compare(this, outcome.reports)
     }
 
     private fun newProcCheck(): List<TrojanAdapter.UiItem> {

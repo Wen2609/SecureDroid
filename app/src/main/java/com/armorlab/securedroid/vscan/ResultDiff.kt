@@ -14,7 +14,7 @@ object ResultDiff {
     private fun prefs(context: Context) =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-    fun save(context: Context, results: List<TrojanScanner.ScanResult>) {
+    fun save(context: Context, results: List<TrojanScanner.Report>) {
         val o = JSONObject()
         for (r in results) {
             o.put(r.packageName, if (r.isInfected) (r.worstLevel?.name ?: "INFECTED") else "CLEAN")
@@ -32,7 +32,7 @@ object ResultDiff {
         } catch (_: Exception) { emptyMap() }
     }
 
-    fun compare(context: Context, current: List<TrojanScanner.ScanResult>): List<TrojanAdapter.UiItem> {
+    fun compare(context: Context, current: List<TrojanScanner.Report>): List<TrojanAdapter.UiItem> {
         val prev = load(context)
         val nowInfected = current.filter { it.isInfected }
         val prevInfected = prev.filterValues { it != "CLEAN" }

@@ -2,7 +2,7 @@ package com.armorlab.securedroid.feature
 
 import android.app.admin.DevicePolicyManager
 import android.content.Context
-import android.os.KeyguardManager
+import android.app.KeyguardManager
 import android.provider.Settings
 import com.armorlab.securedroid.scan.ThreatLevel
 import java.io.File

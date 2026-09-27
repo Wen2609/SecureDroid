@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="@string/tool_vault" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/vault_note" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEncrypt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/vault_btn_encrypt" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDecrypt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="@string/vault_btn_decrypt" />
+</LinearLayout>

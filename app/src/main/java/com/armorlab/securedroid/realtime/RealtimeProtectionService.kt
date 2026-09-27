@@ -72,12 +72,12 @@ class RealtimeProtectionService : Service() {
             val dao = AppDatabase.get(applicationContext).scanRecordDao()
             val now = System.currentTimeMillis()
             val entities = java.util.concurrent.ConcurrentLinkedQueue<ScanRecordEntity>()
-            ParallelScanner.scanAll(applicationContext, 4, { _, _ -> }, { r ->
+            ParallelScanner.scanReports(applicationContext, 4, { _, _ -> }, { r ->
                 entities.add(
                     ScanRecordEntity(
                         packageName = r.packageName,
                         appName = r.appName,
-                        sha256 = r.sha256,
+                        sha256 = "",
                         threatName = r.detections.maxByOrNull { it.level.ordinal }?.name,
                         riskScore = 0,
                         scannedAt = now

@@ -1,6 +1,7 @@
 package com.armorlab.securedroid.ui
 
 import android.Manifest
+import android.media.RingtoneManager
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -49,7 +50,10 @@ class SosActivity : AppCompatActivity() {
         try {
             val phone = binding.etPhone.text.toString().trim()
             val msg = binding.etMsg.text.toString().trim()
-            SmsManager.getDefault().sendTextMessage(phone, null, msg, null, null)
+            val sm = if (android.os.Build.VERSION.SDK_INT >= 31)
+                getSystemService(SmsManager::class.java)
+            else @Suppress("DEPRECATION") SmsManager.getDefault()
+            sm?.sendTextMessage(phone, null, msg, null, null)
             val vib = getSystemService(Vibrator::class.java)
             vib?.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE))
             RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))

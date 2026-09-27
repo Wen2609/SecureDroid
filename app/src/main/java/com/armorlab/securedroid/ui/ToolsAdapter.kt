@@ -9,7 +9,7 @@ import com.armorlab.securedroid.databinding.ItemToolBinding
 
 class ToolsAdapter(
     private val onClick: (ToolEntry) -> Unit
-) : ListAdapter<ToolEntry, ToolsAdapter.VH>(DIFF) {
+) : ListAdapter<ToolsAdapter.ToolEntry, ToolsAdapter.VH>(DIFF) {
 
     enum class Kind {
         FULL_AUDIT, NETWORK, VAULT, SHRED, CLEANER, FREEZE,

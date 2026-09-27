@@ -24,7 +24,10 @@ class TrojanAdapter : ListAdapter<TrojanAdapter.UiItem, TrojanAdapter.VH>(DIFF) 
         val detail: String,
         val level: ThreatLevel?,
         val suggestion: String?,
-        val uninstallPkg: String?
+        val uninstallPkg: String? = null,
+        val evidence: String? = null,
+        val fixCommand: String? = null,
+        val fixLabel: String? = null
     )
 
     class VH(val binding: ItemTrojanBinding) : RecyclerView.ViewHolder(binding.root)

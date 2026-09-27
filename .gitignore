@@ -9,3 +9,6 @@ captures/
 *.aab
 *.jks
 *.keystore
+
+# 构建产物仅保留 apks/ 目录下的发布包
+!apks/*.apk

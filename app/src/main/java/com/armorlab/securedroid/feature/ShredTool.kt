@@ -32,7 +32,8 @@ object ShredTool {
                     os.write(buf, 0, n)
                     left -= n
                 }
-                os.fd.sync()
+                os.flush()
+                (os as? java.io.FileOutputStream)?.fd?.sync()
             } ?: return false
             android.provider.DocumentsContract.deleteDocument(context.contentResolver, uri)
         } catch (_: Exception) {

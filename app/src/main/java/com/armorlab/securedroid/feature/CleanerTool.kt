@@ -3,7 +3,7 @@ package com.armorlab.securedroid.feature
 import android.content.Context
 import com.armorlab.securedroid.root.ShellBridge
 
-/** 应用缓存清理:du 统计 /data/data/*/cache(root),一键 rm 清理 */
+/** 应用缓存清理:du 统计各应用 cache 目录大小(root),一键 rm 清理 */
 object CleanerTool {
 
     data class Entry(val label: String, val pkg: String, val sizeKb: Long)

@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Base64
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.root.ShellBridge
-import com.armorlab.securedroid.scan.ClamAvSignatures
+import com.armorlab.securedroid.trojan.ClamAvSignatures
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
 

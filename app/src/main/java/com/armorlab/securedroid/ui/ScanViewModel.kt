@@ -7,16 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.ScanRecordEntity
-import com.armorlab.securedroid.scan.ScannerEngine
+import com.armorlab.securedroid.trojan.TrojanScanner
 import com.armorlab.securedroid.vscan.ParallelScanner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.ConcurrentLinkedQueue
 
 sealed class ScanUiState {
     data object Idle : ScanUiState()
     data class Scanning(val progress: Int, val total: Int) : ScanUiState()
-    data class Done(val results: List<ScannerEngine.ScanResult>) : ScanUiState()
+    data class Done(val results: List<TrojanScanner.Report>) : ScanUiState()
 }
 
 class ScanViewModel(app: Application) : AndroidViewModel(app) {
@@ -28,15 +27,13 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
         if (_state.value is ScanUiState.Scanning) return
         viewModelScope.launch(Dispatchers.IO) {
             val context = getApplication<Application>()
-            val collected = ConcurrentLinkedQueue<ScannerEngine.ScanResult>()
             // 并行加速:4 线程并发多引擎扫描,实时进度
-            ParallelScanner.scanAll(context, 4,
-                { done, total -> _state.postValue(ScanUiState.Scanning(done, total)) },
-                { r -> collected.add(r) }
+            val outcome = ParallelScanner.scanReports(context, 4,
+                { done, total -> _state.postValue(ScanUiState.Scanning(done, total)) }
             )
-            val results = collected.sortedWith(
-                compareByDescending<ScannerEngine.ScanResult> { it.isMalicious }
-                    .thenByDescending { it.permissionRiskScore }
+            val results = outcome.reports.sortedWith(
+                compareByDescending<TrojanScanner.Report> { it.isInfected }
+                    .thenByDescending { it.worstLevel?.ordinal ?: -1 }
             )
             val dao = AppDatabase.get(context).scanRecordDao()
             val now = System.currentTimeMillis()
@@ -44,9 +41,9 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
                 ScanRecordEntity(
                     packageName = r.packageName,
                     appName = r.appName,
-                    sha256 = r.sha256,
-                    threatName = r.threat?.name,
-                    riskScore = r.permissionRiskScore,
+                    sha256 = "",
+                    threatName = r.detections.maxByOrNull { it.level.ordinal }?.name,
+                    riskScore = 0,
                     scannedAt = now
                 )
             })

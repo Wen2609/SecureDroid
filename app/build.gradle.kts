@@ -14,6 +14,8 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
+        // 仅保留中文资源,release 剥离 androidx/material 的多语言表
+        resourceConfigurations.addAll(listOf("zh", "zh-rCN"))
     }
 
     buildTypes {

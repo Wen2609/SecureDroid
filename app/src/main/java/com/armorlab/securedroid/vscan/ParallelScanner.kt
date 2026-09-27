@@ -10,23 +10,34 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
-/** 并行全盘查杀:4 线程池并发跑多引擎扫描,支持取消与进度回报 */
+/** 并行全盘查杀:多线程池并发跑多引擎扫描,支持取消与进度回报 */
 object ParallelScanner {
 
-    fun scanAll(
+    /** 自适应并发度:按 CPU 核数取 2-6,小设备省电、大设备提速 */
+    fun defaultWorkers(): Int =
+        Runtime.getRuntime().availableProcessors().coerceIn(2, 6)
+
+    data class Outcome(
+        val reports: List<TrojanScanner.Report>,
+        val cancelled: Boolean,
+        val total: Int
+    )
+
+    /** 核心扫描:返回原始报告(供 ResultDiff / FamilyClassifier 等数据层复用) */
+    fun scanReports(
         context: Context,
-        workers: Int = 4,
+        workers: Int = defaultWorkers(),
         onProgress: (done: Int, total: Int) -> Unit,
-        onEachResult: ((TrojanScanner.ScanResult) -> Unit)? = null
-    ): List<TrojanAdapter.UiItem> {
+        onEachResult: ((TrojanScanner.Report) -> Unit)? = null
+    ): Outcome {
         ScanControl.reset()
         val pkgs = context.packageManager.getInstalledPackages(0)
             .map { it.packageName }
             .filter { !TrustStore.isTrusted(context, it) }
         val total = pkgs.size
-        if (total == 0) return emptyList()
+        if (total == 0) return Outcome(emptyList(), false, 0)
 
-        val results = ConcurrentLinkedQueue<TrojanScanner.ScanResult>()
+        val results = ConcurrentLinkedQueue<TrojanScanner.Report>()
         val done = AtomicInteger(0)
         val pool = Executors.newFixedThreadPool(workers)
         val latch = CountDownLatch(total)
@@ -57,16 +68,21 @@ object ParallelScanner {
         if (!cancelled) pool.shutdown()
         onProgress(done.get(), total)
 
+        return Outcome(results.toList(), cancelled, total)
+    }
+
+    /** 报告 → UI 列表(取消提示 + 感染项 + 汇总) */
+    fun toUiItems(outcome: Outcome): List<TrojanAdapter.UiItem> {
         val items = mutableListOf<TrojanAdapter.UiItem>()
-        if (cancelled) {
+        if (outcome.cancelled) {
             items.add(
                 TrojanAdapter.UiItem(
-                    "Scan.Cancelled", "查杀已被用户取消(完成 " + done.get() + "/" + total + ")",
+                    "Scan.Cancelled", "查杀已被用户取消(完成 " + outcome.reports.size + "/" + outcome.total + ")",
                     "", ThreatLevel.MEDIUM, null, null
                 )
             )
         }
-        for (r in results) {
+        for (r in outcome.reports) {
             if (!r.isInfected) continue
             items.add(
                 TrojanAdapter.UiItem(
@@ -81,11 +97,20 @@ object ParallelScanner {
         }
         items.add(
             TrojanAdapter.UiItem(
-                "Parallel.Summary", "并行扫描 " + done.get() + "/" + total + " 个应用,感染 " +
-                    results.count { it.isInfected } + " 个",
-                "", if (results.any { it.isInfected }) ThreatLevel.HIGH else ThreatLevel.LOW, null, null
+                "Parallel.Summary", "并行扫描 " + outcome.reports.size + "/" + outcome.total + " 个应用,感染 " +
+                    outcome.reports.count { it.isInfected } + " 个",
+                "", if (outcome.reports.any { it.isInfected }) ThreatLevel.HIGH else ThreatLevel.LOW, null, null
             )
         )
         return items
     }
+
+    /** 兼容旧调用:直接返回 UI 列表 */
+    fun scanAll(
+        context: Context,
+        workers: Int = defaultWorkers(),
+        onProgress: (done: Int, total: Int) -> Unit,
+        onEachResult: ((TrojanScanner.Report) -> Unit)? = null
+    ): List<TrojanAdapter.UiItem> =
+        toUiItems(scanReports(context, workers, onProgress, onEachResult))
 }

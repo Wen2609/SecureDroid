@@ -1,6 +1,8 @@
 package com.armorlab.securedroid.vscan
 
+import android.content.Context
 import com.armorlab.securedroid.scan.ThreatLevel
+import com.armorlab.securedroid.trojan.TrojanScanner
 import com.armorlab.securedroid.ui.TrojanAdapter
 
 /** 木马家族分类:按检测项关键词组合归入已知家族谱系 */
@@ -23,7 +25,7 @@ object FamilyClassifier {
     /** 对全量应用并行扫描并按家族归类 */
     fun items(
         context: Context,
-        results: List<TrojanScanner.ScanResult>
+        results: List<TrojanScanner.Report>
     ): List<TrojanAdapter.UiItem> {
         val infected = results.filter { it.isInfected }
         if (infected.isEmpty()) {
@@ -31,7 +33,7 @@ object FamilyClassifier {
                 TrojanAdapter.UiItem("Family.Clean", "未发现可归类家族的感染应用", "", ThreatLevel.LOW, null, null)
             )
         }
-        val byFamily = LinkedHashMap<String, MutableList<TrojanScanner.ScanResult>>()
+        val byFamily = LinkedHashMap<String, MutableList<TrojanScanner.Report>>()
         for (r in infected) {
             val family = classify(r.detections.map { it.name })
             byFamily.getOrPut(family) { mutableListOf() }.add(r)

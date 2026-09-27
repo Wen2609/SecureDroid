@@ -8,9 +8,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.databinding.ItemScanResultBinding
+import com.armorlab.securedroid.trojan.TrojanScanner
 
 class ScanAdapter :
-    ListAdapter<ScannerEngine.ScanResult, ScanAdapter.VH>(DIFF) {
+    ListAdapter<TrojanScanner.Report, ScanAdapter.VH>(DIFF) {
 
     class VH(val binding: ItemScanResultBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -23,15 +24,17 @@ class ScanAdapter :
         holder.binding.tvAppName.text = result.appName
         holder.binding.tvPackage.text = result.packageName
 
+        val worst = result.worstLevel
         when {
-            result.isMalicious -> {
+            result.isInfected -> {
                 holder.binding.tvStatus.text =
-                    ctx.getString(R.string.status_malicious) + " · " + (result.threat?.name ?: "")
+                    ctx.getString(R.string.status_malicious) + " · " +
+                    (result.detections.maxByOrNull { it.level.ordinal }?.name ?: "")
                 holder.binding.tvStatus.setTextColor(ContextCompat.getColor(ctx, R.color.status_malicious))
             }
-            result.isRisky -> {
+            worst != null -> {
                 holder.binding.tvStatus.text =
-                    ctx.getString(R.string.status_risky) + " (" + result.permissionRiskScore + ")"
+                    ctx.getString(R.string.status_risky) + " (" + worst.name + ")"
                 holder.binding.tvStatus.setTextColor(ContextCompat.getColor(ctx, R.color.status_risky))
             }
             else -> {
@@ -42,15 +45,15 @@ class ScanAdapter :
     }
 
     companion object {
-        private val DIFF = object : DiffUtil.ItemCallback<ScannerEngine.ScanResult>() {
+        private val DIFF = object : DiffUtil.ItemCallback<TrojanScanner.Report>() {
             override fun areItemsTheSame(
-                oldItem: ScannerEngine.ScanResult,
-                newItem: ScannerEngine.ScanResult
+                oldItem: TrojanScanner.Report,
+                newItem: TrojanScanner.Report
             ) = oldItem.packageName == newItem.packageName
 
             override fun areContentsTheSame(
-                oldItem: ScannerEngine.ScanResult,
-                newItem: ScannerEngine.ScanResult
+                oldItem: TrojanScanner.Report,
+                newItem: TrojanScanner.Report
             ) = oldItem == newItem
         }
     }

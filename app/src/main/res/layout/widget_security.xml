@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="8dp"
+    android:background="#F2101418">
+
+    <ImageView
+        android:id="@+id/widgetIcon"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:src="@drawable/ic_shield"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/widgetTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:text="@string/app_name"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/widgetOpen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:background="#FF2E7D32"
+        android:text="@string/widget_open"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/widgetScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:background="#FFB71C1C"
+        android:text="@string/widget_scan"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp" />
+</LinearLayout>

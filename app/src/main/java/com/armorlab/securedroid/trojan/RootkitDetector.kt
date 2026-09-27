@@ -43,17 +43,6 @@ object RootkitDetector {
     fun detect(context: Context): List<RootFinding> {
         val findings = mutableListOf<RootFinding>()
 
-        // 1. su 二进制
-        for (p in suPaths) {
-            if (p in found) findings.add(
-                RootFinding(
-                    "Rootkit.SuBinary", ThreatLevel.HIGH,
-                    "发现 su 二进制: " + p,
-                    "设备已具备 root 能力;确认是否本人操作,并排查未知授权记录"
-                )
-            )
-        }
-
         // 1+2 预探测:su 路径直接 File.exists,不可读路径批量单次 su 兜底
         val found = HashSet<String>()
         val needSu = mutableListOf<String>()
@@ -68,6 +57,17 @@ object RootkitDetector {
             probeOut.lines().map { it.trim() }
                 .filter { it.isNotEmpty() }
                 .forEach { found.add(it) }
+        }
+
+        // 1. su 二进制
+        for (p in suPaths) {
+            if (p in found) findings.add(
+                RootFinding(
+                    "Rootkit.SuBinary", ThreatLevel.HIGH,
+                    "发现 su 二进制: " + p,
+                    "设备已具备 root 能力;确认是否本人操作,并排查未知授权记录"
+                )
+            )
         }
 
         // 2. Magisk / KernelSU 隐藏框架

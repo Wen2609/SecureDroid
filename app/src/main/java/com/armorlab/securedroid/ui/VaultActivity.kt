@@ -93,6 +93,10 @@ class VaultActivity : AppCompatActivity() {
         runOnUiThread { toast(res) }
     }
 
+    private fun toast(res: Int) {
+        toast(getString(res))
+    }
+
     private fun toast(msg: CharSequence) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
     }

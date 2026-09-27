@@ -13,3 +13,7 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.openjsse.**
 -dontwarn javax.naming.**
+
+# security-crypto(Tink)编译期缺失的注解,仅警告可安全忽略
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.concurrent.GuardedBy
