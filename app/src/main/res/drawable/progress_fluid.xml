@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 流体进度条:圆角轨道 + 品牌渐变进度,替代系统默认细线 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/sd_radius_pill" />
+            <solid android:color="@color/sd_hairline_soft" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="@dimen/sd_radius_pill" />
+                <gradient android:angle="0" android:startColor="@color/sd_brand" android:endColor="@color/sd_glow" android:type="linear" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

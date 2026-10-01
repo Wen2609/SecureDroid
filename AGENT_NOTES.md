@@ -67,6 +67,14 @@
 - 安全约定:涉及秘密的界面必须 FLAG_SECURE;可被覆盖点击的关键界面加 filterTouchesWhenObscured;
   网络请求必须 https;特征库/规则类更新必须校验 SHA-256(FeatureUpdater 已强制)
 
+## 视觉设计约定(改 UI 前必读)
+- 令牌在 res/values(浅色)+ res/values-night(深色):配色/圆角/间距只改这两处,别在布局里写字面值
+- **陷阱**:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
+  构建/Lint/测试全绿但深色模式失效;NightThemeTokenTest 已盯住这一点
+- 布局里 60 个 View ID 被 Kotlin 引用(见 ui/ 下 binding.xxx),重排布局时 ID 一个都不能改
+- 玻璃材质只用于功能层(工具栏/底部入口条);内容卡片用 Widget.SecureDroid.Card 的 1dp 光边
+- 设计稿:python design/render_mockup.py 重新渲染 design/mockup-sheet.png;令牌与脚本内的色值需同步
+
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
 - 编译错误集中修完再编译,别一轮一修

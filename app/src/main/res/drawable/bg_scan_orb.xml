@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 主行动「扫描光球」:从品牌蓝过渡到凝光青的径向渐变,按下时配合 stateListAnimator 轻微内缩 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient
+        android:centerX="0.35"
+        android:centerY="0.28"
+        android:gradientRadius="180dp"
+        android:startColor="@color/sd_brand_bright"
+        android:centerColor="@color/sd_brand"
+        android:endColor="@color/sd_glow"
+        android:type="radial" />
+</shape>

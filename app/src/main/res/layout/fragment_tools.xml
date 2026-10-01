@@ -1,30 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 工具页:开关收敛进一张卡,下方是工具列表(卡片行,错峰入场) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/sd_gutter"
+    android:paddingTop="@dimen/sd_space_4">
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/swDaily"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.SecureDroid.Card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:text="@string/sw_daily_scan" />
+        android:layout_height="wrap_content">
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/swSim"
-        android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/sd_space_4"
+            android:paddingVertical="@dimen/sd_space_2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/sd_space_2"
+                android:text="@string/sd_section_prefs"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Section"
+                android:textColor="@color/sd_text_tertiary" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swDaily"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sd_touch_min"
+                android:text="@string/sw_daily_scan"
+                android:textColor="@color/sd_text" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swSim"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sd_touch_min"
+                android:text="@string/sw_sim_guard"
+                android:textColor="@color/sd_text" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:text="@string/sw_sim_guard" />
+        android:layout_marginTop="@dimen/sd_space_5"
+        android:layout_marginBottom="@dimen/sd_space_2"
+        android:text="@string/sd_section_tools"
+        android:textAppearance="@style/TextAppearance.SecureDroid.Section"
+        android:textColor="@color/sd_text_tertiary" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTools"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layoutAnimation="@anim/sd_list_layout"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingBottom="16dp" />
+        android:paddingBottom="@dimen/sd_space_5" />
 </LinearLayout>

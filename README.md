@@ -121,6 +121,21 @@ WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超�
 
 CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
 
+## 视觉设计系统(流体设计)
+
+界面依据 **ColorOS 17「流体设计」**(凝光视效 / 流体动效 / 柔性反馈)、Apple HIG 的材质与动效规范、
+以及 UI/UX Pro Max 规则库重做。完整令牌表、组件规范与可访问性自检见 [design/DESIGN.md](design/DESIGN.md)。
+
+![设计稿](design/mockup-sheet.png)
+
+> 上图由 `design/render_mockup.py` 按令牌 1:1 渲染生成,**不是真机截图**。
+
+- 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色):色板、4dp 栅格、圆角、五级文字层级;
+- 「凝光」背景 = 线性渐变 + 两处径向光晕,零图片资源;卡片用 1dp 光边 + 极低阴影代替重投影;
+- **玻璃只出现在功能层**(工具栏、底部入口条),内容层保持不透明表面以保证正文对比度 ≥4.5:1;
+- 动效:列表错峰入场(每项延迟 8%)、按压缩放 0.97 / 110ms、回弹 240ms;页面转场交给系统,避免低端机掉帧;
+- 触摸目标 ≥48dp、相邻点击区间距 ≥8dp、状态不靠颜色单独表意(有无障碍硬性项自检清单)。
+
 ## 安全加固
 
 参考 OWASP MASVS 与 Android 平台安全机制实施:
@@ -177,10 +192,10 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.0.1-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.1.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-      SHA-256 4bc4e70b773319bc129d2c41798d6e51347d44ce17fc3db5afc3318d2dbeecd6
-      大小    1,957,876 字节    versionCode 2 / versionName 1.0.1
+      SHA-256 25b859aef603aacdd03ba246abfd752eabfe1c7cd8eff9552497fd6590789ca2
+      大小    1,980,745 字节    versionCode 3 / versionName 1.1.0(流体设计版)
 
   上一版 apks/SecureDroid-v1.0.0-release-signed.apk 保留用于回退。
 

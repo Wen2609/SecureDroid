@@ -1,27 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.SecureDroid.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="4dp"
-    android:paddingVertical="8dp">
-
-    <TextView
-        android:id="@+id/tvAppName"
-        android:layout_width="wrap_content"
+    android:layout_marginBottom="@dimen/sd_space_2"
+    app:cardCornerRadius="@dimen/sd_radius_inner">
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textAppearance="?attr/textAppearanceBodyLarge" />
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/sd_space_4"
+        android:paddingVertical="@dimen/sd_space_3">
 
-    <TextView
-        android:id="@+id/tvPackage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBodySmall" />
+        <TextView
+            android:id="@+id/tvAppName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+            android:textColor="@color/sd_text"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBodyMedium" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvPackage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/sd_text_tertiary" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_1"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/sd_text_secondary" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

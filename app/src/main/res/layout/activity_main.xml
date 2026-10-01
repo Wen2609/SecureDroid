@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  应用外壳:内容层(容器)+ 功能层(工具栏、底部入口条)。
+  设计依据(HIG):玻璃材质只出现在浮于内容之上的控件层;内容层使用凝光渐变背景,保持可读性。
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_fluid"
     android:orientation="vertical">
 
-    <!-- 完整性告警条:默认隐藏,仅在签名校验失败(疑似重打包)时由 MainActivity 显示 -->
+    <!-- 完整性告警条:签名与首次安装不一致(疑似重打包)时由 MainActivity 显示 -->
     <TextView
         android:id="@+id/integrityBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B3261E"
-        android:padding="12dp"
+        android:background="@color/sd_danger_solid"
+        android:padding="@dimen/sd_space_3"
         android:textColor="#FFFFFF"
         android:textSize="13sp"
         android:visibility="gone" />
@@ -20,9 +25,11 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
-        app:titleTextColor="#FFFFFF"
-        app:title="@string/app_name" />
+        android:background="@color/sd_glass"
+        android:elevation="0dp"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/TextAppearance.SecureDroid.Title"
+        app:titleTextColor="@color/sd_text" />
 
     <FrameLayout
         android:id="@+id/container"
@@ -30,16 +37,26 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- 6 个功能入口。Material 的 BottomNavigationView 硬上限为 5 项,
-         超过会在膨胀阶段抛 IllegalArgumentException(BottomNavigationView#getMaxItemCount),
-         导致主界面无法启动。TabLayout 滚动模式无此限制,且内置选中态与图标支持。 -->
+    <!-- 底部入口条:功能层玻璃面板 + 顶部 3dp 胶囊指示器。
+         Material 的 BottomNavigationView 硬上限为 5 项,本应用有 6 个入口,
+         使用可滚动 TabLayout 避免膨胀期抛异常。 -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        app:tabMode="scrollable"
+        android:background="@drawable/bg_glass_panel"
+        android:minHeight="64dp"
         app:tabGravity="fill"
+        app:tabIconTint="@color/tab_text"
+        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorColor="@color/sd_brand"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorGravity="top"
         app:tabIndicatorHeight="3dp"
-        app:tabInlineLabel="true" />
+        app:tabInlineLabel="true"
+        app:tabMode="scrollable"
+        app:tabPaddingEnd="@dimen/sd_space_3"
+        app:tabPaddingStart="@dimen/sd_space_3"
+        app:tabRippleColor="@color/sd_hairline_soft"
+        app:tabTextColor="@color/tab_text" />
 </LinearLayout>

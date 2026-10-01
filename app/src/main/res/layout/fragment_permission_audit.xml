@@ -1,20 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 权限审计页:结论先行(摘要卡),明细按风险排序在下方 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="@dimen/sd_gutter"
+    android:paddingTop="@dimen/sd_space_4">
 
-    <TextView
-        android:id="@+id/tvSummary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceTitleMedium" />
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.SecureDroid.CardGlass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/sd_space_4">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sd_section_audit"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Section"
+                android:textColor="@color/sd_text_tertiary" />
+
+            <TextView
+                android:id="@+id/tvSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sd_space_2"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+                android:textColor="@color/sd_text" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAudit"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layoutAnimation="@anim/sd_list_layout"
+        android:layout_marginTop="@dimen/sd_space_3"
         android:layout_weight="1"
-        android:layout_marginTop="8dp" />
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/sd_space_5" />
 </LinearLayout>

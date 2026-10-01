@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 设计令牌 · 色彩(深色):安全工具的默认气质 —— 深空底 + 凝光青蓝 -->
+<resources>
+    <color name="primary">#6FA0FF</color>
+    <color name="ic_launcher_background">#0B1220</color>
+    <color name="status_safe">@color/sd_safe</color>
+    <color name="status_risky">@color/sd_warn</color>
+    <color name="status_malicious">@color/sd_danger</color>
+
+    <color name="sd_brand">#4C8DFF</color>
+    <color name="sd_brand_bright">#7FB0FF</color>
+    <color name="sd_glow">#37D6FF</color>
+    <color name="sd_on_primary">#06101F</color>
+
+    <color name="sd_bg">#070B14</color>
+    <color name="sd_bg_alt">#0C1626</color>
+    <color name="sd_bloom">#4D2E7BFF</color>
+    <color name="sd_bloom_clear">#002E7BFF</color>
+    <color name="sd_bloom_2">#3322D3EE</color>
+
+    <color name="sd_surface">#131C2E</color>
+    <color name="sd_surface_soft">#0F1826</color>
+    <color name="sd_glass">#14FFFFFF</color>
+    <color name="sd_glass_strong">#24FFFFFF</color>
+    <color name="sd_hairline">#2EFFFFFF</color>
+    <color name="sd_hairline_soft">#1AFFFFFF</color>
+    <color name="sd_highlight">#3DFFFFFF</color>
+
+    <color name="sd_text">#EAF0FF</color>
+    <color name="sd_text_secondary">#A3B2CC</color>
+    <color name="sd_text_tertiary">#7C8CA6</color>
+    <color name="sd_on_brand">#06101F</color>
+
+    <color name="sd_safe">#34D399</color>
+    <color name="sd_warn">#FBBF24</color>
+    <color name="sd_danger">#FF7A7A</color>
+    <color name="sd_danger_solid">#B3261E</color>
+</resources>

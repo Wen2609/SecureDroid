@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 状态胶囊:文字着色表达语义,底色保持中性(色彩克制) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="@dimen/sd_radius_pill" />
+    <solid android:color="@color/sd_glass_strong" />
+    <stroke android:width="@dimen/sd_hairline_width" android:color="@color/sd_hairline_soft" />
+</shape>

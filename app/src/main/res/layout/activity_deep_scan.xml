@@ -1,43 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 深度扫描页:说明文案 + 主行动 + 实时阶段 + 结果 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_fluid"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="@dimen/sd_gutter"
+    android:paddingTop="@dimen/sd_space_4">
 
     <TextView
         android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceTitleLarge" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/deep_btn_start" />
+        android:textAppearance="@style/TextAppearance.SecureDroid.Title"
+        android:textColor="@color/sd_text" />
 
-    <TextView
-        android:id="@+id/tvPhase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/deep_note"
-        android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-    <ProgressBar
-        android:id="@+id/progress"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.SecureDroid.CardGlass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:indeterminate="true" />
+        android:layout_marginTop="@dimen/sd_space_3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/sd_space_4">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStart"
+                style="@style/Widget.SecureDroid.Button.Pill"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sd_btn_height"
+                android:text="@string/deep_btn_start"
+                app:icon="@drawable/ic_scan" />
+
+            <TextView
+                android:id="@+id/tvPhase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sd_space_3"
+                android:text="@string/deep_note"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+                android:textColor="@color/sd_text_secondary" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginTop="@dimen/sd_space_3"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/sd_brand"
+                android:progressDrawable="@drawable/progress_fluid" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layoutAnimation="@anim/sd_list_layout"
+        android:layout_marginTop="@dimen/sd_space_3"
         android:layout_weight="1"
-        android:layout_marginTop="8dp" />
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/sd_space_5" />
 </LinearLayout>

@@ -1,8 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  设计令牌 · 色彩(浅色)
+  参考:ColorOS 17「流体设计」(凝光视效 / 流体动效 / 柔性反馈)+ Apple HIG(色彩克制、玻璃只用于功能层)
+  命名沿用旧版(primary / status_*),避免破坏既有布局引用;sd_ 前缀为本轮新增的体系化令牌。
+-->
 <resources>
+    <!-- 兼容旧名 -->
     <color name="primary">#0B57D0</color>
     <color name="ic_launcher_background">#0B57D0</color>
-    <color name="status_safe">#2E7D32</color>
-    <color name="status_risky">#F9A825</color>
-    <color name="status_malicious">#C62828</color>
+    <color name="status_safe">@color/sd_safe</color>
+    <color name="status_risky">@color/sd_warn</color>
+    <color name="status_malicious">@color/sd_danger</color>
+
+    <!-- 品牌:信任蓝 + 凝光青 -->
+    <color name="sd_brand">#0B57D0</color>
+    <color name="sd_brand_bright">#2F7BFF</color>
+    <color name="sd_glow">#0FB5D6</color>
+    <color name="sd_on_primary">#FFFFFF</color>
+
+    <!-- 内容层:底色 + 渐变第二色 + 光晕 -->
+    <color name="sd_bg">#F3F7FD</color>
+    <color name="sd_bg_alt">#E6EFFB</color>
+    <color name="sd_bloom">#332F7BFF</color>
+    <color name="sd_bloom_clear">#002F7BFF</color>
+    <color name="sd_bloom_2">#1F0FB5D6</color>
+
+    <!-- 表面:内容卡片(不透明优先,保证正文对比度)与功能层玻璃 -->
+    <color name="sd_surface">#FFFFFF</color>
+    <color name="sd_surface_soft">#F7FAFF</color>
+    <color name="sd_glass">#F2FFFFFF</color>
+    <color name="sd_glass_strong">#FAFFFFFF</color>
+    <color name="sd_hairline">#1F0B1220</color>
+    <color name="sd_hairline_soft">#120B1220</color>
+    <color name="sd_highlight">#66FFFFFF</color>
+
+    <!-- 文本 -->
+    <color name="sd_text">#0B1220</color>
+    <color name="sd_text_secondary">#51617C</color>
+    <color name="sd_text_tertiary">#7A88A0</color>
+    <color name="sd_on_brand">#FFFFFF</color>
+
+    <!-- 语义状态 -->
+    <color name="sd_safe">#1B7F4B</color>
+    <color name="sd_warn">#9A5B00</color>
+    <color name="sd_danger">#C62828</color>
+    <color name="sd_danger_solid">#C62828</color>
 </resources>

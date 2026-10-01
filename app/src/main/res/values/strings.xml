@@ -258,4 +258,13 @@
     <!-- 完整性告警:签名与首次安装不一致时展示,提示可能存在重打包 -->
     <string name="integrity_tamper">⚠ 应用签名与首次安装记录不一致,可能已被重打包,请立即从官方渠道重新安装</string>
     <string name="integrity_multisigner">⚠ 检测到多个签名者,应用完整性存疑,请从官方渠道重新安装</string>
+
+    <!-- 分节标题(流体设计:小号大写/加宽字距的分节标签) -->
+    <string name="sd_section_actions">快速操作</string>
+    <string name="sd_section_prefs">安全设置</string>
+    <string name="sd_section_trojan">查杀与深度检测</string>
+    <string name="sd_section_lock">应用锁</string>
+    <string name="sd_section_audit">权限审计</string>
+    <string name="sd_section_tools">工具</string>
+    <string name="sd_score_placeholder" translatable="false">100</string>
 </resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 设计令牌 · 尺寸与节奏:4dp 基准栅格;触摸目标 ≥48dp、相邻点击区间距 ≥8dp(无障碍硬性要求) -->
+<resources>
+    <dimen name="sd_space_1">4dp</dimen>
+    <dimen name="sd_space_2">8dp</dimen>
+    <dimen name="sd_space_3">12dp</dimen>
+    <dimen name="sd_space_4">16dp</dimen>
+    <dimen name="sd_space_5">24dp</dimen>
+    <dimen name="sd_space_6">32dp</dimen>
+
+    <dimen name="sd_gutter">20dp</dimen>
+    <dimen name="sd_touch_min">48dp</dimen>
+
+    <dimen name="sd_radius_card">28dp</dimen>
+    <dimen name="sd_radius_inner">18dp</dimen>
+    <dimen name="sd_radius_pill">100dp</dimen>
+    <dimen name="sd_hairline_width">1dp</dimen>
+
+    <dimen name="sd_hero_orb">196dp</dimen>
+    <dimen name="sd_btn_height">52dp</dimen>
+</resources>
