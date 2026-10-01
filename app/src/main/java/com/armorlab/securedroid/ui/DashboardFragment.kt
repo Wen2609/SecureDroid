@@ -34,9 +34,9 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val ctx = requireContext()
-        binding.btnGoScan.setOnClickListener { (activity as? MainActivity)?.navigateTo(R.id.nav_scanner) }
-        binding.btnGoAudit.setOnClickListener { (activity as? MainActivity)?.navigateTo(R.id.nav_audit) }
-        binding.btnGoLock.setOnClickListener { (activity as? MainActivity)?.navigateTo(R.id.nav_lock) }
+        binding.btnGoScan.setOnClickListener { (activity as? MainActivity)?.navigateTo(R.id.nav_detect, 0) }
+        binding.btnGoAudit.setOnClickListener { (activity as? MainActivity)?.navigateTo(R.id.nav_protect, 1) }
+        binding.btnGoLock.setOnClickListener { (activity as? MainActivity)?.navigateTo(R.id.nav_protect, 0) }
         binding.btnRealtime.setOnClickListener { toggleRealtime(ctx) }
         refreshRealtimeButton()
         initRootPanel(ctx)
@@ -75,6 +75,14 @@ class DashboardFragment : Fragment() {
         val b = _binding ?: return
         b.tvScore.text = score.toString()
         b.tvState.setText(stateRes)
+        // 环形进度与评分同源:数字与图形表达同一件事,不做纯装饰的"假环"
+        b.scoreRing.progress = score
+        val ringColor = when (stateRes) {
+            R.string.dashboard_state_bad -> R.color.sd_danger
+            R.string.dashboard_state_warn -> R.color.sd_warn
+            else -> R.color.sd_safe
+        }
+        b.scoreRing.setIndicatorColor(ContextCompat.getColor(requireContext(), ringColor))
     }
 
     private fun toggleRealtime(ctx: Context) {

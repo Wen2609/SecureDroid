@@ -13,12 +13,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.armorlab.securedroid.databinding.ActivityMainBinding
 import com.armorlab.securedroid.security.IntegrityGuard
-import com.armorlab.securedroid.ui.AppLockFragment
 import com.armorlab.securedroid.ui.DashboardFragment
-import com.armorlab.securedroid.ui.PermissionAuditFragment
-import com.armorlab.securedroid.ui.ScannerFragment
-import com.armorlab.securedroid.ui.ToolsFragment
-import com.armorlab.securedroid.ui.TrojanFragment
+import com.armorlab.securedroid.ui.DetectFragment
+import com.armorlab.securedroid.ui.ProtectFragment
+import com.armorlab.securedroid.ui.SectionHost
 import com.google.android.material.tabs.TabLayout
 
 class MainActivity : AppCompatActivity() {
@@ -47,10 +45,10 @@ class MainActivity : AppCompatActivity() {
         setupTabs()
         checkIntegrity()
 
-        // 快捷设置磁贴 / 小部件跳转直达扫描页
+        // 快捷设置磁贴 / 小部件跳转直达"检测"板块
         val goto = intent?.getStringExtra("goto")
         if (goto == "scan") {
-            navigateTo(R.id.nav_scanner)
+            navigateTo(R.id.nav_detect)
         } else if (savedInstanceState == null) {
             binding.bottomNav.getTabAt(0)?.select()
         }
@@ -76,11 +74,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 从菜单资源构建底部标签页。
+     * 从菜单资源构建底部入口。
      *
-     * 使用可滚动 TabLayout 而非 BottomNavigationView:后者最多支持 5 个条目,
-     * 本应用有 6 个功能入口,直接使用会在布局膨胀时抛异常导致无法启动。
-     * 菜单 XML 仍作为入口的唯一定义源,避免标题/图标重复维护。
+     * 顶层只有三个板块(状态 / 检测 / 防护),二级功能收进板块内的分段控件 ——
+     * 六个平级入口是上一版界面"杂乱"的根源:用户每次操作都要在六个等价选项里做一次决策。
+     * 用 TabLayout 而非 BottomNavigationView 是为了避免后者 5 项硬上限,以及便于自定义指示器。
      */
     private fun setupTabs() {
         // 锚点用根视图:此处只为借用菜单资源解析入口定义,弹窗本身不会显示
@@ -108,11 +106,8 @@ class MainActivity : AppCompatActivity() {
     private fun openTab(position: Int) {
         val itemId = tabItemIds.getOrNull(position) ?: return
         val fragment: Fragment = when (itemId) {
-            R.id.nav_scanner -> ScannerFragment()
-            R.id.nav_audit -> PermissionAuditFragment()
-            R.id.nav_lock -> AppLockFragment()
-            R.id.nav_trojan -> TrojanFragment()
-            R.id.nav_tools -> ToolsFragment()
+            R.id.nav_detect -> DetectFragment()
+            R.id.nav_protect -> ProtectFragment()
             else -> DashboardFragment()
         }
         supportFragmentManager.beginTransaction()
@@ -121,9 +116,18 @@ class MainActivity : AppCompatActivity() {
         binding.toolbar.title = tabTitles.getOrNull(position) ?: getString(R.string.app_name)
     }
 
-    /** 供页面内快捷入口跳转(仪表盘按钮等) */
-    fun navigateTo(itemId: Int) {
+    /**
+     * 供页面内快捷入口跳转(状态页的快捷卡、小部件、快捷设置磁贴)。
+     * [segment] 为板块内的二级分段下标,0 表示默认分段。
+     */
+    fun navigateTo(itemId: Int, segment: Int = 0) {
         val index = tabItemIds.indexOf(itemId)
-        if (index >= 0) binding.bottomNav.getTabAt(index)?.select()
+        if (index < 0) return
+        binding.bottomNav.getTabAt(index)?.select()
+        if (segment > 0) {
+            // 提交是异步的,先落地再下发分段,避免目标 Fragment 尚未创建
+            supportFragmentManager.executePendingTransactions()
+            (supportFragmentManager.findFragmentById(R.id.container) as? SectionHost)?.selectSegment(segment)
+        }
     }
 }

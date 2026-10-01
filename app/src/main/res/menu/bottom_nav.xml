@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  顶层导航只有三个板块:状态 / 检测 / 防护。
+  每个板块内部用分段控件(segmented)承载二级功能 —— 顶层入口 ≤3 是刻意的:
+  底部导航每多一项,用户的决策成本就上升一档,而六个平级入口正是上一版"杂乱"的根源。
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_home" android:icon="@drawable/ic_shield" android:title="@string/tab_home" />
-    <item android:id="@+id/nav_scanner" android:icon="@drawable/ic_scan" android:title="@string/tab_scan" />
-    <item android:id="@+id/nav_audit" android:icon="@drawable/ic_grid" android:title="@string/tab_audit" />
-    <item android:id="@+id/nav_lock" android:icon="@drawable/ic_lock" android:title="@string/tab_lock" />
-    <item android:id="@+id/nav_trojan" android:icon="@drawable/ic_bug" android:title="@string/tab_trojan" />
-    <item android:id="@+id/nav_tools" android:icon="@drawable/ic_tool" android:title="@string/tab_tools" />
+    <item android:id="@+id/nav_status" android:icon="@drawable/ic_shield" android:title="@string/tab_status" />
+    <item android:id="@+id/nav_detect" android:icon="@drawable/ic_scan" android:title="@string/tab_detect" />
+    <item android:id="@+id/nav_protect" android:icon="@drawable/ic_lock" android:title="@string/tab_protect" />
 </menu>

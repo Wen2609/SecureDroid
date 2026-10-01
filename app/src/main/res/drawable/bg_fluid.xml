@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  内容层背景「凝光」:深空底 + 两处柔和光晕(右上暖光、左下青光)。
-  光晕用径向渐变模拟真实光源,而不是叠加图片 —— 任何屏幕密度下都清晰且体积为 0。
+  内容层背景。上一版是"线性渐变 + 两处光晕 + 每张卡片描边",叠在一起就是噪声;
+  现在只保留一次纵向渐变 + 右上角一处极淡光晕,让内容成为唯一焦点。
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
@@ -15,30 +15,15 @@
     </item>
 
     <item
-        android:width="380dp"
-        android:height="380dp"
+        android:width="420dp"
+        android:height="420dp"
         android:gravity="top|right"
-        android:right="-120dp"
-        android:top="-130dp">
+        android:right="-160dp"
+        android:top="-180dp">
         <shape android:shape="oval">
             <gradient
-                android:gradientRadius="210dp"
+                android:gradientRadius="230dp"
                 android:startColor="@color/sd_bloom"
-                android:endColor="@color/sd_bloom_clear"
-                android:type="radial" />
-        </shape>
-    </item>
-
-    <item
-        android:width="320dp"
-        android:height="320dp"
-        android:bottom="-150dp"
-        android:gravity="bottom|left"
-        android:left="-130dp">
-        <shape android:shape="oval">
-            <gradient
-                android:gradientRadius="190dp"
-                android:startColor="@color/sd_bloom_2"
                 android:endColor="@color/sd_bloom_clear"
                 android:type="radial" />
         </shape>

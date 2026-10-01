@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  应用外壳:内容层(容器)+ 功能层(工具栏、底部入口条)。
-  设计依据(HIG):玻璃材质只出现在浮于内容之上的控件层;内容层使用凝光渐变背景,保持可读性。
+  应用外壳 = 内容层 + 功能层。
+  顶部不再放玻璃条:大标题直接写在背景上(更少的容器 = 更少的视觉噪声),
+  页面标题即当前板块名;玻璃只留给底部入口条与它上面的那条指示器。
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,10 +25,14 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/sd_glass"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:elevation="0dp"
-        app:title="@string/app_name"
+        android:minHeight="@dimen/sd_row_height"
+        android:paddingStart="@dimen/sd_gutter"
+        android:paddingEnd="@dimen/sd_gutter"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
         app:titleTextAppearance="@style/TextAppearance.SecureDroid.Title"
         app:titleTextColor="@color/sd_text" />
 
@@ -37,15 +42,13 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- 底部入口条:功能层玻璃面板 + 顶部 3dp 胶囊指示器。
-         Material 的 BottomNavigationView 硬上限为 5 项,本应用有 6 个入口,
-         使用可滚动 TabLayout 避免膨胀期抛异常。 -->
+    <!-- 底部入口条:三个板块。玻璃 + 顶部 3dp 胶囊指示器 -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_glass_panel"
-        android:minHeight="64dp"
+        android:minHeight="68dp"
         app:tabGravity="fill"
         app:tabIconTint="@color/tab_text"
         app:tabIndicator="@drawable/tab_indicator"
@@ -54,9 +57,9 @@
         app:tabIndicatorGravity="top"
         app:tabIndicatorHeight="3dp"
         app:tabInlineLabel="true"
-        app:tabMode="scrollable"
-        app:tabPaddingEnd="@dimen/sd_space_3"
-        app:tabPaddingStart="@dimen/sd_space_3"
+        app:tabMode="fixed"
+        app:tabPaddingEnd="@dimen/sd_space_4"
+        app:tabPaddingStart="@dimen/sd_space_4"
         app:tabRippleColor="@color/sd_hairline_soft"
         app:tabTextColor="@color/tab_text" />
 </LinearLayout>

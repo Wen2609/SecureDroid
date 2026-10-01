@@ -4,7 +4,9 @@
 - 优先用项目自带 Wrapper:gradlew.bat <task>(Windows)/ ./gradlew <task>;本机已把 Gradle 8.7 发行包播种到 C:\Android_build\.gradle\wrapper\dists\gradle-8.7-bin\bhs2wmbdwecv87pi65oeuq5iu,故 --offline 可用
 - 便捷脚本 build.cmd [task](只回显错误行 + BUILD 结果)
 - 签名:keystore 在 D:\DSH WORK\keystore\securedroid-release.jks,凭据在项目根 keystore.properties(已 gitignore);文件缺失时 release 自动未签名,CI 安全
-- 发布产物:apks/SecureDroid-v1.0.0-release-signed.apk(v2+v3 已签名,可安装)
+- 发布产物:apks/SecureDroid-v1.2.0-release-signed.apk(v2+v3 已签名,可安装)
+- **GRADLE_USER_HOME 已迁到 D:\Android_build\.gradle**:C 盘曾满到 0 字节,反复把 Gradle 守护进程杀掉
+  (症状:"daemon disappeared unexpectedly" 或 "磁盘空间不足");报这类错先看 C 盘剩余空间,再清 %TEMP%
 
 ### 不要自己拼环境变量
 - JDK17: C:\Android_build\jdk-17 / SDK: C:\Android_build\sdk / Gradle 8.7: C:\Android_build\gradle-8.7\bin\gradle.bat
@@ -66,6 +68,11 @@
 - 完整性守卫:security/IntegrityGuard(签名 SHA-256 + TOFU);UNAVAILABLE 不得当作 TRUSTED
 - 安全约定:涉及秘密的界面必须 FLAG_SECURE;可被覆盖点击的关键界面加 filterTouchesWhenObscured;
   网络请求必须 https;特征库/规则类更新必须校验 SHA-256(FeatureUpdater 已强制)
+
+## 信息架构(改导航前必读)
+- 顶层只有 3 个板块:状态 / 检测 / 防护(res/menu/bottom_nav.xml);二级功能用板内分段控件
+- 新板块页面实现 ui/SectionHost,MainActivity.navigateTo(板块 id, 分段下标) 可跨板块直达
+- 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
 ## 视觉设计约定(改 UI 前必读)
 - 令牌在 res/values(浅色)+ res/values-night(深色):配色/圆角/间距只改这两处,别在布局里写字面值

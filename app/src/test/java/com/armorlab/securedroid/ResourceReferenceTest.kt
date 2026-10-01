@@ -124,4 +124,15 @@ class ResourceReferenceTest {
         }
         assertTrue("布局内存在重复 id: " + dupes.joinToString("; "), dupes.isEmpty())
     }
+
+    /**
+     * 回归:属性名是 android:layoutAnimation,不是 android:layout_animation。
+     * 这个笔误本项目犯过两次 —— AAPT 报错信息只给出行号,排查成本高,
+     * 因此在这里用一条零成本的断言挡住。
+     */
+    @Test
+    fun layoutAnimationAttributeSpelling() {
+        val bad = xmlFiles().filter { it.readText().contains("android:layout_animation=") }
+        assertTrue("以下布局使用了不存在的属性 android:layout_animation:$bad", bad.isEmpty())
+    }
 }

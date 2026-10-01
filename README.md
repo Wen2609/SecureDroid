@@ -130,7 +130,16 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 
 > 上图由 `design/render_mockup.py` 按令牌 1:1 渲染生成,**不是真机截图**。
 
+**顶层只有三个板块**,二级功能收进板内分段控件(6 个平级入口是上一版"杂乱"的结构性原因):
+
+| 板块 | 二级功能 |
+| --- | --- |
+| **状态** | 评分环 + 快速入口 + 防护开关 |
+| **检测** | 病毒扫描 · 木马查杀 |
+| **防护** | 应用锁 · 权限审计 · 工具箱 |
+
 - 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色):色板、4dp 栅格、圆角、五级文字层级;
+- 内容卡片靠**色调层级**分层(深色纯色块 / 浅色 1dp 阴影),描边只留给功能层;
 - 「凝光」背景 = 线性渐变 + 两处径向光晕,零图片资源;卡片用 1dp 光边 + 极低阴影代替重投影;
 - **玻璃只出现在功能层**(工具栏、底部入口条),内容层保持不透明表面以保证正文对比度 ≥4.5:1;
 - 动效:列表错峰入场(每项延迟 8%)、按压缩放 0.97 / 110ms、回弹 240ms;页面转场交给系统,避免低端机掉帧;
@@ -192,12 +201,12 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.1.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.2.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-      SHA-256 25b859aef603aacdd03ba246abfd752eabfe1c7cd8eff9552497fd6590789ca2
-      大小    1,980,745 字节    versionCode 3 / versionName 1.1.0(流体设计版)
+      SHA-256 208a4b04183b9403e66043feb57269c94dc7e06ab8ab130e83eac10d6805e872
+      大小    1,996,728 字节    versionCode 4 / versionName 1.2.0(三大板块 · 流体设计 v2)
 
-  上一版 apks/SecureDroid-v1.0.0-release-signed.apk 保留用于回退。
+  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 保留用于回退。
 
 ## 注意事项
 

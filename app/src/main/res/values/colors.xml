@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   设计令牌 · 色彩(浅色)
-  参考:ColorOS 17「流体设计」(凝光视效 / 流体动效 / 柔性反馈)+ Apple HIG(色彩克制、玻璃只用于功能层)
-  命名沿用旧版(primary / status_*),避免破坏既有布局引用;sd_ 前缀为本轮新增的体系化令牌。
+  依据 ColorOS 17「流体设计」+ Apple HIG + UI/UX Pro Max 规则库。
+  原则:内容层用**色调层级**区分表面(不靠描边),描边只留给功能层玻璃;
+  语义色只用于状态,不用于装饰。
 -->
 <resources>
     <!-- 兼容旧名 -->
@@ -14,35 +15,36 @@
 
     <!-- 品牌:信任蓝 + 凝光青 -->
     <color name="sd_brand">#0B57D0</color>
-    <color name="sd_brand_bright">#2F7BFF</color>
     <color name="sd_glow">#0FB5D6</color>
     <color name="sd_on_primary">#FFFFFF</color>
 
-    <!-- 内容层:底色 + 渐变第二色 + 光晕 -->
-    <color name="sd_bg">#F3F7FD</color>
-    <color name="sd_bg_alt">#E6EFFB</color>
-    <color name="sd_bloom">#332F7BFF</color>
+    <!-- 内容层底色 -->
+    <color name="sd_bg">#F4F7FC</color>
+    <color name="sd_bg_alt">#E9F0FA</color>
+    <color name="sd_bloom">#1F2F7BFF</color>
     <color name="sd_bloom_clear">#002F7BFF</color>
-    <color name="sd_bloom_2">#1F0FB5D6</color>
 
-    <!-- 表面:内容卡片(不透明优先,保证正文对比度)与功能层玻璃 -->
+    <!-- 表面层级:1(卡片) → 2(卡内嵌套块) → 3(强调块) -->
     <color name="sd_surface">#FFFFFF</color>
     <color name="sd_surface_soft">#F7FAFF</color>
+
+    <!-- 功能层玻璃(工具栏 / 底部入口条) -->
     <color name="sd_glass">#F2FFFFFF</color>
     <color name="sd_glass_strong">#FAFFFFFF</color>
-    <color name="sd_hairline">#1F0B1220</color>
-    <color name="sd_hairline_soft">#120B1220</color>
+    <color name="sd_hairline">#140B1220</color>
+    <color name="sd_hairline_soft">#0D0B1220</color>
     <color name="sd_highlight">#66FFFFFF</color>
+    <color name="sd_ring_track">#140B1220</color>
 
     <!-- 文本 -->
     <color name="sd_text">#0B1220</color>
-    <color name="sd_text_secondary">#51617C</color>
-    <color name="sd_text_tertiary">#7A88A0</color>
+    <color name="sd_text_secondary">#4C5C77</color>
+    <color name="sd_text_tertiary">#78879E</color>
     <color name="sd_on_brand">#FFFFFF</color>
 
     <!-- 语义状态 -->
-    <color name="sd_safe">#1B7F4B</color>
-    <color name="sd_warn">#9A5B00</color>
-    <color name="sd_danger">#C62828</color>
-    <color name="sd_danger_solid">#C62828</color>
+    <color name="sd_safe">#12734A</color>
+    <color name="sd_warn">#8A5200</color>
+    <color name="sd_danger">#B4232A</color>
+    <color name="sd_danger_solid">#B4232A</color>
 </resources>

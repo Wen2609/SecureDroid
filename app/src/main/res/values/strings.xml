@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">安卫安全助手</string>
-    <string name="tab_home">首页</string>
-    <string name="tab_scan">病毒扫描</string>
-    <string name="tab_audit">权限审计</string>
-    <string name="tab_lock">应用锁</string>
 
     <string name="dashboard_score_label">安全评分</string>
     <string name="dashboard_state_good">当前设备状态良好,未发现明显威胁</string>
@@ -49,7 +45,6 @@
     <string name="realtime_text">正在监控应用安装与更新</string>
     <string name="threat_found_title">发现恶意应用!</string>
     <string name="accessibility_desc">安卫应用锁使用无障碍服务检测前台应用,在受保护应用启动时要求输入 PIN 码。</string>
-    <string name="tab_trojan">木马查杀</string>
     <string name="trojan_idle">点击开始,多引擎检测木马与后门</string>
     <string name="trojan_start">开始木马查杀</string>
     <string name="trojan_scanning">正在深度扫描,请稍候…</string>
@@ -81,7 +76,6 @@
     <string name="locker_scanning">正在检测设备管理员与锁机行为…</string>
     <string name="locker_done">锁机检测完成:发现 %1$d 项风险</string>
     <string name="locker_clean">未发现锁机软件与可疑设备管理员</string>
-    <string name="tab_tools">工具箱</string>
     <string name="sw_daily_scan">每日定时自动查杀</string>
     <string name="sw_sim_guard">SIM 卡变更防盗告警</string>
     <string name="daily_scan_on">每日定时查杀已开启</string>
@@ -260,11 +254,21 @@
     <string name="integrity_multisigner">⚠ 检测到多个签名者,应用完整性存疑,请从官方渠道重新安装</string>
 
     <!-- 分节标题(流体设计:小号大写/加宽字距的分节标签) -->
-    <string name="sd_section_actions">快速操作</string>
     <string name="sd_section_prefs">安全设置</string>
-    <string name="sd_section_trojan">查杀与深度检测</string>
     <string name="sd_section_lock">应用锁</string>
     <string name="sd_section_audit">权限审计</string>
     <string name="sd_section_tools">工具</string>
     <string name="sd_score_placeholder" translatable="false">100</string>
+
+    <!-- 三大板块及其二级分段 -->
+    <string name="tab_status">状态</string>
+    <string name="tab_detect">检测</string>
+    <string name="tab_protect">防护</string>
+    <string name="seg_virus">病毒扫描</string>
+    <string name="seg_trojan">木马查杀</string>
+    <string name="seg_applock">应用锁</string>
+    <string name="seg_audit">权限审计</string>
+    <string name="seg_tools">工具箱</string>
+    <string name="sd_section_enter">快速进入</string>
+    <string name="sd_section_guard">防护开关</string>
 </resources>
