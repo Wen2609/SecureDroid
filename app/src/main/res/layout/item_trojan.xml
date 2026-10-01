@@ -1,63 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/sd_gutter"
-    android:paddingVertical="@dimen/sd_space_3">
-
-    <TextView
-        android:id="@+id/tvTitle"
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
-        android:textColor="@color/sd_text" />
-
+        android:minHeight="@dimen/sd_row_height"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/sd_space_4"
+        android:paddingVertical="@dimen/sd_space_3">
     <TextView
-        android:id="@+id/tvSub"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-        android:textColor="@color/sd_text_secondary" />
-
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+            android:textStyle="bold"
+            android:textColor="@color/c_foreground" />
     <TextView
-        android:id="@+id/tvDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-        android:textColor="@color/sd_text_secondary" />
-
+            android:id="@+id/tvSub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/c_muted_foreground" />
     <TextView
-        android:id="@+id/tvSuggestion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sd_space_2"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-        android:textColor="@color/sd_warn" />
-
+            android:id="@+id/tvDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/c_muted_foreground" />
+    <TextView
+            android:id="@+id/tvSuggestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_2"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/c_gold" />
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sd_space_2"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUninstall"
-            style="@style/Widget.SecureDroid.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/sd_space_2"
-            android:minHeight="@dimen/sd_touch_min"
-            android:text="@string/trojan_uninstall" />
-
+            android:layout_marginTop="@dimen/sd_space_2"
+            android:orientation="horizontal">
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnFix"
-            style="@style/Widget.SecureDroid.Button.Outlined"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/sd_touch_min"
-            android:text="@string/fix_run" />
+                android:id="@+id/btnUninstall"
+                style="@style/Widget.SecureDroid.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/sd_space_2"
+                android:minHeight="@dimen/sd_touch_min"
+                android:text="@string/trojan_uninstall" />
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFix"
+                style="@style/Widget.SecureDroid.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/sd_touch_min"
+                android:text="@string/fix_run" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>

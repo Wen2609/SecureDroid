@@ -1,99 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 查杀中心:两个互斥状态(菜单 / 运行)叠放,运行态带进度与结果列表 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_fluid"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/sd_gutter"
-    android:paddingTop="@dimen/sd_space_4">
-
-    <TextView
-        android:id="@+id/tvTitle"
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Title"
-        android:textColor="@color/sd_text" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sd_space_3"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:id="@+id/menuState"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvActions"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/sd_gutter">
+        <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/sd_space_4"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Title"
+                android:textColor="@color/c_foreground" />
+        </LinearLayout>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:layout_marginHorizontal="@dimen/sd_gutter"
+            android:layout_marginBottom="@dimen/sd_gutter"
+            android:layout_weight="1">
+        <LinearLayout
+                android:id="@+id/menuState"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layoutAnimation="@anim/sd_list_layout"
-                android:clipToPadding="false"
-                android:paddingBottom="@dimen/sd_space_5" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/runState"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBack"
-                    style="@style/Widget.SecureDroid.Button"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/sd_touch_min"
-                    android:layout_weight="1"
-                    android:text="@string/vc_back" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCancel"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/sd_touch_min"
-                    android:layout_marginStart="@dimen/sd_space_2"
-                    android:layout_weight="1"
-                    android:text="@string/vc_cancel" />
+                android:orientation="vertical">
+            <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.SecureDroid.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvActions"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvPhase"
+        <LinearLayout
+                android:id="@+id/runState"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sd_space_3"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-                android:textColor="@color/sd_text_secondary" />
-
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBack"
+                        style="@style/Widget.SecureDroid.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_btn_height"
+                        android:layout_weight="1"
+                        android:text="@string/vc_back" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCancel"
+                        style="@style/Widget.SecureDroid.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_btn_height"
+                        android:layout_marginStart="@dimen/sd_space_2"
+                        android:layout_weight="1"
+                        android:text="@string/vc_cancel" />
+                </LinearLayout>
             <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:layout_marginTop="@dimen/sd_space_3"
-                android:indeterminate="true"
-                android:indeterminateTint="@color/sd_brand"
-                android:progressDrawable="@drawable/progress_fluid" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvList"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layoutAnimation="@anim/sd_list_layout"
-                android:layout_marginTop="@dimen/sd_space_3"
-                android:layout_weight="1"
-                android:clipToPadding="false"
-                android:paddingBottom="@dimen/sd_space_5" />
-        </LinearLayout>
-    </FrameLayout>
-</LinearLayout>
+                    android:id="@+id/progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginTop="@dimen/sd_space_4"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_fluid" />
+            <TextView
+                    android:id="@+id/tvPhase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sd_space_3"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+                    android:textColor="@color/c_muted_foreground" />
+            <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.SecureDroid.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/sd_space_3"
+                    android:layout_weight="1">
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>

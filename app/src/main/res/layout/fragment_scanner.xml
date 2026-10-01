@@ -1,49 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 病毒扫描(iOS 风格):一个主按钮 + 一条进度 + 一张分组结果列表 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnStartScan"
-        style="@style/Widget.SecureDroid.Button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sd_btn_height"
-        android:text="@string/scan_start"
-        app:icon="@drawable/ic_scan" />
-
-    <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="@dimen/sd_space_4"
-        android:max="100"
-        android:progress="0"
-        android:progressDrawable="@drawable/progress_fluid" />
-
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sd_space_3"
-        android:text="@string/scan_idle"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-        android:textColor="@color/sd_text_secondary" />
-
-    <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SecureDroid.Card"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sd_space_4"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvResults"
+            android:id="@+id/btnStartScan"
+            style="@style/Widget.SecureDroid.Button.Accent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false" />
-    </com.google.android.material.card.MaterialCardView>
-</LinearLayout>
+            android:layout_height="@dimen/sd_btn_height"
+            android:text="@string/scan_start"
+            app:icon="@drawable/ic_scan" />
+    <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_fluid" />
+    <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_3"
+            android:text="@string/scan_idle"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/c_muted_foreground" />
+    <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.SecureDroid.Card"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvResults"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>

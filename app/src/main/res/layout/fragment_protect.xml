@@ -1,56 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 防护板块:iOS 分段控件(应用锁 / 权限审计 / 工具箱)+ 分组内容 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/sd_gutter">
-
-    <LinearLayout
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sd_space_2"
-        android:background="@drawable/bg_segment_track"
-        android:padding="2dp">
-
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/segProtect"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/sd_gutter">
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:selectionRequired="true"
-            app:singleSelection="true">
-
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:background="@drawable/bg_segment_track"
+            android:padding="2dp">
+        <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/segProtect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true">
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/segProtectLock"
-                style="@style/Widget.SecureDroid.Segment"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/sd_segment_hit"
-                android:layout_weight="1"
-                android:text="@string/seg_applock" />
-
+                    android:id="@+id/segProtectLock"
+                    style="@style/Widget.SecureDroid.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/sd_segment_hit"
+                    android:layout_weight="1"
+                    android:text="@string/seg_applock" />
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/segProtectAudit"
-                style="@style/Widget.SecureDroid.Segment"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/sd_segment_hit"
-                android:layout_weight="1"
-                android:text="@string/seg_audit" />
-
+                    android:id="@+id/segProtectAudit"
+                    style="@style/Widget.SecureDroid.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/sd_segment_hit"
+                    android:layout_weight="1"
+                    android:text="@string/seg_audit" />
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/segProtectTools"
-                style="@style/Widget.SecureDroid.Segment"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/sd_segment_hit"
-                android:layout_weight="1"
-                android:text="@string/seg_tools" />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
-    </LinearLayout>
-
+                    android:id="@+id/segProtectTools"
+                    style="@style/Widget.SecureDroid.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/sd_segment_hit"
+                    android:layout_weight="1"
+                    android:text="@string/seg_tools" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </LinearLayout>
     <FrameLayout
-        android:id="@+id/protectContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sd_space_4"
-        android:layout_weight="1" />
-</LinearLayout>
+            android:id="@+id/protectContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:layout_weight="1" />
+    </LinearLayout>

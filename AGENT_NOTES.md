@@ -74,7 +74,15 @@
 - 新板块页面实现 ui/SectionHost,MainActivity.navigateTo(板块 id, 分段下标) 可跨板块直达
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
-## 视觉设计约定(Apple 风格,改 UI 前必读)
+## 视觉设计约定(Swiss Style,改 UI 前必读)
+- 风格基线来自 ui-ux-pro-max 的 design-system 解析:Minimalism & Swiss Style + Trust navy 色板
+  (`--design-system "mobile security utility antivirus app dark protective"`);改风格要重跑技能,不要凭口味改
+- 分隔语言 = 1dp 边框 + 留白,卡片 0dp 阴影;强调色只有一个(accent),同一颜色不得两义
+- 令牌只有一套语义体系:c_* 是本体,sd_*/ios_*/status_* 只是别名;新增颜色请走 c_* 角色名
+- **布局由 design/generate_layouts.mjs 生成**,手改 XML 会在下次生成时被覆盖;要改布局改脚本
+- 自检:触摸 ≥48dp、相邻 ≥8dp、正文 16sp/行高 1.5、状态不靠颜色单独表意
+
+## 视觉设计约定(旧记录 · Apple 风格)
 - 风格基线是 iOS HIG:系统色(systemBlue/Green/Orange/Red、label/secondaryLabel/separator、
   systemGroupedBackground/systemFill)、Dynamic Type 字号、inset grouped 列表、分段控件、通栏标签栏
 - 冲突裁决:与 Android 规范冲突时取更严的一方(行高 48dp > iOS 44pt);不照搬依赖 iOS 系统行为的外形

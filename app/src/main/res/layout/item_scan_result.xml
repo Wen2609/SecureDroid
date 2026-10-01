@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:minHeight="@dimen/sd_row_height"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/sd_gutter"
-    android:paddingVertical="@dimen/sd_space_3">
-
-    <TextView
-        android:id="@+id/tvAppName"
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
-        android:textColor="@color/sd_text" />
-
+        android:minHeight="@dimen/sd_row_height"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/sd_space_4"
+        android:paddingVertical="@dimen/sd_space_3">
     <TextView
-        android:id="@+id/tvPackage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-        android:textColor="@color/sd_text_secondary" />
-
+            android:id="@+id/tvAppName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+            android:textStyle="bold"
+            android:textColor="@color/c_foreground" />
     <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-        android:textColor="@color/sd_text_secondary" />
-</LinearLayout>
+            android:id="@+id/tvPackage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/c_muted_foreground" />
+    <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/c_muted_foreground" />
+    </LinearLayout>

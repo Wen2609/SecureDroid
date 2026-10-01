@@ -2,6 +2,30 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.4.0] - 2026-10-01
+
+### Changed
+
+- **按 ui-ux-pro-max 的解析结果完全重写设计系统**:风格定为 **Minimalism & Swiss Style**
+  (技能 `--design-system` 输出),配色采用其返回的 Trust navy 语义色板,深色表面层级来自
+  `--domain color "dark mode surface elevation contrast"`;
+  - 色彩:primary/accent/background/foreground/card/muted/border/destructive 全部按技能返回的
+    十六进制值定义;旧的 `sd_*`/`ios_*`/`status_*` 令牌**保留为别名**指向同一套语义色,
+    因此全应用共享一个色板,不存在并行体系;
+  - **分隔语言改为 1dp 边框 + 留白**:卡片 0dp 阴影 1dp 描边(技能 Key Effects:"sharp shadows if any"),
+    分区靠 24/32dp 留白而非分隔条;
+  - 字体 6 级:Display 34 / Title 26 / Headline 20 / Body 16(行高 1.5)/ Label 14 / Section 12(大写 0.08 字距);
+  - 尺寸:4/8dp 栅格,行高 56dp,触摸下限 48dp,标签栏 60dp,卡片圆角 12dp、控件 8dp;
+  - 底部标签栏:实底 + 1dp 顶边框 + 3dp accent 指示条(替换上一版的通栏玻璃);
+- **布局改为由脚本生成**:新增 `design/generate_layouts.mjs`,17 个布局文件从设计令牌生成,
+  使"令牌 → 界面"的映射可执行、可复查,避免逐页手写造成的漂移;
+- 技能中与设计冲突的建议按"先验证适配性再套用"处理并记录偏差:字体改用系统字体(CJK 与包体),
+  深色 CTA 用 `#38BDF8` 而非返回值 `#EF4444`(避免与危险态同色,技能自身规则禁止一色两义)。
+
+### Known
+
+- Lint 警告由 74 增至 108:历史令牌别名(`ios_*` 等)与旧 drawable 已无引用点,属于待清理项,不影响 0 错误门禁。
+
 ## [1.3.0] - 2026-10-01
 
 ### Changed

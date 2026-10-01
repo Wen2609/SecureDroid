@@ -1,78 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 应用锁(iOS 风格):状态与设置同属一张分组卡,受保护应用列表单独一张 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SecureDroid.Card"
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.SecureDroid.Card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvPinState"
+            android:layout_height="wrap_content">
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/sd_row_height"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="@dimen/sd_gutter"
-                android:paddingVertical="@dimen/sd_space_3"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-                android:textColor="@color/sd_text" />
-
-            <View style="@style/Widget.SecureDroid.Divider" />
-
+                android:orientation="vertical">
+            <TextView
+                    android:id="@+id/tvPinState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/sd_row_height"
+                    android:paddingHorizontal="@dimen/sd_space_4"
+                    android:paddingVertical="@dimen/sd_space_3"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+                    android:textColor="@color/c_foreground" />
+            <View
+                    style="@style/Widget.SecureDroid.Divider" />
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSetPin"
-                style="@style/Widget.SecureDroid.Button.Row"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height"
-                android:text="@string/lock_set_pin"
-                android:textColor="@color/sd_brand" />
-
-            <View style="@style/Widget.SecureDroid.Divider" />
-
+                    android:id="@+id/btnSetPin"
+                    style="@style/Widget.SecureDroid.Button.Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height"
+                    android:text="@string/lock_set_pin"
+                    android:textColor="@color/c_accent" />
+            <View
+                    style="@style/Widget.SecureDroid.Divider" />
             <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/swDecoy"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height"
-                android:paddingHorizontal="@dimen/sd_gutter"
-                android:text="@string/lock_decoy_sw"
-                android:textColor="@color/sd_text"
-                android:textSize="17sp"
-                app:thumbTint="@color/switch_thumb"
-                app:trackTint="@color/switch_track" />
-
-            <View style="@style/Widget.SecureDroid.Divider" />
-
+                    android:id="@+id/swDecoy"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height"
+                    android:paddingHorizontal="@dimen/sd_space_4"
+                    android:text="@string/lock_decoy_sw"
+                    android:textColor="@color/c_foreground"
+                    android:textSize="16sp"
+                    app:thumbTint="@color/switch_thumb"
+                    app:trackTint="@color/switch_track" />
+            <View
+                    style="@style/Widget.SecureDroid.Divider" />
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAccessibility"
-                style="@style/Widget.SecureDroid.Button.Row"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height"
-                android:text="@string/lock_accessibility_go"
-                android:textColor="@color/sd_brand" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+                    android:id="@+id/btnAccessibility"
+                    style="@style/Widget.SecureDroid.Button.Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height"
+                    android:text="@string/lock_accessibility_go"
+                    android:textColor="@color/c_accent" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SecureDroid.Card"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sd_space_4"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvLockApps"
+            style="@style/Widget.SecureDroid.Card"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false" />
-    </com.google.android.material.card.MaterialCardView>
-</LinearLayout>
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLockApps"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>

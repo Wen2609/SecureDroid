@@ -1,185 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 木马查杀(iOS 风格):主按钮 + 分组入口行 + 分组结果列表 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnTrojanScan"
-        style="@style/Widget.SecureDroid.Button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sd_btn_height"
-        android:text="@string/trojan_start"
-        app:icon="@drawable/ic_bug" />
-
+            android:id="@+id/btnTrojanScan"
+            style="@style/Widget.SecureDroid.Button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sd_btn_height"
+            android:text="@string/trojan_start"
+            app:icon="@drawable/ic_bug" />
     <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="@dimen/sd_space_4"
-        android:max="100"
-        android:progress="0"
-        android:progressDrawable="@drawable/progress_fluid" />
-
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_fluid" />
     <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sd_space_3"
-        android:text="@string/trojan_idle"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-        android:textColor="@color/sd_text_secondary" />
-
-    <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SecureDroid.Card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sd_space_4">
-
-        <LinearLayout
+            android:id="@+id/tvStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRootkit"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingEnd="44dp"
-                    android:text="@string/rootkit_btn"
-                    app:icon="@drawable/ic_shield" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/sd_gutter"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron"
-                    app:tint="@color/sd_text_tertiary" />
-            </FrameLayout>
-
-            <View style="@style/Widget.SecureDroid.Divider" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnModules"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingEnd="44dp"
-                    android:text="@string/modules_btn"
-                    app:icon="@drawable/ic_grid" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/sd_gutter"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron"
-                    app:tint="@color/sd_text_tertiary" />
-            </FrameLayout>
-
-            <View style="@style/Widget.SecureDroid.Divider" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLocker"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingEnd="44dp"
-                    android:text="@string/locker_btn"
-                    app:icon="@drawable/ic_lock" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/sd_gutter"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron"
-                    app:tint="@color/sd_text_tertiary" />
-            </FrameLayout>
-
-            <View style="@style/Widget.SecureDroid.Divider" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnDeepScan"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingEnd="44dp"
-                    android:text="@string/deep_scan_btn"
-                    app:icon="@drawable/ic_scan" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/sd_gutter"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron"
-                    app:tint="@color/sd_text_tertiary" />
-            </FrameLayout>
-
-            <View style="@style/Widget.SecureDroid.Divider" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_row_height">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnVirusCenter"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingEnd="44dp"
-                    android:text="@string/vc_open_btn"
-                    app:icon="@drawable/ic_bug" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/sd_gutter"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron"
-                    app:tint="@color/sd_text_tertiary" />
-            </FrameLayout>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+            android:layout_marginTop="@dimen/sd_space_3"
+            android:text="@string/trojan_idle"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/c_muted_foreground" />
     <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SecureDroid.Card"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sd_space_3"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvTrojan"
+            style="@style/Widget.SecureDroid.Card"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false" />
-    </com.google.android.material.card.MaterialCardView>
-</LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_4">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRootkit"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/rootkit_btn"
+                        app:icon="@drawable/ic_shield" />
+                <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/c_muted_foreground" />
+                </FrameLayout>
+            <View
+                    style="@style/Widget.SecureDroid.Divider" />
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnModules"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/modules_btn"
+                        app:icon="@drawable/ic_grid" />
+                <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/c_muted_foreground" />
+                </FrameLayout>
+            <View
+                    style="@style/Widget.SecureDroid.Divider" />
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLocker"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/locker_btn"
+                        app:icon="@drawable/ic_lock" />
+                <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/c_muted_foreground" />
+                </FrameLayout>
+            <View
+                    style="@style/Widget.SecureDroid.Divider" />
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDeepScan"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/deep_scan_btn"
+                        app:icon="@drawable/ic_scan" />
+                <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/c_muted_foreground" />
+                </FrameLayout>
+            <View
+                    style="@style/Widget.SecureDroid.Divider" />
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnVirusCenter"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/vc_open_btn"
+                        app:icon="@drawable/ic_bug" />
+                <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/c_muted_foreground" />
+                </FrameLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.SecureDroid.Card"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sd_space_3"
+            android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTrojan"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>

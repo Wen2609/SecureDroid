@@ -1,46 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 权限审计(iOS 风格):结论在一张分组卡里,明细在下一张 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/sd_gutter"
-        android:layout_marginBottom="@dimen/sd_space_2"
-        android:text="@string/sd_section_audit"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Section"
-        android:textColor="@color/sd_text_secondary" />
-
-    <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SecureDroid.Card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/tvSummary"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/sd_row_height"
-            android:paddingHorizontal="@dimen/sd_gutter"
-            android:paddingVertical="@dimen/sd_space_3"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-            android:textColor="@color/sd_text" />
-    </com.google.android.material.card.MaterialCardView>
-
+            android:layout_marginStart="@dimen/sd_gutter"
+            android:layout_marginTop="@dimen/sd_space_5"
+            android:layout_marginBottom="@dimen/sd_space_2"
+            android:text="@string/sd_section_audit"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Section"
+            android:textColor="@color/c_muted_foreground" />
     <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SecureDroid.Card"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sd_space_4"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAudit"
+            style="@style/Widget.SecureDroid.Card"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false" />
-    </com.google.android.material.card.MaterialCardView>
-</LinearLayout>
+            android:layout_height="wrap_content">
+        <TextView
+                android:id="@+id/tvSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/sd_row_height"
+                android:paddingHorizontal="@dimen/sd_space_4"
+                android:paddingVertical="@dimen/sd_space_3"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+                android:textColor="@color/c_foreground" />
+        </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.SecureDroid.Card"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAudit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>

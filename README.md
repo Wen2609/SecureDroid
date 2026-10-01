@@ -121,13 +121,15 @@ WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超�
 
 CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
 
-## 视觉设计系统(Apple 风格 · iOS HIG)
+## 视觉设计系统(Minimalism & Swiss Style)
 
-界面依据 **Apple Human Interface Guidelines** 重做:iOS 语义系统色、Dynamic Type 类型尺度、
-inset grouped 列表、分段控件、通栏标签栏。完整令牌表、实现落点与自检清单见 [design/DESIGN.md](design/DESIGN.md)。
+界面**由 ui-ux-pro-max 技能的设计系统解析结果驱动**:风格 `Minimalism & Swiss Style`,
+配色取其返回的 Trust navy 语义色板,深色表面层级来自 color 域查询。完整来源、令牌表、偏差记录与自检清单见
+[design/DESIGN.md](design/DESIGN.md)。
 
-HIG 与 Android 规范冲突时**取更严的一方**(如行高取 48dp 而非 iOS 的 44pt);
-没有照搬 iOS 的返回手势、胶囊导航栏等依赖系统行为的外形 —— 翻译的是原则,不是外形。
+- 分隔靠 **1dp 边框 + 留白**(技能 Key Effects:"sharp shadows if any"),卡片 0dp 阴影;
+- 4/8dp 栅格、行高 56dp、触摸下限 48dp、正文 16sp / 行高 1.5、对比度 ≥4.5:1;
+- **全部布局由脚本从令牌生成**(\`design/generate_layouts.mjs\`),改令牌重跑即可,不存在逐页漂移。
 
 ![设计稿](design/mockup-sheet.png)
 
@@ -205,12 +207,12 @@ HIG 与 Android 规范冲突时**取更严的一方**(如行高取 48dp 而非 i
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.3.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.4.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-      SHA-256 60a327c7b5bf58c0453f7975e651963190b5078d668884ff76ceea6a769afd27
-      大小    1,999,616 字节    versionCode 5 / versionName 1.3.0(Apple 风格 · iOS HIG)
+      SHA-256 ec4474cf43d6ff5773c2674e74b2ad28ad4a0e00bd543d702a575e5713ce3012
+      大小    1,998,669 字节    versionCode 6 / versionName 1.4.0(Swiss Style · ui-ux-pro-max)
 
-  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 保留用于回退。
+  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 / v1.3.0 保留用于回退。
 
 ## 注意事项
 

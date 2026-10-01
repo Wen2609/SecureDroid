@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 分段控件轨道:iOS 用 12% 的系统填充色 + 9dp 圆角 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <corners android:radius="9dp" />
-    <solid android:color="@color/ios_fill" />
+    <corners android:radius="10dp" />
+    <solid android:color="@color/c_muted" />
 </shape>

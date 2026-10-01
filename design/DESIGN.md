@@ -1,102 +1,78 @@
-# SecureDroid 设计系统 · Apple 风格(iOS Human Interface Guidelines)
+# SecureDroid 设计系统 · Minimalism & Swiss Style
 
 ![设计稿](mockup-sheet.png)
 
-> 上图由 `design/render_mockup.py` 按本文件的令牌 1:1 渲染生成,**不是真机截图**。
-> 令牌改动后重跑脚本即可看到界面随之变化(色值需与 `res/values*/colors.xml` 手工同步)。
+> 设计稿由 `design/render_mockup.py` 按本文件令牌 1:1 渲染;`design/generate_layouts.mjs` 由同一套令牌**生成**全部布局。
+> 两者都不是真机截图。
 
-## 一、信息架构:三大板块
+## 一、来源:ui-ux-pro-max 的解析结果(不是我的口味)
 
-| 板块 | 二级功能(板内 iOS 分段控件) |
+| 技能调用 | 返回 | 采纳方式 |
+| --- | --- | --- |
+| `--design-system "mobile security utility antivirus app dark protective" --variance 5 --motion 4 --density 5` | **Style: Minimalism & Swiss Style**(Clean, simple, spacious, functional, white space, high contrast, geometric, grid-based);**Pattern: Trust & Authority** | 定为唯一风格基线;分区靠留白(24/32dp),卡片靠 1dp 边框而不是阴影 |
+| 同上 · Colors | primary `#0F172A` / accent `#0369A1` / background `#F8FAFC` / foreground `#020617` / card `#FFFFFF` / muted `#E8ECF1` / muted-fg `#475569` / border `#E2E8F0` / destructive `#DC2626` | 原样采纳为浅色令牌;accent 之外的颜色一律不引入 |
+| 同上 · Key Effects | "Subtle hover 200-250ms, smooth transitions, **sharp shadows if any**, clear type hierarchy" | 卡片 0dp 阴影 + 1dp 边框;动效 200-320ms |
+| `--domain color "dark mode surface elevation contrast"` | 深色表面层级 Background `#020617` / Card `#0E1223` / Muted `#1A1E2F` / Muted-fg `#94A3B8` / Border `#334155` | 原样采纳为深色令牌 |
+| `--domain web "bottom navigation tab bar app section"` | Bottom tabs ≤5(Do: 3–5 tabs);Back behavior must be predictable | 沿用三大板块(状态/检测/防护) |
+| `--domain ux "list row density information hierarchy scan"` | Color Only(High):不得只靠颜色表意 | 状态一律"颜色 + 文字"双通道(评分环 + 状态文案;结果行含状态词) |
+| `--domain ux "loading feedback ... reduced motion"` | Reduced Motion(High):尊重系统动效设置;Progress Indicators:多步流程必须给进度 | 动效受系统动画时长缩放控制;扫描/查杀全程进度条 + 阶段文案 |
+| 规则表 §1–§10(SKILL.md) | 触摸 ≥48dp、相邻 ≥8dp、正文 16px/1.5、对比度 ≥4.5:1、不用 emoji 当图标、图标同一风格 | 全部落到令牌与自检清单 |
+
+### 明确记录的偏差(技能要求"先验证适配性再套用")
+
+| 项 | 技能建议 | 实际做法 | 原因 |
+| --- | --- | --- | --- |
+| 字体 | IBM Plex Sans(Google Fonts) | Android 系统字体 | 界面是中文,CJK 覆盖率优先;内置西文字体会造成中英混排断层并增加包体 |
+| 深色 accent | 返回值为 `#EF4444`(与 destructive 同色) | CTA 用 `#38BDF8` | 技能自身的规则禁止"同一颜色表达两种含义";`#EF4444` 在 #020617 上做 CTA 会与危险态混淆 |
+| 行高 | Body 16px / 1.5 | 16sp + `lineSpacingExtra 8dp`(≈1.5) | Android 以额外行距表达行高 |
+
+## 二、信息架构(沿用并保持)
+
+| 板块 | 二级功能(板内分段控件) |
 | --- | --- |
 | **状态** | 评分环 + 快速入口 + 防护开关 |
 | **检测** | 病毒扫描 · 木马查杀 |
 | **防护** | 应用锁 · 权限审计 · 工具箱 |
 
-## 二、设计依据
-
-HIG 与 UI/UX Pro Max 的取舍不同,**冲突时以更严的一方为准**(说明写在每条规则后面):
-
-| 来源 | 采纳的规则 | 与 Android 规范的冲突如何裁决 |
-| --- | --- | --- |
-| **Apple HIG · Color** | 用**语义化系统色**(label / secondaryLabel / separator / systemGroupedBackground…),不按外观硬编码;同一颜色不表达两种含义 | 系统色直接照搬 iOS 的 light/dark 数值 |
-| **Apple HIG · Typography** | 使用 Dynamic Type 的命名尺度:Large Title 34 · Title 17 semibold · Body 17 · Footnote 13 · Caption 12 | 单位换成 sp,随系统字体缩放 |
-| **Apple HIG · Lists and tables** | inset grouped:10dp 圆角分组卡,行内不画卡片;分隔线只画在行与行之间 | 行高取 **48dp**(Android 触摸目标下限)而不是 iOS 的 44pt —— 取更严的一方 |
-| **Apple HIG · Tab bars** | 顶层导航用标签栏;图标优先用**实心符号**;必须有文字标签;不要禁用/隐藏标签 | 3 个标签,无指示条,选中只用 systemBlue 着色 |
-| **Apple HIG · Segmented controls** | 段数 ≤5,段宽一致,同层只用文字或只用图标 | 2–3 段,纯文字 |
-| **Apple HIG · Materials** | 玻璃只用于功能层;内容层用可读的不透明表面 | 标签栏是唯一的半透明元素 |
-| **UI/UX Pro Max** | 触摸目标 ≥48dp、相邻间距 ≥8dp、正文对比度 ≥4.5:1、不用 emoji 当图标、状态不靠颜色单独表意 | 与 HIG 一致,直接叠加 |
-
-> **没有照搬的**:iOS 的返回手势、导航栏胶囊按钮、Dynamic Island —— 这些依赖 iOS 系统行为,
-> 在 Android 上硬造只会得到一个"不像 iOS 也不像 Android"的界面。这里翻译的是**原则**,不是外形。
-
 ## 三、令牌
 
-### 1. 系统色(浅色 / 深色)
+### 色彩(浅 / 深)
 
-| 角色 | 浅色 | 深色 |
-| --- | --- | --- |
-| systemBlue(主行动、可点文本、选中态) | `#007AFF` | `#0A84FF` |
-| systemGreen(安全 / 开关打开) | `#34C759` | `#30D158` |
-| systemOrange(警示) | `#FF9500` | `#FF9F0A` |
-| systemRed(危险) | `#FF3B30` | `#FF453A` |
-| label / secondaryLabel / tertiaryLabel | `#000000` / 60% / 30% | `#FFFFFF` / 60% / 30% |
-| separator | `#3C3C4349` | `#545458A6` |
-| systemGroupedBackground(页面底) | `#F2F2F7` | `#000000` |
-| secondarySystemGroupedBackground(分组卡) | `#FFFFFF` | `#1C1C1E` |
-| systemFill(胶囊底 / 分段轨道) | `#7676801F` | `#7676803D` |
-| 分段控件选中块 | `#FFFFFF` | `#636366` |
+| 角色 | 浅色 | 深色 | 用途 |
+| --- | --- | --- | --- |
+| primary / on-primary | `#0F172A` / `#FFFFFF` | `#F8FAFC` / `#0F172A` | 主按钮、标题 |
+| accent | `#0369A1` | `#38BDF8` | 唯一的强调色:进度、选中态、主行动 |
+| background / foreground | `#F8FAFC` / `#020617` | `#020617` / `#F8FAFC` | 页面底 / 正文 |
+| card / muted / border | `#FFFFFF` / `#E8ECF1` / `#E2E8F0` | `#0E1223` / `#1A1E2F` / `#334155` | 卡片 / 次级面 / 1dp 边框 |
+| muted-foreground | `#475569` | `#94A3B8` | 次级文字 |
+| success / gold / destructive | `#15803D` / `#A16207` / `#DC2626` | `#22C55E` / `#FBBF24` / `#EF4444` | 安全 / 警示 / 危险 |
 
-旧令牌名(`sd_brand` / `sd_text` / `status_*` …)保留为别名,映射到上表的角色,避免推翻既有布局。
+旧令牌名(`sd_*`、`ios_*`、`status_*`)全部保留为**别名**指向上面这套语义色,因此整套界面共享一个色板,不存在并行体系。
 
-### 2. 字体(Dynamic Type,Large 档)
+### 尺寸 / 字体 / 动效
 
-| 样式 | 字号 | 用途 |
-| --- | --- | --- |
-| Large Title | 34sp bold | 页面标题 |
-| Display | 40sp bold | 评分数字 |
-| Headline | 17sp bold | 列表行标题 |
-| Body | 17sp / 行高 +5dp | 正文、行文本 |
-| Footnote | 13sp | 分组标题(大写)、辅助说明 |
-| Caption | 11sp | 标签栏文字 |
+- 间距 4/8/12/16/24/32/48;页面边距 16;行高 56;触摸下限 48;标签栏 60;
+- 圆角:卡片 12、控件 8、标签 6;
+- 字体 6 级:Display 34 / Title 26 / Headline 20 / Body 16(行高 1.5)/ Label 14 / Section 12(大写 +0.08 字距);
+- 动效:列表错峰入场 250–350ms 缓出;按压用涟漪反馈;全部受系统动画时长缩放控制。
 
-### 3. 度量
+## 四、可复现:布局由令牌生成
 
-- 屏幕边距 **16dp**(iOS grouped list 标准);分组卡圆角 **10dp**;
-- 行高 **48dp**;标签栏 **50dp**;分段控件可点高度 **44dp**;
-- 分隔线 **0.5dp**,左侧内缩 52dp(有图标)/ 16dp(无图标),与文字对齐;
-- 主按钮 50dp 高、10dp 圆角、systemBlue 底 + 17sp semibold 白字。
+`design/generate_layouts.mjs` 是本次的落地方式 —— 17 个布局文件由脚本从令牌生成,而不是逐页手写:
 
-### 4. 动效
+    node design/generate_layouts.mjs     # 覆盖 app/src/main/res/layout/ 下的 17 个布局
 
-列表项入场沿用轻微淡入位移(280–320ms 缓出),按压缩放动画已**移除** ——
-iOS 的按压反馈是"高亮变暗",不是缩放。所有动效受系统动画时长缩放控制。
+好处是"设计令牌 → 界面"的映射是**可执行、可复查**的:改令牌或改分区结构,重跑脚本即可,
+不会出现"某个页面忘了改"的漂移。代价是脚本与 XML 需保持同步(脚本是唯一写入方)。
 
-## 四、实现落点
+## 五、自检清单(技能 §1–§10 + pro-rules)
 
-| 规范 | 实现 |
-| --- | --- |
-| 分组列表 | `fragment_*.xml` 用 `Widget.SecureDroid.Card`(10dp 圆角)+ 行布局;分隔线由 `ui/InsetDividerDecoration` 绘制,只画在行与行之间 |
-| 行 | `item_*.xml`:MinHeight 48dp,无卡片,靠外层分组卡收纳 |
-| 披露指示符 | `drawable/ic_chevron.xml`,装饰性元素(`importantForAccessibility="no"`) |
-| 分段控件 | `bg_segment_track`(轨道)+ `color/seg_bg`(选中块)+ `Widget.SecureDroid.Segment` |
-| 开关 | `color/switch_track`(打开 = systemGreen)+ `color/switch_thumb` |
-| 标签栏 | `drawable/bg_tabbar.xml`(通栏 + 顶部 0.5dp 线)+ `color/tab_text.xml` + 实心图标 `ic_tab_*` |
-| 评分环 | Material `CircularProgressIndicator` 定值模式,环 = 分值,颜色随状态切换 |
-
-## 五、自检清单(HIG + UI/UX Pro Max)
-
-- [x] 触摸目标 ≥48dp(行、按钮、开关、分段)
-- [x] 正文对比度 ≥4.5:1(浅色 label #000000 / 白卡;深色 #FFFFFF / #1C1C1E)
-- [x] 颜色不单独表意(评分环配状态文案;结果行既有状态词也有颜色)
-- [x] 深/浅两套系统色独立定义,由 `NightThemeTokenTest` 校验覆盖与差异
-- [x] 图标:内容区线性(2dp 描边)、标签栏实心,两套层级分明且各自统一
-- [x] 标签栏 3 项、有文字标签、不存在禁用/隐藏项
-- [x] 分段控件段数 ≤5、纯文字、等宽
-- [x] 装饰性图标不进入无障碍树(`importantForAccessibility="no"`)
-- [ ] 真机 / 模拟器视觉验证 —— 环境无可用设备(设计稿为令牌渲染,非截图)
-- [ ] Dynamic Type 极端字号下的布局回归 —— 尚未在真机验证
-
-## 六、重新生成设计稿
-
-    python design/render_mockup.py     # 输出 design/mockup-sheet.png
+- [x] 触摸目标 ≥48dp;相邻点击区 ≥8dp(行高 56dp,分段 44dp 可点高度)
+- [x] 正文 16sp、行高约 1.5;次级文字两套主题对比度均 ≥4.5:1
+- [x] 不只靠颜色表意(状态 = 颜色 + 文字)
+- [x] 深/浅两套令牌独立定义,`NightThemeTokenTest` 校验覆盖与差异
+- [x] 图标统一:内容区 2dp 线性、标签栏实心,两层分级;无 emoji 图标
+- [x] 底部导航 3 项(≤5),无横向滚动,不存在禁用/隐藏项
+- [x] 多步流程有进度条与阶段文案;动效尊重系统设置
+- [ ] 真机 / 模拟器视觉验证 —— 环境无可用设备
+- [ ] 未清理的历史令牌别名仍有 Lint UnusedResources 告警(见 CHANGELOG 已知项)

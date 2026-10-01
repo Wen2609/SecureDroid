@@ -1,48 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  应用主题:把设计令牌接到 Material 3 主题属性上,让系统组件(卡片/按钮/开关/对话框)自动继承。
-  参考:ColorOS 17「流体设计」—— 凝光视效(亮边+低阴影)、流体动效(300ms 级缓出)、柔性反馈(按压缩放);
-       Apple HIG —— 玻璃只出现在功能层(工具栏/入口条),内容层保持可读的不透明表面。
--->
+<!-- 应用主题:把 ui-ux-pro-max 返回的语义色接到 Material 3 主题属性上 -->
 <resources>
     <style name="Theme.SecureDroid" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/sd_brand</item>
-        <item name="colorOnPrimary">@color/sd_on_primary</item>
-        <item name="colorPrimaryContainer">@color/sd_brand</item>
-        <item name="colorOnPrimaryContainer">@color/sd_on_primary</item>
-        <item name="colorSecondary">@color/sd_glow</item>
-        <item name="colorOnSecondary">@color/sd_on_brand</item>
+        <item name="colorPrimary">@color/c_primary</item>
+        <item name="colorOnPrimary">@color/c_on_primary</item>
+        <item name="colorPrimaryContainer">@color/c_primary</item>
+        <item name="colorOnPrimaryContainer">@color/c_on_primary</item>
+        <item name="colorSecondary">@color/c_accent</item>
+        <item name="colorOnSecondary">@color/c_on_accent</item>
 
-        <item name="android:colorBackground">@color/sd_bg</item>
-        <item name="colorSurface">@color/sd_surface</item>
-        <item name="colorOnSurface">@color/sd_text</item>
-        <item name="colorSurfaceVariant">@color/sd_surface_soft</item>
-        <item name="colorOnSurfaceVariant">@color/sd_text_secondary</item>
-        <item name="colorOutline">@color/sd_hairline</item>
-        <item name="colorOutlineVariant">@color/sd_hairline_soft</item>
-        <item name="colorError">@color/sd_danger</item>
-        <item name="colorOnError">@color/sd_on_primary</item>
+        <item name="android:colorBackground">@color/c_background</item>
+        <item name="colorSurface">@color/c_card</item>
+        <item name="colorOnSurface">@color/c_foreground</item>
+        <item name="colorSurfaceVariant">@color/c_muted</item>
+        <item name="colorOnSurfaceVariant">@color/c_muted_foreground</item>
+        <item name="colorOutline">@color/c_border</item>
+        <item name="colorOutlineVariant">@color/c_border</item>
+        <item name="colorError">@color/c_destructive</item>
+        <item name="colorOnError">@color/c_on_destructive</item>
 
-        <!-- 内容层背景:凝光渐变 + 两处光晕 -->
         <item name="android:windowBackground">@drawable/bg_fluid</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@color/sd_bg</item>
+        <item name="android:navigationBarColor">@color/c_background</item>
 
-        <!-- 组件默认样式 -->
         <item name="materialCardViewStyle">@style/Widget.SecureDroid.Card</item>
         <item name="materialButtonStyle">@style/Widget.SecureDroid.Button</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.SecureDroid.Title</item>
-        <item name="textAppearanceTitleMedium">@style/TextAppearance.SecureDroid.Title</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.SecureDroid.Headline</item>
         <item name="textAppearanceTitleSmall">@style/TextAppearance.SecureDroid.Section</item>
         <item name="textAppearanceBodyMedium">@style/TextAppearance.SecureDroid.Body</item>
         <item name="textAppearanceBodySmall">@style/TextAppearance.SecureDroid.Label</item>
         <item name="textAppearanceLabelMedium">@style/TextAppearance.SecureDroid.Label</item>
         <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.SecureDroid.Card</item>
         <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.SecureDroid.Inner</item>
-
-        <!-- 页面切换用系统级过渡,避免自定义转场在低端机上掉帧 -->
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowContentTransitions">true</item>
     </style>
 </resources>

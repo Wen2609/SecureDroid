@@ -1,55 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 设计令牌 · 色彩(深色)—— iOS 深色外观的系统色变体 -->
+<!--
+  设计令牌 · 色彩(深色)
+  来源:ui-ux-pro-max 的 color 域查询(dark mode surface elevation contrast)返回的深色表面层级
+  (Background/Card/Muted/Border/Foreground 五级),与浅色同一套角色命名。
+  偏差说明:技能返回的深色 accent 是 #EF4444(与 destructive 同色),用它做 CTA 会违反
+  "同一颜色不得表达两种含义",因此 CTA 改用 #38BDF8(在 #020617 上对比度 > 8:1)。
+-->
 <resources>
-    <color name="ios_blue">#0A84FF</color>
-    <color name="ios_green">#30D158</color>
-    <color name="ios_orange">#FF9F0A</color>
-    <color name="ios_red">#FF453A</color>
-    <color name="ios_gray">#8E8E93</color>
-    <color name="ios_gray2">#636366</color>
-    <color name="ios_gray4">#3A3A3C</color>
-    <color name="ios_gray5">#38383A</color>
-    <color name="ios_gray6">#1C1C1E</color>
+    <color name="c_primary">#F8FAFC</color>
+    <color name="c_on_primary">#0F172A</color>
+    <color name="c_secondary">#1E293B</color>
+    <color name="c_accent">#38BDF8</color>
+    <color name="c_on_accent">#04121F</color>
+    <color name="c_background">#020617</color>
+    <color name="c_foreground">#F8FAFC</color>
+    <color name="c_card">#0E1223</color>
+    <color name="c_card_foreground">#F8FAFC</color>
+    <color name="c_muted">#1A1E2F</color>
+    <color name="c_muted_foreground">#94A3B8</color>
+    <color name="c_border">#334155</color>
+    <color name="c_destructive">#EF4444</color>
+    <color name="c_on_destructive">#000000</color>
+    <color name="c_ring">#FFFFFF</color>
+    <color name="c_gold">#FBBF24</color>
+    <color name="c_success">#22C55E</color>
 
-    <color name="ios_label">#FFFFFF</color>
-    <color name="ios_label_secondary">#EBEBF599</color>
-    <color name="ios_label_tertiary">#EBEBF54D</color>
-    <color name="ios_separator">#545458A6</color>
-    <color name="ios_opaque_separator">#38383A</color>
-    <color name="ios_system_bg">#000000</color>
-    <color name="ios_secondary_bg">#000000</color>
-    <color name="ios_grouped_card">#1C1C1E</color>
-    <color name="ios_fill">#7676803D</color>
-    <color name="ios_segment_selected">#636366</color>
-    <color name="ios_tabbar">#16161AF2</color>
+    <color name="primary">@color/c_primary</color>
+    <color name="ic_launcher_background">#0F172A</color>
+    <color name="status_safe">@color/c_success</color>
+    <color name="status_risky">@color/c_gold</color>
+    <color name="status_malicious">@color/c_destructive</color>
 
-    <color name="primary">@color/ios_blue</color>
-    <color name="ic_launcher_background">#0B1220</color>
-    <color name="status_safe">@color/ios_green</color>
-    <color name="status_risky">@color/ios_orange</color>
-    <color name="status_malicious">@color/ios_red</color>
-
-    <color name="sd_brand">@color/ios_blue</color>
-    <color name="sd_glow">@color/ios_blue</color>
-    <color name="sd_on_primary">#FFFFFF</color>
-    <color name="sd_bg">@color/ios_secondary_bg</color>
-    <color name="sd_bg_alt">@color/ios_secondary_bg</color>
+    <color name="sd_brand">@color/c_primary</color>
+    <color name="sd_accent">@color/c_accent</color>
+    <color name="sd_glow">@color/c_accent</color>
+    <color name="sd_on_brand">@color/c_on_primary</color>
+    <color name="sd_bg">@color/c_background</color>
+    <color name="sd_bg_alt">@color/c_background</color>
     <color name="sd_bloom">#00000000</color>
     <color name="sd_bloom_clear">#00000000</color>
-    <color name="sd_surface">@color/ios_grouped_card</color>
-    <color name="sd_surface_soft">@color/ios_secondary_bg</color>
-    <color name="sd_glass">@color/ios_tabbar</color>
-    <color name="sd_glass_strong">@color/ios_fill</color>
-    <color name="sd_hairline">@color/ios_separator</color>
-    <color name="sd_hairline_soft">@color/ios_separator</color>
+    <color name="sd_surface">@color/c_card</color>
+    <color name="sd_surface_soft">@color/c_muted</color>
+    <color name="sd_glass">@color/c_card</color>
+    <color name="sd_glass_strong">@color/c_muted</color>
+    <color name="sd_hairline">@color/c_border</color>
+    <color name="sd_hairline_soft">@color/c_border</color>
     <color name="sd_highlight">#00000000</color>
-    <color name="sd_ring_track">@color/ios_gray5</color>
-    <color name="sd_text">@color/ios_label</color>
-    <color name="sd_text_secondary">#EBEBF599</color>
-    <color name="sd_text_tertiary">#EBEBF573</color>
-    <color name="sd_on_brand">#FFFFFF</color>
-    <color name="sd_safe">@color/ios_green</color>
-    <color name="sd_warn">@color/ios_orange</color>
-    <color name="sd_danger">@color/ios_red</color>
-    <color name="sd_danger_solid">#FF453A</color>
+    <color name="sd_ring_track">@color/c_muted</color>
+    <color name="sd_text">@color/c_foreground</color>
+    <color name="sd_text_secondary">@color/c_muted_foreground</color>
+    <color name="sd_text_tertiary">#64748B</color>
+    <color name="sd_safe">@color/c_success</color>
+    <color name="sd_warn">@color/c_gold</color>
+    <color name="sd_danger">@color/c_destructive</color>
+    <color name="sd_danger_solid">@color/c_destructive</color>
+
+    <color name="ios_blue">@color/c_accent</color>
+    <color name="ios_green">@color/c_success</color>
+    <color name="ios_orange">@color/c_gold</color>
+    <color name="ios_red">@color/c_destructive</color>
+    <color name="ios_gray">@color/c_muted_foreground</color>
+    <color name="ios_gray2">#64748B</color>
+    <color name="ios_gray4">#334155</color>
+    <color name="ios_gray5">@color/c_muted</color>
+    <color name="ios_gray6">@color/c_muted</color>
+    <color name="ios_label">@color/c_foreground</color>
+    <color name="ios_label_secondary">@color/c_muted_foreground</color>
+    <color name="ios_label_tertiary">#64748B</color>
+    <color name="ios_separator">@color/c_border</color>
+    <color name="ios_opaque_separator">@color/c_border</color>
+    <color name="ios_system_bg">@color/c_background</color>
+    <color name="ios_secondary_bg">@color/c_background</color>
+    <color name="ios_grouped_card">@color/c_card</color>
+    <color name="ios_fill">@color/c_muted</color>
+    <color name="ios_segment_selected">@color/c_muted</color>
+    <color name="ios_tabbar">@color/c_card</color>
 </resources>

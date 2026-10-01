@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- iOS 进度条:4dp 细圆角轨道 + systemBlue 填充 -->
+<!-- 进度条:4dp 中性轨道 + accent 填充(规则:多步流程必须给出进度) -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/sd_radius_pill" />
-            <solid android:color="@color/ios_gray5" />
+            <corners android:radius="2dp" />
+            <solid android:color="@color/c_muted" />
         </shape>
     </item>
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
-                <corners android:radius="@dimen/sd_radius_pill" />
-                <solid android:color="@color/sd_brand" />
+                <corners android:radius="2dp" />
+                <solid android:color="@color/c_accent" />
             </shape>
         </clip>
     </item>

@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 通用结果列表页:玻璃页头 + 流体进度 + 卡片行结果 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_fluid"
-    android:orientation="vertical">
-
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/sd_glass"
-        android:paddingHorizontal="@dimen/sd_gutter"
-        android:paddingVertical="@dimen/sd_space_4"
-        android:textAppearance="@style/TextAppearance.SecureDroid.Title"
-        android:textColor="@color/sd_text" />
-
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/sd_gutter"
+            android:paddingVertical="@dimen/sd_space_4"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Title"
+            android:textColor="@color/c_foreground" />
     <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginHorizontal="@dimen/sd_gutter"
-        android:layout_marginTop="@dimen/sd_space_3"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/sd_brand"
-        android:progressDrawable="@drawable/progress_fluid" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layoutAnimation="@anim/sd_list_layout"
-        android:layout_marginTop="@dimen/sd_space_3"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingHorizontal="@dimen/sd_gutter"
-        android:paddingBottom="@dimen/sd_space_5" />
-</LinearLayout>
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_fluid" />
+    <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.SecureDroid.Card"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:layout_marginBottom="@dimen/sd_space_4"
+            android:layout_marginHorizontal="@dimen/sd_gutter"
+            android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
