@@ -47,6 +47,28 @@
 - **运行时缺陷**:`RootkitDetector` 变量先用后声明、`ShredTool` 在 `OutputStream` 上调用 `fd.sync()`、`SystemBaseline` 的 `KeyguardManager` 包名错误、`VaultActivity` 缺少 `toast(Int)` 重载、`SosActivity` 缺少 `RingtoneManager` import 与弃用 API 替换;
 - `.gitignore` 重写为合法 UTF-8(此前为 ANSI,工具无法解析)。
 
+### Added / Corrected — 依据官方文档的核查与加固
+
+对照 ClamAV 官方签名格式文档核查后发现**兼容性声明与实现不符**,已修正:
+
+- **`.ndb` 解析器此前不兼容官方格式**:实现的是一套自定义分号分隔格式(`名称;偏移;HEX;严重度;目标`),
+  而官方 `.ndb` 为冒号分隔的 `名称:目标类型:偏移:HEX[:min_flevel[:max_flevel]]`,
+  真实 ClamAV 特征库无法加载。现已按官方格式重写解析,并保留历史格式的向后兼容;
+- **新增偏移语义支持**:`*`(任意位置)、绝对偏移 `n`、`EOF-n`(文件尾偏移)、浮动区间 `n,MaxShift`;
+  位置固定的特征改为直接定位,**零扫描开销**(此前所有特征都做全量扫描);
+  `EP+/Sx+/SL+` 等仅对 PE/ELF/Mach-O 生效的语义统一退化为任意位置,避免漏报;
+- **新增 `.hsu` / `.ndu` 扩展名识别**,与 ClamAV 命名一致;
+- 内置演示特征改写为官方格式(任意位置 / 绝对偏移 / 文件尾三种形态各一条),并保留一条历史格式用于回归。
+
+安全加固(参考 OWASP MASVS 与 Android 平台机制):
+
+- 锁屏页与文件保险箱启用 `FLAG_SECURE`,禁止截屏 / 录屏 / 最近任务缩略图;
+- 锁屏页根布局启用 `filterTouchesWhenObscured`,阻断悬浮窗覆盖点击劫持;
+- 新增 `network_security_config.xml`:全局禁止明文流量、仅信任系统 CA;
+- 新增 `dataExtractionRules`:敏感数据不进入云备份与设备迁移(修复 Lint 的 DataExtractionRules 警告);
+- 特征库在线更新(`FeatureUpdater`)加固:仅接受 **https**(含重定向后复检)、**SHA-256 必填**、
+  内容合理性校验(拒绝 HTML 错误页 / 空内容)—— 特征库投毒等于让查杀引擎失效。
+
 ### Changed
 
 - **性能**:扫描线程池跨扫描复用(自适应 2-6 线程)、APK 哈希缓存内存 LRU + 批量落盘、ClamAV 字节特征改为单遍锚点索引匹配、`HashCache` 超限按 LRU 淘汰而非整表清空;

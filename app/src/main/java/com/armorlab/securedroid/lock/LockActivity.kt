@@ -15,6 +15,11 @@ class LockActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 禁止截屏 / 录屏 / 最近任务缩略图:防止 PIN 被截屏木马或被旁人看到
+        window.setFlags(
+            android.view.WindowManager.LayoutParams.FLAG_SECURE,
+            android.view.WindowManager.LayoutParams.FLAG_SECURE
+        )
         // 未设置 PIN 时直接放行,避免把自己锁死
         if (!AppLockStore.hasPin(this)) {
             finish()

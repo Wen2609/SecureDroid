@@ -121,6 +121,35 @@ WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超�
 
 CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
 
+## 安全加固
+
+参考 OWASP MASVS 与 Android 平台安全机制实施:
+
+| 措施 | 位置 | 作用 |
+| --- | --- | --- |
+| `FLAG_SECURE` | 锁屏页、文件保险箱 | 禁止截屏 / 录屏 / 最近任务缩略图,防止 PIN 与文件内容泄露 |
+| `filterTouchesWhenObscured` | 锁屏页根布局 | 阻止悬浮窗覆盖点击劫持(tapjacking)窃取 PIN |
+| 禁止明文流量 | `res/xml/network_security_config.xml` | 全局 `cleartextTrafficPermitted=false`,仅信任系统 CA |
+| 禁止备份 / 迁移 | `allowBackup=false` + `dataExtractionRules` | 敏感数据不进入云备份与设备迁移 |
+| 特征库更新强制完整性 | `FeatureUpdater` | 仅接受 https(含重定向后)、SHA-256 **必填**、内容合理性校验 —— 防止特征库被投毒导致查杀失效 |
+| 提权命令策略 | `PrivilegedPolicy` | 灾害级命令(整根删除 / 格式化 / 写分区 / 恢复出厂)在提权层强制拦截并留痕审计 |
+
+## ClamAV 特征库兼容性
+
+格式实现依据 ClamAV 官方文档:
+[Extended Signatures](https://docs.clamav.net/manual/Signatures/ExtendedSignatures.html) ·
+[Hash Signatures](https://docs.clamav.net/manual/Signatures/HashSignatures.html)
+
+| 文件 | 行格式 | 支持情况 |
+| --- | --- | --- |
+| `.hsb` / `.hsu` | `hash(64 hex):文件大小:名称` | 完整支持(大小为 0 表示忽略长度) |
+| `.ndb` / `.ndu` | `名称:目标类型:偏移:HEX[:min_flevel[:max_flevel]]` | 支持;偏移语义:`*` 任意位置、`n` 绝对偏移、`EOF-n` 文件尾偏移、`n,MaxShift` 浮动区间;`EP+/Sx+/SL+`(仅 PE/ELF/Mach-O)安全退化为任意位置以免漏报 |
+| `.hdb`(MD5)/ `.hdu` | `md5:大小:名称` | 不支持:本引擎按 SHA-256 计算文件指纹 |
+
+扫描性能:任意位置特征走单遍锚点分桶匹配;绝对偏移与 EOF 偏移特征直接定位,零扫描开销。
+
+> 历史兼容:早期版本使用的自定义分号格式 `名称;偏移;HEX;严重度;目标` 仍可解析,旧演示特征无需改动。
+
 ## 发布版签名与混淆
 
 - release 已启用 R8 混淆与资源压缩(规则见 app/proguard-rules.pro)与资源裁剪;

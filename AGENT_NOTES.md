@@ -56,6 +56,13 @@
 - 已由该套件抓出的两个致命缺陷:WorkManager 未初始化崩溃、BottomNavigationView 6 项超限崩溃 —— 改动导航或启动逻辑后务必重跑
 - 导航约定:底部入口用可滚动 TabLayout(BottomNavigationView 上限 5 项);入口定义源仍是 res/menu/bottom_nav.xml
 
+## 签名引擎与安全约定
+- ClamAV 兼容以官方文档为准:https://docs.clamav.net/manual/Signatures/ExtendedSignatures.html
+  .ndb = 名称:目标类型:偏移:HEX(冒号分隔);偏移支持 * / n / EOF-n / n,MaxShift;旧分号格式为历史兼容,勿再新增
+- 改动签名解析后必须跑 ClamAvSignatureEngineTest(真实加载 assets 并校验三种偏移语义)
+- 安全约定:涉及秘密的界面必须 FLAG_SECURE;可被覆盖点击的关键界面加 filterTouchesWhenObscured;
+  网络请求必须 https;特征库/规则类更新必须校验 SHA-256(FeatureUpdater 已强制)
+
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
 - 编译错误集中修完再编译,别一轮一修

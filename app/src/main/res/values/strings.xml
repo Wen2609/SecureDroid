@@ -161,7 +161,7 @@
     <string name="vc_report">威胁报告导出</string>
     <string name="vc_done_fmt">完成:%1$d 项结果</string>
     <string name="vc_update_url">特征文件 URL(.hsb / .ndb)</string>
-    <string name="vc_update_sha">校验 SHA-256(可选,强烈建议)</string>
+    <string name="vc_update_sha">校验 SHA-256(必填,确认特征库完整性)</string>
     <string name="vc_update_btn">下载并加载</string>
     <string name="vc_update_need_url">请输入特征文件 URL</string>
     <string name="vc_trust_title">信任列表(点击移除信任)</string>

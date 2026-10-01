@@ -31,6 +31,11 @@ class VaultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 保险箱涉及密码与文件内容:禁止截屏 / 录屏 / 最近任务缩略图
+        window.setFlags(
+            android.view.WindowManager.LayoutParams.FLAG_SECURE,
+            android.view.WindowManager.LayoutParams.FLAG_SECURE
+        )
         binding = ActivityVaultBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.tvTitle.setText(R.string.tool_vault)

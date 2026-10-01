@@ -1,3 +1,19 @@
-# ClamAV 兼容签名(.ndb:十六进制字节特征)格式:名称;偏移;HEX(支持?通配);严重度;目标
-# 该特征解码为 ASCII 标记串 "APK-TROJAN-TEST-SIGNATURE",用于自检字节码扫描链路
-Test.Trojan.Marker;0;41504B2D54524F4A414E2D544553542D5349474E4154555245;70;*
+# ClamAV 扩展签名(.ndb)演示库。格式依据官方文档:
+#   https://docs.clamav.net/manual/Signatures/ExtendedSignatures.html
+#   名称:目标类型:偏移:HEX特征[:min_flevel[:max_flevel]]
+#     目标类型: 0=任意, 1=PE, 6=ELF, ...
+#     偏移: * = 任意位置 | n = 绝对偏移 | EOF-n = 文件尾往前 n 字节 | n,MaxShift = 浮动偏移区间
+#     HEX 中 ? 为半字节通配(如 4? 表示高半字节为 4)
+# 以下均为自检用演示特征,解码后是明文标记串,便于验证扫描链路。
+
+# 任意位置匹配:ASCII "APK-TROJAN-TEST-SIGNATURE"
+Test.Trojan.Marker:0:*:41504B2D54524F4A414E2D544553542D5349474E4154555245
+
+# 绝对偏移匹配:DEX 文件头魔数 "dex\n035"(偏移 0)
+Test.Trojan.DexHeader:0:0:6465780A303335
+
+# 文件尾偏移匹配:末尾 4 字节为 "EVIL"
+Test.Trojan.TailMarker:0:EOF-4:4556494C
+
+# 历史自定义格式(分号分隔)仍兼容:名称;偏移;HEX;严重度;目标
+Test.Trojan.LegacyMarker;0;41504B2D4C45474143592D54455354;70;*

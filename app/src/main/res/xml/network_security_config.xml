@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  网络安全配置(参考 OWASP MASVS-NETWORK):
+  - 全局禁止明文 HTTP 流量,特征库更新等所有网络请求必须走 TLS;
+  - 仅信任系统 CA,不额外信任用户安装的证书,降低中间人劫持风险。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
