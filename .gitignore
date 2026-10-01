@@ -1,3 +1,4 @@
+ï»¿# Build outputs
 *.iml
 .gradle/
 .idea/
@@ -5,13 +6,19 @@ local.properties
 build/
 app/build/
 captures/
+
+# Packages: only apks/*.apk is whitelisted as a release artifact
 *.apk
 *.aab
+!apks/*.apk
+
+# Signing material must never be committed
 *.jks
 *.keystore
+keystore.properties
 
-# ¹¹½¨²úÎï½ö±£Áô apks/ Ä¿Â¼ÏÂµÄ·¢²¼°ü
-!apks/*.apk
+# Build logs
+*.log
 build_out.log
 build_err.log
 rel.log

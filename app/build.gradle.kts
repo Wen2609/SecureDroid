@@ -1,12 +1,36 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
 }
 
+// 发布签名配置:凭据放 keystore.properties(已 gitignore),缺失时 release 保持未签名,
+// 保证 CI / 其他开发者没有密钥也能正常构建。
+val keystorePropsFile = rootProject.file("keystore.properties")
+val hasReleaseSigning = keystorePropsFile.exists()
+val keystoreProps = Properties().apply {
+    if (hasReleaseSigning) keystorePropsFile.inputStream().use { load(it) }
+}
+
 android {
     namespace = "com.armorlab.securedroid"
     compileSdk = 34
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+            }
+        }
+    }
 
     defaultConfig {
         applicationId = "com.armorlab.securedroid"
@@ -22,6 +46,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

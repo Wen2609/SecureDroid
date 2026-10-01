@@ -64,19 +64,53 @@
 
 ## 构建步骤
 
-1. 安装 Android Studio(建议 Ladybug 或更新)与 JDK 17;
-2. 用 Android Studio 打开本目录,等待 Gradle Sync 完成;
-3. 若命令行构建需先生成 Wrapper(仓库不含二进制 jar):
+只需 JDK 17(项目自带 Gradle Wrapper,无需预装 Gradle):
 
-       gradle wrapper --gradle-version 8.7
-       ./gradlew assembleDebug
+    # Linux / macOS
+    ./gradlew assembleDebug
 
-4. 产物位于 app/build/outputs/apk/debug/app-debug.apk。
+    # Windows
+    gradlew.bat assembleDebug
+
+    # 或使用便捷脚本(只回显错误行与构建结果)
+    build.cmd
+
+用 Android Studio 打开本目录亦可,等待 Gradle Sync 完成即可构建。
+产物位于 app/build/outputs/apk/debug/app-debug.apk。
+
+### 测试与验证
+
+    ./gradlew testDebugUnitTest     # 38 项 JVM 单元测试
+    ./gradlew assembleRelease       # R8 混淆 + 签名发布包
+
+单元测试覆盖安全关键不变量:
+
+| 测试套件 | 项数 | 校验内容 |
+| --- | --- | --- |
+| PrivilegedPolicyTest | 15 | 提权安全策略:灾害级命令必须拒绝、防护命令必须放行、拒绝理由可读 |
+| FamilyClassifierTest | 9 | 木马家族分类:关键词命中稳定、混合信号结果确定 |
+| ResourceReferenceTest | 7 | 资源引用完整性:@string/@drawable/@color/@xml/@mipmap/@id 全部可解析(此前 ic_tool 缺失类构建失败由此拦截) |
+| ManifestInvariantsTest | 4 | 清单不变量:前台服务类型与权限一致、组件类真实存在、通知权限已声明 |
+| ScannerEngineTest | 3 | SHA-256 十六进制编码格式正确 |
+
+CI:.github/workflows/android.yml 在每次 push / PR 上自动跑测试、构建 debug 包并上传产物。
 
 ## 发布版签名与混淆
 
-- release 构建已启用 R8 混淆与资源压缩,规则见 app/proguard-rules.pro;
-- 正式发布前在 local.properties 或 CI 变量中配置签名密钥(keystore 不入库)。
+- release 已启用 R8 混淆与资源压缩(规则见 app/proguard-rules.pro)与资源裁剪;
+- 签名配置读取项目根目录的 keystore.properties(已 gitignore),密钥生成方式:
+
+      keytool -genkeypair -v -keystore <path>/securedroid-release.jks -alias securedroid -keyalg RSA -keysize 4096 -validity 10950
+
+  然后创建项目根目录 keystore.properties:
+
+      storeFile=<path>/securedroid-release.jks
+      storePassword=******
+      keyAlias=securedroid
+      keyPassword=******
+
+- 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
+- 已产出的可安装签名包见 apks/SecureDroid-v1.0.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096)。
 
 ## 注意事项
 

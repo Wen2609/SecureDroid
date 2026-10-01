@@ -1,6 +1,12 @@
 # SecureDroid Agent Notes(给 AI 会话的速查,先读这个再干活)
 
-## 构建环境(直接用 build.cmd,不要自己拼环境变量)
+## 构建环境
+- 优先用项目自带 Wrapper:gradlew.bat <task>(Windows)/ ./gradlew <task>;本机已把 Gradle 8.7 发行包播种到 C:\Android_build\.gradle\wrapper\dists\gradle-8.7-bin\bhs2wmbdwecv87pi65oeuq5iu,故 --offline 可用
+- 便捷脚本 build.cmd [task](只回显错误行 + BUILD 结果)
+- 签名:keystore 在 D:\DSH WORK\keystore\securedroid-release.jks,凭据在项目根 keystore.properties(已 gitignore);文件缺失时 release 自动未签名,CI 安全
+- 发布产物:apks/SecureDroid-v1.0.0-release-signed.apk(v2+v3 已签名,可安装)
+
+### 不要自己拼环境变量
 - JDK17: C:\Android_build\jdk-17 / SDK: C:\Android_build\sdk / Gradle 8.7: C:\Android_build\gradle-8.7\bin\gradle.bat
 - 禁止调用 C:\Android_build\env.bat(中文注释在 UTF-8 代码页下乱码会炸)
 - 一键构建: 项目根目录 `build.cmd [task]`,只打印错误行和 BUILD 结果
@@ -38,7 +44,7 @@
 ## 单元测试(改安全逻辑或清单后必须跑)
 - 运行:build.cmd testDebugUnitTest(或 gradle testDebugUnitTest)
 - 位置:app/src/test/java/com/armorlab/securedroid/
-- 覆盖:PrivilegedPolicyTest(提权安全策略)/ FamilyClassifierTest / ScannerEngineTest / ManifestInvariantsTest
+- 覆盖(38 项):PrivilegedPolicyTest(15)/ FamilyClassifierTest(9)/ ResourceReferenceTest(7,资源引用完整性)/ ManifestInvariantsTest(4)/ ScannerEngineTest(3)
 - ManifestInvariantsTest 校验:清单声明的 activity/service/receiver 类必须真实存在、FGS 类型与权限一致 —— 改 manifest 或删类后务必重跑
 
 ## 省钱须知(给 AI)
