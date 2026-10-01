@@ -43,7 +43,7 @@ const chevron = () => view("ImageView", { "android:layout_width": "20dp", "andro
   "android:importantForAccessibility": "no", "android:src": "@drawable/ic_chevron", "app:tint": "@color/c_muted_foreground" });
 const rowButton = (id, label, icon) => view("FrameLayout", { "android:layout_width": "match_parent", "android:layout_height": "@dimen/sd_row_height" },
   view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/" + id, style: "@style/Widget.SecureDroid.Button.Row",
-    "android:layout_width": "match_parent", "android:layout_height": "match_parent", "android:paddingEnd": "44dp",
+    "android:layout_width": "match_parent", "android:layout_height": "match_parent", "android:paddingStart": "@dimen/sd_space_4", "android:paddingEnd": "44dp",
     "android:text": label, "app:icon": "@drawable/" + icon }) + "\n" + chevron());
 const actionRow = (id, label, color) => view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/" + id,
   style: "@style/Widget.SecureDroid.Button.Row", "android:layout_width": "match_parent", "android:layout_height": "@dimen/sd_row_height",
@@ -278,6 +278,9 @@ out["item_trojan.xml"] = itemRow(text({ "android:id": "@+id/tvTitle", "android:l
 
 
 // ===== 其余活动 / 对话框 / 小组件:同样由令牌生成,避免出现"两套设计语言" =====
+const titleNoPad = () => text({ "android:id": "@+id/tvTitle", "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
+  "android:paddingBottom": "@dimen/sd_space_2", "android:textAppearance": "@style/TextAppearance.SecureDroid.Title",
+  "android:textColor": "@color/c_foreground" });
 const titleBlock = () => text({ "android:id": "@+id/tvTitle", "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
   "android:paddingTop": "@dimen/sd_space_4", "android:paddingBottom": "@dimen/sd_space_2",
   "android:textAppearance": "@style/TextAppearance.SecureDroid.Title", "android:textColor": "@color/c_foreground" });
@@ -291,24 +294,27 @@ const noteText = (s) => text({ "android:layout_width": "match_parent", "android:
 const pageWithTitle = (children) => page(linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
   "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter" }, titleBlock() + "\n" + children));
 
-out["activity_shred.xml"] = page(linear({ "android:layout_width": "match_parent", "android:layout_height": "match_parent",
-  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter" },
-  titleBlock() + "\n" + filledButton("btnPick", "@string/shred_pick", "ic_grid") + "\n" + noteText("@string/shred_note") + "\n" +
+out["activity_shred.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
+  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter",
+  "android:paddingTop": "@dimen/sd_space_4" },
+  titleNoPad() + "\n" + "\n" + filledButton("btnPick", "@string/shred_pick", "ic_grid") + "\n" + noteText("@string/shred_note") + "\n" +
   card({ "android:layout_height": "0dp", "android:layout_marginTop": "@dimen/sd_space_4", "android:layout_marginBottom": "@dimen/sd_space_4",
     "android:layout_weight": "1" }, list("rvList"))));
 
-out["activity_sos.xml"] = page(linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
-  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter" },
-  titleBlock() + "\n" +
+out["activity_sos.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
+  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter",
+  "android:paddingTop": "@dimen/sd_space_4" },
+  titleNoPad() + "\n" + "\n" +
   field("etPhone", "@string/sos_hint_phone", "phone") + "\n" +
   field("etMsg", "@string/sos_hint_msg", "textMultiLine") + "\n" +
   view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/btnSend", style: "@style/Widget.SecureDroid.Button.Accent",
     "android:layout_width": "match_parent", "android:layout_height": "@dimen/sd_btn_height", "android:layout_marginTop": "@dimen/sd_space_4",
     "android:text": "@string/sos_btn_send" })));
 
-out["activity_vault.xml"] = page(linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
-  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter" },
-  titleBlock() + "\n" +
+out["activity_vault.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
+  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter",
+  "android:paddingTop": "@dimen/sd_space_4" },
+  titleNoPad() + "\n" + "\n" +
   linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content", "android:orientation": "horizontal" },
     view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/btnEncrypt", style: "@style/Widget.SecureDroid.Button.Accent",
       "android:layout_width": "0dp", "android:layout_height": "@dimen/sd_btn_height", "android:layout_weight": "1",
@@ -322,7 +328,7 @@ out["dialog_set_pin.xml"] = HEAD + linear({ ...NS, "android:layout_width": "matc
   field("etPin", "@string/lock_pin_hint", "numberPassword") + "\n" + field("etPinConfirm", "@string/lock_pin_confirm_hint", "numberPassword"));
 
 // 桌面小组件:RemoteViews 只支持有限控件,这里只用 LinearLayout/ImageView/TextView
-out["widget_security.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
+out["widget_security.xml"] = HEAD + '<!-- tools:ignore Overdraw:RemoteViews 自带背景,不继承主题背景,不存在 overdraw -->' + "\n" + linear({ ...NS, "xmlns:tools": "http://schemas.android.com/tools", "tools:ignore": "Overdraw", "android:layout_width": "match_parent", "android:layout_height": "match_parent",
   "android:background": "@color/c_card", "android:gravity": "center_vertical", "android:orientation": "horizontal",
   "android:padding": "@dimen/sd_space_4" },
   view("ImageView", { "android:id": "@+id/widgetIcon", "android:layout_width": "40dp", "android:layout_height": "40dp",
@@ -356,10 +362,10 @@ out["activity_lock.xml"] = page(linear({ "android:layout_width": "match_parent",
     "android:layout_marginTop": "@dimen/sd_space_4", "android:layout_marginBottom": "@dimen/sd_space_5", "android:letterSpacing": "0.4",
     "android:minHeight": "@dimen/sd_touch_min", "android:text": "@string/lock_unlock_hint",
     "android:textColor": "@color/c_muted_foreground", "android:textAppearance": "@style/TextAppearance.SecureDroid.Body" }) + "\n" +
-  keypadRow([key("btn1", "1"), key("btn2", "2"), key("btn3", "3")]) + "\n" +
-  keypadRow([key("btn4", "4"), key("btn5", "5"), key("btn6", "6")]) + "\n" +
-  keypadRow([key("btn7", "7"), key("btn8", "8"), key("btn9", "9")]) + "\n" +
-  keypadRow([filler(), key("btn0", "0"),
+  keypadRow([key("btn1", "@string/keypad_1"), key("btn2", "@string/keypad_2"), key("btn3", "@string/keypad_3")]) + "\n" +
+  keypadRow([key("btn4", "@string/keypad_4"), key("btn5", "@string/keypad_5"), key("btn6", "@string/keypad_6")]) + "\n" +
+  keypadRow([key("btn7", "@string/keypad_7"), key("btn8", "@string/keypad_8"), key("btn9", "@string/keypad_9")]) + "\n" +
+  keypadRow([filler(), key("btn0", "@string/keypad_0"),
     view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/btnDel",
       style: "@style/Widget.SecureDroid.Button.Outlined", "android:layout_width": "0dp", "android:layout_height": "64dp",
       "android:layout_margin": "@dimen/sd_space_1", "android:layout_weight": "1",

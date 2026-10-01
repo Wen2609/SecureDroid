@@ -268,4 +268,14 @@
     <string name="seg_tools">工具箱</string>
     <string name="sd_section_enter">快速进入</string>
     <string name="sd_section_guard">防护开关</string>
+    <string name="keypad_0" translatable="false">0</string>
+    <string name="keypad_1" translatable="false">1</string>
+    <string name="keypad_2" translatable="false">2</string>
+    <string name="keypad_3" translatable="false">3</string>
+    <string name="keypad_4" translatable="false">4</string>
+    <string name="keypad_5" translatable="false">5</string>
+    <string name="keypad_6" translatable="false">6</string>
+    <string name="keypad_7" translatable="false">7</string>
+    <string name="keypad_8" translatable="false">8</string>
+    <string name="keypad_9" translatable="false">9</string>
 </resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lint 基线决策文件。
+
+  原则:能改的必须改(触摸目标、令牌化、未使用资源、可访问性等已在代码里修掉);
+  剩下这些是**明确的工程取舍**,在这里逐条写明理由并关闭,避免"警告堆里没人看"。
+  关闭一条 = 做了一次决定,而不是忽略了一个问题。
+-->
+<lint>
+    <!-- 安全类工具必须使用真实分区路径做扫描;Lint 建议的 getFilesDir()/getExternalStorageDirectory()
+         是本应用私有目录,拿它去扫描 /sdcard、/data 会直接扫不到目标。 -->
+    <issue id="SdCardPath" severity="ignore" />
+
+    <!-- SystemBaseline 通过反射读 SystemProperties(/proc 读取受限时),已有 getprop 兜底,
+         失败不影响功能;反射是本项目已知且有意的实现方式。 -->
+    <issue id="PrivateApi" severity="ignore" />
+
+    <!-- targetSdk 34 / 依赖版本升级需要联网拉取新 SDK 与 AAR,当前构建环境离线;
+         升级路径已记入 README 的后续路线,不在此处静默改版本号。 -->
+    <issue id="OldTargetApi" severity="ignore" />
+    <issue id="GradleDependency" severity="ignore" />
+
+    <!-- 这些常量在编译期内联(API 33 的权限名、API 29 的 ServiceInfo),在 minSdk 26 上只是
+         一个字符串常量,不涉及运行时 API 调用;真正的版本判断在代码里已用 Build.VERSION 守卫。 -->
+    <issue id="InlinedApi" severity="ignore" />
+
+    <!-- 中文文案由代码拼接(如"已扫描 1284/2000 项")。本应用当前只发布中文,未接多语言;
+         若要国际化,应改为 getString(R.string.x, args) 并抽出格式串 —— 已记入后续路线。 -->
+    <issue id="SetTextI18n" severity="ignore" />
+    <!-- anydpi-v26 目录沿用 Android Studio 模板约定:去掉 v26 会让部分工具链识别不到自适应图标 -->
+    <issue id="ObsoleteSdkInt" severity="ignore" />
+</lint>

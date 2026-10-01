@@ -210,8 +210,8 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
 - 已产出的可安装签名包见 apks/SecureDroid-v1.4.1-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-      SHA-256 e21e5cc46d54380451ee08aaff862839d0043a4c67a5bd62ab31ac49418b543c
-      大小    1,999,070 字节    versionCode 7 / versionName 1.4.1(Swiss Style · 全量修复)
+      SHA-256 ee55ca47d146da793ca83ca63847e5c4b94662a2a43dd6c3f61c1876cc40e2e4
+      大小    2,000,205 字节    versionCode 7 / versionName 1.4.1(Swiss Style · 全量修复)
 
   更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 保留用于回退。
 
