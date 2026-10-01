@@ -22,10 +22,16 @@ object ScanScheduler {
     fun sync(context: Context) {
         val enabled = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getBoolean(KEY_ENABLED, false)
-        if (enabled) schedule(context) else cancel(context)
+        if (enabled) schedule(context) else cancel(context) // 返回布尔仅为可观测性,失败不抛出
     }
 
-    fun schedule(context: Context) {
+    /**
+     * 入队周期任务。
+     * 任何调度异常都不得向上传播:本方法会在 Application.onCreate 中被调用,
+     * 调度失败只应导致"定时查杀不生效",绝不能让应用启动崩溃。
+     * @return true 表示入队成功
+     */
+    fun schedule(context: Context): Boolean = try {
         val request = PeriodicWorkRequestBuilder<DailyScanWorker>(1, TimeUnit.DAYS)
             .setConstraints(
                 Constraints.Builder()
@@ -39,9 +45,17 @@ object ScanScheduler {
             ExistingPeriodicWorkPolicy.UPDATE,
             request
         )
+        true
+    } catch (t: Throwable) {
+        android.util.Log.w("ScanScheduler", "定时查杀调度失败,已忽略以免影响启动", t)
+        false
     }
 
-    fun cancel(context: Context) {
+    fun cancel(context: Context): Boolean = try {
         WorkManager.getInstance(context).cancelUniqueWork(DailyScanWorker.UNIQUE_NAME)
+        true
+    } catch (t: Throwable) {
+        android.util.Log.w("ScanScheduler", "取消定时查杀失败,已忽略", t)
+        false
     }
 }

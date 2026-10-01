@@ -98,8 +98,12 @@ class AppLockFragment : Fragment() {
                 val pin = dialogBinding.etPin.text?.toString() ?: ""
                 val confirm = dialogBinding.etPinConfirm.text?.toString() ?: ""
                 if (pin.length == 4 && pin == confirm) {
-                    AppLockStore.setPin(requireContext(), pin)
-                    Toast.makeText(requireContext(), R.string.lock_pin_saved, Toast.LENGTH_SHORT).show()
+                    val saved = AppLockStore.setPin(requireContext(), pin)
+                    Toast.makeText(
+                        requireContext(),
+                        if (saved) R.string.lock_pin_saved else R.string.lock_pin_store_failed,
+                        Toast.LENGTH_SHORT
+                    ).show()
                     refreshHeader()
                 } else {
                     Toast.makeText(requireContext(), R.string.lock_pin_mismatch, Toast.LENGTH_SHORT).show()

@@ -79,6 +79,19 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        // Robolectric 冒烟测试需要真实 Android 资源(布局 / 主题 / 清单)
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            // Robolectric 默认从 repo1.maven.org 拉取 android-all 运行库(约 150MB),
+            // 受限网络下会静默挂起。这里指向可达镜像,并在本地已预置时走离线模式。
+            it.systemProperty("robolectric.dependency.repo.id", "aliyun")
+            it.systemProperty("robolectric.dependency.repo.url", "https://maven.aliyun.com/repository/public")
+            val offlineDir = rootProject.file("robolectric-deps")
+            if (offlineDir.isDirectory) {
+                it.systemProperty("robolectric.offline", "true")
+                it.systemProperty("robolectric.dependency.dir", offlineDir.absolutePath)
+            }
+        }
     }
 }
 
@@ -99,4 +112,8 @@ dependencies {
 
     // 本地单元测试(安全关键逻辑)
     testImplementation("junit:junit:4.13.2")
+    // Robolectric:在 JVM 上真实启动 Application / 膨胀布局 / 拉起 Activity / 打开 Room
+    testImplementation("org.robolectric:robolectric:4.12.2")
+    testImplementation("androidx.test:core:1.6.1")
+    testImplementation("androidx.test.ext:junit:1.2.1")
 }

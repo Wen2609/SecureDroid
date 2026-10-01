@@ -65,6 +65,18 @@
                 android:resource="@xml/app_lock_service_config" />
         </service>
 
+        <!-- WorkManager 按需初始化:移除默认 startup 初始化器,改由 SecureGuardApp 提供配置 -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <receiver
             android:name=".realtime.BootReceiver"
             android:exported="true">

@@ -49,6 +49,13 @@
 - Lint 已开启 abortOnError:新增 API 调用若缺少权限声明会直接构建失败(例:SOS 震动需要 VIBRATE);本地跑 lintDebug 校验
 - 故意保留的 lint 警告(勿盲目修):SdCardPath(查杀必须用真实系统路径)、PrivateApi(SystemProperties 反射有 getprop 兜底)、HardcodedText/SetTextI18n(动态拼接文案)
 
+## 运行时验证(Robolectric,改 UI/启动逻辑后必须跑)
+- 命令:build.cmd testDebugUnitTest(全套含冒烟),或 gradle testDebugUnitTest --tests "com.armorlab.securedroid.smoke.*"
+- 覆盖:Application 启动、21 个布局膨胀、13 个 Activity 拉起、Room 读写、权限层降级
+- android-all 运行库:本机已预置在 robolectric-deps/(150MB,已 gitignore);缺失时自动走镜像下载
+- 已由该套件抓出的两个致命缺陷:WorkManager 未初始化崩溃、BottomNavigationView 6 项超限崩溃 —— 改动导航或启动逻辑后务必重跑
+- 导航约定:底部入口用可滚动 TabLayout(BottomNavigationView 上限 5 项);入口定义源仍是 res/menu/bottom_nav.xml
+
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
 - 编译错误集中修完再编译,别一轮一修

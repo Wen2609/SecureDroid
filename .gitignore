@@ -1,4 +1,4 @@
-﻿# Build outputs
+# Build outputs
 *.iml
 .gradle/
 .idea/
@@ -16,6 +16,9 @@ captures/
 *.jks
 *.keystore
 keystore.properties
+
+# Robolectric offline runtime (150MB, machine-local)
+robolectric-deps/
 
 # Build logs
 *.log

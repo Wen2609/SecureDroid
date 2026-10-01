@@ -18,6 +18,18 @@
 
 ### Fixed
 
+**由 Robolectric 运行时冒烟测试发现并修复(编译 / Lint / 静态测试均无法发现):**
+
+- **应用启动即崩溃**:`SecureGuardApp.onCreate` → `ScanScheduler.sync` 无保护调用 `WorkManager.getInstance()`。
+  一旦 androidx.startup 初始化器未生效(被裁剪、受限进程等),会抛 `IllegalStateException: WorkManager is not initialized properly`。
+  改为官方推荐的**按需初始化**(Application 实现 `Configuration.Provider` + 清单移除默认初始化器),并在调度层全量兜底异常 —— 调度失败只应导致定时查杀不生效,绝不能让应用启动崩溃;
+- **主界面 100% 无法启动**:`bottom_nav.xml` 定义了 6 个入口,而 Material `BottomNavigationView` 硬上限为 5 项,
+  布局膨胀阶段直接抛 `IllegalArgumentException: Maximum number of items supported by BottomNavigationView is 5`。
+  改用无条目上限的**可滚动 `TabLayout`**,6 个功能入口全部保留,菜单 XML 仍作为入口定义的唯一来源;
+- **应用锁在安全存储不可用时崩溃**:`EncryptedSharedPreferences` 依赖 AndroidKeyStore,密钥库异常会抛 `KeyStoreException`。
+  现统一降级为"应用锁未启用"并记录日志 —— 不崩溃,也**不静默退化为明文存储**(静默降级会掩盖真实安全状态);
+- 应用锁 PIN 保存失败现在会明确提示用户(此前无论成功与否都提示"已保存")。
+
 **由 Android Lint 门禁发现并修复(启用 `abortOnError = true` 后首轮):**
 
 - `SosActivity`:调用 `Vibrator.vibrate()` **却未声明 VIBRATE 权限** —— 真机上一键 SOS 会抛 SecurityException 崩溃,恰好在最需要它的时候失效;

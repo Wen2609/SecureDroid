@@ -36,6 +36,7 @@
     <string name="lock_pin_confirm_hint">请再次输入</string>
     <string name="lock_save">保存</string>
     <string name="lock_pin_saved">PIN 码已保存</string>
+    <string name="lock_pin_store_failed">PIN 保存失败:设备安全存储不可用,应用锁未启用</string>
     <string name="lock_pin_mismatch">两次输入不一致或不是 4 位数字</string>
     <string name="lock_unlock_title">应用已锁定</string>
     <string name="lock_unlock_hint">请输入 PIN 码解锁</string>

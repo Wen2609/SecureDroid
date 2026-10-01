@@ -83,7 +83,18 @@
     ./gradlew testDebugUnitTest     # 38 项 JVM 单元测试
     ./gradlew assembleRelease       # R8 混淆 + 签名发布包
 
-单元测试覆盖安全关键不变量:
+### 运行时冒烟测试(Robolectric)
+
+在 JVM 上真实启动应用,不需要真机或模拟器:
+
+| 测试套件 | 项数 | 校验内容 |
+| --- | --- | --- |
+| ApplicationSmokeTest | 2 | **应用能启动**:走完 Application.onCreate、通知渠道创建、定时任务同步 |
+| LayoutInflationTest | 2 | **21 个布局全部可膨胀**(布局/主题/自定义属性问题当场暴露) |
+| ActivityLaunchTest | 2 | **13 个 Activity 全部可拉起**(create → start → resume),含锁屏页无 PIN 自动结束 |
+| DatabaseAndManagersTest | 4 | Room 建表读写往返、提权层无 root 安全降级、完整性模块给出明确提示、开机广播安全无操作 |
+
+### 静态与逻辑测试
 
 | 测试套件 | 项数 | 校验内容 |
 | --- | --- | --- |
@@ -92,6 +103,12 @@
 | ResourceReferenceTest | 7 | 资源引用完整性:@string/@drawable/@color/@xml/@mipmap/@id 全部可解析(此前 ic_tool 缺失类构建失败由此拦截) |
 | ManifestInvariantsTest | 4 | 清单不变量:前台服务类型与权限一致、组件类真实存在、通知权限已声明 |
 | ScannerEngineTest | 3 | SHA-256 十六进制编码格式正确 |
+
+运行时验证已抓出并修复两个**致命缺陷**(编译、Lint、静态测试均无法发现):
+WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超限导致主界面无法启动。详见 CHANGELOG。
+
+> Robolectric 需要 `android-all` 运行库(约 150MB)。构建脚本会在项目内存在 `robolectric-deps/` 时走离线模式,
+> 否则自动从可用镜像下载;该目录已 gitignore。
 
 ### 静态检查(Lint)
 

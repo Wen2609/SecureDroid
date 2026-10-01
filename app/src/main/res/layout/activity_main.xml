@@ -19,9 +19,16 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <!-- 6 个功能入口。Material 的 BottomNavigationView 硬上限为 5 项,
+         超过会在膨胀阶段抛 IllegalArgumentException(BottomNavigationView#getMaxItemCount),
+         导致主界面无法启动。TabLayout 滚动模式无此限制,且内置选中态与图标支持。 -->
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/bottom_nav" />
+        android:background="?attr/colorSurface"
+        app:tabMode="scrollable"
+        app:tabGravity="fill"
+        app:tabIndicatorHeight="3dp"
+        app:tabInlineLabel="true" />
 </LinearLayout>
