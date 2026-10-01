@@ -254,4 +254,8 @@
     <string name="va_phase_integrity">正在校验系统文件完整性…</string>
     <string name="va_phase_lockfiles">正在锁定关键文件…</string>
     <string name="va_phase_unlockfiles">正在解除锁定…</string>
+
+    <!-- 完整性告警:签名与首次安装不一致时展示,提示可能存在重打包 -->
+    <string name="integrity_tamper">⚠ 应用签名与首次安装记录不一致,可能已被重打包,请立即从官方渠道重新安装</string>
+    <string name="integrity_multisigner">⚠ 检测到多个签名者,应用完整性存疑,请从官方渠道重新安装</string>
 </resources>

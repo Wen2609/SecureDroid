@@ -132,6 +132,7 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 | 禁止明文流量 | `res/xml/network_security_config.xml` | 全局 `cleartextTrafficPermitted=false`,仅信任系统 CA |
 | 禁止备份 / 迁移 | `allowBackup=false` + `dataExtractionRules` | 敏感数据不进入云备份与设备迁移 |
 | 特征库更新强制完整性 | `FeatureUpdater` | 仅接受 https(含重定向后)、SHA-256 **必填**、内容合理性校验 —— 防止特征库被投毒导致查杀失效 |
+| 运行时防重打包 | `IntegrityGuard` + 主界面告警条 | 启动时比对安装包签名证书 SHA-256 与首次安装记录(TOFU),不一致或多签名者立即告警 —— 被改造过的"安全软件"本身就是最好的木马载体 |
 | 提权命令策略 | `PrivilegedPolicy` | 灾害级命令(整根删除 / 格式化 / 写分区 / 恢复出厂)在提权层强制拦截并留痕审计 |
 
 ## ClamAV 特征库兼容性
@@ -146,7 +147,18 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 | `.ndb` / `.ndu` | `名称:目标类型:偏移:HEX[:min_flevel[:max_flevel]]` | 支持;偏移语义:`*` 任意位置、`n` 绝对偏移、`EOF-n` 文件尾偏移、`n,MaxShift` 浮动区间;`EP+/Sx+/SL+`(仅 PE/ELF/Mach-O)安全退化为任意位置以免漏报 |
 | `.hdb`(MD5)/ `.hdu` | `md5:大小:名称` | 不支持:本引擎按 SHA-256 计算文件指纹 |
 
-扫描性能:任意位置特征走单遍锚点分桶匹配;绝对偏移与 EOF 偏移特征直接定位,零扫描开销。
+扫描性能:任意位置特征走**单遍扫描 + 2 字节窗口直接索引**(65536 直接表 + 链表,扫描期零分配),
+每字节只做一次数组寻址,候选数约为单字节锚点分桶的 1/256;绝对偏移与 EOF 偏移特征按偏移直接定位,零扫描开销。
+
+- 窗口取每条签名中最长"连续固定字节"片段的前 2 字节;只能取到 1 字节时走单字节索引,整条全通配时退化为逐位置校验
+  —— 因此这次提速**不改变任何判定结果**;
+- 等价性由 `SignatureMatchIndexTest` 用两种独立参考实现(旧版单字节锚点分桶 + 逐签名朴素扫描)
+  在 4 MB 随机数据上交叉验证,三者输出集合必须完全一致;
+- **实测数据**(200 条同锚点特征 × 1 MB,最不利于旧实现的构造):单字节锚点分桶 39.3 ms → 2 字节窗口索引 17.9 ms;
+  典型数据下两者相当,但旧实现的单个桶会随特征条数线性变胖,新实现不会;
+- **实测否决过一个"更高级"的方案**:先按教科书实现了 Aho-Corasick 自动机(CSR + 每字节二分查找 + 失效链回溯),
+  在同一场景下反而是 127 ms(比单字节锚点分桶还慢 3.6 倍),于是换回直接索引。
+  性能优化必须用数据说话 —— 该对比基准已固化进测试套件,防止以后凭直觉改回去。
 
 > 历史兼容:早期版本使用的自定义分号格式 `名称;偏移;HEX;严重度;目标` 仍可解析,旧演示特征无需改动。
 
@@ -165,7 +177,12 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.0.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096)。
+- 已产出的可安装签名包见 apks/SecureDroid-v1.0.1-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+
+      SHA-256 4bc4e70b773319bc129d2c41798d6e51347d44ce17fc3db5afc3318d2dbeecd6
+      大小    1,957,876 字节    versionCode 2 / versionName 1.0.1
+
+  上一版 apks/SecureDroid-v1.0.0-release-signed.apk 保留用于回退。
 
 ## 注意事项
 
@@ -212,6 +229,9 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 ## 后续路线建议
 
 - 云端特征库与增量更新(签名校验 + Certificate Pinning);
+- 补齐 ClamAV 其余格式:`.hdb` / `.hdu`(MD5 文件指纹)与 `.mdb`,当前引擎只计算 SHA-256;
+- atom 选择按字节频率择优(在真实特征库上进一步压低误命中率);
+- 接入 Play Integrity 或服务端签名校验,弥补 TOFU 无法识别"直接安装盗版"的固有缺口;
 - APK 深度静态分析(Smali 指令级、嵌入子 APK、证书链异常检测);
 - 网络流量与 DNS 防护(VpnService);
 - 反钓鱼短信 / 骚扰拦截模块;

@@ -8,7 +8,7 @@ set ANDROID_SDK_ROOT=%ANDROID_HOME%
 set ANDROID_USER_HOME=C:\Android_build\.android
 set GRADLE_USER_HOME=C:\Android_build\.gradle
 cd /d "%~dp0"
-set TASK=%1
+set TASK=%*
 if "%TASK%"=="" set TASK=assembleDebug
 call C:\Android_build\gradle-8.7\bin\gradle.bat %TASK% --console=plain 1>build_out.log 2>build_err.log
 echo EXIT=%ERRORLEVEL%

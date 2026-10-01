@@ -60,6 +60,10 @@
 - ClamAV 兼容以官方文档为准:https://docs.clamav.net/manual/Signatures/ExtendedSignatures.html
   .ndb = 名称:目标类型:偏移:HEX(冒号分隔);偏移支持 * / n / EOF-n / n,MaxShift;旧分号格式为历史兼容,勿再新增
 - 改动签名解析后必须跑 ClamAvSignatureEngineTest(真实加载 assets 并校验三种偏移语义)
+- 匹配索引:ClamAvSignatures.buildIndex 建 2 字节窗口直接表(65536 直接表 + 链表,扫描期零分配);
+  改算法后必须跑 SignatureMatchIndexTest —— 它用旧版单字节锚点分桶与朴素扫描做交叉等价验证,防的是漏报/误报
+  (曾按教科书实现 Aho-Corasick:实测比锚点分桶慢 3.6 倍,已放弃;除非特征库到万级否则别改回去)
+- 完整性守卫:security/IntegrityGuard(签名 SHA-256 + TOFU);UNAVAILABLE 不得当作 TRUSTED
 - 安全约定:涉及秘密的界面必须 FLAG_SECURE;可被覆盖点击的关键界面加 filterTouchesWhenObscured;
   网络请求必须 https;特征库/规则类更新必须校验 SHA-256(FeatureUpdater 已强制)
 

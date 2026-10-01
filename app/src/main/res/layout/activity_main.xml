@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- 完整性告警条:默认隐藏,仅在签名校验失败(疑似重打包)时由 MainActivity 显示 -->
+    <TextView
+        android:id="@+id/integrityBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#B3261E"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

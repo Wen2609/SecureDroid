@@ -5,12 +5,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuInflater
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.armorlab.securedroid.databinding.ActivityMainBinding
+import com.armorlab.securedroid.security.IntegrityGuard
 import com.armorlab.securedroid.ui.AppLockFragment
 import com.armorlab.securedroid.ui.DashboardFragment
 import com.armorlab.securedroid.ui.PermissionAuditFragment
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupTabs()
+        checkIntegrity()
 
         // 快捷设置磁贴 / 小部件跳转直达扫描页
         val goto = intent?.getStringExtra("goto")
@@ -50,6 +53,25 @@ class MainActivity : AppCompatActivity() {
             navigateTo(R.id.nav_scanner)
         } else if (savedInstanceState == null) {
             binding.bottomNav.getTabAt(0)?.select()
+        }
+    }
+
+    /**
+     * 校验自身安装包签名(防重打包)。
+     *
+     * 只在**不一致**时告警:首次运行(TOFU)与正常升级都不会打扰用户;
+     * 取不到签名信息时既不告警也不放行,保持沉默但记录在诊断信息中。
+     */
+    private fun checkIntegrity() {
+        val result = IntegrityGuard.check(this)
+        if (result.shouldWarn) {
+            binding.integrityBanner.visibility = View.VISIBLE
+            binding.integrityBanner.text = getString(
+                if (result.multipleSigners) R.string.integrity_multisigner
+                else R.string.integrity_tamper
+            )
+        } else {
+            binding.integrityBanner.visibility = View.GONE
         }
     }
 
