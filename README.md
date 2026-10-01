@@ -80,7 +80,7 @@
 
 ### 测试与验证
 
-    ./gradlew testDebugUnitTest     # 38 项 JVM 单元测试
+    ./gradlew testDebugUnitTest     # 79 项 JVM 单元测试(含 Robolectric 冒烟)
     ./gradlew assembleRelease       # R8 混淆 + 签名发布包
 
 ### 运行时冒烟测试(Robolectric)
@@ -90,8 +90,8 @@
 | 测试套件 | 项数 | 校验内容 |
 | --- | --- | --- |
 | ApplicationSmokeTest | 2 | **应用能启动**:走完 Application.onCreate、通知渠道创建、定时任务同步 |
-| LayoutInflationTest | 2 | **21 个布局全部可膨胀**(布局/主题/自定义属性问题当场暴露) |
-| ActivityLaunchTest | 2 | **13 个 Activity 全部可拉起**(create → start → resume),含锁屏页无 PIN 自动结束 |
+| LayoutInflationTest | 2 | **20 个布局全部可膨胀**(布局/主题/自定义属性问题当场暴露) |
+| ActivityLaunchTest | 2 | **清单里全部 Activity 全部可拉起**(create → start → resume),含锁屏页无 PIN 自动结束 |
 | DatabaseAndManagersTest | 4 | Room 建表读写往返、提权层无 root 安全降级、完整性模块给出明确提示、开机广播安全无操作 |
 
 ### 静态与逻辑测试
@@ -121,36 +121,42 @@ WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超�
 
 CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
 
-## 视觉设计系统(Minimalism & Swiss Style)
+## 视觉设计系统(按设计稿重建)
 
-界面**由 ui-ux-pro-max 技能的设计系统解析结果驱动**:风格 `Minimalism & Swiss Style`,
-配色取其返回的 Trust navy 语义色板,深色表面层级来自 color 域查询。完整来源、令牌表、偏差记录与自检清单见
+本版界面按用户提供的设计稿**逐项实测重建**:先用 Pillow 对设计稿做像素级取样(字簇宽度反推字号、
+色值取样、圆角与间距测量),再落成设计令牌。风格从上一版的 Swiss 直角边框换成
+**大圆角白卡 + 品牌绿进度环 + 悬浮导航条**。完整来源、实测数据、令牌表、映射表与刻意偏差见
 [design/DESIGN.md](design/DESIGN.md)。
 
-- 分隔靠 **1dp 边框 + 留白**(技能 Key Effects:"sharp shadows if any"),卡片 0dp 阴影;
-- 4/8dp 栅格、行高 56dp、触摸下限 48dp、正文 16sp / 行高 1.5、对比度 ≥4.5:1;
-- **全部 20 个布局由脚本从令牌生成**(\`design/generate_layouts.mjs\`),改令牌重跑即可,不存在逐页漂移;
-- 设计规则可自动验收:\`DesignRuleTest\`(触摸目标 / 令牌化 / 生成器一致性)+ \`ColorContrastTest\`(WCAG 对比度)。
+- 品牌色取设计稿实测值:主色 `#04BD19`、进度环 `#31D027`、环底 `#E4EDE2`、内盘 `#EAF4E8`;
+- 页面背景为纵向渐变(`bg_page`,顶 `#F3F8EE` → 底 `#EFF0F0`),卡片纯白、24dp 圆角、极淡阴影;
+- 几何:标题 24sp、环内数字 54sp、卡标题 18sp、状态文案 17sp、卡副标题 15sp;进度环 190dp
+  (描边 25dp、内盘 140dp)、主按钮 48dp 高、悬浮导航 60dp 高;
+- **全部 20 个布局由脚本从令牌生成**(`design/generate_layouts.mjs`),改令牌重跑即可,不存在逐页漂移;
+- 设计规则可自动验收:`DesignRuleTest`(触摸目标 / 令牌化 / 生成器一致性)+ `ColorContrastTest`(WCAG 对比度)。
 
 ![设计稿](design/mockup-sheet.png)
 
-> 上图由 `design/render_mockup.py` 按令牌 1:1 渲染生成,**不是真机截图**。
+> 上图由 `design/render_mockup.py` **现读 res/values 令牌**渲染生成(1080×2400),**不是真机截图**。
 
-**顶层只有三个板块**,二级功能收进板内分段控件(6 个平级入口是上一版"杂乱"的结构性原因):
+**顶层只有三个板块**:首页只看结论,会改变设备行为的开关一律下沉:
 
 | 板块 | 二级功能 |
 | --- | --- |
-| **状态** | 评分环 + 快速入口 + 防护开关 |
+| **首页** | 评分环 + 状态文案 + "一键优化" + 2×2 宫格(清理存储 · 病毒风险 · 网络审计 · 应用管理) |
 | **检测** | 病毒扫描 · 木马查杀 |
-| **防护** | 应用锁 · 权限审计 · 工具箱 |
+| **防护** | 应用锁 · 权限审计 · 工具箱(实时防护 / Root 自动处置) |
 
-- 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色):iOS 系统色、Dynamic Type、iOS 度量;
-- 列表用 inset grouped:10dp 圆角分组卡 + 行间 0.5dp 内缩分隔线(`InsetDividerDecoration`);
-- 标签栏通栏、实心图标(内容区为线性图标)、选中只用 systemBlue 着色;
-- 「凝光」背景 = 线性渐变 + 两处径向光晕,零图片资源;卡片用 1dp 光边 + 极低阴影代替重投影;
-- **玻璃只出现在功能层**(工具栏、底部入口条),内容层保持不透明表面以保证正文对比度 ≥4.5:1;
-- 动效:列表错峰入场(每项延迟 8%)、按压缩放 0.97 / 110ms、回弹 240ms;页面转场交给系统,避免低端机掉帧;
-- 触摸目标 ≥48dp、相邻点击区间距 ≥8dp、状态不靠颜色单独表意(有无障碍硬性项自检清单)。
+- 首页宫格副标题全部来自**真实数据**:可用存储空间(`StatFs`)、威胁数(Room)、活动连接数(`NetAudit`)、已锁应用数(`AppLockStore`);
+- 实时防护与 Root 自动处置(自动杀毒 / 自动卸载)从首页下沉到"防护 → 工具箱",避免首屏误触;
+  偏好键与旧版完全一致(`settings` / `realtime_enabled`),覆盖安装不丢配置;
+- 底部导航为**悬浮圆角白条**(高 60dp、圆角 24dp、左右 6dp、贴底 4dp),选中态为品牌绿图标 + 文字,**无指示条**;
+- 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色,全量覆盖同一套令牌),同一份布局适配两套主题;
+- 列表用 inset grouped:圆角分组卡 + 内缩分隔线(`InsetDividerDecoration`),行高 56dp、触摸下限 48dp;
+- **刻意的对比度偏差**:设计稿主按钮为品牌绿 `#04BD19` + 白字 = **2.53:1**,低于 WCAG AA 的 4.5:1。
+  本轮以"严格还原设计稿"为先,该配对在 `ColorContrastTest` 中显式记为 2.4:1 下限,并由
+  `brandCtaContrastDeviationIsDocumented` 守住 —— **偏差一旦被修好,测试就会失败**,提醒撤销这个例外。
+  其余全部文字配对仍要求 ≥4.5:1(实测:正文/卡片 17.40、副文/卡片 5.33、副文/页面 4.81)。
 
 ## 安全加固
 
@@ -208,12 +214,12 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.5.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.6.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 DF3F4D6D80A4116CE26641BC253051638F562672CA06800B0F5AE0124CCB7174
-    大小    1,988,202 字节    versionCode 8 / versionName 1.5.0(精简版 · 移除 8 项非核心功能)
+    SHA-256 3744DEC6BC741CA46B4BC40F0C1FC5595BB87A0C988E43BCE1CD1DB8FA1798B7
+    大小    1,994,195 字节    versionCode 9 / versionName 1.6.0(按设计稿重建视觉系统)
 
-  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 保留用于回退。
+  更早版本 apks/SecureDroid-v1.0.0 / v1.0.1 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 / v1.5.0 保留用于回退。
 
 ## 注意事项
 

@@ -1,43 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  设计令牌 · 色彩(浅色)
-  来源:ui-ux-pro-max 的 design-system 模式
-  解析结果 —— Style: Minimalism & Swiss Style / Pattern: Trust & Authority / 配色: Trust navy + premium gold。
-  该风格的关键约束:几何、留白、高对比、**不用重投影**(阴影"if any"),分隔靠 1dp 边框与留白。
-
-  角色沿用技能返回的语义命名(primary / on-primary / secondary / accent / background / foreground /
-  card / muted / muted-foreground / border / destructive / ring),旧令牌名保留为别名,
-  这样整套界面无需逐页改属性即可切换到新体系。
+  设计令牌(浅色)。整份调色板来自用户提供的设计图逐像素实测:
+  品牌绿 #04BD19(主按钮)、弧线绿 #31D027、环底 #E4EDE2、环内圆盘 #EAF4E8、
+  正文 #1A1A1A、次级文字 #6B6B6B(设计图实测为 #828282,对比度只有 3.84:1,
+  为达 WCAG AA 略作加深,偏差已记入 design/DESIGN.md)、风险红 #D03B37(设计图原色,4.81:1 达标)、
+  卡片 #FFFFFF、悬浮导航 #FDFDFD、页面背景为 #F3F8EE 到 #EFF0F0 的垂直渐变(见 drawable/bg_page.xml)。
+  布局里禁止出现字面色值,一律引用这里的语义名(DesignRuleTest 强制)。
 -->
 <resources>
-    <!-- ===== 技能返回的调色板(浅色) ===== -->
-    <color name="c_primary">#0F172A</color>
-    <color name="c_on_primary">#FFFFFF</color>
-    <color name="c_accent">#0369A1</color>
-    <color name="c_on_accent">#FFFFFF</color>
-    <color name="c_background">#F8FAFC</color>
-    <color name="c_foreground">#020617</color>
-    <color name="c_card">#FFFFFF</color>
-    <color name="c_muted">#E8ECF1</color>
-    <color name="c_muted_foreground">#475569</color>
-    <color name="c_border">#E2E8F0</color>
-    <color name="c_destructive">#DC2626</color>
-    <color name="c_on_destructive">#FFFFFF</color>
-    <!-- 技能返回的 Notes 指出 accent 由 #CA8A04 调整为"premium gold",保留为警示色角色 -->
-    <color name="c_gold">#A16207</color>
-    <color name="c_success">#15803D</color>
+    <!-- 品牌与强调 -->
+    <color name="c_primary">#FF04BD19</color>
+    <color name="c_on_primary">#FFFFFFFF</color>
+    <color name="c_primary_container">#FFD8F4D9</color>
+    <color name="c_on_primary_container">#FF06330B</color>
+    <color name="c_accent">#FF15803D</color>
+    <color name="c_on_accent">#FFFFFFFF</color>
 
-    <!-- ===== 旧令牌别名(全部指向上面的语义色) ===== -->
-    <color name="ic_launcher_background">@color/c_primary</color>
+    <!-- 页面与文字 -->
+    <color name="c_background">#FFF2F4EF</color>
+    <color name="c_bg_top">#FFF3F8EE</color>
+    <color name="c_bg_bottom">#FFEFF0F0</color>
+    <color name="c_foreground">#FF1A1A1A</color>
+    <color name="c_card">#FFFFFFFF</color>
+    <color name="c_nav">#FFFDFDFD</color>
+    <color name="c_muted">#FFE6EDE4</color>
+    <color name="c_muted_foreground">#FF6B6B6B</color>
+    <color name="c_border">#FFDFE4DD</color>
+
+    <!-- 语义 -->
+    <color name="c_destructive">#FFD03B37</color>
+    <color name="c_on_destructive">#FFFFFFFF</color>
+    <color name="c_gold">#FFA16207</color>
+    <color name="c_success">#FF15803D</color>
+
+    <!-- 首页大圆环 -->
+    <color name="c_ring">#FF31D027</color>
+    <color name="c_ring_track">#FFE4EDE2</color>
+    <color name="c_ring_disc">#FFEAF4E8</color>
+
+    <!-- 应用图标(自适应图标底色 + 白色盾牌 + 品牌绿对勾) -->
+    <color name="ic_launcher_background">#FF0B7A1C</color>
+
+    <!-- 语义别名:调用方按用途取色,不必记忆具体色名 -->
     <color name="status_safe">@color/c_success</color>
     <color name="status_risky">@color/c_gold</color>
     <color name="status_malicious">@color/c_destructive</color>
-
-    <color name="sd_brand">@color/c_primary</color>
     <color name="sd_hairline">@color/c_border</color>
-    <color name="sd_safe">@color/c_success</color>
     <color name="sd_warn">@color/c_gold</color>
     <color name="sd_danger">@color/c_destructive</color>
-
-    <!-- iOS 令牌名(上一版遗留)映射到同一套语义色,避免出现两套并行色板 -->
 </resources>

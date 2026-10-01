@@ -81,13 +81,30 @@ class ColorContrastTest {
             Triple("c_foreground", "c_background", 4.5),
             Triple("c_muted_foreground", "c_card", 4.5),
             Triple("c_muted_foreground", "c_background", 4.5),
-            Triple("c_on_primary", "c_primary", 4.5),
+            // 品牌主按钮:设计稿指定"亮绿底 + 白字"(#04BD19 / #FFFFFF)= 2.53:1,低于 AA 正文要求。
+            // 用户要求严格按设计稿实现,故此处把这一对的下限显式记录为 2.4:1(见 DESIGN.md「刻意偏差」),
+            // 其余配对仍守 4.5:1 —— 放宽的是这一对,不是整条规则。
+            Triple("c_on_primary", "c_primary", 2.4),
             Triple("c_on_accent", "c_accent", 4.5),
             Triple("c_destructive", "c_card", 4.5),
             Triple("c_gold", "c_card", 4.5),
             Triple("c_success", "c_card", 4.5),
             Triple("c_border", "c_card", 1.2)
         ))
+    }
+
+    /**
+     * 品牌主按钮的对比度偏差必须被**显式记录**,而不是静默放宽:
+     * 一旦这个配对真的达标了,本测试会失败,提示把它从例外里删掉并同步 DESIGN.md。
+     */
+    @Test
+    fun brandCtaContrastDeviationIsDocumented() {
+        val p = palette("values/colors.xml")
+        val ratio = contrast(p.getValue("c_on_primary"), p.getValue("c_primary"))
+        assertTrue(
+            "品牌主按钮对比度 %.2f:1 —— 若已达标,请删除本例外、把下限改回 4.5 并更新 DESIGN.md".format(ratio),
+            ratio >= 2.4 && ratio < 4.4
+        )
     }
 
     @Test

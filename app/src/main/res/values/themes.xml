@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 应用主题:把 ui-ux-pro-max 返回的语义色接到 Material 3 主题属性上 -->
+<!-- 应用主题:把设计令牌接到 Material 3 主题属性,窗口背景用设计图的垂直渐变 -->
 <resources>
     <style name="Theme.SecureDroid" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/c_primary</item>
         <item name="colorOnPrimary">@color/c_on_primary</item>
-        <item name="colorPrimaryContainer">@color/c_primary</item>
-        <item name="colorOnPrimaryContainer">@color/c_on_primary</item>
+        <item name="colorPrimaryContainer">@color/c_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/c_on_primary_container</item>
         <item name="colorSecondary">@color/c_accent</item>
         <item name="colorOnSecondary">@color/c_on_accent</item>
 
@@ -19,10 +19,10 @@
         <item name="colorError">@color/c_destructive</item>
         <item name="colorOnError">@color/c_on_destructive</item>
 
-        <item name="android:windowBackground">@drawable/bg_fluid</item>
+        <item name="android:windowBackground">@drawable/bg_page</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@color/c_background</item>
+        <item name="android:navigationBarColor">@color/c_bg_bottom</item>
 
         <item name="materialCardViewStyle">@style/Widget.SecureDroid.Card</item>
         <item name="materialButtonStyle">@style/Widget.SecureDroid.Button</item>

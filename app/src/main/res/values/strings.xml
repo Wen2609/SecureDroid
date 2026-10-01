@@ -2,15 +2,29 @@
 <resources>
     <string name="app_name">安卫安全助手</string>
 
-    <string name="dashboard_score_label">安全评分</string>
-    <string name="dashboard_state_good">当前设备状态良好,未发现明显威胁</string>
-    <string name="dashboard_state_warn">发现风险项,建议尽快处理</string>
+    <string name="home_title">安全中心</string>
+    <string name="dashboard_score_unit">分</string>
+    <string name="dashboard_state_good">设备状态良好,未发现威胁</string>
+    <string name="dashboard_state_warn">发现风险项,建议立即处理</string>
     <string name="dashboard_state_bad">发现恶意应用,请立即处理!</string>
+    <string name="btn_optimize">一键优化</string>
+
+    <!-- 首页四宫格:标题是固定文案,副标题由 DashboardFragment 用真实数据替换 -->
+    <string name="tile_clean_title">清理存储</string>
+    <string name="tile_clean_sub">查看可释放空间</string>
+    <string name="tile_clean_free">可用 %1$s</string>
+    <string name="tile_virus_title">病毒风险</string>
+    <string name="tile_virus_sub">尚未扫描</string>
+    <string name="tile_virus_bad">%1$d 个威胁待处理</string>
+    <string name="tile_network_title">网络审计</string>
+    <string name="tile_network_sub">查看网络连接</string>
+    <string name="tile_network_count">%1$d 个活动连接</string>
+    <string name="tile_applock_title">应用管理</string>
+    <string name="tile_applock_sub">管理应用锁</string>
+    <string name="tile_applock_count">已锁定 %1$d 个应用</string>
+
     <string name="btn_go_scan">病毒扫描</string>
-    <string name="btn_go_audit">权限审计</string>
-    <string name="btn_go_lock">应用锁</string>
-    <string name="btn_realtime_start">开启实时防护</string>
-    <string name="btn_realtime_stop">关闭实时防护</string>
+    <string name="sw_realtime">实时防护</string>
 
     <string name="scan_idle">点击下方按钮开始扫描</string>
     <string name="scan_start">开始全盘扫描</string>
@@ -217,7 +231,7 @@
     <string name="sd_score_placeholder" translatable="false">100</string>
 
     <!-- 三大板块及其二级分段 -->
-    <string name="tab_status">状态</string>
+    <string name="tab_status">首页</string>
     <string name="tab_detect">检测</string>
     <string name="tab_protect">防护</string>
     <string name="seg_virus">病毒扫描</string>
@@ -225,7 +239,6 @@
     <string name="seg_applock">应用锁</string>
     <string name="seg_audit">权限审计</string>
     <string name="seg_tools">工具箱</string>
-    <string name="sd_section_enter">快速进入</string>
     <string name="sd_section_guard">防护开关</string>
     <string name="keypad_0" translatable="false">0</string>
     <string name="keypad_1" translatable="false">1</string>

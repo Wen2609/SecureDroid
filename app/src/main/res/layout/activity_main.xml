@@ -1,56 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 由 design/generate_layouts.mjs 从设计令牌生成;请勿手改,改令牌或改脚本后重跑 -->
-<LinearLayout
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_fluid"
-        android:orientation="vertical">
-    <TextView
-            android:id="@+id/integrityBanner"
+        android:background="@drawable/bg_page">
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/c_destructive"
-            android:padding="@dimen/sd_space_3"
-            android:textColor="@color/c_on_destructive"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Caption"
-            android:visibility="gone" />
-    <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:elevation="0dp"
-            android:minHeight="@dimen/sd_row_height"
-            android:paddingStart="@dimen/sd_gutter"
-            android:paddingEnd="@dimen/sd_gutter"
-            android:paddingTop="@dimen/sd_space_3"
-            app:contentInsetStart="0dp"
-            app:contentInsetStartWithNavigation="0dp"
-            app:titleTextAppearance="@style/TextAppearance.SecureDroid.Title"
-            app:titleTextColor="@color/c_foreground" />
-    <FrameLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <TextView
+                android:id="@+id/integrityBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/c_destructive"
+                android:padding="@dimen/sd_space_3"
+                android:textColor="@color/c_on_destructive"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Caption"
+                android:visibility="gone" />
+        <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingBottom="@dimen/sd_nav_clearance" />
+        </LinearLayout>
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sd_tabbar_height"
-            android:background="@drawable/bg_tabbar"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="@dimen/sd_nav_margin_h"
+            android:layout_marginEnd="@dimen/sd_nav_margin_h"
+            android:layout_marginBottom="@dimen/sd_nav_margin_bottom"
+            android:background="@drawable/bg_nav_bar"
+            android:elevation="8dp"
             app:tabGravity="fill"
             app:tabIconTint="@color/tab_text"
-            app:tabIndicator="@drawable/tab_indicator"
-            app:tabIndicatorColor="@color/c_accent"
-            app:tabIndicatorFullWidth="false"
-            app:tabIndicatorGravity="top"
-            app:tabIndicatorHeight="3dp"
-            app:tabInlineLabel="true"
+            app:tabIndicatorHeight="0dp"
             app:tabMode="fixed"
             app:tabPaddingEnd="@dimen/sd_space_3"
             app:tabPaddingStart="@dimen/sd_space_3"
             app:tabRippleColor="@color/c_muted"
+            app:tabTextAppearance="@style/TextAppearance.SecureDroid.Nav"
             app:tabTextColor="@color/tab_text" />
-    </LinearLayout>
+    </FrameLayout>

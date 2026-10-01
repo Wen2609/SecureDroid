@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 页面底:设计图实测为自上而下的极淡渐变(#F3F8EE → #EFF0F0),不是纯色。
+     渐变两端都是令牌,深浅色模式各自取值,布局里不需要额外背景。 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/c_bg_top"
+        android:endColor="@color/c_bg_bottom" />
+</shape>

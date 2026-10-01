@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  设计令牌 · 色彩(深色)
-  来源:ui-ux-pro-max 的 color 域查询(dark mode surface elevation contrast)返回的深色表面层级
-  (Background/Card/Muted/Border/Foreground 五级),与浅色同一套角色命名。
-  偏差说明:技能返回的深色 accent 是 #EF4444(与 destructive 同色),用它做 CTA 会违反
-  "同一颜色不得表达两种含义",因此 CTA 改用 #38BDF8(在 #020617 上对比度 > 8:1)。
+  设计令牌(深色)。设计图只给了浅色稿,深色版沿用同一支品牌绿,但把"绿底白字"换成
+  "亮绿底深墨字",这样夜间模式下对比度反而达到 8.28:1(浅色稿的品牌绿配对是 2.53:1,
+  属于按设计图执行的有意偏差,见 design/DESIGN.md)。
 -->
 <resources>
-    <color name="c_primary">#F8FAFC</color>
-    <color name="c_on_primary">#0F172A</color>
-    <color name="c_accent">#38BDF8</color>
-    <color name="c_on_accent">#04121F</color>
-    <color name="c_background">#020617</color>
-    <color name="c_foreground">#F8FAFC</color>
-    <color name="c_card">#0E1223</color>
-    <color name="c_muted">#1A1E2F</color>
-    <color name="c_muted_foreground">#94A3B8</color>
-    <color name="c_border">#334155</color>
-    <color name="c_destructive">#EF4444</color>
-    <color name="c_on_destructive">#000000</color>
-    <color name="c_gold">#FBBF24</color>
-    <color name="c_success">#22C55E</color>
-    <color name="ic_launcher_background">#0F172A</color>
+    <color name="c_primary">#FF31D027</color>
+    <color name="c_on_primary">#FF06210A</color>
+    <color name="c_primary_container">#FF1B3A20</color>
+    <color name="c_on_primary_container">#FFD8F4D9</color>
+    <color name="c_accent">#FF4ADE80</color>
+    <color name="c_on_accent">#FF052E16</color>
+
+    <color name="c_background">#FF0B0F0C</color>
+    <color name="c_bg_top">#FF101711</color>
+    <color name="c_bg_bottom">#FF0B0E0C</color>
+    <color name="c_foreground">#FFEDF2EC</color>
+    <color name="c_card">#FF171B18</color>
+    <color name="c_nav">#FF191E1A</color>
+    <color name="c_muted">#FF232823</color>
+    <color name="c_muted_foreground">#FFA9B3A7</color>
+    <color name="c_border">#FF2C332D</color>
+
+    <color name="c_destructive">#FFFF6B6B</color>
+    <color name="c_on_destructive">#FF08120A</color>
+    <color name="c_gold">#FFFBBF24</color>
+    <color name="c_success">#FF4ADE80</color>
+
+    <color name="c_ring">#FF31D027</color>
+    <color name="c_ring_track">#FF22301F</color>
+    <color name="c_ring_disc">#FF16241A</color>
+
+    <color name="ic_launcher_background">#FF0B7A1C</color>
+
     <color name="status_safe">@color/c_success</color>
     <color name="status_risky">@color/c_gold</color>
     <color name="status_malicious">@color/c_destructive</color>
-
-    <color name="sd_brand">@color/c_primary</color>
     <color name="sd_hairline">@color/c_border</color>
-    <color name="sd_safe">@color/c_success</color>
     <color name="sd_warn">@color/c_gold</color>
     <color name="sd_danger">@color/c_destructive</color>
 </resources>

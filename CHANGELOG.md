@@ -2,6 +2,38 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.6.0] - 2026-10-01
+
+### Changed
+
+本轮按用户给定的设计稿**重建整套界面**:视觉语言从 Swiss 直角边框改为"大圆角白卡 + 品牌绿进度环 + 悬浮导航条"。
+
+- 令牌层整体重写(`values/colors.xml`、`values-night/colors.xml`、`values/dimens.xml`、`values/styles.xml`、
+  `values/themes.xml`、`values-night/themes.xml`):品牌色取设计稿实测值 `#04BD19` / `#31D027`,页面改为纵向渐变;
+- 字号与几何按实测重建:标题 24sp、环内数字 54sp、卡标题 18sp、状态 17sp、卡副标题 15sp;卡片圆角 24dp、
+  进度环 190dp(描边 25dp、内盘 140dp)、主按钮 48dp 高、悬浮导航 60dp 高;
+- 首页重做:评分环 + 状态文案 + "一键优化"主行动 + 2×2 功能宫格(清理存储 / 病毒风险 / 网络审计 / 应用管理),
+  宫格副标题全部来自真实数据(可用空间、威胁数、活动连接数、已锁应用数);
+- `activity_main.xml` 由 Toolbar + 贴底标签栏改为**悬浮圆角导航条**(高 60dp、圆角 24dp、左右 6dp、贴底 4dp),
+  选中态为品牌绿图标 + 文字,无指示条;三个标签改为 首页 / 检测 / 防护;
+- 实时防护开关、Root 自动处置开关与 Root 状态 chip 从首页迁到"防护 → 工具箱",能力与偏好键不变;
+- `design/render_mockup.py` 重写:改为**现读** `res/values` 令牌渲染验收图,渲染器不再写死任何设计值;
+- `design/DESIGN.md` 重写:记录设计稿实测数据、令牌映射表与刻意的对比度偏差及其守卫测试;
+- `ColorContrastTest` 把品牌主按钮(`#04BD19` + 白字 = 2.53:1)的下限**显式**记为 2.4:1,并新增
+  `brandCtaContrastDeviationIsDocumented`:偏差一旦被修好就失败,提醒撤销例外;
+- `DesignRuleTest` 新增 `dottedStylesDeclareExplicitParent`:带点号的样式名必须显式写 `parent`;
+- `versionCode` 8 → 9,`versionName` 1.5.0 → 1.6.0。
+
+### Fixed
+
+- 修复 `Widget.SecureDroid.Chip` / `.Divider` 丢失显式 `parent=""` 导致的整包资源链接失败
+  (`error: resource style/Widget.SecureDroid not found`)。
+
+### Removed
+
+- 删除已无引用的 `drawable/bg_fluid.xml`、`bg_tabbar.xml`、`tab_indicator.xml` 与 3 条字符串
+  (`btn_realtime_start`、`btn_realtime_stop`、`sw_realtime_sub`)。
+
 ## [1.5.0] - 2026-10-01
 
 ### Removed

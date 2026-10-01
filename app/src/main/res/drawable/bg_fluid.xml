@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 页面底:Swiss 风格是纯色 + 留白,不用渐变/光晕/图片 -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/c_background" />
-</shape>

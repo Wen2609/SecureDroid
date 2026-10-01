@@ -1,27 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  设计令牌 · 尺寸 —— 4/8dp 节奏(ui-ux-pro-max 规则:8dp spacing rhythm、触摸目标 ≥48dp、相邻 ≥8dp)。
-  密度档位 5-6(Standard):行高 56dp,分区间距 24/32。
-  Swiss 风格是几何的:圆角克制(卡片 12dp、控件 8dp),分隔靠 1dp 边框。
+  尺寸令牌。首页那组数值直接来自设计图实测(907px 宽 ≈ 360dp,换算 2.519px/dp):
+  标题 24sp、圆环 190dp/描边 25dp、内盘 140dp、主按钮高 48dp 且左右内缩 48dp、
+  卡片圆角 24dp/高 128dp/间隙 10dp/外边距 6dp、悬浮导航高 60dp/圆角 24dp/外边距 6dp。
 -->
 <resources>
+    <!-- 间距:4/8dp 网格 -->
     <dimen name="sd_space_1">4dp</dimen>
     <dimen name="sd_space_2">8dp</dimen>
     <dimen name="sd_space_3">12dp</dimen>
     <dimen name="sd_space_4">16dp</dimen>
     <dimen name="sd_space_5">24dp</dimen>
-
     <dimen name="sd_gutter">16dp</dimen>
     <dimen name="sd_touch_min">48dp</dimen>
     <dimen name="sd_row_height">56dp</dimen>
-    <dimen name="sd_tabbar_height">60dp</dimen>
 
-    <dimen name="sd_radius_card">12dp</dimen>
-    <dimen name="sd_radius_inner">8dp</dimen>
-    <dimen name="sd_radius_chip">6dp</dimen>
+    <!-- 圆角与描边 -->
+    <dimen name="sd_radius_card">24dp</dimen>
+    <dimen name="sd_radius_inner">16dp</dimen>
+    <dimen name="sd_radius_chip">12dp</dimen>
+    <dimen name="sd_radius_pill">24dp</dimen>
     <dimen name="sd_hairline_width">1dp</dimen>
 
-    <dimen name="sd_hero_ring">176dp</dimen>
+    <!-- 首页 -->
+    <dimen name="sd_home_margin">6dp</dimen>
+    <dimen name="sd_home_title_top">8dp</dimen>
+    <dimen name="sd_ring_size">190dp</dimen>
+    <dimen name="sd_ring_stroke">25dp</dimen>
+    <dimen name="sd_ring_disc">140dp</dimen>
+    <dimen name="sd_ring_top">24dp</dimen>
+    <dimen name="sd_status_top">20dp</dimen>
+    <dimen name="sd_cta_height">48dp</dimen>
+    <dimen name="sd_cta_inset">48dp</dimen>
+    <dimen name="sd_cta_top">16dp</dimen>
+    <dimen name="sd_grid_top">24dp</dimen>
+    <dimen name="sd_grid_gap">10dp</dimen>
+    <dimen name="sd_tile_height">128dp</dimen>
+    <dimen name="sd_tile_icon">26dp</dimen>
+    <dimen name="sd_tile_padding">16dp</dimen>
+
+    <!-- 悬浮底部导航 -->
+    <dimen name="sd_tabbar_height">60dp</dimen>
+    <dimen name="sd_nav_margin_h">6dp</dimen>
+    <dimen name="sd_nav_margin_bottom">4dp</dimen>
+    <dimen name="sd_nav_radius">24dp</dimen>
+    <dimen name="sd_nav_clearance">72dp</dimen>
+
+    <!-- 其它 -->
     <dimen name="sd_btn_height">48dp</dimen>
     <dimen name="sd_segment_hit">48dp</dimen>
     <dimen name="sd_divider_inset">56dp</dimen>

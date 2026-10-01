@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 底部导航选中态 = 品牌绿(设计图实测:选中项的文字与图标都是绿,且没有指示条) -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/c_foreground" android:state_selected="true" />
+    <item android:color="@color/c_primary" android:state_selected="true" />
     <item android:color="@color/c_muted_foreground" />
 </selector>

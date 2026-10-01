@@ -85,6 +85,29 @@ class DesignRuleTest {
         assertEquals("布局中出现了未令牌化的值:$violations", emptyList<String>(), violations)
     }
 
+    /**
+     * 带点号的样式名必须**显式**声明 parent。
+     *
+     * aapt2 会把 "A.B.C" 的隐式父样式推断为 "A.B";这个前缀不存在时报
+     * "resource style/A.B not found" 并让整包链接失败(1.6.0 改版踩过一次:
+     * 重写 styles.xml 时把 Chip/Divider 的 parent="" 弄丢了)。
+     * 确实不想继承任何父样式时,写 parent="" 显式关掉推断。
+     */
+    @Test
+    fun dottedStylesDeclareExplicitParent() {
+        val violations = mutableListOf<String>()
+        for (file in listOf("values/styles.xml", "values/themes.xml", "values-night/themes.xml")) {
+            val f = File(resDir, file)
+            if (!f.isFile) continue
+            f.readText().lineSequence().forEachIndexed { i, line ->
+                val m = Regex("^\\s*<style\\s+name=\"([^\"]+)\"([^>]*)>").find(line) ?: return@forEachIndexed
+                val name = m.groupValues[1]
+                if (name.contains('.') && !m.groupValues[2].contains("parent=")) violations.add(file + ":" + (i + 1) + " " + name)
+            }
+        }
+        assertEquals("带点号的样式名必须显式写 parent(否则 aapt2 会去找不存在的隐式父样式):$violations", emptyList<String>(), violations)
+    }
+
     /** 令牌本身必须齐全:设计系统的核心角色缺一个,整套界面就会退回默认值 */
     @Test
     fun coreTokensExistInBothThemes() {

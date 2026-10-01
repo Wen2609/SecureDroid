@@ -64,69 +64,91 @@ const segment = (groupId, items) => linear({ "android:layout_width": "match_pare
       "android:layout_weight": "1", "android:text": t })).join("\n")));
 
 const out = {};
-out["activity_main.xml"] = HEAD + view("LinearLayout", { ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
-  "android:background": "@drawable/bg_fluid", "android:orientation": "vertical" },
-  text({ "android:id": "@+id/integrityBanner", "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
-    "android:background": "@color/c_destructive", "android:padding": "@dimen/sd_space_3", "android:textColor": "@color/c_on_destructive",
-    "android:textAppearance": "@style/TextAppearance.SecureDroid.Caption", "android:visibility": "gone" }) + "\n" +
-  view("androidx.appcompat.widget.Toolbar", { "android:id": "@+id/toolbar", "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
-    "android:background": "@android:color/transparent", "android:elevation": "0dp", "android:minHeight": "@dimen/sd_row_height",
-    "android:paddingStart": "@dimen/sd_gutter", "android:paddingEnd": "@dimen/sd_gutter", "android:paddingTop": "@dimen/sd_space_3",
-    "app:contentInsetStart": "0dp", "app:contentInsetStartWithNavigation": "0dp",
-    "app:titleTextAppearance": "@style/TextAppearance.SecureDroid.Title", "app:titleTextColor": "@color/c_foreground" }) + "\n" +
-  view("FrameLayout", { "android:id": "@+id/container", "android:layout_width": "match_parent", "android:layout_height": "0dp", "android:layout_weight": "1" }) + "\n" +
+out["activity_main.xml"] = HEAD + view("FrameLayout", { ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
+  "android:background": "@drawable/bg_page" },
+  linear({ "android:layout_width": "match_parent", "android:layout_height": "match_parent", "android:orientation": "vertical" },
+    text({ "android:id": "@+id/integrityBanner", "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
+      "android:background": "@color/c_destructive", "android:padding": "@dimen/sd_space_3", "android:textColor": "@color/c_on_destructive",
+      "android:textAppearance": "@style/TextAppearance.SecureDroid.Caption", "android:visibility": "gone" }) + "\n" +
+    view("FrameLayout", { "android:id": "@+id/container", "android:layout_width": "match_parent", "android:layout_height": "0dp",
+      "android:layout_weight": "1", "android:paddingBottom": "@dimen/sd_nav_clearance" })) + "\n" +
   view("com.google.android.material.tabs.TabLayout", { "android:id": "@+id/bottomNav", "android:layout_width": "match_parent",
-    "android:layout_height": "@dimen/sd_tabbar_height", "android:background": "@drawable/bg_tabbar", "app:tabGravity": "fill",
-    "app:tabIconTint": "@color/tab_text", "app:tabIndicator": "@drawable/tab_indicator", "app:tabIndicatorColor": "@color/c_accent",
-    "app:tabIndicatorFullWidth": "false", "app:tabIndicatorGravity": "top", "app:tabIndicatorHeight": "3dp", "app:tabInlineLabel": "true",
-    "app:tabMode": "fixed", "app:tabPaddingEnd": "@dimen/sd_space_3", "app:tabPaddingStart": "@dimen/sd_space_3",
-    "app:tabRippleColor": "@color/c_muted", "app:tabTextColor": "@color/tab_text" }));
+    "android:layout_height": "@dimen/sd_tabbar_height", "android:layout_gravity": "bottom",
+    "android:layout_marginStart": "@dimen/sd_nav_margin_h", "android:layout_marginEnd": "@dimen/sd_nav_margin_h",
+    "android:layout_marginBottom": "@dimen/sd_nav_margin_bottom", "android:background": "@drawable/bg_nav_bar", "android:elevation": "8dp",
+    "app:tabGravity": "fill", "app:tabIconTint": "@color/tab_text", "app:tabIndicatorHeight": "0dp", "app:tabMode": "fixed",
+    "app:tabPaddingEnd": "@dimen/sd_space_3", "app:tabPaddingStart": "@dimen/sd_space_3",
+    "app:tabRippleColor": "@color/c_muted", "app:tabTextAppearance": "@style/TextAppearance.SecureDroid.Nav",
+    "app:tabTextColor": "@color/tab_text" }));
 
-const hero = card({}, linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
-  "android:gravity": "center_horizontal", "android:orientation": "vertical", "android:padding": "@dimen/sd_space_5" },
-  view("FrameLayout", { "android:layout_width": "wrap_content", "android:layout_height": "wrap_content" },
-    view("com.google.android.material.progressindicator.CircularProgressIndicator", { "android:id": "@+id/scoreRing",
-      "android:layout_width": "wrap_content", "android:layout_height": "wrap_content", "android:layout_gravity": "center",
-      "android:indeterminate": "false", "android:max": "100", "android:progress": "100", "app:indicatorColor": "@color/c_accent",
-      "app:indicatorSize": "@dimen/sd_hero_ring", "app:trackColor": "@color/c_muted", "app:trackThickness": "8dp" }) + "\n" +
-    linear({ "android:layout_width": "wrap_content", "android:layout_height": "wrap_content", "android:layout_gravity": "center",
-      "android:gravity": "center_horizontal", "android:orientation": "vertical" },
-      text({ "android:id": "@+id/tvScore", "android:layout_width": "wrap_content", "android:layout_height": "wrap_content",
-        "android:text": "@string/sd_score_placeholder", "android:textAppearance": "@style/TextAppearance.SecureDroid.Display",
-        "android:textColor": "@color/c_foreground" }) + "\n" +
-      text({ "android:layout_width": "wrap_content", "android:layout_height": "wrap_content", "android:text": "@string/dashboard_score_label",
-        "android:textAppearance": "@style/TextAppearance.SecureDroid.Section", "android:textColor": "@color/c_muted_foreground" }))) + "\n" +
-  text({ "android:id": "@+id/tvState", "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
-    "android:layout_marginTop": "@dimen/sd_space_4", "android:gravity": "center", "android:text": "@string/dashboard_state_good",
-    "android:textAppearance": "@style/TextAppearance.SecureDroid.Body", "android:textColor": "@color/c_muted_foreground" }) + "\n" +
-  text({ "android:id": "@+id/tvRootState", style: "@style/Widget.SecureDroid.Chip", "android:layout_width": "wrap_content",
-    "android:layout_height": "wrap_content", "android:layout_marginTop": "@dimen/sd_space_3", "android:text": "@string/root_mode_off",
-    "android:textColor": "@color/c_muted_foreground" })));
+// 首页四宫格入口卡:图标 + 标题 + 副标题(副标题由 DashboardFragment 用真实数据替换)
+const tile = (id, title, sub, subId, icon, extra = {}) => card({ style: "@style/Widget.SecureDroid.Tile",
+  "android:id": "@+id/" + id, "android:layout_width": "0dp", "android:layout_height": "@dimen/sd_tile_height", "android:layout_weight": "1", ...extra },
+  linear({ "android:layout_width": "match_parent", "android:layout_height": "match_parent", "android:orientation": "vertical",
+    "android:padding": "@dimen/sd_tile_padding" },
+    view("ImageView", { "android:layout_width": "@dimen/sd_tile_icon", "android:layout_height": "@dimen/sd_tile_icon",
+      "android:importantForAccessibility": "no", "android:src": "@drawable/" + icon, "app:tint": "@color/c_foreground" }) + "\n" +
+    text({ "android:layout_width": "wrap_content", "android:layout_height": "wrap_content", "android:layout_marginTop": "@dimen/sd_space_5",
+      "android:text": title, "android:textAppearance": "@style/TextAppearance.SecureDroid.Headline",
+      "android:textColor": "@color/c_foreground" }) + "\n" +
+    text({ "android:id": "@+id/" + subId, "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
+      "android:layout_marginTop": "@dimen/sd_space_1", "android:ellipsize": "end", "android:maxLines": "1", "android:text": sub,
+      "android:textAppearance": "@style/TextAppearance.SecureDroid.Tile", "android:textColor": "@color/c_muted_foreground" })));
+const tileRow = (a, left, right) => linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
+  "android:orientation": "horizontal", ...a }, tile(left[0], left[1], left[2], left[3], left[4], { "android:layout_marginEnd": "@dimen/sd_grid_gap" }) + "\n" + tile(right[0], right[1], right[2], right[3], right[4]));
 
 out["fragment_dashboard.xml"] = HEAD + view("ScrollView", { ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
-  "android:clipToPadding": "false", "android:paddingBottom": "@dimen/sd_space_5" },
+  "android:clipToPadding": "false" },
   linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content", "android:orientation": "vertical",
-    "android:paddingHorizontal": "@dimen/sd_gutter" },
-    hero + "\n" +
-    sectionHeader("@string/sd_section_enter") + "\n" +
-    card({}, linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content", "android:orientation": "vertical" },
-      rowButton("btnGoScan", "@string/btn_go_scan", "ic_scan") + "\n" + divider() + "\n" +
-      rowButton("btnGoAudit", "@string/btn_go_audit", "ic_grid") + "\n" + divider() + "\n" +
-      rowButton("btnGoLock", "@string/btn_go_lock", "ic_lock"))) + "\n" +
-    sectionHeader("@string/sd_section_guard") + "\n" +
-    card({}, linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content", "android:orientation": "vertical" },
-      rowButton("btnRealtime", "@string/btn_realtime_start", "ic_shield") + "\n" + divider() + "\n" +
-      switchRow("swAutoDisinfect", "@string/sw_auto_disinfect") + "\n" + divider() + "\n" +
-      switchRow("swAutoUninstall", "@string/sw_auto_uninstall")))));
+    "android:paddingHorizontal": "@dimen/sd_home_margin" },
+    text({ "android:id": "@+id/tvHomeTitle", "android:layout_width": "wrap_content", "android:layout_height": "wrap_content",
+      "android:layout_marginTop": "@dimen/sd_home_title_top", "android:text": "@string/home_title",
+      "android:textAppearance": "@style/TextAppearance.SecureDroid.Title", "android:textColor": "@color/c_foreground" }) + "\n" +
+    view("FrameLayout", { "android:layout_width": "@dimen/sd_ring_size", "android:layout_height": "@dimen/sd_ring_size",
+      "android:layout_gravity": "center_horizontal", "android:layout_marginTop": "@dimen/sd_ring_top" },
+      view("View", { "android:layout_width": "@dimen/sd_ring_disc", "android:layout_height": "@dimen/sd_ring_disc",
+        "android:layout_gravity": "center", "android:background": "@drawable/bg_ring_disc", "android:importantForAccessibility": "no" }) + "\n" +
+      view("com.google.android.material.progressindicator.CircularProgressIndicator", { "android:id": "@+id/scoreRing",
+        "android:layout_width": "wrap_content", "android:layout_height": "wrap_content", "android:layout_gravity": "center",
+        "android:indeterminate": "false", "android:max": "100", "android:progress": "100", "app:indicatorColor": "@color/c_ring",
+        "app:indicatorSize": "@dimen/sd_ring_size", "app:trackColor": "@color/c_ring_track",
+        "app:trackCornerRadius": "@dimen/sd_radius_chip", "app:trackThickness": "@dimen/sd_ring_stroke" }) + "\n" +
+      linear({ "android:layout_width": "wrap_content", "android:layout_height": "wrap_content", "android:layout_gravity": "center",
+        "android:gravity": "center_horizontal", "android:orientation": "vertical" },
+        text({ "android:id": "@+id/tvScore", "android:layout_width": "wrap_content", "android:layout_height": "wrap_content",
+          "android:includeFontPadding": "false", "android:text": "@string/sd_score_placeholder",
+          "android:textAppearance": "@style/TextAppearance.SecureDroid.Score", "android:textColor": "@color/c_foreground" }) + "\n" +
+        text({ "android:id": "@+id/tvScoreUnit", "android:layout_width": "wrap_content", "android:layout_height": "wrap_content",
+          "android:text": "@string/dashboard_score_unit", "android:textAppearance": "@style/TextAppearance.SecureDroid.Label",
+          "android:textColor": "@color/c_muted_foreground" }))) + "\n" +
+    text({ "android:id": "@+id/tvState", "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
+      "android:layout_marginTop": "@dimen/sd_status_top", "android:gravity": "center", "android:text": "@string/dashboard_state_good",
+      "android:textAppearance": "@style/TextAppearance.SecureDroid.Status", "android:textColor": "@color/c_muted_foreground" }) + "\n" +
+    view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/btnOptimize", style: "@style/Widget.SecureDroid.Button",
+      "android:layout_width": "match_parent", "android:layout_height": "@dimen/sd_cta_height", "android:layout_marginTop": "@dimen/sd_cta_top",
+      "android:layout_marginStart": "@dimen/sd_cta_inset", "android:layout_marginEnd": "@dimen/sd_cta_inset",
+      "android:text": "@string/btn_optimize" }) + "\n" +
+    tileRow({ "android:layout_marginTop": "@dimen/sd_grid_top" },
+      ["tileClean", "@string/tile_clean_title", "@string/tile_clean_sub", "tvCleanSub", "ic_clean"],
+      ["tileVirus", "@string/tile_virus_title", "@string/tile_virus_sub", "tvVirusSub", "ic_bug"]) + "\n" +
+    tileRow({ "android:layout_marginTop": "@dimen/sd_grid_gap" },
+      ["tileNetwork", "@string/tile_network_title", "@string/tile_network_sub", "tvNetworkSub", "ic_network"],
+      ["tileApplock", "@string/tile_applock_title", "@string/tile_applock_sub", "tvApplockSub", "ic_lock"])));
 
 out["fragment_detect.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
   "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter" },
+  text({ "android:layout_width": "wrap_content", "android:layout_height": "wrap_content",
+    "android:layout_marginTop": "@dimen/sd_space_4", "android:text": "@string/tab_detect",
+    "android:textAppearance": "@style/TextAppearance.SecureDroid.Title", "android:textColor": "@color/c_foreground" }) + "\n" +
   segment("segDetect", [["segDetectVirus", "@string/seg_virus"], ["segDetectTrojan", "@string/seg_trojan"]]) + "\n" +
   view("FrameLayout", { "android:id": "@+id/detectContainer", "android:layout_width": "match_parent", "android:layout_height": "0dp",
     "android:layout_marginTop": "@dimen/sd_space_4", "android:layout_weight": "1" }));
 
 out["fragment_protect.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
   "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter" },
+  text({ "android:layout_width": "wrap_content", "android:layout_height": "wrap_content",
+    "android:layout_marginTop": "@dimen/sd_space_4", "android:text": "@string/tab_protect",
+    "android:textAppearance": "@style/TextAppearance.SecureDroid.Title", "android:textColor": "@color/c_foreground" }) + "\n" +
   segment("segProtect", [["segProtectLock", "@string/seg_applock"], ["segProtectAudit", "@string/seg_audit"], ["segProtectTools", "@string/seg_tools"]]) + "\n" +
   view("FrameLayout", { "android:id": "@+id/protectContainer", "android:layout_width": "match_parent", "android:layout_height": "0dp",
     "android:layout_marginTop": "@dimen/sd_space_4", "android:layout_weight": "1" }));
@@ -166,7 +188,15 @@ out["fragment_permission_audit.xml"] = page(sectionHeader("@string/sd_section_au
     "android:textAppearance": "@style/TextAppearance.SecureDroid.Body", "android:textColor": "@color/c_foreground" })) + "\n" +
   card({ "android:layout_height": "0dp", "android:layout_marginTop": "@dimen/sd_space_4", "android:layout_weight": "1" }, list("rvAudit")));
 
-out["fragment_tools.xml"] = page(sectionHeader("@string/sd_section_prefs") + "\n" +
+out["fragment_tools.xml"] = page(sectionHeader("@string/sd_section_guard") + "\n" +
+  card({}, linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content", "android:orientation": "vertical" },
+    switchRow("swRealtime", "@string/sw_realtime", "com.google.android.material.switchmaterial.SwitchMaterial") + "\n" + divider() + "\n" +
+    text({ "android:id": "@+id/tvRootState", style: "@style/Widget.SecureDroid.Chip", "android:layout_width": "wrap_content",
+      "android:layout_height": "wrap_content", "android:layout_marginStart": "@dimen/sd_space_4", "android:layout_marginVertical": "@dimen/sd_space_3",
+      "android:text": "@string/root_mode_off", "android:textColor": "@color/c_muted_foreground" }) + "\n" + divider() + "\n" +
+    switchRow("swAutoDisinfect", "@string/sw_auto_disinfect") + "\n" + divider() + "\n" +
+    switchRow("swAutoUninstall", "@string/sw_auto_uninstall"))) + "\n" +
+  sectionHeader("@string/sd_section_prefs") + "\n" +
   card({}, linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content", "android:orientation": "vertical" },
     switchRow("swDaily", "@string/sw_daily_scan", "com.google.android.material.switchmaterial.SwitchMaterial") + "\n" + divider() + "\n" +
     switchRow("swSim", "@string/sw_sim_guard", "com.google.android.material.switchmaterial.SwitchMaterial"))) + "\n" +

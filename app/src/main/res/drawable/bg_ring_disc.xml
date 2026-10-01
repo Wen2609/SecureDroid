@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 训练环内的浅绿圆盘:设计图里环内不是透明,而是一块比环底更浅的绿(#EAF4E8) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/c_ring_disc" />
+</shape>

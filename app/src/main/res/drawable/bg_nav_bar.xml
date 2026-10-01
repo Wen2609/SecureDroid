@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 悬浮底部导航的底板:24dp 圆角 + 近白底(#FDFDFD),悬浮在内容之上,靠 View 的 elevation 出阴影 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/c_nav" />
+    <corners android:radius="@dimen/sd_nav_radius" />
+</shape>

@@ -7,6 +7,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/sd_gutter">
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_4"
+            android:text="@string/tab_protect"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Title"
+            android:textColor="@color/c_foreground" />
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

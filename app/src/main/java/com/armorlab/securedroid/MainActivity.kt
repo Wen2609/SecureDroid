@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
 
     /** 入口定义来自 R.menu.bottom_nav,与顺序一一对应 */
     private val tabItemIds = mutableListOf<Int>()
-    private val tabTitles = mutableListOf<String>()
 
     private val notificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -76,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * 从菜单资源构建底部入口。
      *
-     * 顶层只有三个板块(状态 / 检测 / 防护),二级功能收进板块内的分段控件 ——
+     * 顶层只有三个板块(首页 / 检测 / 防护),二级功能收进板块内的分段控件 ——
      * 六个平级入口是上一版界面"杂乱"的根源:用户每次操作都要在六个等价选项里做一次决策。
      * 用 TabLayout 而非 BottomNavigationView 是为了避免后者 5 项硬上限,以及便于自定义指示器。
      */
@@ -86,11 +85,9 @@ class MainActivity : AppCompatActivity() {
         MenuInflater(this).inflate(R.menu.bottom_nav, menu)
 
         tabItemIds.clear()
-        tabTitles.clear()
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
             tabItemIds.add(item.itemId)
-            tabTitles.add(item.title?.toString() ?: "")
             binding.bottomNav.addTab(
                 binding.bottomNav.newTab().setText(item.title).setIcon(item.icon)
             )
@@ -113,7 +110,6 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
-        binding.toolbar.title = tabTitles.getOrNull(position) ?: getString(R.string.app_name)
     }
 
     /**
