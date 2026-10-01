@@ -12,8 +12,7 @@ class ToolsAdapter(
 ) : ListAdapter<ToolsAdapter.ToolEntry, ToolsAdapter.VH>(DIFF) {
 
     enum class Kind {
-        FULL_AUDIT, NETWORK, VAULT, SHRED, CLEANER, FREEZE,
-        APK_EXTRACT, IME, SOS, CLIPBOARD, LOG_EXPORT
+        FULL_AUDIT, NETWORK, CLEANER
     }
 
     data class ToolEntry(val title: String, val sub: String, val kind: Kind)

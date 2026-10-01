@@ -18,7 +18,7 @@
 | 恶意模块防护 | 针对 KernelSU / APatch / SukiSU-Ultra / Magisk:扫描模块启动脚本与 su 开机脚本,加权评分判定恶意行为,支持一键禁用模块、删除恶意 su 脚本 |
 | Root 即时检测 / 自动杀毒 | Root 模式下:Root 守护循环(开机即扫 + 每 5 分钟巡检)即时检测恶意模块与 su 脚本;命中高危 / 严重项自动禁用模块、删除恶意脚本;应用安装即检,恶意应用经 root 自动卸载;全部处置写入审计表(auto_actions)并发通知 |
 | 防锁机软件 | 检测第三方设备管理员 + lockNow / resetPassword / wipeData 组合行为;Root 模式下守护循环即时检测,判定锁机木马即自动执行 dpm remove-active-admin 解除管理员并卸载;普通模式提供一键解除处置按钮 |
-| 安全工具箱(20 项) | 一键全面体检 / 系统安全基线 9 项 / DNS 劫持检测(DoH 对比) / hosts 篡改检测 / 网络连接审计(UID 归属) / 剪贴板敏感信息检查 / 文件保险箱(AES-256-GCM + PBKDF2 60 万次迭代) / 文件粉碎器 / 应用缓存清理(root) / 应用冻结解冻(root) / APK 提取器(root) / 输入法安全审计 / SOS 紧急求助(短信+警报) / SIM 卡变更防盗告警 / 每日定时自动查杀 / 快捷设置磁贴 / 桌面小部件 / 应用锁防暴力破解 / 应用锁假崩溃诱骗 / 安全日志导出 |
+| 安全工具箱(精简版) | 只保留需 root 或需主动触发的高价值工具:一键全面体检 / 系统安全基线 9 项 / DNS 劫持检测(DoH 对比) / hosts 篡改检测 / 网络连接审计(UID 归属) / 应用缓存清理(root);另有 SIM 卡变更防盗告警 / 每日定时自动查杀 / 快捷设置磁贴 / 桌面小部件 / 应用锁防暴力破解 / 应用锁假崩溃诱骗 |
 | 深度查杀(内存·全盘·分区) | 三阶段极致扫描:①运行内存进程检测(双视角枚举抓 Rootkit 隐匿进程、已删除可执行文件驻留、临时目录可执行、伪装系统进程、rwxp 匿名内存注入、挖矿级 CPU 双采样);②全设备目录查杀(tmp 载荷 + find 全盘可执行脚本/dex/jar + 脚本评分 + 系统分区全局可写 + root 残留 + ClamAV 字节特征经 base64 通道读取);③底层分区查杀(/dev/block/by-name 枚举 + dd 原始分区特征扫描 + boot 镜像 magisk/tmp 引用痕迹);守护循环自动清除临时目录载荷 |
 | 病毒查杀中心(20 项专项) | 签名库状态统计 / 最近安装应用综合深扫(7 天) / APK 证书与签名完整性 / 嵌入式 APK 与隐藏 DEX 检测(PK 头与 dex magic 计数) / assets 原生库异常 / 旧 targetSdk 风险 / 危险权限组合(安装+短信) / 综合威胁评分引擎(权限+行为+元数据三路合成) / 信任列表白名单(全链路过滤) / 隔离区(移动+销毁) / APK 哈希缓存加速 / 差异快速扫描(仅变更应用) / 进程基线学习与新增进程检测(守护循环联动) / 特征库在线更新(URL+SHA-256 校验) / 特征库热重载 / 威胁情报报告导出 / 查杀统计仪表 / 恶意应用强停清数据处置 / 卸载残留目录检查 |
 | 最高权限防护 | 统一提权层:主动探测 su 授权(ROOT)/ 本地 shell 分级,能力矩阵可视化(12 项能力),灾害级命令安全策略强制拦截,批量命令合并为单次 su 会话,最近 500 条提权命令审计落盘 |
@@ -115,8 +115,8 @@ WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超�
     ./gradlew lintDebug            # 错误级问题阻断构建
 
 已启用 `abortOnError = true`:权限缺失、API 误用、清单不一致等**真实崩溃风险**会直接让构建失败。
-初次启用即发现并修复 4 个真实缺陷(详见 CHANGELOG):SOS 震动缺少 VIBRATE 权限、锁屏页弃用 API、
-磁贴弃用 API、SMS 权限导致无电话硬件设备不可安装。硬编码系统路径(`/data/local/tmp`、`/sdcard`)
+初次启用即发现并修复真实缺陷(详见 CHANGELOG):振动反馈缺少 VIBRATE 权限、锁屏页弃用 API、
+磁贴弃用 API。硬编码系统路径(`/data/local/tmp`、`/sdcard`)
 与 `SystemProperties` 反射属**故意为之**(查杀必须使用真实系统路径,反射有 `getprop` 兜底),保留为警告。
 
 CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
@@ -129,7 +129,7 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 
 - 分隔靠 **1dp 边框 + 留白**(技能 Key Effects:"sharp shadows if any"),卡片 0dp 阴影;
 - 4/8dp 栅格、行高 56dp、触摸下限 48dp、正文 16sp / 行高 1.5、对比度 ≥4.5:1;
-- **全部 23 个布局由脚本从令牌生成**(\`design/generate_layouts.mjs\`),改令牌重跑即可,不存在逐页漂移;
+- **全部 20 个布局由脚本从令牌生成**(\`design/generate_layouts.mjs\`),改令牌重跑即可,不存在逐页漂移;
 - 设计规则可自动验收:\`DesignRuleTest\`(触摸目标 / 令牌化 / 生成器一致性)+ \`ColorContrastTest\`(WCAG 对比度)。
 
 ![设计稿](design/mockup-sheet.png)
@@ -158,7 +158,7 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 
 | 措施 | 位置 | 作用 |
 | --- | --- | --- |
-| `FLAG_SECURE` | 锁屏页、文件保险箱 | 禁止截屏 / 录屏 / 最近任务缩略图,防止 PIN 与文件内容泄露 |
+| `FLAG_SECURE` | 锁屏页 | 禁止截屏 / 录屏 / 最近任务缩略图,防止 PIN 泄露 |
 | `filterTouchesWhenObscured` | 锁屏页根布局 | 阻止悬浮窗覆盖点击劫持(tapjacking)窃取 PIN |
 | 禁止明文流量 | `res/xml/network_security_config.xml` | 全局 `cleartextTrafficPermitted=false`,仅信任系统 CA |
 | 禁止备份 / 迁移 | `allowBackup=false` + `dataExtractionRules` | 敏感数据不进入云备份与设备迁移 |
@@ -208,10 +208,10 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.4.1-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.5.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-      SHA-256 ee55ca47d146da793ca83ca63847e5c4b94662a2a43dd6c3f61c1876cc40e2e4
-      大小    2,000,205 字节    versionCode 7 / versionName 1.4.1(Swiss Style · 全量修复)
+    SHA-256 DF3F4D6D80A4116CE26641BC253051638F562672CA06800B0F5AE0124CCB7174
+    大小    1,988,202 字节    versionCode 8 / versionName 1.5.0(精简版 · 移除 8 项非核心功能)
 
   更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 保留用于回退。
 

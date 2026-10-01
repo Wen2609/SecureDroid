@@ -47,6 +47,7 @@
                         style="@style/Widget.SecureDroid.Button.Row"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingStart="@dimen/sd_space_4"
                         android:paddingEnd="44dp"
                         android:text="@string/rootkit_btn"
                         app:icon="@drawable/ic_shield" />
@@ -69,6 +70,7 @@
                         style="@style/Widget.SecureDroid.Button.Row"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingStart="@dimen/sd_space_4"
                         android:paddingEnd="44dp"
                         android:text="@string/modules_btn"
                         app:icon="@drawable/ic_grid" />
@@ -91,6 +93,7 @@
                         style="@style/Widget.SecureDroid.Button.Row"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingStart="@dimen/sd_space_4"
                         android:paddingEnd="44dp"
                         android:text="@string/locker_btn"
                         app:icon="@drawable/ic_lock" />
@@ -113,6 +116,7 @@
                         style="@style/Widget.SecureDroid.Button.Row"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingStart="@dimen/sd_space_4"
                         android:paddingEnd="44dp"
                         android:text="@string/deep_scan_btn"
                         app:icon="@drawable/ic_scan" />
@@ -135,6 +139,7 @@
                         style="@style/Widget.SecureDroid.Button.Row"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingStart="@dimen/sd_space_4"
                         android:paddingEnd="44dp"
                         android:text="@string/vc_open_btn"
                         app:icon="@drawable/ic_bug" />

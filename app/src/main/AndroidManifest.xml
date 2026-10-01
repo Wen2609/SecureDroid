@@ -12,13 +12,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
-    <!-- SMS 功能在无电话硬件的设备(平板 / ChromeOS)上不可用,但不影响安装与其余功能 -->
-    <uses-feature
-        android:name="android.hardware.telephony"
-        android:required="false" />
 
     <application
         android:name=".SecureGuardApp"
@@ -91,13 +85,7 @@
 
         <activity android:name=".ui.FullAuditActivity" android:exported="false" />
         <activity android:name=".ui.NetworkAuditActivity" android:exported="false" />
-        <activity android:name=".ui.VaultActivity" android:exported="false" />
-        <activity android:name=".ui.ShredActivity" android:exported="false" />
         <activity android:name=".ui.CleanerActivity" android:exported="false" />
-        <activity android:name=".ui.FreezeActivity" android:exported="false" />
-        <activity android:name=".ui.ApkExtractorActivity" android:exported="false" />
-        <activity android:name=".ui.ImeAuditActivity" android:exported="false" />
-        <activity android:name=".ui.SosActivity" android:exported="false" />
         <activity android:name=".ui.DeepScanActivity" android:exported="false" />
         <activity android:name=".ui.VirusCenterActivity" android:exported="false" />
 

@@ -294,35 +294,6 @@ const noteText = (s) => text({ "android:layout_width": "match_parent", "android:
 const pageWithTitle = (children) => page(linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
   "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter" }, titleBlock() + "\n" + children));
 
-out["activity_shred.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
-  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter",
-  "android:paddingTop": "@dimen/sd_space_4" },
-  titleNoPad() + "\n" + "\n" + filledButton("btnPick", "@string/shred_pick", "ic_grid") + "\n" + noteText("@string/shred_note") + "\n" +
-  card({ "android:layout_height": "0dp", "android:layout_marginTop": "@dimen/sd_space_4", "android:layout_marginBottom": "@dimen/sd_space_4",
-    "android:layout_weight": "1" }, list("rvList"))));
-
-out["activity_sos.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
-  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter",
-  "android:paddingTop": "@dimen/sd_space_4" },
-  titleNoPad() + "\n" + "\n" +
-  field("etPhone", "@string/sos_hint_phone", "phone") + "\n" +
-  field("etMsg", "@string/sos_hint_msg", "textMultiLine") + "\n" +
-  view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/btnSend", style: "@style/Widget.SecureDroid.Button.Accent",
-    "android:layout_width": "match_parent", "android:layout_height": "@dimen/sd_btn_height", "android:layout_marginTop": "@dimen/sd_space_4",
-    "android:text": "@string/sos_btn_send" })));
-
-out["activity_vault.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "match_parent",
-  "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_gutter",
-  "android:paddingTop": "@dimen/sd_space_4" },
-  titleNoPad() + "\n" + "\n" +
-  linear({ "android:layout_width": "match_parent", "android:layout_height": "wrap_content", "android:orientation": "horizontal" },
-    view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/btnEncrypt", style: "@style/Widget.SecureDroid.Button.Accent",
-      "android:layout_width": "0dp", "android:layout_height": "@dimen/sd_btn_height", "android:layout_weight": "1",
-      "android:text": "@string/vault_btn_encrypt" }) + "\n" +
-    view("com.google.android.material.button.MaterialButton", { "android:id": "@+id/btnDecrypt", style: "@style/Widget.SecureDroid.Button.Outlined",
-      "android:layout_width": "0dp", "android:layout_height": "@dimen/sd_btn_height", "android:layout_marginStart": "@dimen/sd_space_2",
-      "android:layout_weight": "1", "android:text": "@string/vault_btn_decrypt" })) + "\n" + noteText("@string/vault_note")));
-
 out["dialog_set_pin.xml"] = HEAD + linear({ ...NS, "android:layout_width": "match_parent", "android:layout_height": "wrap_content",
   "android:orientation": "vertical", "android:paddingHorizontal": "@dimen/sd_space_5", "android:paddingTop": "@dimen/sd_space_3" },
   field("etPin", "@string/lock_pin_hint", "numberPassword") + "\n" + field("etPinConfirm", "@string/lock_pin_confirm_hint", "numberPassword"));

@@ -40,7 +40,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="1"
+                    android:text="@string/keypad_1"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn2"
@@ -49,7 +49,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="2"
+                    android:text="@string/keypad_2"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn3"
@@ -58,7 +58,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="3"
+                    android:text="@string/keypad_3"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             </LinearLayout>
         <LinearLayout
@@ -72,7 +72,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="4"
+                    android:text="@string/keypad_4"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn5"
@@ -81,7 +81,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="5"
+                    android:text="@string/keypad_5"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn6"
@@ -90,7 +90,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="6"
+                    android:text="@string/keypad_6"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             </LinearLayout>
         <LinearLayout
@@ -104,7 +104,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="7"
+                    android:text="@string/keypad_7"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn8"
@@ -113,7 +113,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="8"
+                    android:text="@string/keypad_8"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn9"
@@ -122,7 +122,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="9"
+                    android:text="@string/keypad_9"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             </LinearLayout>
         <LinearLayout
@@ -140,7 +140,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="@dimen/sd_space_1"
                     android:layout_weight="1"
-                    android:text="0"
+                    android:text="@string/keypad_0"
                     android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDel"

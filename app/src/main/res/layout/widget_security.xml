@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 由 design/generate_layouts.mjs 从设计令牌生成;请勿手改,改令牌或改脚本后重跑 -->
+<!-- tools:ignore Overdraw:RemoteViews 自带背景,不继承主题背景,不存在 overdraw -->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="Overdraw"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/c_card"
