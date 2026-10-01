@@ -9,17 +9,18 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.AutoActionEntity
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.deep.FilesystemScanner
+import com.armorlab.securedroid.feature.DailyScanRunner
 import com.armorlab.securedroid.vscan.ActionPolicy
 import com.armorlab.securedroid.vscan.AdminSnapshot
 import com.armorlab.securedroid.vscan.BatteryAware
 import com.armorlab.securedroid.vscan.ProcessBaseline
-import com.armorlab.securedroid.vscan.ParallelScanner
 import com.armorlab.securedroid.vscan.Quarantine
 import com.armorlab.securedroid.root.LockerDetector
 import com.armorlab.securedroid.root.ModuleScanner
@@ -50,7 +51,14 @@ class RealtimeProtectionService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        startForeground(NOTIF_ID, buildNotification())
+        // 前台服务类型必须与 manifest 声明一致:
+        // Android 14+ 使用 specialUse(常驻安全监控语义,不受 dataSync 时长/语义限制),
+        // 低版本回退 dataSync。类型不匹配会抛 SecurityException 导致崩溃。
+        val fgsType = if (android.os.Build.VERSION.SDK_INT >= 34)
+            android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+        else
+            android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        ServiceCompat.startForeground(this, NOTIF_ID, buildNotification(), fgsType)
         registerPackageMonitor()
         // Root 守护循环:即时检测(开机即扫一轮,之后周期巡检)
         scope.launch { guardLoop() }
@@ -63,34 +71,13 @@ class RealtimeProtectionService : Service() {
         return START_STICKY
     }
 
-    /** 每日定时查杀:全盘多引擎扫描并汇总通知(低电量省电模式自动跳过) */
+    /**
+     * 前台触发的一轮定时查杀(来自磁贴 / 服务内部动作)。
+     * 系统级周期调度走 WorkManager(DailyScanWorker),两者共用 DailyScanRunner。
+     */
     private suspend fun scheduledScan() {
-        if (BatteryAware.eco(this)) {
-            notifyAutoAction("电量低,本次定时查杀已跳过(省电模式)")
-            return
-        }
         try {
-            var infected = 0
-            val dao = AppDatabase.get(applicationContext).scanRecordDao()
-            val now = System.currentTimeMillis()
-            val entities = java.util.concurrent.ConcurrentLinkedQueue<ScanRecordEntity>()
-            ParallelScanner.scanReports(applicationContext, 4, { _, _ -> }, { r ->
-                entities.add(
-                    ScanRecordEntity(
-                        packageName = r.packageName,
-                        appName = r.appName,
-                        sha256 = "",
-                        threatName = r.detections.maxByOrNull { it.level.ordinal }?.name,
-                        riskScore = 0,
-                        scannedAt = now
-                    )
-                )
-            })
-            val list = entities.toList()
-            dao.insertAll(list)
-            infected = list.count { it.threatName != null }
-            dao.trim()
-            notifyAutoAction("每日查杀完成: 扫描 " + entities.size + " 个应用, 发现 " + infected + " 个感染项")
+            DailyScanRunner.run(applicationContext)
         } catch (_: Exception) {
         }
     }
@@ -275,26 +262,9 @@ class RealtimeProtectionService : Service() {
         )
     }
 
-    private var lastNotifyText = ""
-    private var lastNotifyAt = 0L
-
+    /** 统一走 SecurityNotifier(与 WorkManager 路径共享去重与样式) */
     private fun notifyAutoAction(text: String) {
-        // 60 秒内同文本去重,防止巡检刷屏
-        val now = System.currentTimeMillis()
-        if (text == lastNotifyText && now - lastNotifyAt < 60_000L) return
-        lastNotifyText = text
-        lastNotifyAt = now
-        val nm = getSystemService(NotificationManager::class.java) ?: return
-        nm.notify(
-            ("auto" + text).hashCode(),
-            NotificationCompat.Builder(this, SecureGuardAppRefs.CHANNEL_ALERT)
-                .setSmallIcon(R.drawable.ic_shield)
-                .setContentTitle(getString(R.string.auto_disinfect_title))
-                .setContentText(text)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .build()
-        )
+        SecurityNotifier.alert(this, text)
     }
 
     companion object {
@@ -302,10 +272,14 @@ class RealtimeProtectionService : Service() {
         const val ACTION_SCHEDULED_SCAN = "com.armorlab.securedroid.SCHEDULED_SCAN"
         private const val GUARD_INTERVAL_MS = 5L * 60 * 1000
 
-        fun start(context: Context) {
+        /** @return true 表示启动请求已被系统接受;false 表示被后台启动策略拒绝 */
+        fun start(context: Context): Boolean = try {
             ContextCompat.startForegroundService(
                 context, Intent(context, RealtimeProtectionService::class.java)
             )
+            true
+        } catch (_: Exception) {
+            false
         }
 
         fun stop(context: Context) {

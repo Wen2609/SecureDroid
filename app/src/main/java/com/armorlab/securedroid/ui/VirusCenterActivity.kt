@@ -444,29 +444,45 @@ class VirusCenterActivity : AppCompatActivity() {
     }
 
     private fun showCertMarkDialog() {
-        val pm = packageManager
-        val thirdParty = pm.getInstalledApplications(0)
-            .filter { (it.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0 }
-            .take(80)
-        if (thirdParty.isEmpty()) {
-            toast(getString(R.string.vc_trust_none))
-            return
-        }
-        val labels = thirdParty.map { it.loadLabel(pm).toString() + " (" + it.packageName + ")" }.toTypedArray()
-        AlertDialog.Builder(this)
-            .setTitle(R.string.va_certmark)
-            .setItems(labels) { _, which ->
-                val pkg = thirdParty[which].packageName
-                val hash = CertStore.certHash(this, pkg)
-                if (hash == null) {
-                    toast(getString(R.string.vc_cert_fail))
-                } else {
-                    CertStore.markGood(this, hash)
-                    toast(getString(R.string.vc_cert_marked) + " " + hash.take(16) + "…")
-                }
+        // 应用枚举 + 标签解析放后台线程(设备应用多时避免主线程卡顿 / ANR)
+        Thread {
+            val pm = packageManager
+            val thirdParty = try {
+                pm.getInstalledApplications(0)
+                    .filter { (it.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0 }
+                    .take(80)
+            } catch (_: Exception) {
+                emptyList()
             }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            val labels = thirdParty.map {
+                it.loadLabel(pm).toString() + " (" + it.packageName + ")"
+            }.toTypedArray()
+            runOnUiThread {
+                if (thirdParty.isEmpty()) {
+                    toast(getString(R.string.vc_trust_none))
+                    return@runOnUiThread
+                }
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.va_certmark)
+                    .setItems(labels) { _, which ->
+                        val pkg = thirdParty[which].packageName
+                        // 证书读取涉及 APK 解析,同样放后台,避免点选时卡顿
+                        Thread {
+                            val hash = CertStore.certHash(this, pkg)
+                            runOnUiThread {
+                                if (hash == null) {
+                                    toast(getString(R.string.vc_cert_fail))
+                                } else {
+                                    CertStore.markGood(this, hash)
+                                    toast(getString(R.string.vc_cert_marked) + " " + hash.take(16) + "…")
+                                }
+                            }
+                        }.start()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
+        }.start()
     }
 
     private fun showBlocklistDialog() {

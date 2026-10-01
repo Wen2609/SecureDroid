@@ -29,6 +29,18 @@
 - Room: AppDatabase.get(ctx).scanRecordDao()(insertAll/trim/threatCount) + autoActionDao
 - 字符串资源在 res/values/strings.xml,新增 UI 引用前先查有没有
 
+## 后台任务与前台服务约定(改动前必读)
+- 定时查杀 = WorkManager:ScanScheduler 入队 DailyScanWorker(唯一名 securedroid_daily_scan)→ DailyScanRunner.run();禁止再引入「AlarmManager + startForegroundService」(Android 12+ 会抛 ForegroundServiceStartNotAllowedException 崩溃);AlarmReceiver 已删除,勿复活
+- 前台服务类型:manifest 为 dataSync|specialUse,代码按 API 34 分派(ServiceCompat.startForeground);增删类型必须同步权限,否则启动崩溃
+- 所有启动前台服务的入口(开机 / 磁贴 / 小部件)必须 try-catch;开机路径失败不得崩溃
+- 告警通知统一走 SecurityNotifier.alert(ctx, text),不要另写去重逻辑
+
+## 单元测试(改安全逻辑或清单后必须跑)
+- 运行:build.cmd testDebugUnitTest(或 gradle testDebugUnitTest)
+- 位置:app/src/test/java/com/armorlab/securedroid/
+- 覆盖:PrivilegedPolicyTest(提权安全策略)/ FamilyClassifierTest / ScannerEngineTest / ManifestInvariantsTest
+- ManifestInvariantsTest 校验:清单声明的 activity/service/receiver 类必须真实存在、FGS 类型与权限一致 —— 改 manifest 或删类后务必重跑
+
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
 - 编译错误集中修完再编译,别一轮一修
