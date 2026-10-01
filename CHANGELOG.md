@@ -2,6 +2,31 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.3.0] - 2026-10-01
+
+### Changed
+
+- **界面改为 Apple HIG 风格**(iOS 系统色 + Dynamic Type + inset grouped 列表 + 分段控件 + 通栏标签栏):
+  - **色彩**:全部改用 iOS 语义系统色(systemBlue / systemGreen / systemOrange / systemRed、
+    label / secondaryLabel / tertiaryLabel / separator、systemGroupedBackground / secondarySystemGroupedBackground、
+    systemFill),浅色与深色各一套,旧令牌名保留为别名;
+  - **字体**:采用 Dynamic Type 命名尺度(Large Title 34 / Display 40 / Headline 17 semibold / Body 17 /
+    Footnote 13 / Caption 11,单位 sp);
+  - **列表**:改为 iOS inset grouped —— 10dp 圆角分组卡收纳行,行不再各自成卡;分隔线 0.5dp,
+    只在行与行之间绘制(新增 `ui/InsetDividerDecoration`),左侧 52/16dp 内缩与文字对齐;
+  - **导航**:底部通栏标签栏(顶部 0.5dp 分隔线),实心图标在上、11sp 标签在下,选中只用 systemBlue 着色、
+    没有指示条;内容区仍是 2dp 线性图标 —— 实心/线性两层分级与 iOS 一致;
+  - **控件**:iOS 分段控件(12% 填充轨道 + 选中段浮起的浅色块)、iOS 开关(打开为 systemGreen)、
+    行尾披露指示符 `ic_chevron`(`importantForAccessibility="no"`,不进入无障碍树);
+  - **版式**:去掉渐变与光晕,内容层改为纯色分组底(iOS 不使用装饰性背景);
+  - **动效**:移除按压缩放(iOS 的按压反馈是高亮变暗,不是缩放),保留列表入场;
+- 度量:屏幕边距 16dp、行高 48dp(**取 Android 触摸目标下限,严于 iOS 的 44pt**)、分组卡圆角 10dp;
+- 构建:`gradle.properties` 堆内存降到 1.5GB 并关闭并行 —— 本机 14GB 内存下 2GB 堆会因内存不足启动失败。
+
+### Fixed
+
+- 补齐重构中遗漏的令牌与样式别名(`sd_glow`、`Widget.SecureDroid.Chip`),避免到 AAPT 链接期才暴露。
+
 ## [1.2.0] - 2026-10-01
 
 ### Changed

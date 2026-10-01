@@ -121,10 +121,13 @@ WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超�
 
 CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
 
-## 视觉设计系统(流体设计)
+## 视觉设计系统(Apple 风格 · iOS HIG)
 
-界面依据 **ColorOS 17「流体设计」**(凝光视效 / 流体动效 / 柔性反馈)、Apple HIG 的材质与动效规范、
-以及 UI/UX Pro Max 规则库重做。完整令牌表、组件规范与可访问性自检见 [design/DESIGN.md](design/DESIGN.md)。
+界面依据 **Apple Human Interface Guidelines** 重做:iOS 语义系统色、Dynamic Type 类型尺度、
+inset grouped 列表、分段控件、通栏标签栏。完整令牌表、实现落点与自检清单见 [design/DESIGN.md](design/DESIGN.md)。
+
+HIG 与 Android 规范冲突时**取更严的一方**(如行高取 48dp 而非 iOS 的 44pt);
+没有照搬 iOS 的返回手势、胶囊导航栏等依赖系统行为的外形 —— 翻译的是原则,不是外形。
 
 ![设计稿](design/mockup-sheet.png)
 
@@ -138,8 +141,9 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 | **检测** | 病毒扫描 · 木马查杀 |
 | **防护** | 应用锁 · 权限审计 · 工具箱 |
 
-- 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色):色板、4dp 栅格、圆角、五级文字层级;
-- 内容卡片靠**色调层级**分层(深色纯色块 / 浅色 1dp 阴影),描边只留给功能层;
+- 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色):iOS 系统色、Dynamic Type、iOS 度量;
+- 列表用 inset grouped:10dp 圆角分组卡 + 行间 0.5dp 内缩分隔线(`InsetDividerDecoration`);
+- 标签栏通栏、实心图标(内容区为线性图标)、选中只用 systemBlue 着色;
 - 「凝光」背景 = 线性渐变 + 两处径向光晕,零图片资源;卡片用 1dp 光边 + 极低阴影代替重投影;
 - **玻璃只出现在功能层**(工具栏、底部入口条),内容层保持不透明表面以保证正文对比度 ≥4.5:1;
 - 动效:列表错峰入场(每项延迟 8%)、按压缩放 0.97 / 110ms、回弹 240ms;页面转场交给系统,避免低端机掉帧;
@@ -201,12 +205,12 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.2.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.3.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-      SHA-256 208a4b04183b9403e66043feb57269c94dc7e06ab8ab130e83eac10d6805e872
-      大小    1,996,728 字节    versionCode 4 / versionName 1.2.0(三大板块 · 流体设计 v2)
+      SHA-256 60a327c7b5bf58c0453f7975e651963190b5078d668884ff76ceea6a769afd27
+      大小    1,999,616 字节    versionCode 5 / versionName 1.3.0(Apple 风格 · iOS HIG)
 
-  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 保留用于回退。
+  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 保留用于回退。
 
 ## 注意事项
 

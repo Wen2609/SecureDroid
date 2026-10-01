@@ -29,6 +29,7 @@ class PermissionAuditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvAudit.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvAudit.addItemDecoration(InsetDividerDecoration(requireContext()))
         binding.rvAudit.adapter = adapter
         runAudit()
     }

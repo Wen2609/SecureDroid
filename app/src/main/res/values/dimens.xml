@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 设计令牌 · 尺寸:4/8dp 节奏;触摸目标 ≥48dp;相邻点击区 ≥8dp(无障碍硬性要求) -->
+<!--
+  设计令牌 · 尺寸(iOS 度量,按 Android 规范取整)
+  - 屏幕边距 16dp(iOS grouped list 标准 16pt);
+  - 列表行 48dp:iOS 是 44pt,但 Android 平台规范要求 ≥48dp 触摸目标,取更严的一方;
+  - 分组卡片圆角 10dp(iOS inset grouped 的标准圆角);
+  - 分隔线 0.5dp(Apple 的 hairline 是 0.33pt)。
+-->
 <resources>
     <dimen name="sd_space_1">4dp</dimen>
     <dimen name="sd_space_2">8dp</dimen>
@@ -8,17 +14,19 @@
     <dimen name="sd_space_5">24dp</dimen>
     <dimen name="sd_space_6">32dp</dimen>
 
-    <dimen name="sd_gutter">20dp</dimen>
+    <dimen name="sd_gutter">16dp</dimen>
     <dimen name="sd_touch_min">48dp</dimen>
-    <dimen name="sd_row_height">56dp</dimen>
+    <dimen name="sd_row_height">48dp</dimen>
+    <dimen name="sd_tabbar_height">50dp</dimen>
 
-    <dimen name="sd_radius_card">26dp</dimen>
-    <dimen name="sd_radius_inner">16dp</dimen>
+    <dimen name="sd_radius_card">10dp</dimen>
+    <dimen name="sd_radius_inner">8dp</dimen>
     <dimen name="sd_radius_pill">100dp</dimen>
-    <dimen name="sd_hairline_width">1dp</dimen>
+    <dimen name="sd_hairline_width">0.5dp</dimen>
 
-    <dimen name="sd_hero_ring">188dp</dimen>
-    <dimen name="sd_btn_height">52dp</dimen>
-    <!-- 浅色靠极淡阴影分层;深色改为纯色调分层(values-night 覆盖为 0dp) -->
-    <dimen name="sd_card_elevation">1dp</dimen>
+    <dimen name="sd_hero_ring">180dp</dimen>
+    <dimen name="sd_btn_height">50dp</dimen>
+    <dimen name="sd_card_elevation">0dp</dimen>
+    <dimen name="sd_segment_height">32dp</dimen>
+    <dimen name="sd_segment_hit">44dp</dimen>
 </resources>

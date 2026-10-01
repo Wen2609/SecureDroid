@@ -26,6 +26,7 @@ class TrojanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvTrojan.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTrojan.addItemDecoration(InsetDividerDecoration(requireContext()))
         binding.rvTrojan.adapter = adapter
 
         viewModel.state.observe(viewLifecycleOwner) { state ->

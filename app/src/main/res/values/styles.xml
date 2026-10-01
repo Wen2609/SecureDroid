@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  组件样式层。两条硬规则写在最前面,后面所有样式都遵守:
-  1) 内容卡片靠**色调层级**分层(浅色加 1dp 阴影,深色纯色调),**不画描边** —— 上一版每张卡都描边,是"杂乱"的主因;
-  2) 描边是功能层的专属语言(工具栏、底部入口条、分段控件),用于把控件与内容区分开。
-  文字层级固定五级,避免页面之间字号漂移;正文 16sp / 行高 1.5,达到移动端可读下限。
+  组件样式层 —— Apple HIG 的 iOS 类型尺度与控件规范。
+
+  三条来自 HIG 的硬约束:
+  1) 字体使用 Dynamic Type 的命名尺度(Large Title / Headline / Body / Footnote…),
+     而不是随手写字号 —— 层级由语义决定,不由页面决定;
+  2) 列表采用 inset grouped:一张 10dp 圆角的分组卡片,行与行之间是 0.5dp 分隔线,
+     分隔线左侧内缩 16dp(与文字对齐);
+  3) 颜色一律用语义系统色(label / secondaryLabel / separator / systemGroupedBackground…),
+     同一颜色不表达两种含义。
 -->
 <resources>
-    <!-- 形状 -->
+    <!-- 形状:iOS 分组卡 10dp,控件 8dp -->
     <style name="ShapeAppearance.SecureDroid.Card" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/sd_radius_card</item>
@@ -16,100 +21,45 @@
         <item name="cornerSize">@dimen/sd_radius_inner</item>
     </style>
 
-    <!-- 文字层级 -->
+    <!-- Dynamic Type 尺度(Large 档) -->
     <style name="TextAppearance.SecureDroid.Display" parent="TextAppearance.Material3.DisplayMedium">
-        <item name="android:textSize">60sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">-0.02</item>
-    </style>
-    <style name="TextAppearance.SecureDroid.Title" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">40sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">-0.01</item>
     </style>
-    <style name="TextAppearance.SecureDroid.Section" parent="TextAppearance.Material3.TitleSmall">
-        <item name="android:textSize">12sp</item>
+    <!-- Large Title 34pt / 41 -->
+    <style name="TextAppearance.SecureDroid.Title" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">34sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0.12</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.Title2" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!-- 分组标题:Footnote 13pt,次要标签色,大写 -->
+    <style name="TextAppearance.SecureDroid.Section" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.04</item>
         <item name="android:textAllCaps">true</item>
     </style>
-    <style name="TextAppearance.SecureDroid.Body" parent="TextAppearance.Material3.BodyMedium">
-        <item name="android:textSize">16sp</item>
-        <item name="android:lineSpacingExtra">8dp</item>
+    <!-- Body 17pt / 22 -->
+    <style name="TextAppearance.SecureDroid.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">17sp</item>
+        <item name="android:lineSpacingExtra">5dp</item>
     </style>
-    <style name="TextAppearance.SecureDroid.Label" parent="TextAppearance.Material3.LabelMedium">
+    <!-- Headline 17pt semibold:列表行标题 -->
+    <style name="TextAppearance.SecureDroid.Headline" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!-- Footnote 13pt -->
+    <style name="TextAppearance.SecureDroid.Label" parent="TextAppearance.Material3.BodySmall">
         <item name="android:textSize">13sp</item>
-        <item name="android:letterSpacing">0.01</item>
+        <item name="android:lineSpacingExtra">3dp</item>
     </style>
 
-    <!-- 内容卡片:色调分层,无描边 -->
-    <style name="Widget.SecureDroid.Card" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardBackgroundColor">@color/sd_surface</item>
-        <item name="cardCornerRadius">@dimen/sd_radius_card</item>
-        <item name="cardElevation">@dimen/sd_card_elevation</item>
-        <item name="rippleColor">@color/sd_hairline</item>
-        <item name="android:stateListAnimator">@animator/sd_soft_press</item>
-    </style>
-
-    <!-- 功能层玻璃:仅用于工具栏 / 底部入口条(HIG:玻璃属于浮在内容之上的控件层) -->
-    <style name="Widget.SecureDroid.CardGlass" parent="Widget.SecureDroid.Card">
-        <item name="cardBackgroundColor">@color/sd_glass</item>
-        <item name="strokeWidth">@dimen/sd_hairline_width</item>
-        <item name="strokeColor">@color/sd_hairline</item>
-        <item name="cardElevation">0dp</item>
-    </style>
-
-    <!-- 按钮 -->
-    <style name="Widget.SecureDroid.Button" parent="Widget.Material3.Button">
-        <item name="android:minHeight">@dimen/sd_btn_height</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:letterSpacing">0.01</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="cornerRadius">@dimen/sd_radius_inner</item>
-        <item name="iconPadding">@dimen/sd_space_2</item>
-        <item name="android:stateListAnimator">@animator/sd_soft_press</item>
-    </style>
-    <style name="Widget.SecureDroid.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:minHeight">@dimen/sd_touch_min</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="cornerRadius">@dimen/sd_radius_inner</item>
-        <item name="strokeColor">@color/sd_hairline</item>
-        <item name="android:stateListAnimator">@animator/sd_soft_press</item>
-    </style>
-    <style name="Widget.SecureDroid.Button.Pill" parent="Widget.SecureDroid.Button">
-        <item name="cornerRadius">@dimen/sd_radius_pill</item>
-    </style>
-    <!-- 行式按钮:卡内的入口行,带图标与右侧箭头语义,不再是"按钮墙" -->
-    <style name="Widget.SecureDroid.Button.Row" parent="Widget.Material3.Button.TextButton">
-        <item name="android:minHeight">@dimen/sd_row_height</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:gravity">start|center_vertical</item>
-        <item name="android:paddingStart">@dimen/sd_space_4</item>
-        <item name="android:paddingEnd">@dimen/sd_space_4</item>
-        <item name="cornerRadius">@dimen/sd_radius_inner</item>
-        <item name="iconGravity">textStart</item>
-        <item name="iconPadding">@dimen/sd_space_3</item>
-        <item name="iconTint">@color/sd_text_secondary</item>
-        <item name="android:textColor">@color/sd_text</item>
-        <item name="rippleColor">@color/sd_hairline</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
-    </style>
-
-    <!-- 分段控件:板块内部的二级导航 -->
-    <style name="Widget.SecureDroid.Segment" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:minHeight">@dimen/sd_touch_min</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
-        <item name="cornerRadius">@dimen/sd_radius_inner</item>
-        <item name="strokeColor">@color/sd_hairline</item>
-    </style>
-
-    <!-- 状态胶囊 -->
+    <!-- 状态胶囊:iOS 用小标签 + 12% 填充色,不用描边 -->
     <style name="Widget.SecureDroid.Chip" parent="">
         <item name="android:background">@drawable/bg_chip</item>
         <item name="android:paddingStart">@dimen/sd_space_3</item>
@@ -117,5 +67,98 @@
         <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">6dp</item>
         <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Caption 1 12pt:iOS 标签栏文字用 10pt,这里 11sp 保可读性 -->
+    <style name="TextAppearance.SecureDroid.Caption" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <!-- 分组卡片:inset grouped 的容器。iOS 分组卡没有描边,靠背景色区分 -->
+    <style name="Widget.SecureDroid.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/sd_surface</item>
+        <item name="cardCornerRadius">@dimen/sd_radius_card</item>
+        <item name="cardElevation">0dp</item>
+        <item name="rippleColor">@color/sd_hairline</item>
+    </style>
+    <style name="Widget.SecureDroid.CardGlass" parent="Widget.SecureDroid.Card">
+        <item name="cardBackgroundColor">@color/sd_glass</item>
+    </style>
+
+    <!-- 列表行:图标 + 标题(+ 副标题)+ 右侧附件;行高 ≥48dp(Android 触摸目标下限) -->
+    <style name="Widget.SecureDroid.Row" parent="">
+        <item name="android:minHeight">@dimen/sd_row_height</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/sd_gutter</item>
+        <item name="android:paddingEnd">@dimen/sd_gutter</item>
+        <item name="android:paddingTop">@dimen/sd_space_3</item>
+        <item name="android:paddingBottom">@dimen/sd_space_3</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <!-- 按钮:iOS 填充按钮 = systemBlue + 10dp 圆角 + 17sp semibold -->
+    <style name="Widget.SecureDroid.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/sd_btn_height</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="cornerRadius">@dimen/sd_radius_card</item>
+        <item name="iconPadding">@dimen/sd_space_2</item>
+        <item name="backgroundTint">@color/sd_brand</item>
+        <item name="android:textColor">@color/sd_on_brand</item>
+    </style>
+    <style name="Widget.SecureDroid.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/sd_touch_min</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">@dimen/sd_radius_card</item>
+        <item name="strokeColor">@color/sd_hairline</item>
+        <item name="android:textColor">@color/sd_brand</item>
+        <item name="iconTint">@color/sd_brand</item>
+    </style>
+    <style name="Widget.SecureDroid.Button.Pill" parent="Widget.SecureDroid.Button">
+        <item name="cornerRadius">@dimen/sd_radius_card</item>
+    </style>
+    <!-- 行式入口:整行可点,左侧图标,右侧 chevron —— 取代"按钮墙" -->
+    <style name="Widget.SecureDroid.Button.Row" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">@dimen/sd_row_height</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingStart">@dimen/sd_gutter</item>
+        <item name="android:paddingEnd">@dimen/sd_gutter</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/sd_space_3</item>
+        <item name="iconTint">@color/sd_brand</item>
+        <item name="android:textColor">@color/sd_text</item>
+        <item name="rippleColor">@color/sd_hairline</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- 分段控件:iOS 样式 —— 外层是 12% 填充色的圆角轨道,选中段是一块浮起的浅色块 -->
+    <style name="Widget.SecureDroid.Segment" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">@dimen/sd_segment_hit</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">7dp</item>
+        <item name="android:textColor">@color/seg_text</item>
+        <item name="backgroundTint">@color/seg_bg</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="rippleColor">@color/sd_hairline</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- iOS inset grouped 分隔线:只画在行与行之间,左侧与文字对齐 -->
+    <style name="Widget.SecureDroid.Divider" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/sd_hairline_width</item>
+        <item name="android:layout_marginStart">52dp</item>
+        <item name="android:background">@color/sd_hairline</item>
     </style>
 </resources>

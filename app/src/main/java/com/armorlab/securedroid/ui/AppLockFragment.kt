@@ -37,6 +37,7 @@ class AppLockFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvLockApps.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvLockApps.addItemDecoration(InsetDividerDecoration(requireContext()))
         binding.rvLockApps.adapter = adapter
         binding.btnSetPin.setOnClickListener { showPinDialog() }
         binding.btnAccessibility.setOnClickListener {

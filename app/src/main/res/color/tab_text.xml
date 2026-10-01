@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- iOS 标签栏:选中项用 systemBlue 着色,未选中用 secondaryLabel -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="@color/sd_brand" android:state_selected="true" />
-    <item android:color="@color/sd_text_tertiary" />
+    <item android:color="@color/sd_text_secondary" />
 </selector>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  状态板块。信息只有三块:当前评分、三个快捷入口、三个防护开关。
-  评分不用卡片包住 —— 让它直接落在背景上,是整个应用唯一的强焦点。
+  状态板块 —— iOS inset grouped 列表:
+  一张 10dp 圆角的分组卡,行与行之间是 0.5dp 分隔线(左侧与文字对齐),
+  分组标题是 13sp 大写次要标签色,并在卡片左边距之外再内缩 16dp(iOS 的作法)。
+  评分环 = 分值本身,不是装饰。
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:fillViewport="true"
     android:paddingBottom="@dimen/sd_space_5">
 
     <LinearLayout
@@ -17,123 +18,92 @@
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/sd_gutter">
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/sd_space_3">
-
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/scoreRing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminate="false"
-                android:max="100"
-                android:progress="100"
-                app:indicatorColor="@color/sd_safe"
-                app:indicatorSize="@dimen/sd_hero_ring"
-                app:trackColor="@color/sd_ring_track"
-                app:trackThickness="8dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvScore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sd_score_placeholder"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Display"
-                    android:textColor="@color/sd_text" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dashboard_score_label"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Section"
-                    android:textColor="@color/sd_text_tertiary" />
-            </LinearLayout>
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/tvState"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sd_space_4"
-            android:gravity="center"
-            android:text="@string/dashboard_state_good"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-            android:textColor="@color/sd_text_secondary" />
-
-        <TextView
-            android:id="@+id/tvRootState"
-            style="@style/Widget.SecureDroid.Chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/sd_space_3"
-            android:text="@string/root_mode_off"
-            android:textColor="@color/sd_text_secondary" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sd_space_6"
-            android:layout_marginBottom="@dimen/sd_space_2"
-            android:text="@string/sd_section_enter"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Section"
-            android:textColor="@color/sd_text_tertiary" />
-
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.SecureDroid.Card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_2">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="@dimen/sd_space_2">
+                android:paddingHorizontal="@dimen/sd_space_5"
+                android:paddingVertical="@dimen/sd_space_5">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGoScan"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sd_row_height"
-                    android:text="@string/btn_go_scan"
-                    app:icon="@drawable/ic_scan" />
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGoAudit"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sd_row_height"
-                    android:text="@string/btn_go_audit"
-                    app:icon="@drawable/ic_grid" />
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/scoreRing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminate="false"
+                        android:max="100"
+                        android:progress="100"
+                        app:indicatorColor="@color/sd_safe"
+                        app:indicatorSize="@dimen/sd_hero_ring"
+                        app:trackColor="@color/sd_ring_track"
+                        app:trackCornerRadius="5dp"
+                        app:trackThickness="9dp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGoLock"
-                    style="@style/Widget.SecureDroid.Button.Row"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvScore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sd_score_placeholder"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.Display"
+                            android:textColor="@color/sd_text" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dashboard_score_label"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+                            android:textColor="@color/sd_text_secondary" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvState"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/sd_row_height"
-                    android:text="@string/btn_go_lock"
-                    app:icon="@drawable/ic_lock" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sd_space_4"
+                    android:gravity="center"
+                    android:text="@string/dashboard_state_good"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+                    android:textColor="@color/sd_text_secondary" />
+
+                <TextView
+                    android:id="@+id/tvRootState"
+                    style="@style/Widget.SecureDroid.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sd_space_3"
+                    android:text="@string/root_mode_off"
+                    android:textColor="@color/sd_text_secondary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sd_gutter"
             android:layout_marginTop="@dimen/sd_space_5"
             android:layout_marginBottom="@dimen/sd_space_2"
-            android:text="@string/sd_section_guard"
+            android:text="@string/sd_section_enter"
             android:textAppearance="@style/TextAppearance.SecureDroid.Section"
-            android:textColor="@color/sd_text_tertiary" />
+            android:textColor="@color/sd_text_secondary" />
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.SecureDroid.Card"
@@ -143,8 +113,102 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/sd_space_2">
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGoScan"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/btn_go_scan"
+                        app:icon="@drawable/ic_scan" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_gutter"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/sd_text_tertiary" />
+                </FrameLayout>
+
+                <View style="@style/Widget.SecureDroid.Divider" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGoAudit"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/btn_go_audit"
+                        app:icon="@drawable/ic_grid" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_gutter"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/sd_text_tertiary" />
+                </FrameLayout>
+
+                <View style="@style/Widget.SecureDroid.Divider" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_row_height">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGoLock"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="44dp"
+                        android:text="@string/btn_go_lock"
+                        app:icon="@drawable/ic_lock" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_gutter"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/sd_text_tertiary" />
+                </FrameLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sd_gutter"
+            android:layout_marginTop="@dimen/sd_space_5"
+            android:layout_marginBottom="@dimen/sd_space_2"
+            android:text="@string/sd_section_guard"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Section"
+            android:textColor="@color/sd_text_secondary" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.SecureDroid.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRealtime"
@@ -154,23 +218,31 @@
                     android:text="@string/btn_realtime_start"
                     app:icon="@drawable/ic_shield" />
 
+                <View style="@style/Widget.SecureDroid.Divider" />
+
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/swAutoDisinfect"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sd_row_height"
-                    android:paddingHorizontal="@dimen/sd_space_4"
+                    android:paddingHorizontal="@dimen/sd_gutter"
                     android:text="@string/sw_auto_disinfect"
                     android:textColor="@color/sd_text"
-                    android:textSize="16sp" />
+                    android:textSize="17sp"
+                    app:thumbTint="@color/switch_thumb"
+                    app:trackTint="@color/switch_track" />
+
+                <View style="@style/Widget.SecureDroid.Divider" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/swAutoUninstall"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sd_row_height"
-                    android:paddingHorizontal="@dimen/sd_space_4"
+                    android:paddingHorizontal="@dimen/sd_gutter"
                     android:text="@string/sw_auto_uninstall"
                     android:textColor="@color/sd_text"
-                    android:textSize="16sp" />
+                    android:textSize="17sp"
+                    app:thumbTint="@color/switch_thumb"
+                    app:trackTint="@color/switch_track" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>

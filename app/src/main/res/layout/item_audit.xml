@@ -1,48 +1,40 @@
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.SecureDroid.Card"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/sd_space_2"
-    app:cardCornerRadius="@dimen/sd_radius_inner">
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/sd_row_height"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/sd_gutter"
+    android:paddingVertical="@dimen/sd_space_3">
+
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:minHeight="@dimen/sd_touch_min"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/sd_space_4"
-        android:paddingVertical="@dimen/sd_space_3">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvAppName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-                android:textColor="@color/sd_text"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvPerms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-                android:textColor="@color/sd_text_secondary" />
-        </LinearLayout>
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvScore"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvAppName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sd_space_3"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+            android:textColor="@color/sd_text" />
+
+        <TextView
+            android:id="@+id/tvPerms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:textColor="@color/sd_text_secondary" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tvScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sd_space_3"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+</LinearLayout>

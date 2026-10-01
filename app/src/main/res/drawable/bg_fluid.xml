@@ -1,31 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  内容层背景。上一版是"线性渐变 + 两处光晕 + 每张卡片描边",叠在一起就是噪声;
-  现在只保留一次纵向渐变 + 右上角一处极淡光晕,让内容成为唯一焦点。
--->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle">
-            <gradient
-                android:angle="270"
-                android:startColor="@color/sd_bg"
-                android:endColor="@color/sd_bg_alt"
-                android:type="linear" />
-        </shape>
-    </item>
-
-    <item
-        android:width="420dp"
-        android:height="420dp"
-        android:gravity="top|right"
-        android:right="-160dp"
-        android:top="-180dp">
-        <shape android:shape="oval">
-            <gradient
-                android:gradientRadius="230dp"
-                android:startColor="@color/sd_bloom"
-                android:endColor="@color/sd_bloom_clear"
-                android:type="radial" />
-        </shape>
-    </item>
-</layer-list>
+<!-- 内容层背景:iOS 用纯色分组底,不用渐变或光晕(装饰越多,内容越难读) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/sd_bg" />
+</shape>

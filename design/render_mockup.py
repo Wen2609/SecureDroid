@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-SecureDroid 设计稿渲染器 v2(三大板块:状态 / 检测 / 防护)
+SecureDroid 设计稿渲染器 v3 —— Apple 风格(iOS 系统色 + Dynamic Type + inset grouped 列表)
 
-不是真机截图:它按 res/values 中的设计令牌 1:1 复刻界面,用于在没有模拟器/真机的环境下
-自检层级、节奏、对比度与圆角。v2 的关键变化:
-  - 顶层只有三个板块,二级功能收进分段控件;
-  - 内容卡片靠色调分层(深色纯色调 / 浅色 1dp 阴影),不再每张卡描边;
-  - 评分环是有意义的(环 = 分值),不是装饰。
+不是真机截图:按 res/values 的令牌 1:1 复刻,用于自检层级/节奏/对比度/圆角。
+v3 的关键变化:纯色分组底、10dp 分组卡、0.5dp 内缩分隔线、iOS 分段控件、iOS 绿色开关、
+通栏标签栏(实心图标 + 11sp 标签,选中只用 systemBlue 着色、无指示条)。
 """
 from PIL import Image, ImageDraw, ImageFont
 import os
@@ -18,296 +16,268 @@ def font(size, bold=False):
     return ImageFont.truetype(FONT_B if bold else FONT, size)
 
 def hexc(s, alpha=255):
+    if isinstance(s, tuple):
+        return s
     s = s.lstrip("#")
     if len(s) == 6:
         return (int(s[0:2],16), int(s[2:4],16), int(s[4:6],16), alpha)
     return (int(s[0:2],16), int(s[2:4],16), int(s[4:6],16), int(s[6:8],16))
 
-def vgrad(size, c1, c2):
-    w, h = size
-    img = Image.new("RGBA", size)
-    d = ImageDraw.Draw(img)
-    for y in range(h):
-        t = y / max(1, h - 1)
-        d.line([(0, y), (w, y)], fill=tuple(int(c1[i] + (c2[i]-c1[i])*t) for i in range(4)))
-    return img
-
-def bloom(size, color, radius, cx, cy):
-    layer = Image.new("RGBA", size, (0,0,0,0))
-    d = ImageDraw.Draw(layer)
-    for i in range(90, 0, -1):
-        t = i / 90
-        a = int(color[3] * ((1 - t) ** 2.0))
-        if a <= 0: continue
-        r = radius * t
-        d.ellipse([cx-r, cy-r, cx+r, cy+r], fill=(color[0], color[1], color[2], a))
-    return layer
-
-DARK = dict(bg="#080C15", bg2="#0B1220", bloom="#2E7BFF", bloomA=0x33,
-            surface="#121A2A", surface2="#182234", glass=(255,255,255,20),
-            hairline=(255,255,255,38), track=(255,255,255,38), shadow=False,
-            text="#EDF2FF", text2="#A9B7CE", text3="#8290A8",
-            brand="#5B93FF", glow="#3FD8F5", onbrand="#06101F",
-            safe="#3FD98F", warn="#FFC24B", danger="#FF8A8A")
-LIGHT = dict(bg="#F4F7FC", bg2="#E9F0FA", bloom="#2F7BFF", bloomA=0x1F,
-             surface="#FFFFFF", surface2="#F3F6FC", glass=(255,255,255,242),
-             hairline=(11,18,32,20), track=(11,18,32,20), shadow=True,
-             text="#0B1220", text2="#4C5C77", text3="#78879E",
-             brand="#0B57D0", glow="#0FB5D6", onbrand="#FFFFFF",
-             safe="#12734A", warn="#8A5200", danger="#B4232A")
+# iOS 系统色(Large 档)
+LIGHT = dict(bg="#F2F2F7", card="#FFFFFF", label="#000000", label2=(60,60,67,153), label3=(60,60,67,77),
+             sep=(60,60,67,73), blue="#007AFF", green="#34C759", orange="#FF9500", red="#FF3B30",
+             gray5="#E5E5EA", gray4="#D1D1D6", fill=(118,118,128,31), seg="#FFFFFF",
+             tabbar=(249,249,249,242), dark=False)
+DARK = dict(bg="#000000", card="#1C1C1E", label="#FFFFFF", label2=(235,235,245,153), label3=(235,235,245,77),
+            sep=(84,84,88,166), blue="#0A84FF", green="#30D158", orange="#FF9F0A", red="#FF453A",
+            gray5="#38383A", gray4="#3A3A3C", fill=(118,118,128,61), seg="#636366",
+            tabbar=(22,22,26,242), dark=True)
 
 W, H = 412, 915
-GUT = 20
-R_CARD, R_INNER, ROW_H = 26, 16, 56
+GUT, R_CARD, ROW_H = 16, 10, 48
 
 def base(t):
-    img = Image.new("RGBA", (W, H))
-    img.alpha_composite(vgrad((W,H), hexc(t["bg"]), hexc(t["bg2"])))
-    img.alpha_composite(bloom((W,H), hexc(t["bloom"], t["bloomA"]), 320, W-30, -40))
-    return img
+    return Image.new("RGBA", (W, H), hexc(t["bg"]))
 
-def title(img, t, text):
-    d = ImageDraw.Draw(img)
-    d.text((GUT, 34), text, font=font(22, True), fill=hexc(t["text"]))
+def large_title(img, t, text):
+    ImageDraw.Draw(img).text((GUT, 30), text, font=font(34, True), fill=hexc(t["label"]))
 
-def section(img, t, text, y):
-    d = ImageDraw.Draw(img)
-    d.text((GUT, y), text, font=font(12, True), fill=hexc(t["text3"]))
-    return y + 20
+def group_header(img, t, text, y):
+    ImageDraw.Draw(img).text((GUT + 16, y), text, font=font(13), fill=hexc(t["label2"]))
+    return y + 22
 
-def card(img, t, box, radius=R_CARD, fill=None):
+def group(img, t, y, rows_h):
     d = ImageDraw.Draw(img)
-    color = fill if fill else t["surface"]
-    if t["shadow"]:
-        sh = Image.new("RGBA", img.size, (0,0,0,0))
-        ImageDraw.Draw(sh).rounded_rectangle([box[0], box[1]+2, box[2], box[3]+3], radius=radius, fill=(11,18,32,18))
-        img.alpha_composite(sh)
-    d.rounded_rectangle(box, radius=radius, fill=hexc(color) if isinstance(color, str) else color)
+    box = [GUT, y, W - GUT, y + rows_h]
+    d.rounded_rectangle(box, radius=R_CARD, fill=hexc(t["card"]))
+    return box
 
-def row(img, t, y, label, icon="shield", right=None, sub=None, h=ROW_H):
-    """卡内一行:图标 + 文本(+ 右侧控件)"""
+def sep(img, t, y, inset=52):
     d = ImageDraw.Draw(img)
-    x = GUT + 16
-    cy = y + h / 2
-    cx = x + 12
-    col = hexc(t["text2"])
-    if icon == "shield":
-        d.polygon([(cx, cy-9), (cx-7, cy-5.5), (cx-7, cy+1), (cx, cy+7), (cx+7, cy+1), (cx+7, cy-5.5)], outline=col, width=2)
-    elif icon == "scan":
+    d.line([GUT + inset, y, W - GUT, y], fill=t["sep"], width=1)
+
+def icon(d, cx, cy, kind, col, filled=True):
+    if kind == "scan":
         d.ellipse([cx-8, cy-8, cx+8, cy+8], outline=col, width=2)
-        d.line([cx+5, cy+5, cx+9, cy+9], fill=col, width=2)
-    elif icon == "lock":
-        d.rounded_rectangle([cx-8, cy-2, cx+8, cy+9], radius=3, outline=col, width=2)
-        d.arc([cx-5, cy-9, cx+5, cy+1], start=180, end=360, fill=col, width=2)
-    elif icon == "grid":
+        d.line([cx+5.5, cy+5.5, cx+9, cy+9], fill=col, width=2)
+    elif kind == "grid":
         for dx in (-8, 1):
             for dy in (-8, 1):
                 d.rounded_rectangle([cx+dx, cy+dy, cx+dx+7, cy+dy+7], radius=2, outline=col, width=2)
-    elif icon == "bug":
+    elif kind == "lock":
+        d.rounded_rectangle([cx-8, cy-2, cx+8, cy+9], radius=3, outline=col, width=2)
+        d.arc([cx-5, cy-9, cx+5, cy+1], start=180, end=360, fill=col, width=2)
+    elif kind == "shield":
+        d.polygon([(cx, cy-9), (cx-7, cy-5.5), (cx-7, cy+1), (cx, cy+7), (cx+7, cy+1), (cx+7, cy-5.5)], outline=col, width=2)
+    elif kind == "bug":
         d.ellipse([cx-7, cy-6, cx+7, cy+8], outline=col, width=2)
         d.line([cx, cy-6, cx, cy-10], fill=col, width=2)
-    d.text((x + 32, cy), label, font=font(16), fill=hexc(t["text"]), anchor="lm")
+
+def chevron(d, t, cy):
+    col = t["label3"] if isinstance(t["label3"], tuple) else hexc(t["label3"])
+    x = W - GUT - 14
+    d.line([x-4, cy-5.5, x+1, cy, x-4, cy+5.5], fill=col, width=2, joint="curve")
+
+def switch(d, t, cy, on):
+    w, h = 51, 31
+    x = W - GUT - 16 - w
+    d.rounded_rectangle([x, cy-h/2, x+w, cy+h/2], radius=h/2, fill=hexc(t["green"]) if on else hexc(t["gray4"]))
+    kx = x + (w - h + 4) if on else x + 2
+    d.ellipse([kx+2, cy-h/2+2, kx+h-2, cy+h/2-2], fill=(255,255,255))
+
+def row(img, t, y, label, kind=None, right=None, sub=None):
+    d = ImageDraw.Draw(img)
+    cy = y + ROW_H/2
+    tx = GUT + 16
+    if kind:
+        icon(d, tx + 12, cy, kind, hexc(t["blue"]))
+        tx += 40
+    d.text((tx, cy if not sub else cy - 9), label, font=font(17), fill=hexc(t["label"]))
     if sub:
-        d.text((x + 32, cy + 20), sub, font=font(12), fill=hexc(t["text3"]), anchor="lm")
+        d.text((tx, cy + 11), sub, font=font(13), fill=hexc(t["label2"]))
     if right == "chevron":
-        d.line([W-GUT-28, cy-5, W-GUT-32, cy, W-GUT-28, cy+5], fill=hexc(t["text3"]), width=2, joint="curve")
-    elif right == "switch_on" or right == "switch_off":
-        on = right == "switch_on"
-        sw, sh_ = 46, 28
-        sx = W - GUT - 16 - sw
-        d.rounded_rectangle([sx, cy-sh_/2, sx+sw, cy+sh_/2], radius=sh_/2,
-                            fill=hexc(t["brand"]) if on else hexc(t["text3"], 70))
-        knob = sx + (sw - sh_ + 2) if on else sx + 2
-        d.ellipse([knob+1, cy-sh_/2+2, knob+sh_-1, cy+sh_/2-2], fill=hexc(t["onbrand"]) if on else hexc(t["surface"]))
+        chevron(d, t, cy)
+    elif right in ("on", "off"):
+        switch(d, t, cy, right == "on")
+    return y + ROW_H
+
+def button_row(img, t, y, label, color=None):
+    d = ImageDraw.Draw(img)
+    cy = y + ROW_H/2
+    d.text((GUT + 16, cy), label, font=font(17), fill=hexc(color if color else t["blue"]), anchor="lm")
+    return y + ROW_H
+
+def filled_button(img, t, y, label, h=50):
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([GUT, y, W-GUT, y+h], radius=R_CARD, fill=hexc(t["blue"]))
+    cx = W/2 - 44
+    d.ellipse([cx-8, y+h/2-8, cx+8, y+h/2+8], outline=(255,255,255), width=2)
+    d.text((W/2 + 12, y+h/2), label, font=font(17, True), fill=(255,255,255), anchor="mm")
     return y + h
 
-def segment(img, t, y, labels, active=0):
+def progress(img, t, y, ratio=0.6):
     d = ImageDraw.Draw(img)
-    h = 48
+    d.rounded_rectangle([GUT, y, W-GUT, y+4], radius=2, fill=hexc(t["gray5"]))
+    d.rounded_rectangle([GUT, y, GUT+(W-2*GUT)*ratio, y+4], radius=2, fill=hexc(t["blue"]))
+    return y + 4
+
+def segmented(img, t, y, labels, active=0):
+    d = ImageDraw.Draw(img)
+    h = 32
+    d.rounded_rectangle([GUT, y, W-GUT, y+h], radius=9, fill=t["fill"] if isinstance(t["fill"], tuple) else hexc(t["fill"]))
     n = len(labels)
-    w = (W - 2*GUT - (n-1)*8) / n
+    seg_w = (W - 2*GUT - 4) / n
     for i, lb in enumerate(labels):
-        x = GUT + i * (w + 8)
-        on = i == active
-        d.rounded_rectangle([x, y, x+w, y+h], radius=R_INNER,
-                            fill=hexc(t["brand"], 38) if on else None,
-                            outline=hexc(t["brand"]) if on else t["hairline"], width=2 if on else 1)
-        d.text((x+w/2, y+h/2), lb, font=font(14, on), fill=hexc(t["brand"]) if on else hexc(t["text2"]), anchor="mm")
+        x = GUT + 2 + i * seg_w
+        if i == active:
+            d.rounded_rectangle([x, y+2, x+seg_w, y+h-2], radius=7, fill=hexc(t["seg"]),
+                                outline=t["sep"] if isinstance(t["sep"], tuple) else hexc(t["sep"]), width=1)
+        d.text((x + seg_w/2, y+h/2), lb, font=font(13, i == active), fill=hexc(t["label"]), anchor="mm")
     return y + h
 
-def pill_button(img, t, y, label, icon="scan", h=52):
+def tabbar(img, t, active=0):
+    y0 = H - 50
+    layer = Image.new("RGBA", img.size, (0,0,0,0))
+    ImageDraw.Draw(layer).rectangle([0, y0, W, H], fill=t["tabbar"])
+    img.alpha_composite(layer)
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle([GUT, y, W-GUT, y+h], radius=h/2, fill=hexc(t["brand"]))
-    cx = W/2 - 42
-    d.ellipse([cx-8, y+h/2-8, cx+8, y+h/2+8], outline=hexc(t["onbrand"]), width=2)
-    d.text((W/2 + 14, y+h/2), label, font=font(16), fill=hexc(t["onbrand"]), anchor="mm")
-    return y + h
-
-def progress(img, t, y, ratio=0.62):
-    d = ImageDraw.Draw(img)
-    d.rounded_rectangle([GUT, y, W-GUT, y+10], radius=5, fill=t["track"] if isinstance(t["track"], tuple) else hexc(t["track"]))
-    d.rounded_rectangle([GUT, y, GUT+(W-2*GUT)*ratio, y+10], radius=5, fill=hexc(t["brand"]))
-    return y + 10
+    d.line([0, y0, W, y0], fill=t["sep"], width=1)
+    names = ["状态", "检测", "防护"]
+    kinds = ["shield", "scan", "lock"]
+    for i, (n, k) in enumerate(zip(names, kinds)):
+        cx = W/3*(i+0.5)
+        col = hexc(t["blue"]) if i == active else hexc(t["label2"])
+        icon(d, cx, y0+17, k, col)
+        d.text((cx, y0+38), n, font=font(11), fill=col, anchor="mm")
 
 def ring(img, t, cy, score=100, color=None):
     d = ImageDraw.Draw(img)
-    size, thick = 188, 8
+    size, thick = 180, 9
     box = [W/2-size/2, cy-size/2, W/2+size/2, cy+size/2]
-    d.arc(box, start=0, end=360, fill=t["track"] if isinstance(t["track"], tuple) else hexc(t["track"]), width=thick)
-    d.arc(box, start=-90, end=-90+360*score/100.0, fill=hexc(color or t["safe"]), width=thick)
-    d.text((W/2, cy-14), str(score), font=font(60, True), fill=hexc(t["text"]), anchor="mm")
-    d.text((W/2, cy+34), "安全评分", font=font(12, True), fill=hexc(t["text3"]), anchor="mm")
+    d.arc(box, start=0, end=360, fill=hexc(t["gray5"]), width=thick)
+    d.arc(box, start=-90, end=-90+360*score/100.0, fill=hexc(color or t["green"]), width=thick)
+    d.text((W/2, cy-14), str(score), font=font(40, True), fill=hexc(t["label"]), anchor="mm")
+    d.text((W/2, cy+24), "安全评分", font=font(13), fill=hexc(t["label2"]), anchor="mm")
     return cy + size/2
 
-def chip(img, t, cy, text):
+# ---------- 状态 ----------
+def status(img, t):
+    large_title(img, t, "状态")
+    y = 92
+    group(img, t, y, 292)
+    ring(img, t, y + 130, 100, t["green"])
     d = ImageDraw.Draw(img)
-    w = d.textlength(text, font=font(13)) + 28
-    d.rounded_rectangle([W/2-w/2, cy-15, W/2+w/2, cy+15], radius=15,
-                        fill=t["glass"] if isinstance(t["glass"], tuple) else hexc(t["glass"]),
-                        outline=t["hairline"] if isinstance(t["hairline"], tuple) else hexc(t["hairline"]), width=1)
-    d.text((W/2, cy), text, font=font(13), fill=hexc(t["text2"]), anchor="mm")
-    return cy + 15
+    d.text((W/2, y + 240), "设备状态良好,未发现风险项", font=font(17), fill=hexc(t["label2"]), anchor="mm")
+    txt = "未获取 Root 权限"
+    tw = d.textlength(txt, font=font(13)) + 28
+    d.rounded_rectangle([W/2-tw/2, y+262, W/2+tw/2, y+288], radius=13, fill=t["fill"] if isinstance(t["fill"], tuple) else hexc(t["fill"]))
+    d.text((W/2, y+275), txt, font=font(13), fill=hexc(t["label2"]), anchor="mm")
+    y += 292 + 26
+    y = group_header(img, t, "快 速 进 入", y)
+    group(img, t, y, ROW_H*3)
+    yy = y
+    yy = row(img, t, yy, "病毒扫描", "scan", "chevron"); sep(img, t, yy)
+    yy = row(img, t, yy, "权限审计", "grid", "chevron"); sep(img, t, yy)
+    yy = row(img, t, yy, "应用锁", "lock", "chevron")
+    y += ROW_H*3 + 26
+    y = group_header(img, t, "防 护 开 关", y)
+    group(img, t, y, ROW_H*3)
+    yy = y
+    yy = row(img, t, yy, "实时防护", "shield", "on"); sep(img, t, yy)
+    yy = row(img, t, yy, "自动清除威胁", None, "on"); sep(img, t, yy)
+    yy = row(img, t, yy, "自动卸载恶意应用", None, "off")
+    tabbar(img, t, 0)
 
-def tabbar(img, t, active=0):
-    y0 = H - 68
-    layer = Image.new("RGBA", img.size, (0,0,0,0))
-    dl = ImageDraw.Draw(layer)
-    dl.rounded_rectangle([0, y0, W, H+40], radius=26, fill=t["glass"], outline=t["hairline"], width=1)
-    dl.rectangle([0, y0+26, W, H], fill=t["glass"])
-    img.alpha_composite(layer)
+# ---------- 检测 ----------
+def detect(img, t):
+    large_title(img, t, "检测")
+    y = segmented(img, t, 92, ["病毒扫描", "木马查杀"], 0) + 20
+    y = filled_button(img, t, y, "开始扫描") + 20
+    y = progress(img, t, y, 0.62) + 14
     d = ImageDraw.Draw(img)
-    names = ["状态", "检测", "防护"]
-    for i, n in enumerate(names):
-        cx = W/3*(i+0.5)
-        col = t["brand"] if i == active else t["text3"]
-        if i == active:
-            d.rounded_rectangle([cx-16, y0+2, cx+16, y0+5], radius=2, fill=hexc(t["brand"]))
-        if i == 0:
-            d.polygon([(cx, y0+18), (cx-9, y0+23), (cx-9, y0+30), (cx, y0+36), (cx+9, y0+30), (cx+9, y0+23)], outline=hexc(col), width=2)
-        elif i == 1:
-            d.ellipse([cx-9, y0+19, cx+9, y0+37], outline=hexc(col), width=2)
-            d.line([cx+5, y0+33, cx+9, y0+37], fill=hexc(col), width=2)
-        else:
-            d.rounded_rectangle([cx-9, y0+24, cx+9, y0+36], radius=3, outline=hexc(col), width=2)
-            d.arc([cx-6, y0+18, cx+6, y0+30], start=180, end=360, fill=hexc(col), width=2)
-        d.text((cx, y0+48), n, font=font(12, i == active), fill=hexc(col), anchor="mm")
+    d.text((GUT, y), "正在扫描 /data/app/com.example", font=font(13), fill=hexc(t["label2"]))
+    y += 30
+    rows = [("微信", "com.tencent.mm", "未发现风险", t["green"]),
+            ("某银行", "cn.bank.app", "签名校验通过", t["green"]),
+            ("未知来源应用", "com.unknown.tool", "请求高危权限 3 项", t["orange"]),
+            ("广告插件", "com.ad.sdk", "包含已知广告特征", t["red"])]
+    group(img, t, y, 72*len(rows))
+    for i, (name, pkg, st, col) in enumerate(rows):
+        ry = y + i*72
+        d = ImageDraw.Draw(img)
+        d.text((GUT+16, ry+16), name, font=font(17, True), fill=hexc(t["label"]))
+        d.text((GUT+16, ry+40), pkg, font=font(13), fill=hexc(t["label2"]))
+        d.text((GUT+16, ry+56), st, font=font(13), fill=hexc(col))
+        if i < len(rows)-1:
+            sep(img, t, ry+72, 16)
+    tabbar(img, t, 1)
 
-def phone(draw_fn):
-    img = base(draw_fn["t"])
-    draw_fn["fn"](img, draw_fn["t"])
+# ---------- 防护 ----------
+def protect(img, t):
+    large_title(img, t, "防护")
+    y = segmented(img, t, 92, ["应用锁", "权限审计", "工具箱"], 0) + 20
+    group(img, t, y, ROW_H*3)
+    yy = y
+    yy = row(img, t, yy, "微信", None, "on", sub="com.tencent.mm"); sep(img, t, yy, 16)
+    yy = row(img, t, yy, "某银行", None, "on", sub="cn.bank.app"); sep(img, t, yy, 16)
+    yy = row(img, t, yy, "相册", None, "off", sub="com.android.gallery")
+    y += ROW_H*3 + 26
+    y = group_header(img, t, "工 具 箱", y)
+    group(img, t, y, ROW_H*3)
+    yy = y
+    yy = row(img, t, yy, "文件粉碎", "grid", "chevron"); sep(img, t, yy)
+    yy = row(img, t, yy, "加密保险箱", "lock", "chevron"); sep(img, t, yy)
+    yy = row(img, t, yy, "紧急求助", "shield", "chevron")
+    tabbar(img, t, 2)
+
+def phone(t, fn):
+    img = base(t)
+    fn(img, t)
     m = Image.new("L", img.size, 0)
     ImageDraw.Draw(m).rounded_rectangle([0, 0, W-1, H-1], radius=34, fill=255)
     out = Image.new("RGBA", img.size, (0,0,0,0))
     out.paste(img, (0,0), m)
     return out
 
-# ---------- 状态 ----------
-def status(img, t):
-    title(img, t, "状态")
-    y = ring(img, t, 175, 100, t["safe"]) + 22
-    d = ImageDraw.Draw(img)
-    d.text((W/2, y), "设备状态良好,未发现风险项", font=font(16), fill=hexc(t["text2"]), anchor="mm")
-    y = chip(img, t, y + 34, "未获取 Root 权限") + 34
-    y = section(img, t, "快 速 进 入", y)
-    box = [GUT, y, W-GUT, y + 8 + ROW_H*3]
-    card(img, t, box)
-    yy = y + 4
-    yy = row(img, t, yy, "病毒扫描", "scan", "chevron")
-    yy = row(img, t, yy, "权限审计", "grid", "chevron")
-    yy = row(img, t, yy, "应用锁", "lock", "chevron")
-    y = box[3] + 26
-    y = section(img, t, "防 护 开 关", y)
-    box = [GUT, y, W-GUT, y + 8 + ROW_H*3]
-    card(img, t, box)
-    yy = y + 4
-    yy = row(img, t, yy, "实时防护", "shield", "switch_on")
-    yy = row(img, t, yy, "自动清除威胁", "shield", "switch_on")
-    yy = row(img, t, yy, "自动卸载恶意应用", "shield", "switch_off")
-    tabbar(img, t, 0)
-
-# ---------- 检测 ----------
-def detect(img, t):
-    title(img, t, "检测")
-    y = segment(img, t, 60, ["病毒扫描", "木马查杀"], 0) + 20
-    y = pill_button(img, t, y, "开始扫描") + 20
-    y = progress(img, t, y, 0.62) + 16
-    d = ImageDraw.Draw(img)
-    d.text((GUT, y), "正在扫描 /data/app/com.example", font=font(13), fill=hexc(t["text2"]))
-    y += 34
-    rows = [("微信", "com.tencent.mm", "未发现风险", t["safe"]),
-            ("某银行", "cn.bank.app", "签名校验通过", t["safe"]),
-            ("未知来源应用", "com.unknown.tool", "请求高危权限 3 项", t["warn"]),
-            ("广告插件", "com.ad.sdk", "包含已知广告特征", t["danger"])]
-    for name, pkg, st, col in rows:
-        box = [GUT, y, W-GUT, y+84]
-        card(img, t, box, R_INNER)
-        d = ImageDraw.Draw(img)
-        d.text((GUT+16, y+24), name, font=font(16, True), fill=hexc(t["text"]))
-        d.text((GUT+16, y+48), pkg, font=font(12), fill=hexc(t["text3"]))
-        d.text((GUT+16, y+66), st, font=font(13), fill=hexc(col))
-        y += 92
-    tabbar(img, t, 1)
-
-# ---------- 防护 ----------
-def protect(img, t):
-    title(img, t, "防护")
-    y = segment(img, t, 60, ["应用锁", "权限审计", "工具箱"], 0) + 20
-    box = [GUT, y, W-GUT, y + 8 + ROW_H*3]
-    card(img, t, box)
-    yy = y + 4
-    yy = row(img, t, yy, "微信", "lock", "switch_on", sub="com.tencent.mm")
-    yy = row(img, t, yy, "某银行", "lock", "switch_on", sub="cn.bank.app")
-    yy = row(img, t, yy, "相册", "lock", "switch_off", sub="com.android.gallery")
-    y = box[3] + 24
-    y = section(img, t, "工 具 箱", y)
-    box = [GUT, y, W-GUT, y + 8 + ROW_H*3]
-    card(img, t, box)
-    yy = y + 4
-    yy = row(img, t, yy, "文件粉碎", "grid", "chevron")
-    yy = row(img, t, yy, "加密保险箱", "lock", "chevron")
-    yy = row(img, t, yy, "紧急求助", "shield", "chevron")
-    tabbar(img, t, 2)
-
-a = phone(dict(t=DARK, fn=status))
-b = phone(dict(t=DARK, fn=detect))
-c = phone(dict(t=LIGHT, fn=protect))
-
 def tokens():
-    h = 250
-    w = W*3 + 160
-    img = Image.new("RGBA", (w, h), hexc("#0B1220"))
+    h = 268
+    img = Image.new("RGBA", (W*3 + 160, h), hexc("#1C1C1E"))
     d = ImageDraw.Draw(img)
-    d.text((40, 28), "设计令牌与规则(三大板块 · 流体设计 v2)", font=font(18, True), fill="#EDF2FF")
+    d.text((40, 26), "设计令牌 · Apple 系统色与 iOS 度量", font=font(18, True), fill="#FFFFFF")
     rules = [
-        "顶层 3 个入口(状态/检测/防护),二级功能收进分段控件 —— 决策成本从 6 选 1 降到 3 选 1。",
-        "内容卡片靠色调分层:深色纯色块、浅色 1dp 阴影;描边只留给功能层(工具栏/入口条/分段)。",
-        "正文 16sp / 行高 1.5;分节标签 12sp 加宽字距;触摸目标 ≥48dp 且相邻间距 ≥8dp。",
-        "评分环 = 分值本身(不是装饰),颜色随状态切换;状态同时有文字,不靠颜色单独表意。",
-        "动效:列表错峰入场(每项 8%)、按压缩放 0.97/110ms 回弹 240ms,遵循系统动画时长缩放。",
+        "系统色按角色命名:label / secondaryLabel / separator / systemGroupedBackground;同一颜色不表达两种含义。",
+        "Dynamic Type:Large Title 34 · Headline 17 semibold · Body 17 · Footnote 13 · Caption 12(单位 sp)。",
+        "列表用 inset grouped:10dp 圆角分组卡,行高 48dp(Android 触摸目标下限,严于 iOS 的 44pt),分隔线 0.5dp 且左侧内缩。",
+        "标签栏通栏 + 顶部 0.5dp 分隔线,实心图标在上、11sp 标签在下,选中只用 systemBlue 着色、没有指示条。",
+        "分段控件:12% 系统填充色轨道 + 选中段浮起的浅色块;开关:打开为 systemGreen。",
     ]
-    yy = 62
+    yy = 58
     for r in rules:
-        d.text((40, yy), "· " + r, font=font(12), fill="#A9B7CE")
+        d.text((40, yy), "· " + r, font=font(12), fill="#AEAEB2")
         yy += 22
-    sw = [("品牌", "#5B93FF"), ("凝光青", "#3FD8F5"), ("安全", "#3FD98F"), ("警示", "#FFC24B"),
-          ("危险", "#FF8A8A"), ("表面(深)", "#121A2A"), ("底色(深)", "#080C15"), ("表面(浅)", "#FFFFFF")]
+    sw = [("systemBlue", "#007AFF"), ("systemGreen", "#34C759"), ("systemOrange", "#FF9500"), ("systemRed", "#FF3B30"),
+          ("分组卡(浅)", "#FFFFFF"), ("分组底(浅)", "#F2F2F7"), ("分组卡(深)", "#1C1C1E"), ("分组底(深)", "#000000")]
     x = 40
     for name, col in sw:
-        d.rounded_rectangle([x, 186, x+120, 224], radius=12, fill=hexc(col), outline=(255,255,255,40), width=1)
-        d.text((x, 230), name + " " + col, font=font(11), fill="#8290A8")
+        d.rounded_rectangle([x, 186, x+120, 226], radius=10, fill=hexc(col), outline=(255,255,255,40), width=1)
+        d.text((x, 232), name, font=font(11), fill="#AEAEB2")
+        d.text((x, 246), col, font=font(11), fill="#8E8E93")
         x += 132
     return img
 
+a = phone(LIGHT, status)
+b = phone(DARK, detect)
+c = phone(LIGHT, protect)
 tk = tokens()
-SH = 96 + H + 30 + 250 + 30
-sheet = Image.new("RGBA", (W*3 + 160, SH), hexc("#05080F"))
+SH = 100 + H + 30 + 268 + 30
+sheet = Image.new("RGBA", (W*3 + 160, SH), hexc("#F2F2F7"))
 d = ImageDraw.Draw(sheet)
-d.text((40, 30), "SecureDroid · 流体设计 v2 — 三大板块(状态 / 检测 / 防护)", font=font(22, True), fill="#EDF2FF")
-d.text((40, 62), "依据 ColorOS 17「流体设计」+ Apple HIG 材质与动效规范 + UI/UX Pro Max 规则库;令牌与 res/values 一一对应", font=font(12), fill="#A9B7CE")
-sheet.alpha_composite(a, (40, 96))
-sheet.alpha_composite(b, (W + 80, 96))
-sheet.alpha_composite(c, (W*2 + 120, 96))
-sheet.alpha_composite(tk, (40, 96 + H + 30))
+d.text((40, 30), "SecureDroid · Apple 风格(iOS HIG)— 状态 / 检测 / 防护", font=font(22, True), fill="#000000")
+d.text((40, 64), "系统色 + Dynamic Type + inset grouped 列表 + 分段控件 + 通栏标签栏;令牌与 res/values 一一对应", font=font(12), fill="#3C3C43")
+sheet.alpha_composite(a, (40, 100))
+sheet.alpha_composite(b, (W + 80, 100))
+sheet.alpha_composite(c, (W*2 + 120, 100))
+sheet.alpha_composite(tk, (40, 100 + H + 30))
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mockup-sheet.png")
 sheet.convert("RGB").save(out, quality=95)
 print("saved", out, sheet.size)

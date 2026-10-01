@@ -74,7 +74,15 @@
 - 新板块页面实现 ui/SectionHost,MainActivity.navigateTo(板块 id, 分段下标) 可跨板块直达
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
-## 视觉设计约定(改 UI 前必读)
+## 视觉设计约定(Apple 风格,改 UI 前必读)
+- 风格基线是 iOS HIG:系统色(systemBlue/Green/Orange/Red、label/secondaryLabel/separator、
+  systemGroupedBackground/systemFill)、Dynamic Type 字号、inset grouped 列表、分段控件、通栏标签栏
+- 冲突裁决:与 Android 规范冲突时取更严的一方(行高 48dp > iOS 44pt);不照搬依赖 iOS 系统行为的外形
+- 列表分隔线由 ui/InsetDividerDecoration 绘制(只画行间);item_*.xml 是"行"不是"卡片",分组卡由 fragment 提供
+- 标签栏图标用实心(ic_tab_*),内容区图标用线性(ic_*),不要混层
+- 装饰性图标必须 importantForAccessibility="no"
+
+## 视觉设计约定(旧记录)
 - 令牌在 res/values(浅色)+ res/values-night(深色):配色/圆角/间距只改这两处,别在布局里写字面值
 - **陷阱**:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
   构建/Lint/测试全绿但深色模式失效;NightThemeTokenTest 已盯住这一点

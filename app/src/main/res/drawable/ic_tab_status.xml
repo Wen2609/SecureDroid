@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 标签栏图标用**实心**版本:iOS 标签栏优先使用 filled 符号,与内容区的线性图标区分层级。
+     内部的对勾用 evenOdd 挖空,这样着色(tint)后依然是"实心盾牌 + 镂空对勾"。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="25dp"
+    android:height="25dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:fillType="evenOdd"
+        android:pathData="M12,2.4 L4.4,5.5 V11.6 c0,4.7 3.2,8.6 7.6,9.8 4.4,-1.2 7.6,-5.1 7.6,-9.8 V5.5 Z M10.4,15.6 L7.6,12.8 8.7,11.7 10.4,13.4 15.2,8.6 16.3,9.7 Z" />
+</vector>

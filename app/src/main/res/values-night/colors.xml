@@ -1,38 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 设计令牌 · 色彩(深色):安全工具的默认气质 —— 深空底 + 凝光青蓝 -->
+<!-- 设计令牌 · 色彩(深色)—— iOS 深色外观的系统色变体 -->
 <resources>
-    <color name="primary">#6FA0FF</color>
+    <color name="ios_blue">#0A84FF</color>
+    <color name="ios_green">#30D158</color>
+    <color name="ios_orange">#FF9F0A</color>
+    <color name="ios_red">#FF453A</color>
+    <color name="ios_gray">#8E8E93</color>
+    <color name="ios_gray2">#636366</color>
+    <color name="ios_gray4">#3A3A3C</color>
+    <color name="ios_gray5">#38383A</color>
+    <color name="ios_gray6">#1C1C1E</color>
+
+    <color name="ios_label">#FFFFFF</color>
+    <color name="ios_label_secondary">#EBEBF599</color>
+    <color name="ios_label_tertiary">#EBEBF54D</color>
+    <color name="ios_separator">#545458A6</color>
+    <color name="ios_opaque_separator">#38383A</color>
+    <color name="ios_system_bg">#000000</color>
+    <color name="ios_secondary_bg">#000000</color>
+    <color name="ios_grouped_card">#1C1C1E</color>
+    <color name="ios_fill">#7676803D</color>
+    <color name="ios_segment_selected">#636366</color>
+    <color name="ios_tabbar">#16161AF2</color>
+
+    <color name="primary">@color/ios_blue</color>
     <color name="ic_launcher_background">#0B1220</color>
-    <color name="status_safe">@color/sd_safe</color>
-    <color name="status_risky">@color/sd_warn</color>
-    <color name="status_malicious">@color/sd_danger</color>
+    <color name="status_safe">@color/ios_green</color>
+    <color name="status_risky">@color/ios_orange</color>
+    <color name="status_malicious">@color/ios_red</color>
 
-    <color name="sd_brand">#5B93FF</color>
-    <color name="sd_glow">#3FD8F5</color>
-    <color name="sd_on_primary">#06101F</color>
-
-    <color name="sd_bg">#080C15</color>
-    <color name="sd_bg_alt">#0B1220</color>
-    <color name="sd_bloom">#332E7BFF</color>
-    <color name="sd_bloom_clear">#002E7BFF</color>
-
-    <color name="sd_surface">#121A2A</color>
-    <color name="sd_surface_soft">#0F1725</color>
-
-    <color name="sd_glass">#14FFFFFF</color>
-    <color name="sd_glass_strong">#24FFFFFF</color>
-    <color name="sd_hairline">#26FFFFFF</color>
-    <color name="sd_hairline_soft">#14FFFFFF</color>
-    <color name="sd_highlight">#3DFFFFFF</color>
-    <color name="sd_ring_track">#26FFFFFF</color>
-
-    <color name="sd_text">#EDF2FF</color>
-    <color name="sd_text_secondary">#A9B7CE</color>
-    <color name="sd_text_tertiary">#8290A8</color>
-    <color name="sd_on_brand">#06101F</color>
-
-    <color name="sd_safe">#3FD98F</color>
-    <color name="sd_warn">#FFC24B</color>
-    <color name="sd_danger">#FF8A8A</color>
-    <color name="sd_danger_solid">#B3261E</color>
+    <color name="sd_brand">@color/ios_blue</color>
+    <color name="sd_glow">@color/ios_blue</color>
+    <color name="sd_on_primary">#FFFFFF</color>
+    <color name="sd_bg">@color/ios_secondary_bg</color>
+    <color name="sd_bg_alt">@color/ios_secondary_bg</color>
+    <color name="sd_bloom">#00000000</color>
+    <color name="sd_bloom_clear">#00000000</color>
+    <color name="sd_surface">@color/ios_grouped_card</color>
+    <color name="sd_surface_soft">@color/ios_secondary_bg</color>
+    <color name="sd_glass">@color/ios_tabbar</color>
+    <color name="sd_glass_strong">@color/ios_fill</color>
+    <color name="sd_hairline">@color/ios_separator</color>
+    <color name="sd_hairline_soft">@color/ios_separator</color>
+    <color name="sd_highlight">#00000000</color>
+    <color name="sd_ring_track">@color/ios_gray5</color>
+    <color name="sd_text">@color/ios_label</color>
+    <color name="sd_text_secondary">#EBEBF599</color>
+    <color name="sd_text_tertiary">#EBEBF573</color>
+    <color name="sd_on_brand">#FFFFFF</color>
+    <color name="sd_safe">@color/ios_green</color>
+    <color name="sd_warn">@color/ios_orange</color>
+    <color name="sd_danger">@color/ios_red</color>
+    <color name="sd_danger_solid">#FF453A</color>
 </resources>

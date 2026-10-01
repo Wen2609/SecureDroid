@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 病毒扫描(检测板块默认分段):一个主行动 + 一条流体进度 + 结果列表,不再套第二层卡片 -->
+<!-- 病毒扫描(iOS 风格):一个主按钮 + 一条进度 + 一张分组结果列表 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,7 +8,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStartScan"
-        style="@style/Widget.SecureDroid.Button.Pill"
+        style="@style/Widget.SecureDroid.Button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sd_btn_height"
         android:text="@string/scan_start"
@@ -18,7 +18,7 @@
         android:id="@+id/progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="4dp"
         android:layout_marginTop="@dimen/sd_space_4"
         android:max="100"
         android:progress="0"
@@ -33,13 +33,17 @@
         android:textAppearance="@style/TextAppearance.SecureDroid.Label"
         android:textColor="@color/sd_text_secondary" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvResults"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.SecureDroid.Card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layoutAnimation="@anim/sd_list_layout"
-        android:layout_marginTop="@dimen/sd_space_3"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/sd_space_5" />
+        android:layout_marginTop="@dimen/sd_space_4"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvResults"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
+    </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

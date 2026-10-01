@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  应用外壳 = 内容层 + 功能层。
-  顶部不再放玻璃条:大标题直接写在背景上(更少的容器 = 更少的视觉噪声),
-  页面标题即当前板块名;玻璃只留给底部入口条与它上面的那条指示器。
+  应用外壳(Apple 风格):
+  - 顶部是 iOS 的 Large Title(34sp bold,左边距 16dp),直接写在分组底色上,没有导航栏底色;
+  - 底部是 iOS 标签栏:通栏半透明 + 顶部 0.5dp 分隔线,图标在上、文字在下(25dp 实心图标 + 10sp 标签),
+    选中项只用 systemBlue 着色,没有指示条 —— 这是 iOS 与 Android 底部导航最大的形态差别。
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_fluid"
+    android:background="@color/sd_bg"
     android:orientation="vertical">
 
     <!-- 完整性告警条:签名与首次安装不一致(疑似重打包)时由 MainActivity 显示 -->
@@ -28,9 +29,11 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:elevation="0dp"
-        android:minHeight="@dimen/sd_row_height"
+        android:minHeight="52dp"
         android:paddingStart="@dimen/sd_gutter"
         android:paddingEnd="@dimen/sd_gutter"
+        android:paddingTop="@dimen/sd_space_2"
+        android:paddingBottom="@dimen/sd_space_1"
         app:contentInsetStart="0dp"
         app:contentInsetStartWithNavigation="0dp"
         app:titleTextAppearance="@style/TextAppearance.SecureDroid.Title"
@@ -42,24 +45,21 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- 底部入口条:三个板块。玻璃 + 顶部 3dp 胶囊指示器 -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_glass_panel"
-        android:minHeight="68dp"
+        android:layout_height="@dimen/sd_tabbar_height"
+        android:background="@drawable/bg_tabbar"
         app:tabGravity="fill"
         app:tabIconTint="@color/tab_text"
-        app:tabIndicator="@drawable/tab_indicator"
-        app:tabIndicatorColor="@color/sd_brand"
-        app:tabIndicatorFullWidth="false"
-        app:tabIndicatorGravity="top"
-        app:tabIndicatorHeight="3dp"
-        app:tabInlineLabel="true"
+        app:tabIndicatorHeight="0dp"
+        app:tabInlineLabel="false"
         app:tabMode="fixed"
-        app:tabPaddingEnd="@dimen/sd_space_4"
-        app:tabPaddingStart="@dimen/sd_space_4"
-        app:tabRippleColor="@color/sd_hairline_soft"
+        app:tabPaddingBottom="@dimen/sd_space_1"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingTop="@dimen/sd_space_1"
+        app:tabRippleColor="@color/sd_hairline"
+        app:tabTextAppearance="@style/TextAppearance.SecureDroid.Caption"
         app:tabTextColor="@color/tab_text" />
 </LinearLayout>

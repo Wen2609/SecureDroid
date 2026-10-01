@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 分段控件底色:选中 = 浮起的浅色块(iOS 浅色为白、深色为 #636366),未选中 = 透明(露出轨道) -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/ios_segment_selected" android:state_checked="true" />
+    <item android:color="@android:color/transparent" />
+</selector>
