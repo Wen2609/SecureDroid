@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="20dp"
-    android:paddingTop="12dp">
-
-    <com.google.android.material.textfield.TextInputLayout
+<!-- 由 design/generate_layouts.mjs 从设计令牌生成;请勿手改,改令牌或改脚本后重跑 -->
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/lock_pin_hint">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberPassword"
-            android:maxLength="4" />
-    </com.google.android.material.textfield.TextInputLayout>
-
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/sd_space_5"
+        android:paddingTop="@dimen/sd_space_3">
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/lock_pin_confirm_hint">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPinConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberPassword"
-            android:maxLength="4" />
-    </com.google.android.material.textfield.TextInputLayout>
-</LinearLayout>
+            android:layout_marginTop="@dimen/sd_space_3"
+            android:hint="@string/lock_pin_hint">
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:minHeight="@dimen/sd_touch_min" />
+        </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_3"
+            android:hint="@string/lock_pin_confirm_hint">
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPinConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:minHeight="@dimen/sd_touch_min" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>

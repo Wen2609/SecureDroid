@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 深色下卡片用色调分层,不需要阴影(阴影在深色底上不可见,只会增加绘制开销) -->
-<resources>
-    <dimen name="sd_card_elevation">0dp</dimen>
-</resources>

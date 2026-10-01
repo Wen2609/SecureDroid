@@ -44,6 +44,7 @@
 | accent | `#0369A1` | `#38BDF8` | 唯一的强调色:进度、选中态、主行动 |
 | background / foreground | `#F8FAFC` / `#020617` | `#020617` / `#F8FAFC` | 页面底 / 正文 |
 | card / muted / border | `#FFFFFF` / `#E8ECF1` / `#E2E8F0` | `#0E1223` / `#1A1E2F` / `#334155` | 卡片 / 次级面 / 1dp 边框 |
+| (已删除) | `c_secondary` / `c_ring` / `c_card_foreground` | — | 技能返回但当前界面未使用,已按"清理未使用资源"移除,避免出现"定义了却没人用"的假令牌 |
 | muted-foreground | `#475569` | `#94A3B8` | 次级文字 |
 | success / gold / destructive | `#15803D` / `#A16207` / `#DC2626` | `#22C55E` / `#FBBF24` / `#EF4444` | 安全 / 警示 / 危险 |
 
@@ -75,4 +76,7 @@
 - [x] 底部导航 3 项(≤5),无横向滚动,不存在禁用/隐藏项
 - [x] 多步流程有进度条与阶段文案;动效尊重系统设置
 - [ ] 真机 / 模拟器视觉验证 —— 环境无可用设备
-- [ ] 未清理的历史令牌别名仍有 Lint UnusedResources 告警(见 CHANGELOG 已知项)
+- [x] 未使用资源已清理(Lint 警告 108 → 57,0 错误)
+- [x] **可自动验收的部分已写成测试**:`DesignRuleTest`(生成器一致性 / 触摸目标 ≥48dp / 颜色与字号令牌化 / 核心令牌齐全)、
+  `ColorContrastTest`(浅色与深色主题的 WCAG 对比度 ≥4.5:1)
+- [ ] 剩余 57 条警告中,`SdCardPath`、`PrivateApi`(SystemProperties 反射)、`GradleDependency` 属已知取舍,其余为文案国际化类

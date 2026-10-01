@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 由 design/generate_layouts.mjs 从设计令牌生成;请勿手改,改令牌或改脚本后重跑 -->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,7 +14,7 @@
             android:background="@color/c_destructive"
             android:padding="@dimen/sd_space_3"
             android:textColor="@color/c_on_destructive"
-            android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Caption"
             android:visibility="gone" />
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

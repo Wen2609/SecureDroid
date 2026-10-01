@@ -129,8 +129,6 @@
     <string name="clipboard_clear">清空剪贴板</string>
     <string name="clipboard_safe">剪贴板未发现敏感信息</string>
     <string name="log_export_title">安全日志导出</string>
-    <string name="widget_open">打开</string>
-    <string name="widget_scan">查杀</string>
     <string name="lock_decoy_sw">应用锁假崩溃诱骗模式</string>
     <string name="lock_too_many_attempts">尝试次数过多,请等待 %1$d 秒后再试</string>
     <string name="lock_alarm_triggered">检测到暴力破解尝试,已鸣响警报!</string>
@@ -255,7 +253,6 @@
 
     <!-- 分节标题(流体设计:小号大写/加宽字距的分节标签) -->
     <string name="sd_section_prefs">安全设置</string>
-    <string name="sd_section_lock">应用锁</string>
     <string name="sd_section_audit">权限审计</string>
     <string name="sd_section_tools">工具</string>
     <string name="sd_score_placeholder" translatable="false">100</string>

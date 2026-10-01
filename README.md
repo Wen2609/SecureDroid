@@ -129,7 +129,8 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 
 - 分隔靠 **1dp 边框 + 留白**(技能 Key Effects:"sharp shadows if any"),卡片 0dp 阴影;
 - 4/8dp 栅格、行高 56dp、触摸下限 48dp、正文 16sp / 行高 1.5、对比度 ≥4.5:1;
-- **全部布局由脚本从令牌生成**(\`design/generate_layouts.mjs\`),改令牌重跑即可,不存在逐页漂移。
+- **全部 23 个布局由脚本从令牌生成**(\`design/generate_layouts.mjs\`),改令牌重跑即可,不存在逐页漂移;
+- 设计规则可自动验收:\`DesignRuleTest\`(触摸目标 / 令牌化 / 生成器一致性)+ \`ColorContrastTest\`(WCAG 对比度)。
 
 ![设计稿](design/mockup-sheet.png)
 
@@ -207,12 +208,12 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.4.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.4.1-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-      SHA-256 ec4474cf43d6ff5773c2674e74b2ad28ad4a0e00bd543d702a575e5713ce3012
-      大小    1,998,669 字节    versionCode 6 / versionName 1.4.0(Swiss Style · ui-ux-pro-max)
+      SHA-256 e21e5cc46d54380451ee08aaff862839d0043a4c67a5bd62ab31ac49418b543c
+      大小    1,999,070 字节    versionCode 7 / versionName 1.4.1(Swiss Style · 全量修复)
 
-  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 / v1.3.0 保留用于回退。
+  更早版本 apks/SecureDroid-v1.0.0 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 保留用于回退。
 
 ## 注意事项
 

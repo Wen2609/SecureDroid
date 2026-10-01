@@ -13,73 +13,31 @@
     <!-- ===== 技能返回的调色板(浅色) ===== -->
     <color name="c_primary">#0F172A</color>
     <color name="c_on_primary">#FFFFFF</color>
-    <color name="c_secondary">#334155</color>
     <color name="c_accent">#0369A1</color>
     <color name="c_on_accent">#FFFFFF</color>
     <color name="c_background">#F8FAFC</color>
     <color name="c_foreground">#020617</color>
     <color name="c_card">#FFFFFF</color>
-    <color name="c_card_foreground">#020617</color>
     <color name="c_muted">#E8ECF1</color>
     <color name="c_muted_foreground">#475569</color>
     <color name="c_border">#E2E8F0</color>
     <color name="c_destructive">#DC2626</color>
     <color name="c_on_destructive">#FFFFFF</color>
-    <color name="c_ring">#0F172A</color>
     <!-- 技能返回的 Notes 指出 accent 由 #CA8A04 调整为"premium gold",保留为警示色角色 -->
     <color name="c_gold">#A16207</color>
     <color name="c_success">#15803D</color>
 
     <!-- ===== 旧令牌别名(全部指向上面的语义色) ===== -->
-    <color name="primary">@color/c_primary</color>
     <color name="ic_launcher_background">@color/c_primary</color>
     <color name="status_safe">@color/c_success</color>
     <color name="status_risky">@color/c_gold</color>
     <color name="status_malicious">@color/c_destructive</color>
 
     <color name="sd_brand">@color/c_primary</color>
-    <color name="sd_accent">@color/c_accent</color>
-    <color name="sd_glow">@color/c_accent</color>
-    <color name="sd_on_brand">@color/c_on_primary</color>
-    <color name="sd_bg">@color/c_background</color>
-    <color name="sd_bg_alt">@color/c_background</color>
-    <color name="sd_bloom">#00000000</color>
-    <color name="sd_bloom_clear">#00000000</color>
-    <color name="sd_surface">@color/c_card</color>
-    <color name="sd_surface_soft">@color/c_muted</color>
-    <color name="sd_glass">@color/c_card</color>
-    <color name="sd_glass_strong">@color/c_muted</color>
     <color name="sd_hairline">@color/c_border</color>
-    <color name="sd_hairline_soft">@color/c_border</color>
-    <color name="sd_highlight">#00000000</color>
-    <color name="sd_ring_track">@color/c_muted</color>
-    <color name="sd_text">@color/c_foreground</color>
-    <color name="sd_text_secondary">@color/c_muted_foreground</color>
-    <color name="sd_text_tertiary">#64748B</color>
     <color name="sd_safe">@color/c_success</color>
     <color name="sd_warn">@color/c_gold</color>
     <color name="sd_danger">@color/c_destructive</color>
-    <color name="sd_danger_solid">@color/c_destructive</color>
 
     <!-- iOS 令牌名(上一版遗留)映射到同一套语义色,避免出现两套并行色板 -->
-    <color name="ios_blue">@color/c_accent</color>
-    <color name="ios_green">@color/c_success</color>
-    <color name="ios_orange">@color/c_gold</color>
-    <color name="ios_red">@color/c_destructive</color>
-    <color name="ios_gray">@color/c_muted_foreground</color>
-    <color name="ios_gray2">#94A3B8</color>
-    <color name="ios_gray4">#CBD5E1</color>
-    <color name="ios_gray5">@color/c_muted</color>
-    <color name="ios_gray6">@color/c_muted</color>
-    <color name="ios_label">@color/c_foreground</color>
-    <color name="ios_label_secondary">@color/c_muted_foreground</color>
-    <color name="ios_label_tertiary">#64748B</color>
-    <color name="ios_separator">@color/c_border</color>
-    <color name="ios_opaque_separator">@color/c_border</color>
-    <color name="ios_system_bg">@color/c_background</color>
-    <color name="ios_secondary_bg">@color/c_background</color>
-    <color name="ios_grouped_card">@color/c_card</color>
-    <color name="ios_fill">@color/c_muted</color>
-    <color name="ios_segment_selected">@color/c_card</color>
-    <color name="ios_tabbar">@color/c_card</color>
 </resources>

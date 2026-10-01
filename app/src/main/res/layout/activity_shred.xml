@@ -1,28 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/tvTitle"
+<!-- 由 design/generate_layouts.mjs 从设计令牌生成;请勿手改,改令牌或改脚本后重跑 -->
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:text="@string/tool_shred" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/shred_note" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnPick"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/shred_pick" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/sd_gutter">
+        <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/sd_space_4"
+                android:paddingBottom="@dimen/sd_space_2"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Title"
+                android:textColor="@color/c_foreground" />
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPick"
+                style="@style/Widget.SecureDroid.Button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sd_btn_height"
+                android:text="@string/shred_pick"
+                app:icon="@drawable/ic_grid" />
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sd_space_3"
+                android:text="@string/shred_note"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+                android:textColor="@color/c_muted_foreground" />
+        <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.SecureDroid.Card"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/sd_space_4"
+                android:layout_marginBottom="@dimen/sd_space_4"
+                android:layout_weight="1">
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:layoutAnimation="@anim/sd_list_layout" />
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </LinearLayout>

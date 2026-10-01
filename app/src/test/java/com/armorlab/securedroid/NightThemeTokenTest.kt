@@ -52,9 +52,11 @@ class NightThemeTokenTest {
     fun nightColorsOverrideCoreTokens() {
         val night = colors(File(resDir, "values-night/colors.xml"))
         assertTrue("应存在 res/values-night/colors.xml", night.isNotEmpty())
+        // 语义令牌集(Swiss 体系):旧别名已在"清理未使用资源"时删除,这里校验当前核心集
         val required = listOf(
-            "sd_bg", "sd_bg_alt", "sd_surface", "sd_glass", "sd_hairline",
-            "sd_text", "sd_text_secondary", "sd_brand", "sd_glow", "primary"
+            "c_background", "c_foreground", "c_card", "c_muted", "c_muted_foreground",
+            "c_border", "c_primary", "c_on_primary", "c_accent", "c_on_accent",
+            "c_destructive", "c_success", "c_gold"
         )
         val missing = required.filter { it !in night }
         assertEquals("深色令牌缺少:$missing", emptyList<String>(), missing)

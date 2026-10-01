@@ -10,25 +10,19 @@
     <dimen name="sd_space_3">12dp</dimen>
     <dimen name="sd_space_4">16dp</dimen>
     <dimen name="sd_space_5">24dp</dimen>
-    <dimen name="sd_space_6">32dp</dimen>
-    <dimen name="sd_space_7">48dp</dimen>
 
     <dimen name="sd_gutter">16dp</dimen>
     <dimen name="sd_touch_min">48dp</dimen>
     <dimen name="sd_row_height">56dp</dimen>
     <dimen name="sd_tabbar_height">60dp</dimen>
-    <dimen name="sd_icon_tile">40dp</dimen>
 
     <dimen name="sd_radius_card">12dp</dimen>
     <dimen name="sd_radius_inner">8dp</dimen>
     <dimen name="sd_radius_chip">6dp</dimen>
-    <dimen name="sd_radius_pill">100dp</dimen>
     <dimen name="sd_hairline_width">1dp</dimen>
 
     <dimen name="sd_hero_ring">176dp</dimen>
     <dimen name="sd_btn_height">48dp</dimen>
-    <dimen name="sd_card_elevation">0dp</dimen>
-    <dimen name="sd_segment_height">40dp</dimen>
-    <dimen name="sd_segment_hit">44dp</dimen>
+    <dimen name="sd_segment_hit">48dp</dimen>
     <dimen name="sd_divider_inset">56dp</dimen>
 </resources>

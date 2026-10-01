@@ -48,8 +48,13 @@
         <item name="android:letterSpacing">0.08</item>
         <item name="android:textAllCaps">true</item>
     </style>
+
+    <!-- 告警条与键盘数字:同样是样式,不在布局里写字面字号 -->
     <style name="TextAppearance.SecureDroid.Caption" parent="TextAppearance.Material3.LabelSmall">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.Keypad" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">24sp</item>
     </style>
 
     <!-- 内容卡片:0 阴影 + 1dp 边框(Swiss 的分隔语言) -->
@@ -61,8 +66,6 @@
         <item name="strokeColor">@color/c_border</item>
         <item name="rippleColor">@color/c_muted</item>
     </style>
-    <style name="Widget.SecureDroid.CardGlass" parent="Widget.SecureDroid.Card" />
-
     <!-- 按钮:主按钮 = 深蓝底 + 白字;次按钮 = 边框 + 前景色文本 -->
     <style name="Widget.SecureDroid.Button" parent="Widget.Material3.Button">
         <item name="android:minHeight">@dimen/sd_btn_height</item>
@@ -76,21 +79,6 @@
         <item name="iconTint">@color/c_on_primary</item>
         <item name="iconPadding">@dimen/sd_space_2</item>
     </style>
-    <style name="Widget.SecureDroid.Button.Accent" parent="Widget.SecureDroid.Button">
-        <item name="backgroundTint">@color/c_accent</item>
-        <item name="android:textColor">@color/c_on_accent</item>
-        <item name="iconTint">@color/c_on_accent</item>
-    </style>
-    <style name="Widget.SecureDroid.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:minHeight">@dimen/sd_touch_min</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="cornerRadius">@dimen/sd_radius_inner</item>
-        <item name="strokeColor">@color/c_border</item>
-        <item name="android:textColor">@color/c_foreground</item>
-        <item name="iconTint">@color/c_foreground</item>
-    </style>
-    <style name="Widget.SecureDroid.Button.Pill" parent="Widget.SecureDroid.Button" />
     <!-- 行式入口:整行可点,左侧图标,右侧披露指示符 -->
     <style name="Widget.SecureDroid.Button.Row" parent="Widget.Material3.Button.TextButton">
         <item name="android:minHeight">@dimen/sd_row_height</item>
@@ -107,6 +95,20 @@
         <item name="rippleColor">@color/c_muted</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
+    </style>
+    <style name="Widget.SecureDroid.Button.Accent" parent="Widget.SecureDroid.Button">
+        <item name="backgroundTint">@color/c_accent</item>
+        <item name="android:textColor">@color/c_on_accent</item>
+        <item name="iconTint">@color/c_on_accent</item>
+    </style>
+    <style name="Widget.SecureDroid.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/sd_touch_min</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">@dimen/sd_radius_inner</item>
+        <item name="strokeColor">@color/c_border</item>
+        <item name="android:textColor">@color/c_foreground</item>
+        <item name="iconTint">@color/c_foreground</item>
     </style>
 
     <!-- 分段控件:中性轨道 + 选中项用卡片色浮起并描边 -->
