@@ -5,6 +5,8 @@
 > 本图由 `design/render_mockup.py` **现读** `res/values/colors.xml`、`res/values-night/colors.xml`、`res/values/dimens.xml`
 > 渲染而成(渲染器里不写死任何设计值),全部布局由 `design/generate_layouts.mjs` 从同一套令牌生成。
 > 两者都不是真机截图 —— 本环境没有可用设备。
+>
+> 可**交互**的版本:浏览器打开 [design/mockup.html](mockup.html)(浅色)或 [design/mockup-dark.html](mockup-dark.html)(深色)。
 
 ## 一、来源:用户给定设计稿(唯一视觉基线)
 
@@ -91,7 +93,24 @@ CI(`.github/workflows/android.yml`)重跑该脚本并 `git diff --exit-code`,手
 (1.6.0 改版时把 `Widget.SecureDroid.Chip/Divider` 的 `parent=""` 丢了,aapt2 去找不存在的隐式父样式
 `Widget.SecureDroid` 导致整包链接失败)。
 
-## 五、自检清单
+## 五、可交互预览:HTML 视觉稿(不是截图)
+
+`design/render_html.mjs` 与 PNG 渲染器同源:现读 `res/values`(浅)/ `res/values-night`(深)的
+颜色 · 尺寸 · 文案,并解析 `res/color/*.xml` 选择器,渲染成**自包含单文件 HTML**
+(内联 CSS + 内联 SVG 图标,零外部请求),浏览器直接打开即可:
+
+    node design/render_html.mjs
+    # -> design/mockup.html(浅色) design/mockup-dark.html(深色)
+
+- 5 屏 360×800:首页(良好态 100 分 / 风险态 58 分)、检测、防护、工具箱;底部悬浮导航按所在板块高亮;
+- 页脚三张表:8 组配对的**现算**对比度(主按钮 2.53:1 标为刻意偏差)、全部颜色令牌、全部尺寸令牌;
+- **陷阱**:Android 的 `#AARRGGBB` 必须转成 CSS 的 `#RRGGBBAA`。直接写 8 位 hex 会被 CSS 当作
+  带 25/255 透明度的颜色,整个预览会发粉 —— 第一版就是这样错的,渲染器里的 `cssHex()` 就是这道防线;
+- 无头截图自检产物:`html-preview.png` / `html-preview-dark.png`。抽样像素(脚本 `_probe/probe_html.py`)
+  确认品牌绿 亮 #04BD19 / 暗 #31D027、卡片 亮 #FFFFFF / 暗 #171B18、悬浮条 亮 #FDFDFD / 暗 #191E1A
+  全部按令牌上色。
+
+## 六、自检清单
 
 - [x] 触摸目标 ≥48dp(按钮 48、行 56、分段 48、宫格卡 128)
 - [x] 不只靠颜色表意:评分环有数字 + 状态文案;风险卡副标题变红且文案写明"N 个威胁待处理"
@@ -99,6 +118,7 @@ CI(`.github/workflows/android.yml`)重跑该脚本并 `git diff --exit-code`,手
 - [x] 颜色与字号只来自令牌:布局里不允许出现字面色值 / 字面字号(`DesignRuleTest.layoutsUseTokensOnly`)
 - [x] 底部导航 3 项(≤5),悬浮圆角条,选中态绿色图标 + 文字,无指示条
 - [x] 渲染器与布局生成器共用同一套令牌,不会各说各话
+- [x] HTML 视觉稿可直接打开(自包含、零外部请求),并与 PNG / 布局生成器共用同一套令牌
 - [x] 可自动验收的部分已写成测试:`DesignRuleTest`、`ColorContrastTest`、`NightThemeTokenTest`、`ResourceReferenceTest`、smoke 组
 - [ ] 真机 / 模拟器视觉验证 —— 环境无可用设备
 - [ ] Lint 剩余警告为已知取舍(`SdCardPath`、`PrivateApi` 反射、`GradleDependency`、文案国际化)

@@ -133,11 +133,15 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 - 几何:标题 24sp、环内数字 54sp、卡标题 18sp、状态文案 17sp、卡副标题 15sp;进度环 190dp
   (描边 25dp、内盘 140dp)、主按钮 48dp 高、悬浮导航 60dp 高;
 - **全部 20 个布局由脚本从令牌生成**(`design/generate_layouts.mjs`),改令牌重跑即可,不存在逐页漂移;
-- 设计规则可自动验收:`DesignRuleTest`(触摸目标 / 令牌化 / 生成器一致性)+ `ColorContrastTest`(WCAG 对比度)。
+- 设计规则可自动验收:`DesignRuleTest`(触摸目标 / 令牌化 / 生成器一致性)+ `ColorContrastTest`(WCAG 对比度);
+- **可交互视觉稿**:`design/mockup.html` / `design/mockup-dark.html` 是自包含单页(内联 CSS + 内联 SVG,零外部请求),
+  由 `design/render_html.mjs` 现读同一套令牌渲染,含 5 屏与令牌对比度实测表,浏览器直接打开即可;
+  `node design/render_html.mjs` 可随时重新生成。
 
 ![设计稿](design/mockup-sheet.png)
 
 > 上图由 `design/render_mockup.py` **现读 res/values 令牌**渲染生成(1080×2400),**不是真机截图**。
+> 想点开看?用浏览器打开 [`design/mockup.html`](design/mockup.html)(浅色)或 [`design/mockup-dark.html`](design/mockup-dark.html)(深色)。
 
 **顶层只有三个板块**:首页只看结论,会改变设备行为的开关一律下沉:
 
