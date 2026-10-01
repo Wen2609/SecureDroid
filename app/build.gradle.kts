@@ -70,7 +70,11 @@ android {
     }
 
     lint {
-        abortOnError = false
+        // 错误级问题(权限缺失 / API 误用 / 清单不一致等真实崩溃风险)阻断构建;
+        // 警告级(硬编码文案、依赖更新提示等)保留在报告中不阻断。
+        abortOnError = true
+        warningsAsErrors = false
+        checkDependencies = true
     }
 
     testOptions {

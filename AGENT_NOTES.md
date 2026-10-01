@@ -46,6 +46,8 @@
 - 位置:app/src/test/java/com/armorlab/securedroid/
 - 覆盖(38 项):PrivilegedPolicyTest(15)/ FamilyClassifierTest(9)/ ResourceReferenceTest(7,资源引用完整性)/ ManifestInvariantsTest(4)/ ScannerEngineTest(3)
 - ManifestInvariantsTest 校验:清单声明的 activity/service/receiver 类必须真实存在、FGS 类型与权限一致 —— 改 manifest 或删类后务必重跑
+- Lint 已开启 abortOnError:新增 API 调用若缺少权限声明会直接构建失败(例:SOS 震动需要 VIBRATE);本地跑 lintDebug 校验
+- 故意保留的 lint 警告(勿盲目修):SdCardPath(查杀必须用真实系统路径)、PrivateApi(SystemProperties 反射有 getprop 兜底)、HardcodedText/SetTextI18n(动态拼接文案)
 
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)

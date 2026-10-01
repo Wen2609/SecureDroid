@@ -1,0 +1,18 @@
+# Normalize line endings regardless of contributor platform
+* text=auto
+
+# Gradle wrapper and shell scripts must stay LF so they run on Linux/macOS CI
+gradlew text eol=lf
+*.sh text eol=lf
+
+# Windows batch files keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaries must never be normalized
+*.jar binary
+*.apk binary
+*.jks binary
+*.keystore binary
+*.png binary
+*.webp binary

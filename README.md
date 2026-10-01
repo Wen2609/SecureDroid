@@ -93,7 +93,16 @@
 | ManifestInvariantsTest | 4 | 清单不变量:前台服务类型与权限一致、组件类真实存在、通知权限已声明 |
 | ScannerEngineTest | 3 | SHA-256 十六进制编码格式正确 |
 
-CI:.github/workflows/android.yml 在每次 push / PR 上自动跑测试、构建 debug 包并上传产物。
+### 静态检查(Lint)
+
+    ./gradlew lintDebug            # 错误级问题阻断构建
+
+已启用 `abortOnError = true`:权限缺失、API 误用、清单不一致等**真实崩溃风险**会直接让构建失败。
+初次启用即发现并修复 4 个真实缺陷(详见 CHANGELOG):SOS 震动缺少 VIBRATE 权限、锁屏页弃用 API、
+磁贴弃用 API、SMS 权限导致无电话硬件设备不可安装。硬编码系统路径(`/data/local/tmp`、`/sdcard`)
+与 `SystemProperties` 反射属**故意为之**(查杀必须使用真实系统路径,反射有 `getprop` 兜底),保留为警告。
+
+CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
 
 ## 发布版签名与混淆
 

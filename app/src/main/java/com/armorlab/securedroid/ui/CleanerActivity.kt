@@ -17,7 +17,7 @@ class CleanerActivity : BaseListToolActivity() {
         val total = entries.sumOf { it.sizeKb }
         val items = mutableListOf(
             TrojanAdapter.UiItem(
-                title = "Cache.Total · " + String.format("%.1f MB", total / 1024.0),
+                title = "Cache.Total · " + String.format(java.util.Locale.US, "%.1f MB", total / 1024.0),
                 sub = "共 " + entries.size + " 个应用存在缓存",
                 detail = "",
                 level = ThreatLevel.MEDIUM,
@@ -31,7 +31,7 @@ class CleanerActivity : BaseListToolActivity() {
             items.add(
                 TrojanAdapter.UiItem(
                     title = e.label,
-                    sub = e.pkg + " · " + String.format("%.1f MB", e.sizeKb / 1024.0),
+                    sub = e.pkg + " · " + String.format(java.util.Locale.US, "%.1f MB", e.sizeKb / 1024.0),
                     detail = "",
                     level = ThreatLevel.LOW,
                     suggestion = null,

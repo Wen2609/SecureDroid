@@ -27,6 +27,9 @@ jobs:
       - name: Unit tests (security policy / classifier / manifest / resources)
         run: ./gradlew testDebugUnitTest --console=plain
 
+      - name: Android Lint (errors block the build)
+        run: ./gradlew lintDebug --console=plain
+
       - name: Assemble debug APK
         run: ./gradlew assembleDebug --console=plain
 

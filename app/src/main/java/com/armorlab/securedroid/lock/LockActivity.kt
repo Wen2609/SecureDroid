@@ -2,6 +2,7 @@ package com.armorlab.securedroid.lock
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.databinding.ActivityLockBinding
@@ -40,11 +41,15 @@ class LockActivity : AppCompatActivity() {
         )
         for (id in ids) findViewById<MaterialButton>(id).setOnClickListener(listener)
         binding.btnDel.setOnClickListener(listener)
-    }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        // 拦截返回键:锁定期间不允许绕过(解锁窗口仍由 60 秒逻辑控制)
+        // 拦截返回键:锁定期间不允许绕过(解锁窗口仍由 60 秒逻辑控制)。
+        // 使用 OnBackPressedDispatcher 替代已弃用的 onBackPressed(),
+        // 在 Android 13+ 上同样生效且不触发 lint MissingSuperCall。
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // 故意不执行任何操作:阻止返回键关闭锁屏
+            }
+        })
     }
 
     private fun refresh() {
