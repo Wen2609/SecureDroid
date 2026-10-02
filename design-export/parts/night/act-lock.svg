@@ -1,82 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1302" viewBox="0 0 360 434"
      data-export="design-export/export_ui.py" data-mode="night"
      data-source="app/src/main/res/layout/activity_lock.xml">
   <title>独立页 · 解锁(PIN 键盘)</title>
   <desc></desc>
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="434">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="434">
     <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="152" data-y="24" data-w="56" data-h="56">
       <g data-name="icon:ic_lock" transform="translate(152,24) scale(2.33333)">
-        <path d="M7.4,10.4 h9.2 a2.2,2.2 0 0,1 2.2,2.2 v5.2 a2.2,2.2 0 0,1 -2.2,2.2 h-9.2 a2.2,2.2 0 0,1 -2.2,-2.2 v-5.2 a2.2,2.2 0 0,1 2.2,-2.2 z" fill="#4ADE80" stroke="#000000" stroke-width="2"/>
-        <path d="M8.9,10.4 V8.3 a3.1,3.1 0 0,1 6.2,0 v2.1" fill="#4ADE80" stroke="#000000" stroke-width="2"/>
+        <path d="M7.4,10.4 h9.2 a2.2,2.2 0 0,1 2.2,2.2 v5.2 a2.2,2.2 0 0,1 -2.2,2.2 h-9.2 a2.2,2.2 0 0,1 -2.2,-2.2 v-5.2 a2.2,2.2 0 0,1 2.2,-2.2 z" fill="none" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.9,10.4 V8.3 a3.1,3.1 0 0,1 6.2,0 v2.1" fill="none" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
-    <g id="tvDots" data-name="tvDots" data-type="TextView" data-x="110" data-y="96" data-w="140" data-h="21.6">
+    <g id="tvDots" data-name="tvDots" data-type="TextView" data-x="78" data-y="96" data-w="204" data-h="21.6">
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#A9B3A7" text-anchor="start" letter-spacing="6.4" data-text="请输入 PIN 码解锁">
-        <tspan x="110" y="109.6">请输入 PIN 码解锁</tspan>
+        <tspan x="78" y="109.6">请输入 PIN 码解锁</tspan>
       </text>
     </g>
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="24" data-y="141.6" data-w="312" data-h="72">
-    <g id="btn1" data-name="btn1" data-type="MaterialButton" data-x="28" data-y="145.6" data-w="104" data-h="64">
+    <g id="btn1" data-name="btn1" data-type="MaterialButton" data-x="28" data-y="145.6" data-w="96" data-h="64">
+      <rect x="28" y="145.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="1">
-        <tspan x="80" y="180.6">1</tspan>
+        <tspan x="76" y="180.6">1</tspan>
       </text>
     </g>
-    <g id="btn2" data-name="btn2" data-type="MaterialButton" data-x="140" data-y="145.6" data-w="104" data-h="64">
+    <g id="btn2" data-name="btn2" data-type="MaterialButton" data-x="132" data-y="145.6" data-w="96" data-h="64">
+      <rect x="132" y="145.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="2">
-        <tspan x="192" y="180.6">2</tspan>
+        <tspan x="180" y="180.6">2</tspan>
       </text>
     </g>
-    <g id="btn3" data-name="btn3" data-type="MaterialButton" data-x="252" data-y="145.6" data-w="104" data-h="64">
+    <g id="btn3" data-name="btn3" data-type="MaterialButton" data-x="236" data-y="145.6" data-w="96" data-h="64">
+      <rect x="236" y="145.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="3">
-        <tspan x="304" y="180.6">3</tspan>
+        <tspan x="284" y="180.6">3</tspan>
       </text>
     </g>
     </g>
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="24" data-y="213.6" data-w="312" data-h="72">
-    <g id="btn4" data-name="btn4" data-type="MaterialButton" data-x="28" data-y="217.6" data-w="104" data-h="64">
+    <g id="btn4" data-name="btn4" data-type="MaterialButton" data-x="28" data-y="217.6" data-w="96" data-h="64">
+      <rect x="28" y="217.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="4">
-        <tspan x="80" y="252.6">4</tspan>
+        <tspan x="76" y="252.6">4</tspan>
       </text>
     </g>
-    <g id="btn5" data-name="btn5" data-type="MaterialButton" data-x="140" data-y="217.6" data-w="104" data-h="64">
+    <g id="btn5" data-name="btn5" data-type="MaterialButton" data-x="132" data-y="217.6" data-w="96" data-h="64">
+      <rect x="132" y="217.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="5">
-        <tspan x="192" y="252.6">5</tspan>
+        <tspan x="180" y="252.6">5</tspan>
       </text>
     </g>
-    <g id="btn6" data-name="btn6" data-type="MaterialButton" data-x="252" data-y="217.6" data-w="104" data-h="64">
+    <g id="btn6" data-name="btn6" data-type="MaterialButton" data-x="236" data-y="217.6" data-w="96" data-h="64">
+      <rect x="236" y="217.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="6">
-        <tspan x="304" y="252.6">6</tspan>
+        <tspan x="284" y="252.6">6</tspan>
       </text>
     </g>
     </g>
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="24" data-y="285.6" data-w="312" data-h="72">
-    <g id="btn7" data-name="btn7" data-type="MaterialButton" data-x="28" data-y="289.6" data-w="104" data-h="64">
+    <g id="btn7" data-name="btn7" data-type="MaterialButton" data-x="28" data-y="289.6" data-w="96" data-h="64">
+      <rect x="28" y="289.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="7">
-        <tspan x="80" y="324.6">7</tspan>
+        <tspan x="76" y="324.6">7</tspan>
       </text>
     </g>
-    <g id="btn8" data-name="btn8" data-type="MaterialButton" data-x="140" data-y="289.6" data-w="104" data-h="64">
+    <g id="btn8" data-name="btn8" data-type="MaterialButton" data-x="132" data-y="289.6" data-w="96" data-h="64">
+      <rect x="132" y="289.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="8">
-        <tspan x="192" y="324.6">8</tspan>
+        <tspan x="180" y="324.6">8</tspan>
       </text>
     </g>
-    <g id="btn9" data-name="btn9" data-type="MaterialButton" data-x="252" data-y="289.6" data-w="104" data-h="64">
+    <g id="btn9" data-name="btn9" data-type="MaterialButton" data-x="236" data-y="289.6" data-w="96" data-h="64">
+      <rect x="236" y="289.6" width="96" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="9">
-        <tspan x="304" y="324.6">9</tspan>
+        <tspan x="284" y="324.6">9</tspan>
       </text>
     </g>
     </g>
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="24" data-y="357.6" data-w="312" data-h="72">
-    <g id="Space" data-name="Space" data-type="Space" data-x="24" data-y="357.6" data-w="104" data-h="1">
+    <g id="Space" data-name="Space" data-type="Space" data-x="24" data-y="357.6" data-w="98.6667" data-h="1">
     </g>
-    <g id="btn0" data-name="btn0" data-type="MaterialButton" data-x="132" data-y="361.6" data-w="104" data-h="64">
+    <g id="btn0" data-name="btn0" data-type="MaterialButton" data-x="126.667" data-y="361.6" data-w="98.6667" data-h="64">
+      <rect x="126.667" y="361.6" width="98.6667" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="0">
-        <tspan x="184" y="396.6">0</tspan>
+        <tspan x="176" y="396.6">0</tspan>
       </text>
     </g>
-    <g id="btnDel" data-name="btnDel" data-type="MaterialButton" data-x="244" data-y="361.6" data-w="104" data-h="64">
+    <g id="btnDel" data-name="btnDel" data-type="MaterialButton" data-x="233.333" data-y="361.6" data-w="98.6667" data-h="64">
+      <rect x="233.333" y="361.6" width="98.6667" height="64" fill="none" rx="24" ry="24" stroke="#2C332D" stroke-width="1"/>
+      <g data-name="icon:ic_backspace" transform="translate(270.667,381.6) scale(1)">
+        <path d="M22,3 H7 C6.31,3 5.77,3.35 5.41,3.88 L0,12 l5.41,8.11 C5.77,20.64 6.31,21 7,21 h15 c1.1,0 2,-0.9 2,-2 V5 c0,-1.1 -0.9,-2 -2,-2 Z M19,15.59 L17.59,17 14,13.41 10.41,17 9,15.59 12.59,12 9,8.41 10.41,7 14,10.59 17.59,7 19,8.41 15.41,12 Z" fill="#EDF2EC"/>
+      </g>
     </g>
     </g>
     </g>

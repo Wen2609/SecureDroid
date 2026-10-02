@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02 12:39:21",
+  "generatedAt": "2026-10-02 15:16:52",
   "generator": "design-export/export_ui.py",
   "canvas": {
     "widthDp": 360.0,
@@ -48,115 +48,115 @@
     {
       "key": "act-deep-scan",
       "title": "独立页 · 深度扫描",
-      "heightDp": 165.8,
+      "heightDp": 290.0,
       "elements": 7
     },
     {
       "key": "act-lock",
       "title": "独立页 · 解锁(PIN 键盘)",
-      "heightDp": 120.0,
+      "heightDp": 434.0,
       "elements": 20
     },
     {
       "key": "act-result-list",
       "title": "独立页 · 结果列表",
-      "heightDp": 120.0,
+      "heightDp": 208.0,
       "elements": 4
     },
     {
       "key": "act-virus-center",
       "title": "独立页 · 病毒风险中心",
-      "heightDp": 120.0,
+      "heightDp": 292.0,
       "elements": 7
     },
     {
       "key": "frag-dashboard",
       "title": "Fragment · 首页",
-      "heightDp": 651.35,
+      "heightDp": 655.5,
       "elements": 32
     },
     {
       "key": "frag-detect",
       "title": "Fragment · 检测(分段外壳)",
-      "heightDp": 132.4,
+      "heightDp": 192.5,
       "elements": 7
     },
     {
       "key": "frag-protect",
       "title": "Fragment · 防护(分段外壳)",
-      "heightDp": 132.4,
+      "heightDp": 192.5,
       "elements": 8
     },
     {
       "key": "frag-scanner",
       "title": "Fragment · 病毒扫描",
-      "heightDp": 120.0,
+      "heightDp": 239.0,
       "elements": 5
     },
     {
       "key": "frag-trojan",
       "title": "Fragment · 木马查杀",
-      "heightDp": 410.9,
+      "heightDp": 535.0,
       "elements": 26
     },
     {
       "key": "frag-app-lock",
       "title": "Fragment · 应用锁",
-      "heightDp": 211.0,
+      "heightDp": 335.0,
       "elements": 11
     },
     {
       "key": "frag-audit",
       "title": "Fragment · 权限审计",
-      "heightDp": 120.0,
+      "heightDp": 214.0,
       "elements": 6
     },
     {
       "key": "frag-tools",
       "title": "Fragment · 工具箱",
-      "heightDp": 480.84999999999997,
+      "heightDp": 605.0,
       "elements": 15
     },
     {
       "key": "dialog-set-pin",
       "title": "对话框 · 设置 PIN",
-      "heightDp": 148.0,
+      "heightDp": 152.0,
       "elements": 5
     },
     {
       "key": "widget-security",
       "title": "桌面小组件 · 安全状态",
-      "heightDp": 120.0,
+      "heightDp": 124.0,
       "elements": 6
     },
     {
       "key": "item-audit",
       "title": "列表项 · 权限审计行",
-      "heightDp": 120.0,
+      "heightDp": 124.0,
       "elements": 5
     },
     {
       "key": "item-lock-app",
       "title": "列表项 · 应用锁行",
-      "heightDp": 120.0,
+      "heightDp": 124.0,
       "elements": 4
     },
     {
       "key": "item-scan-result",
       "title": "列表项 · 扫描结果行",
-      "heightDp": 120.0,
+      "heightDp": 124.0,
       "elements": 4
     },
     {
       "key": "item-tool",
       "title": "列表项 · 工具/动作行",
-      "heightDp": 120.0,
+      "heightDp": 124.0,
       "elements": 3
     },
     {
       "key": "item-trojan",
       "title": "列表项 · 木马检测行",
-      "heightDp": 120.0,
+      "heightDp": 124.0,
       "elements": 8
     }
   ],

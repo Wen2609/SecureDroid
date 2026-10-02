@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="624" viewBox="0 0 360 208"
      data-export="design-export/export_ui.py" data-mode="light"
      data-source="app/src/main/res/layout/activity_result_list.xml">
   <title>独立页 · 结果列表</title>
   <desc></desc>
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="208">
     <g id="tvTitle" data-name="tvTitle" data-type="TextView" data-x="0" data-y="0" data-w="360" data-h="32">
     </g>
     <g id="progress" data-name="progress" data-type="ProgressBar" data-x="0" data-y="48" data-w="360" data-h="4">
       <rect x="0" y="48" width="360" height="4" fill="#E6EDE4" rx="2" ry="2"/>
       <rect x="0" y="48" width="144" height="4" fill="#04BD19" rx="2" ry="2"/>
     </g>
-    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="68" data-w="328" data-h="68">
-      <rect x="16" y="68" width="328" height="68" fill="#FFFFFF" rx="24" ry="24"/>
-    <g id="rvList" data-name="rvList" data-type="RecyclerView" data-x="16" data-y="68" data-w="328" data-h="68">
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="68" data-w="328" data-h="124">
+      <rect x="16" y="68" width="328" height="124" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="rvList" data-name="rvList" data-type="RecyclerView" data-x="16" data-y="68" data-w="328" data-h="124">
+      <rect x="16" y="68" width="328" height="124" fill="none" rx="8" ry="8" stroke="#9FB79C" stroke-width="1" stroke-dasharray="4 4"/>
       <rect x="24" y="76" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="128">RecyclerView · item_scan_result.xml</text>
+      <rect x="24" y="132" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="184">RecyclerView · item_scan_result.xml</text>
     </g>
     </g>
     </g>

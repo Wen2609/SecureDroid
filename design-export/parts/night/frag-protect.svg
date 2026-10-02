@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="397.2" viewBox="0 0 360 132.4"
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="577.5" viewBox="0 0 360 192.5"
      data-export="design-export/export_ui.py" data-mode="night"
      data-source="app/src/main/res/layout/fragment_protect.xml">
   <title>Fragment · 防护(分段外壳)</title>
   <desc></desc>
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="132.4">
-    <g id="TextView: 防护" data-name="TextView: 防护" data-type="TextView" data-x="16" data-y="16" data-w="48" data-h="32.4">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="192.5">
+    <g id="TextView: 防护" data-name="TextView: 防护" data-type="TextView" data-x="16" data-y="16" data-w="47.76" data-h="32.4">
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="bold" fill="#EDF2EC" text-anchor="start" letter-spacing="-0.24" data-text="防护">
         <tspan x="16" y="36.4">防护</tspan>
       </text>
@@ -30,7 +30,7 @@
     </g>
     </g>
     </g>
-    <g id="protectContainer" data-name="protectContainer" data-type="FrameLayout" data-x="16" data-y="132.4" data-w="328" data-h="16">
+    <g id="protectContainer" data-name="protectContainer" data-type="FrameLayout" data-x="16" data-y="132.4" data-w="328" data-h="60.1">
     </g>
     </g>
 </svg>

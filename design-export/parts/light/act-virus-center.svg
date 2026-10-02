@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="876" viewBox="0 0 360 292"
      data-export="design-export/export_ui.py" data-mode="light"
      data-source="app/src/main/res/layout/activity_virus_center.xml">
   <title>独立页 · 病毒风险中心</title>
   <desc></desc>
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="292">
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="16">
     <g id="tvTitle" data-name="tvTitle" data-type="TextView" data-x="16" data-y="0" data-w="328" data-h="16">
     </g>
     </g>
-    <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="16" data-y="32" data-w="328" data-h="104">
-    <g id="menuState" data-name="menuState" data-type="LinearLayout" data-x="16" data-y="32" data-w="328" data-h="104">
-    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="32" data-w="328" data-h="104">
-      <rect x="16" y="32" width="328" height="104" fill="#FFFFFF" rx="24" ry="24"/>
-    <g id="rvActions" data-name="rvActions" data-type="RecyclerView" data-x="16" data-y="32" data-w="328" data-h="104">
+    <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="16" data-y="32" data-w="328" data-h="244">
+    <g id="menuState" data-name="menuState" data-type="LinearLayout" data-x="16" data-y="32" data-w="328" data-h="244">
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="32" data-w="328" data-h="244">
+      <rect x="16" y="32" width="328" height="244" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="rvActions" data-name="rvActions" data-type="RecyclerView" data-x="16" data-y="32" data-w="328" data-h="244">
+      <rect x="16" y="32" width="328" height="244" fill="none" rx="8" ry="8" stroke="#9FB79C" stroke-width="1" stroke-dasharray="4 4"/>
       <rect x="24" y="40" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="128">RecyclerView · item_tool.xml</text>
+      <rect x="24" y="96" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
+      <rect x="24" y="152" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="268">RecyclerView · item_tool.xml</text>
     </g>
     </g>
     </g>

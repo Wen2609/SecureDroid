@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="444" viewBox="0 0 360 148"
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="456" viewBox="0 0 360 152"
      data-export="design-export/export_ui.py" data-mode="light"
      data-source="app/src/main/res/layout/dialog_set_pin.xml">
   <title>对话框 · 设置 PIN</title>
   <desc></desc>
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="148">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="152">
     <g id="TextInputLayout" data-name="TextInputLayout" data-type="TextInputLayout" data-x="24" data-y="24" data-w="312" data-h="56">
+      <rect x="24" y="24" width="312" height="56" fill="none" rx="4" ry="4" stroke="#DFE4DD" stroke-width="1"/>
+      <text x="40" y="57.6" font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" fill="#6B6B6B">请输入 4 位数字</text>
     <g id="etPin" data-name="etPin" data-type="TextInputEditText" data-x="24" data-y="24" data-w="312" data-h="56">
     </g>
     </g>
     <g id="TextInputLayout" data-name="TextInputLayout" data-type="TextInputLayout" data-x="24" data-y="92" data-w="312" data-h="56">
+      <rect x="24" y="92" width="312" height="56" fill="none" rx="4" ry="4" stroke="#DFE4DD" stroke-width="1"/>
+      <text x="40" y="125.6" font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" fill="#6B6B6B">请再次输入</text>
     <g id="etPinConfirm" data-name="etPinConfirm" data-type="TextInputEditText" data-x="24" data-y="92" data-w="312" data-h="56">
     </g>
     </g>

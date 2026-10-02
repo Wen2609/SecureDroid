@@ -93,6 +93,13 @@ def hex_to_svg(v):
     return None, 1.0
 
 
+def svg_fill(v, fallback=None):
+    """颜色值 -> 可用的 SVG paint;非法或全透明时返回 fallback(默认不画)。
+    直接字符串化 hex_to_svg() 的 None 会得到 fill="None",Chrome 会把它画成黑色。"""
+    f, o = hex_to_svg(v)
+    return f if (f and o > 0.01) else fallback
+
+
 class Tables:
     """res/values* 的解析结果与 @ref 解析器"""
 
@@ -375,6 +382,7 @@ class Renderer:
         self.flat = []
         self.anon = {}
         self._style_cache = {}
+        self.max_bottom = 0.0   # 渲染中实际用到的最低边界(用于 part 画板自适应高度)
 
     # ------------------------------------------------------------ 属性/令牌
     def style(self, node):
@@ -599,15 +607,17 @@ class Renderer:
     def text_width(self, s, size):
         return sum(size * (1.0 if ord(ch) > 0x2E80 else 0.55) for ch in s)
 
-    def wrap_lines(self, text, size, max_w):
+    def wrap_lines(self, text, size, max_w, lsx=0.0):
+        """按可用宽度折行;lsx 为字距(每字之间的额外间距,SVG 与 Android 一致)
+        容差 0.5dp:刚好排满的行不要因为浮点误差被折成两行。"""
         if not text:
             return []
         lines = []
         for para in str(text).split('\n'):
             cur, curw = '', 0.0
             for ch in para:
-                w = size * (1.0 if ord(ch) > 0x2E80 else 0.55)
-                if cur and curw + w > max_w:
+                w = size * (1.0 if ord(ch) > 0x2E80 else 0.55) + (lsx if cur else 0.0)
+                if cur and curw + w > max_w + 0.5:
                     lines.append(cur)
                     cur, curw = ch, w
                 else:
@@ -626,9 +636,11 @@ class Renderer:
             size = self.text_size(node)
             text = self.text_of(node) or ''
             maxw = max(4.0, aw - pl - pr)
-            lines = self.wrap_lines(text, size, maxw)
+            lsx = self.letter_spacing(node) * size
+            lines = self.wrap_lines(text, size, maxw, lsx)
             h = sum(size * 1.35 for _ in lines) + pt + pb
-            w = max([self.text_width(x, size) for x in lines] or [0]) + pl + pr
+            w = max([self.text_width(x, size) + lsx * max(0, len(x) - 1)
+                     for x in lines] or [0]) + pl + pr
             return (min(w, aw) if w > 0 else aw, h)
         if t in ('ImageView', 'ImageButton'):
             return (24.0 + pl + pr, 24.0 + pt + pb)
@@ -688,12 +700,15 @@ class Renderer:
         if t in ('LinearLayout', 'RadioGroup', 'MaterialButtonToggleGroup'):
             if orient == 'horizontal':
                 fixed = 0.0
+                wmargin = 0.0
                 for k in kids:
-                    if self.is_weighted(k):
-                        continue
                     ml, mt, mr, mb = self.margins(k)
+                    if self.is_weighted(k):
+                        wmargin += ml + mr
+                        continue
                     fixed += self.child_w(k, cw, ch, depth) + ml + mr
-                free = max(0.0, cw - fixed)
+                # weight 子项自身 margin 也要从剩余空间里扣掉(Android 语义),否则右侧会溢出
+                free = max(0.0, cw - fixed - wmargin)
                 sw = sum(self.weight(k) for k in kids if self.is_weighted(k)) or 1.0
                 pg = (self.A(node, 'gravity') or '').replace('|', ' ').split()
                 x = cx
@@ -714,12 +729,14 @@ class Renderer:
                     x += ml + w + mr
             else:
                 fixed = 0.0
+                hmargin = 0.0
                 for k in kids:
-                    if self.is_weighted(k):
-                        continue
                     ml, mt, mr, mb = self.margins(k)
+                    if self.is_weighted(k):
+                        hmargin += mt + mb
+                        continue
                     fixed += self.child_h(k, cw, ch, depth) + mt + mb
-                free = max(0.0, ch - fixed)
+                free = max(0.0, ch - fixed - hmargin)
                 sw = sum(self.weight(k) for k in kids if self.is_weighted(k)) or 1.0
                 pg = (self.A(node, 'gravity') or '').replace('|', ' ').split()
                 y = cy
@@ -754,13 +771,16 @@ class Renderer:
                 h = max(0.0, h - mt - mb)
             if t == 'ScrollView':
                 h = max(h, ch)
-            g = (self.A(k, 'layout_gravity') or '') + ' ' + (self.A(k, 'gravity') or '')
+            # 只看子项自己的 layout_gravity:子项的 android:gravity 只管它内部内容,不该挪动它本身
+            toks = (self.A(k, 'layout_gravity') or '').replace('|', ' ').split()
             x, y = cx + ml, cy + mt
-            if 'center_horizontal' in g or 'center' in g.split():
+            if 'center' in toks or 'center_horizontal' in toks:
                 x = cx + (cw - w) / 2.0
-            if 'bottom' in g:
+            elif 'end' in toks or 'right' in toks:
+                x = cx + max(0.0, cw - w - mr)
+            if 'bottom' in toks:
                 y = cy + ch - h - mb
-            if 'center_vertical' in g:
+            elif 'center' in toks or 'center_vertical' in toks:
                 y = cy + (ch - h) / 2.0
             out.append((k, x, y, w, h))
         return out
@@ -839,9 +859,10 @@ class Renderer:
             'data-w="%g" data-h="%g">' % (esc(vid), esc(label), esc(node.short), x, y, w, h))
 
     def rect(self, x, y, w, h, fill, op=1.0, r=None, stroke=None, sw=1.0, dash=None):
-        if w <= 0 or h <= 0 or not fill:
+        if w <= 0 or h <= 0 or (not fill and not stroke):
             return
-        a = ' x="%g" y="%g" width="%g" height="%g" fill="%s"' % (x, y, w, h, fill)
+        # 只描边不填充的框(fill=None)以前被整体丢弃 —— 例如 TextInputLayout 的输入框
+        a = ' x="%g" y="%g" width="%g" height="%g" fill="%s"' % (x, y, w, h, fill or 'none')
         if op < 1.0:
             a += ' fill-opacity="%g"' % op
         if r:
@@ -852,7 +873,8 @@ class Renderer:
             a += ' stroke-dasharray="%s"' % dash
         self.body.append('      <rect%s/>' % a)
 
-    def text_block(self, node, text, x, y, w, h, default_size=14.0, color=None, align=None, vcenter=False):
+    def text_block(self, node, text, x, y, w, h, default_size=14.0, color=None, align=None,
+                   vcenter=False, nowrap=False):
         if not text:
             return
         size = self.text_size(node, default_size)
@@ -860,7 +882,8 @@ class Renderer:
         fill, op = color or self.text_color(node)
         pl, pt, pr, pb = self.pads(node)
         maxw = max(4.0, w - pl - pr)
-        lines = self.wrap_lines(text, size, maxw)
+        lines = ([text] if nowrap
+                 else self.wrap_lines(text, size, maxw, self.letter_spacing(node) * size))
         g = (self.A(node, 'gravity') or '')
         if align is None:
             if 'center' in g:
@@ -891,6 +914,7 @@ class Renderer:
         for i, line in enumerate(lines):
             ly = y0 + i * size * 1.35
             self.body.append('        <tspan x="%g" y="%g">%s</tspan>' % (tx, ly, esc(line)))
+            self.max_bottom = max(self.max_bottom, ly + size * 0.35)
         self.body.append('      </text>')
 
     def draw_icon(self, name, x, y, size, tint):
@@ -905,16 +929,19 @@ class Renderer:
         self.body.append('      <g data-name="icon:%s" transform="translate(%g,%g) scale(%g)">'
                          % (esc(name), tx, ty, s))
         for p in info['paths']:
-            f = tint or (hex_to_svg(self.T.color(p.get('fill'), self.night))[0] if p.get('fill') else None)
+            # tint 同时作用于填充与描边,但不把"无填充"的线性图标变成实心块
+            bf = svg_fill(self.T.color(p.get('fill'), self.night)) if p.get('fill') else None
+            bs = svg_fill(self.T.color(p['stroke'], self.night)) if p.get('stroke') else None
+            f = (tint or bf) if bf else None
             attrs_ = ' d="%s"' % esc(p['d'])
-            if f:
-                attrs_ += ' fill="%s"' % f
-            else:
-                attrs_ += ' fill="none"'
+            attrs_ += (' fill="%s"' % f) if f else ' fill="none"'
             if p.get('stroke'):
-                attrs_ += ' stroke="%s" stroke-width="%s"' % (
-                    hex_to_svg(self.T.color(p['stroke'], self.night))[0] or '#000000',
-                    p.get('strokeWidth') or '1')
+                st = tint or bs or '#000000'
+                attrs_ += ' stroke="%s" stroke-width="%s"' % (st, p.get('strokeWidth') or '1')
+                if p.get('cap') and p['cap'] != 'butt':
+                    attrs_ += ' stroke-linecap="%s"' % p['cap']
+                if p.get('join') and p['join'] != 'miter':
+                    attrs_ += ' stroke-linejoin="%s"' % p['join']
             self.body.append('        <path%s/>' % attrs_)
         self.body.append('      </g>')
 
@@ -933,6 +960,19 @@ class Renderer:
             fill = hex_to_svg(self.T.color('@color/c_card', self.night))[0]
         if t in ('View',) and not fill:
             fill = hex_to_svg(self.T.color('@color/c_border', self.night))[0]
+        if t == 'TextInputLayout':
+            # Material 描边输入框:圆角描边 + hint(此前整块不画,设置 PIN 对话框看起来是空白)
+            self.rect(x, y, w, h, None,
+                      stroke=svg_fill(self.T.color('@color/c_border', self.night), '#B9C4B7'),
+                      sw=1.0, r=4.0)
+            hint = self.T.string(self.A(node, 'hint'))
+            if hint:
+                size = 16.0
+                self.body.append('      <text x="%g" y="%g" font-family="%s" font-size="%g" '
+                                 'fill="%s">%s</text>'
+                                 % (x + 16.0, y + h / 2.0 + size * 0.35, FONT, size,
+                                    svg_fill(self.T.color('@color/c_muted_foreground', self.night),
+                                             '#6B6B6B'), esc(hint)))
         if t in ('MaterialButton', 'Button'):
             bt = self.A(node, 'backgroundTint')
             state = 'checked' if node.checked else 'default'
@@ -944,15 +984,45 @@ class Renderer:
                     fill = f2 if o2 > 0.01 else None
             elif node.checked:
                 fill = hex_to_svg(self.T.color('@color/c_primary', self.night))[0]
+            # OutlinedButton:无 backgroundTint,只有 strokeColor + cornerRadius 描边
+            sc = self.A(node, 'strokeColor')
+            if sc and not fill and str(sc).startswith(('@color/', '#')):
+                sfill = svg_fill(self.T.color(sc, self.night))
+                if sfill:
+                    cr = self._dim_attr(node, 'cornerRadius')
+                    self.rect(x, y, w, h, None, stroke=sfill, sw=1.0,
+                              r=cr if cr is not None else h / 2.0)
         if t in ('MaterialSwitch', 'SwitchMaterial', 'SwitchCompat'):
-            tt = self.A(node, 'trackTint')
-            c = self.T.selector_color(tt.split('/', 1)[1], 'checked', self.night) if tt and tt.startswith('@color/') else None
-            c = c or self.T.color('@color/c_primary', self.night)
-            self.rect(x, y + h / 2.0 - 16.0, 52.0, 32.0, hex_to_svg(c)[0], r=16.0)
-            th = self.A(node, 'thumbTint')
-            ct = self.T.color(th, self.night) if th else '#FFFFFF'
-            self.body.append('      <circle cx="%g" cy="%g" r="12" fill="%s"/>'
-                             % (x + 38.0, y + h / 2.0, hex_to_svg(ct)[0]))
+            # 轨道与滑块都按实际 checked 取色(布局未写 checked 即为关闭);
+            # 有文本时文本在左、开关贴右,与 Material 一致。
+            checked = bool(node.checked)
+            state = 'checked' if checked else 'default'
+
+            def tint(attr, fb):
+                v = self.A(node, attr)
+                c = None
+                if v and str(v).startswith('@color/'):
+                    nm = str(v).split('/', 1)[1]
+                    c = self.T.selector_color(nm, state, self.night) or self.T.color(v, self.night)
+                return svg_fill(c, fb)
+
+            track = tint('trackTint', svg_fill(self.T.color(
+                '@color/c_primary' if checked else '@color/c_border', self.night), '#D3D9D0'))
+            thumb = tint('thumbTint', '#FFFFFF')
+            pl, pt, pr, pb = self.pads(node)
+            tw, thh = 52.0, 32.0
+            label = self.text_of(node) or ''
+            if label:
+                self.text_block(node, label, x, y, max(4.0, w - tw - 12.0), h)
+                tx = x + max(0.0, w - pr - tw)
+            else:
+                tx = x + pl
+            ty = y + (h - thh) / 2.0
+            self.rect(tx, ty, tw, thh, track, r=thh / 2.0)
+            rad = 11.0
+            cx = tx + (tw - rad - 5.0 if checked else rad + 5.0)
+            self.body.append('      <circle cx="%g" cy="%g" r="%g" fill="%s" stroke="#D3D9D0" '
+                             'stroke-width="1"/>' % (cx, ty + thh / 2.0, rad, thumb))
             self.body.append('    </g>')
             return
         if t in ('ProgressBar',):
@@ -972,7 +1042,19 @@ class Renderer:
             self.body.append('      <circle cx="%g" cy="%g" r="%g" fill="none" stroke="%s" stroke-width="%g"/>'
                              % (cx, cy, r, hex_to_svg(tc)[0], sw))
             import math
-            frac = 0.72
+            # 进度读 android:progress / android:max(与真机一致);读不到才用静态示意值
+            pv = self.A(node, 'progress')
+            mv = self.A(node, 'max') or '100'
+            try:
+                frac = float(str(pv).strip()) / max(1e-6, float(str(mv).strip()))
+            except Exception:
+                frac = 0.72
+            frac = min(1.0, max(0.0, frac))
+            if frac >= 0.999:
+                self.body.append('      <circle cx="%g" cy="%g" r="%g" fill="none" stroke="%s" '
+                                 'stroke-width="%g"/>' % (cx, cy, r, hex_to_svg(ic)[0], sw))
+                self.body.append('    </g>')
+                return
             a0 = -90.0
             a1 = -90.0 + 360.0 * frac
             p0 = (cx + r * math.cos(math.radians(a0)), cy + r * math.sin(math.radians(a0)))
@@ -1042,8 +1124,42 @@ class Renderer:
         if t in ('TextView',):
             self.text_block(node, self.text_of(node) or '', x, y, w, h)
         elif t == 'MaterialButton':
-            self.text_block(node, self.text_of(node) or '', x, y, w, h, default_size=16.0,
-                            align='middle', vcenter=True)
+            txt = self.text_of(node) or ''
+            icv = self.A(node, 'icon')
+            iname = icv.split('/', 1)[1] if (icv and str(icv).startswith('@drawable/')) else None
+            if iname and iname in VECTORS:
+                isize = self._dim_attr(node, 'iconSize') or 24.0
+                ipad = self._dim_attr(node, 'iconPadding') or 8.0
+                itint = self.A(node, 'iconTint')
+                icol = svg_fill(self.T.color(itint, self.night)) if itint else None
+                if not icol:
+                    icol = svg_fill(self.text_color(node)[0], '#6B6B6B')
+                pl2, _, pr2, _ = self.pads(node)
+                grav = (self.A(node, 'gravity') or '').replace('|', ' ')
+                lead = ('start' in grav or 'left' in grav
+                        or 'textstart' in str(self.A(node, 'iconGravity') or '').lower())
+                if txt:
+                    tsz = self.text_size(node, 16.0)
+                    tw_ = self.text_width(txt, tsz) + self.letter_spacing(node) * tsz * len(txt)
+                    if lead:
+                        # iconGravity=textStart / android:gravity=start:图标在左、文字左对齐
+                        self.draw_icon(iname, x + pl2, y + (h - isize) / 2.0, isize, icol)
+                        self.text_block(node, txt, x + isize + ipad, y,
+                                        max(4.0, w - isize - ipad), h,
+                                        default_size=16.0, align='start', vcenter=True, nowrap=True)
+                    else:
+                        left = x + (w - (isize + ipad + tw_)) / 2.0
+                        self.draw_icon(iname, left, y + (h - isize) / 2.0, isize, icol)
+                        self.text_block(node, txt, left + isize + ipad, y,
+                                        max(4.0, tw_), h,
+                                        default_size=16.0, align='middle', vcenter=True, nowrap=True)
+                else:
+                    self.draw_icon(iname, x + (w - isize) / 2.0, y + (h - isize) / 2.0, isize, icol)
+            else:
+                grav0 = (self.A(node, 'gravity') or '').replace('|', ' ')
+                al = 'start' if ('start' in grav0 or 'left' in grav0) else 'middle'
+                self.text_block(node, txt, x, y, w, h, default_size=16.0,
+                                align=al, vcenter=True, nowrap=True)
         elif t in ('TextInputEditText', 'EditText'):
             self.text_block(node, self.text_of(node) or self.A(node, 'hint') or '', x, y, w, h)
         # 子节点
@@ -1051,6 +1167,7 @@ class Renderer:
         inner = (x + pl, y + pt, max(0.0, w - pl - pr), max(0.0, h - pt - pb))
         for child, cx, cy, cw_, ch_ in self.place_children(node, *inner, depth + 1):
             self.render(child, cx, cy, cw_, ch_, depth + 1)
+        self.max_bottom = max(self.max_bottom, y + h)
         self.flat.append({'id': self.layer_name(node, label), 'type': node.short, 'text': self.text_of(node),
                           'x': round(x, 1), 'y': round(y, 1), 'w': round(w, 1), 'h': round(h, 1)})
         self.body.append('    </g>')
@@ -1095,6 +1212,8 @@ def load_vectors():
                 'fill': el.get('{%s}fillColor' % NS_ANDROID),
                 'stroke': el.get('{%s}strokeColor' % NS_ANDROID),
                 'strokeWidth': el.get('{%s}strokeWidth' % NS_ANDROID),
+                'cap': el.get('{%s}strokeLineCap' % NS_ANDROID),
+                'join': el.get('{%s}strokeLineJoin' % NS_ANDROID),
             })
         out[f[:-4]] = {'w': w, 'h': h, 'paths': paths}
     return out
@@ -1174,6 +1293,30 @@ def write_text(path, text):
         fh.write(text)
 
 
+def has_type(node, kind, depth=0):
+    if node.short == kind:
+        return True
+    if depth > 12:
+        return False
+    return any(has_type(c, kind, depth + 1) for c in node.children)
+
+
+def weight_min_height(r, node, depth=0):
+    """纵向容器里 0dp+weight 占位子项至少应占的高度之和。
+    组件板没有父约束,这些子项会被压成几 dp 的细条(列表卡看起来像一条白线)。"""
+    if depth > 12:
+        return 0.0
+    total = 0.0
+    vertical = r.orient_of(node) == 'vertical'
+    for c in node.children:
+        lh = str(r.A(c, 'layout_height') or '').strip()
+        wgt = str(r.A(c, 'layout_weight') or '').strip()
+        if vertical and wgt not in ('', '0', '0.0') and (lh.startswith('0d') or lh in ('0', '0.0', '0px')):
+            total += 120.0 if has_type(c, 'RecyclerView') else 56.0
+        total += weight_min_height(r, c, depth + 1)
+    return total
+
+
 def frame_height(r, root, kind):
     mode, v = r.size_of(root.attrs.get('a:layout_height'), MIN_H)
     if mode == 'fixed':
@@ -1185,17 +1328,38 @@ def frame_height(r, root, kind):
 
 
 def render_frame(entry, night):
+    import math
     T = Tables()
-    r = Renderer(T, SHAPES, night, {'key': entry['key'], 'title': entry['title'],
-                                    'source': entry.get('source', ''), 'desc': entry.get('desc', ''),
-                                    'tab': entry.get('tab', 0)})
-    if entry['kind'] == 'screen':
-        root = compose(entry['chrome'], entry['chain'])
-    else:
-        root = parse_layout(os.path.join(LAYOUT_DIR, entry['file']))
+
+    def build():
+        r = Renderer(T, SHAPES, night, {'key': entry['key'], 'title': entry['title'],
+                                        'source': entry.get('source', ''), 'desc': entry.get('desc', ''),
+                                        'tab': entry.get('tab', 0)})
+        if entry['kind'] == 'screen':
+            root = compose(entry['chrome'], entry['chain'])
+        else:
+            root = parse_layout(os.path.join(LAYOUT_DIR, entry['file']))
+        return r, root
+
+    r, root = build()
     h = frame_height(r, root, entry['kind'])
+    if entry['kind'] == 'part' and not entry['key'].startswith(('item-', 'widget-')):
+        extra = weight_min_height(r, root)
+        if extra > 0:
+            h = max(h, min(MIN_H, r.measure(root, CANVAS_W, 0.0)[1] + extra))
     svg = r.svg(root, CANVAS_W, h)
-    return svg, r.flat, h
+    flat = r.flat
+    if entry['kind'] == 'part':
+        # 组件板按实际内容自适应高度:measure() 的估算偏小时逐步长高,避免内容被裁掉
+        for _ in range(4):
+            need = r.max_bottom + 1.0
+            if need <= h + 0.6:
+                break
+            h = max(120.0, min(MIN_H, math.ceil(need * 2.0) / 2.0))
+            r, root = build()
+            svg = r.svg(root, CANVAS_W, h)
+            flat = r.flat
+    return svg, flat, h
 
 
 def icon_svgs(T):
@@ -1693,6 +1857,20 @@ def main():
     manifest['colors'] = len(T.light)
     manifest['dimens'] = len(T.dimens)
     write_text(os.path.join(HERE, 'manifest.json'), json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
+
+    # 自检:SVG paint 不允许出现 "None" —— 非法颜色会被浏览器当成黑色
+    bad = []
+    for sub in ('screens', 'parts', 'icons'):
+        for dp, _, fs in os.walk(os.path.join(HERE, sub)):
+            for f in fs:
+                if not f.endswith('.svg'):
+                    continue
+                txt = open(os.path.join(dp, f), encoding='utf-8').read()
+                if '="None"' in txt:
+                    bad.append(os.path.relpath(os.path.join(dp, f), HERE))
+    print('paint check: ' + ('!! invalid "None" paint in %d file(s): %s'
+                             % (len(bad), ', '.join(sorted(bad)[:6])) if bad
+                             else 'ok (no invalid paint)'))
 
     print('screens=%d parts=%d icons=%d colors=%d dimens=%d' % (
         len(frames), len(parts), len(icons), len(T.light), len(T.dimens)))

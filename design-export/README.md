@@ -46,12 +46,15 @@
 
 1. **文字宽度是估算**:中文按 1em、其余按 0.55em 累加换行,真机字体度量会有差异;换行位置以设备为准。
 2. **列表内容是示意**:RecyclerView 画 3 个占位行(标注 item 布局名),不代表真实条目数与数据。
-3. **进度值是静态示意**:分数环 72%、横向进度条 40%;真机首页分数默认显示 100(干净设备),不是设计稿上的 86。
+3. **进度值**:分数环按布局里的 `android:progress/max` 渲染(`fragment_dashboard.xml` 是 100 → 整圈闭合,与真机干净设备默认 100 分一致);横向进度条仍是静态 40% 示意(源码里是空闲态 `progress="0"`,画成 0 会看不出这条控件的样式)。
 4. **没有阴影/涟漪/动画**:Material 高度、按压涟漪、过渡动画都不在 SVG 里。
 5. **字体是替代名**:SVG 里写的是 Noto Sans CJK SC → Source Han Sans SC → PingFang SC → Microsoft YaHei → Roboto 的候选链,没有嵌入字体文件。
 6. **只画默认态**:错误/空态/按压态没有单独出图。分段控件按画板所属板块渲染选中态 —— 选中段取 `color/seg_bg` 的 `state_checked`(白底)、未选中段取 `color/seg_text` 的默认态(灰字);底部导航与开关同样按 `state_checked`/`state_selected` 选择器取色。
 7. **画板是组合示意**:`screens/` 里把板块 Fragment 塞进 `container`、把二级 Fragment 塞进 `detectContainer`/`protectContainer`,对应代码里 `MainActivity.openTab` 与 `DetectFragment`/`ProtectFragment` 的 Fragment 替换。
 8. **深色是同结构两套配色**,不是两套布局。
+9. **控件按源码语义画**:按钮文字取自 `android:text`,并按 Android Button 的单行语义渲染(不折行);`app:icon` 的按钮会画图标并用 `iconTint` 上色(`iconGravity=textStart` 或 `android:gravity=start` 时图标在左、文字左对齐,`Widget.SecureDroid.Button.Row` 的列表行即此规则,右侧留出 `paddingEnd` 给箭头);Outlined 按钮按 `strokeColor`/`cornerRadius` 画描边(无填充);开关按 `checked` 取轨道与滑块色(布局没写 checked 即关闭态);`TextInputLayout`/`EditText` 画成描边输入框 + `hint` 文本。
+10. **运行期才有值的控件留空**:分数、状态文案、列表行的应用名/包名/权限等都靠 Kotlin 赋值,源码里是占位或空,导出里就是空(如 `item-audit` 画板只有版式没有文字)。
+11. **图标是描边+填充两种风格**:13 个 vector drawable 逐个转出到 `icons/`;描边型图标的 `strokeColor` 同样受 `iconTint` 覆盖(与 Android tint 行为一致),线帽/线接按 vector 的 `strokeLineCap`/`strokeLineJoin` 带上。
 
 ## 5. 重新生成
 

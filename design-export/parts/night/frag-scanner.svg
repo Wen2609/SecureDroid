@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="717" viewBox="0 0 360 239"
      data-export="design-export/export_ui.py" data-mode="night"
      data-source="app/src/main/res/layout/fragment_scanner.xml">
   <title>Fragment · 病毒扫描</title>
   <desc></desc>
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="239">
     <g id="btnStartScan" data-name="btnStartScan" data-type="MaterialButton" data-x="0" data-y="0" data-w="360" data-h="48">
       <rect x="0" y="0" width="360" height="48" fill="#4ADE80" rx="24" ry="24"/>
+      <g data-name="icon:ic_scan" transform="translate(116,12) scale(1)">
+        <path d="M11,4.6 a6.4,6.4 0 1,0 0.01,0" fill="none" stroke="#052E16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15.6,15.6 L20,20" fill="none" stroke="#052E16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="bold" fill="#052E16" text-anchor="middle" letter-spacing="0" data-text="开始全盘扫描">
-        <tspan x="180" y="26">开始全盘扫描</tspan>
+        <tspan x="196" y="26">开始全盘扫描</tspan>
       </text>
     </g>
     <g id="progress" data-name="progress" data-type="ProgressBar" data-x="0" data-y="64" data-w="360" data-h="4">
@@ -20,11 +24,13 @@
         <tspan x="0" y="91.9">点击下方按钮开始扫描</tspan>
       </text>
     </g>
-    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="114.9" data-w="360" data-h="21.1">
-      <rect x="0" y="114.9" width="360" height="21.1" fill="#171B18" rx="24" ry="24"/>
-    <g id="rvResults" data-name="rvResults" data-type="RecyclerView" data-x="0" data-y="114.9" data-w="360" data-h="21.1">
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="114.9" data-w="360" data-h="124.1">
+      <rect x="0" y="114.9" width="360" height="124.1" fill="#171B18" rx="24" ry="24"/>
+    <g id="rvResults" data-name="rvResults" data-type="RecyclerView" data-x="0" data-y="114.9" data-w="360" data-h="124.1">
+      <rect x="0" y="114.9" width="360" height="124.1" fill="none" rx="8" ry="8" stroke="#9FB79C" stroke-width="1" stroke-dasharray="4 4"/>
       <rect x="8" y="122.9" width="344" height="48" fill="#232823" rx="8" ry="8"/>
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="8" y="128">RecyclerView · 列表项 item_*.xml</text>
+      <rect x="8" y="178.9" width="344" height="48" fill="#232823" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="8" y="231">RecyclerView · 列表项 item_*.xml</text>
     </g>
     </g>
     </g>

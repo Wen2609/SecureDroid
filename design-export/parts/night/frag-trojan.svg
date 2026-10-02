@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1232.7" viewBox="0 0 360 410.9"
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1605" viewBox="0 0 360 535"
      data-export="design-export/export_ui.py" data-mode="night"
      data-source="app/src/main/res/layout/fragment_trojan.xml">
   <title>Fragment · 木马查杀</title>
   <desc></desc>
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="410.9">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="535">
     <g id="btnTrojanScan" data-name="btnTrojanScan" data-type="MaterialButton" data-x="0" data-y="0" data-w="360" data-h="48">
       <rect x="0" y="0" width="360" height="48" fill="#31D027" rx="24" ry="24"/>
+      <g data-name="icon:ic_bug" transform="translate(116,12) scale(1)">
+        <path d="M12,7.5 a4.8,4.8 0 0,1 4.8,4.8 v1.4 a4.8,4.8 0 0,1 -9.6,0 v-1.4 A4.8,4.8 0 0,1 12,7.5 z" fill="none" stroke="#06210A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12,7.5 V5.2" fill="none" stroke="#06210A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7.2,10.2 L4.6,8.4" fill="none" stroke="#06210A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16.8,10.2 L19.4,8.4" fill="none" stroke="#06210A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7.4,14.6 L4.8,15.8" fill="none" stroke="#06210A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16.6,14.6 L19.2,15.8" fill="none" stroke="#06210A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="bold" fill="#06210A" text-anchor="middle" letter-spacing="0" data-text="开始木马查杀">
-        <tspan x="180" y="26">开始木马查杀</tspan>
+        <tspan x="196" y="26">开始木马查杀</tspan>
       </text>
     </g>
     <g id="progress" data-name="progress" data-type="ProgressBar" data-x="0" data-y="64" data-w="360" data-h="4">
@@ -25,13 +33,17 @@
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="114.9" data-w="360" data-h="284">
     <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="0" data-y="114.9" data-w="360" data-h="56">
     <g id="btnRootkit" data-name="btnRootkit" data-type="MaterialButton" data-x="0" data-y="114.9" data-w="360" data-h="56">
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="Rootkit / 提权后门检测">
-        <tspan x="180" y="144.9">Rootkit / 提权后门检测</tspan>
+      <g data-name="icon:ic_shield" transform="translate(16,130.9) scale(1)">
+        <path d="M12,3.2 L5.2,6 V12 c0,4.2 2.8,7.7 6.8,8.8 4,-1.1 6.8,-4.6 6.8,-8.8 V6 Z" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9.3,12.2 l1.9,1.9 3.6,-3.9" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="start" letter-spacing="0" data-text="Rootkit / 提权后门检测">
+        <tspan x="52" y="144.9">Rootkit / 提权后门检测</tspan>
       </text>
     </g>
-    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="0" data-y="132.9" data-w="20" data-h="20">
-      <g data-name="icon:ic_chevron" transform="translate(0,132.9) scale(0.833333)">
-        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="#A9B3A7" stroke="#000000" stroke-width="2.4"/>
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="324" data-y="132.9" data-w="20" data-h="20">
+      <g data-name="icon:ic_chevron" transform="translate(324,132.9) scale(0.833333)">
+        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="none" stroke="#A9B3A7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
     </g>
@@ -40,13 +52,19 @@
     </g>
     <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="0" data-y="171.9" data-w="360" data-h="56">
     <g id="btnModules" data-name="btnModules" data-type="MaterialButton" data-x="0" data-y="171.9" data-w="360" data-h="56">
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="恶意模块 / SU 脚本检测">
-        <tspan x="180" y="201.9">恶意模块 / SU 脚本检测</tspan>
+      <g data-name="icon:ic_grid" transform="translate(16,187.9) scale(1)">
+        <path d="M5,5 h5 v5 h-5 z" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14,5 h5 v5 h-5 z" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5,14 h5 v5 h-5 z" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14,14 h5 v5 h-5 z" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="start" letter-spacing="0" data-text="恶意模块 / SU 脚本检测">
+        <tspan x="52" y="201.9">恶意模块 / SU 脚本检测</tspan>
       </text>
     </g>
-    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="0" data-y="189.9" data-w="20" data-h="20">
-      <g data-name="icon:ic_chevron" transform="translate(0,189.9) scale(0.833333)">
-        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="#A9B3A7" stroke="#000000" stroke-width="2.4"/>
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="324" data-y="189.9" data-w="20" data-h="20">
+      <g data-name="icon:ic_chevron" transform="translate(324,189.9) scale(0.833333)">
+        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="none" stroke="#A9B3A7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
     </g>
@@ -55,13 +73,17 @@
     </g>
     <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="0" data-y="228.9" data-w="360" data-h="56">
     <g id="btnLocker" data-name="btnLocker" data-type="MaterialButton" data-x="0" data-y="228.9" data-w="360" data-h="56">
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="锁机软件检测">
-        <tspan x="180" y="258.9">锁机软件检测</tspan>
+      <g data-name="icon:ic_lock" transform="translate(16,244.9) scale(1)">
+        <path d="M7.4,10.4 h9.2 a2.2,2.2 0 0,1 2.2,2.2 v5.2 a2.2,2.2 0 0,1 -2.2,2.2 h-9.2 a2.2,2.2 0 0,1 -2.2,-2.2 v-5.2 a2.2,2.2 0 0,1 2.2,-2.2 z" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.9,10.4 V8.3 a3.1,3.1 0 0,1 6.2,0 v2.1" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="start" letter-spacing="0" data-text="锁机软件检测">
+        <tspan x="52" y="258.9">锁机软件检测</tspan>
       </text>
     </g>
-    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="0" data-y="246.9" data-w="20" data-h="20">
-      <g data-name="icon:ic_chevron" transform="translate(0,246.9) scale(0.833333)">
-        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="#A9B3A7" stroke="#000000" stroke-width="2.4"/>
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="324" data-y="246.9" data-w="20" data-h="20">
+      <g data-name="icon:ic_chevron" transform="translate(324,246.9) scale(0.833333)">
+        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="none" stroke="#A9B3A7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
     </g>
@@ -70,13 +92,17 @@
     </g>
     <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="0" data-y="285.9" data-w="360" data-h="56">
     <g id="btnDeepScan" data-name="btnDeepScan" data-type="MaterialButton" data-x="0" data-y="285.9" data-w="360" data-h="56">
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="深度查杀(内存 · 全盘 · 分区)">
-        <tspan x="180" y="315.9">深度查杀(内存 · 全盘 · 分区)</tspan>
+      <g data-name="icon:ic_scan" transform="translate(16,301.9) scale(1)">
+        <path d="M11,4.6 a6.4,6.4 0 1,0 0.01,0" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15.6,15.6 L20,20" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="start" letter-spacing="0" data-text="深度查杀(内存 · 全盘 · 分区)">
+        <tspan x="52" y="315.9">深度查杀(内存 · 全盘 · 分区)</tspan>
       </text>
     </g>
-    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="0" data-y="303.9" data-w="20" data-h="20">
-      <g data-name="icon:ic_chevron" transform="translate(0,303.9) scale(0.833333)">
-        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="#A9B3A7" stroke="#000000" stroke-width="2.4"/>
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="324" data-y="303.9" data-w="20" data-h="20">
+      <g data-name="icon:ic_chevron" transform="translate(324,303.9) scale(0.833333)">
+        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="none" stroke="#A9B3A7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
     </g>
@@ -85,23 +111,33 @@
     </g>
     <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="0" data-y="342.9" data-w="360" data-h="56">
     <g id="btnVirusCenter" data-name="btnVirusCenter" data-type="MaterialButton" data-x="0" data-y="342.9" data-w="360" data-h="56">
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="病毒查杀中心">
-        <tspan x="180" y="372.9">病毒查杀中心</tspan>
+      <g data-name="icon:ic_bug" transform="translate(16,358.9) scale(1)">
+        <path d="M12,7.5 a4.8,4.8 0 0,1 4.8,4.8 v1.4 a4.8,4.8 0 0,1 -9.6,0 v-1.4 A4.8,4.8 0 0,1 12,7.5 z" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12,7.5 V5.2" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7.2,10.2 L4.6,8.4" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16.8,10.2 L19.4,8.4" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7.4,14.6 L4.8,15.8" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16.6,14.6 L19.2,15.8" fill="none" stroke="#A9B3A7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="start" letter-spacing="0" data-text="病毒查杀中心">
+        <tspan x="52" y="372.9">病毒查杀中心</tspan>
       </text>
     </g>
-    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="0" data-y="360.9" data-w="20" data-h="20">
-      <g data-name="icon:ic_chevron" transform="translate(0,360.9) scale(0.833333)">
-        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="#A9B3A7" stroke="#000000" stroke-width="2.4"/>
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="324" data-y="360.9" data-w="20" data-h="20">
+      <g data-name="icon:ic_chevron" transform="translate(324,360.9) scale(0.833333)">
+        <path d="M9.5,5.5 L16,12 L9.5,18.5" fill="none" stroke="#A9B3A7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
     </g>
     </g>
     </g>
-    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="410.9" data-w="360" data-h="12">
-      <rect x="0" y="410.9" width="360" height="12" fill="#171B18" rx="24" ry="24"/>
-    <g id="rvTrojan" data-name="rvTrojan" data-type="RecyclerView" data-x="0" data-y="410.9" data-w="360" data-h="12">
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="410.9" data-w="360" data-h="124.1">
+      <rect x="0" y="410.9" width="360" height="124.1" fill="#171B18" rx="24" ry="24"/>
+    <g id="rvTrojan" data-name="rvTrojan" data-type="RecyclerView" data-x="0" data-y="410.9" data-w="360" data-h="124.1">
+      <rect x="0" y="410.9" width="360" height="124.1" fill="none" rx="8" ry="8" stroke="#9FB79C" stroke-width="1" stroke-dasharray="4 4"/>
       <rect x="8" y="418.9" width="344" height="48" fill="#232823" rx="8" ry="8"/>
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="8" y="414.9">RecyclerView · 列表项 item_*.xml</text>
+      <rect x="8" y="474.9" width="344" height="48" fill="#232823" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="8" y="527">RecyclerView · 列表项 item_*.xml</text>
     </g>
     </g>
     </g>

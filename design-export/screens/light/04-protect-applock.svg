@@ -15,7 +15,7 @@
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="800">
     <g id="container" data-name="container" data-type="FrameLayout" data-x="0" data-y="0" data-w="360" data-h="800">
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="728">
-    <g id="TextView: 防护" data-name="TextView: 防护" data-type="TextView" data-x="16" data-y="16" data-w="48" data-h="32.4">
+    <g id="TextView: 防护" data-name="TextView: 防护" data-type="TextView" data-x="16" data-y="16" data-w="47.76" data-h="32.4">
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="-0.24" data-text="防护">
         <tspan x="16" y="36.4">防护</tspan>
       </text>
@@ -41,8 +41,8 @@
     </g>
     </g>
     </g>
-    <g id="protectContainer" data-name="protectContainer" data-type="FrameLayout" data-x="16" data-y="132.4" data-w="328" data-h="611.6">
-    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="132.4" data-w="328" data-h="611.6">
+    <g id="protectContainer" data-name="protectContainer" data-type="FrameLayout" data-x="16" data-y="132.4" data-w="328" data-h="595.6">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="132.4" data-w="328" data-h="595.6">
     <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="132.4" data-w="328" data-h="195">
       <rect x="16" y="132.4" width="328" height="195" fill="#FFFFFF" rx="24" ry="24"/>
     <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="132.4" data-w="328" data-h="195">
@@ -52,34 +52,38 @@
       <rect x="72" y="156.4" width="272" height="1" fill="#DFE4DD"/>
     </g>
     <g id="btnSetPin" data-name="btnSetPin" data-type="MaterialButton" data-x="16" data-y="157.4" data-w="328" data-h="56">
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#15803D" text-anchor="middle" letter-spacing="0" data-text="设置 / 修改 PIN 码">
-        <tspan x="180" y="187.4">设置 / 修改 PIN 码</tspan>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#15803D" text-anchor="start" letter-spacing="0" data-text="设置 / 修改 PIN 码">
+        <tspan x="32" y="187.4">设置 / 修改 PIN 码</tspan>
       </text>
     </g>
     <g id="View" data-name="View" data-type="View" data-x="72" data-y="213.4" data-w="272" data-h="1">
       <rect x="72" y="213.4" width="272" height="1" fill="#DFE4DD"/>
     </g>
     <g id="swDecoy" data-name="swDecoy" data-type="MaterialSwitch" data-x="16" data-y="214.4" data-w="328" data-h="56">
-      <rect x="16" y="226.4" width="52" height="32" fill="#04BD19" rx="16" ry="16"/>
-      <circle cx="54" cy="242.4" r="12" fill="None"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#1A1A1A" text-anchor="start" letter-spacing="0" data-text="应用锁假崩溃诱骗模式">
+        <tspan x="32" y="228">应用锁假崩溃诱骗模式</tspan>
+      </text>
+      <rect x="276" y="226.4" width="52" height="32" fill="#DFE4DD" rx="16" ry="16"/>
+      <circle cx="292" cy="242.4" r="11" fill="#FFFFFF" stroke="#D3D9D0" stroke-width="1"/>
     </g>
     <g id="View" data-name="View" data-type="View" data-x="72" data-y="270.4" data-w="272" data-h="1">
       <rect x="72" y="270.4" width="272" height="1" fill="#DFE4DD"/>
     </g>
     <g id="btnAccessibility" data-name="btnAccessibility" data-type="MaterialButton" data-x="16" data-y="271.4" data-w="328" data-h="56">
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#15803D" text-anchor="middle" letter-spacing="0" data-text="开启无障碍权限(用于应用锁)">
-        <tspan x="180" y="301.4">开启无障碍权限(用于应用锁)</tspan>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#15803D" text-anchor="start" letter-spacing="0" data-text="开启无障碍权限(用于应用锁)">
+        <tspan x="32" y="301.4">开启无障碍权限(用于应用锁)</tspan>
       </text>
     </g>
     </g>
     </g>
-    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="343.4" data-w="328" data-h="416.6">
-      <rect x="16" y="343.4" width="328" height="416.6" fill="#FFFFFF" rx="24" ry="24"/>
-    <g id="rvLockApps" data-name="rvLockApps" data-type="RecyclerView" data-x="16" data-y="343.4" data-w="328" data-h="416.6">
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="343.4" data-w="328" data-h="384.6">
+      <rect x="16" y="343.4" width="328" height="384.6" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="rvLockApps" data-name="rvLockApps" data-type="RecyclerView" data-x="16" data-y="343.4" data-w="328" data-h="384.6">
+      <rect x="16" y="343.4" width="328" height="384.6" fill="none" rx="8" ry="8" stroke="#9FB79C" stroke-width="1" stroke-dasharray="4 4"/>
       <rect x="24" y="351.4" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
       <rect x="24" y="407.4" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
       <rect x="24" y="463.4" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
-      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="752">RecyclerView · item_lock_app.xml</text>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="720">RecyclerView · item_lock_app.xml</text>
     </g>
     </g>
     </g>
@@ -95,12 +99,12 @@
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#6B6B6B" text-anchor="middle" x="64" y="784">首页</text>
       <g data-name="icon:ic_tab_detect" transform="translate(168,746) scale(1)">
         <path d="M10.5,3 A7,7 0 1,0 10.5,17 A7,7 0 1,0 10.5,3 Z M10.5,5.6 A4.4,4.4 0 1,1 10.5,14.4 A4.4,4.4 0 1,1 10.5,5.6 Z" fill="#6B6B6B"/>
-        <path d="M15.6,15.6 L20,20" fill="#6B6B6B" stroke="#000000" stroke-width="2.6"/>
+        <path d="M15.6,15.6 L20,20" fill="none" stroke="#6B6B6B" stroke-width="2.6" stroke-linecap="round"/>
       </g>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#6B6B6B" text-anchor="middle" x="180" y="784">检测</text>
       <g data-name="icon:ic_tab_protect" transform="translate(284,746) scale(1)">
         <path d="M6.4,10.2 h11.2 a1.9,1.9 0 0,1 1.9,1.9 v7 a1.9,1.9 0 0,1 -1.9,1.9 h-11.2 a1.9,1.9 0 0,1 -1.9,-1.9 v-7 a1.9,1.9 0 0,1 1.9,-1.9 z" fill="#04BD19"/>
-        <path d="M8.4,10.2 V8 a3.6,3.6 0 0,1 7.2,0 v2.2" fill="#04BD19" stroke="#000000" stroke-width="2.2"/>
+        <path d="M8.4,10.2 V8 a3.6,3.6 0 0,1 7.2,0 v2.2" fill="none" stroke="#04BD19" stroke-width="2.2" stroke-linecap="round"/>
       </g>
       <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#04BD19" text-anchor="middle" x="296" y="784">防护</text>
     </g>

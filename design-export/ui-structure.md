@@ -1,6 +1,6 @@
 # SecureDroid 界面结构(自动导出)
 
-> 本文件由 `design-export/export_ui.py` 从 `app/src/main/res` 生成,生成时间 2026-10-02 12:39:21。信息源是布局 XML 与令牌 XML,不是截图。
+> 本文件由 `design-export/export_ui.py` 从 `app/src/main/res` 生成,生成时间 2026-10-02 15:16:52。信息源是布局 XML 与令牌 XML,不是截图。
 > 重新生成:`python design-export/export_ui.py`。
 
 ## 0. 画布与命名约定
@@ -174,35 +174,35 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `tvHomeTitle` | TextView | 安全中心 | 6 | 8 | 96 | 32.4 |
-| `View` | View |  | 110 | 64.4 | 140 | 140 |
-| `tvScore` | TextView | 100 | 135.4 | 64.4 | 89.1 | 72.9 |
-| `tvScoreUnit` | TextView | 分 | 173 | 137.3 | 14 | 18.9 |
-| `LinearLayout` | LinearLayout |  | 135.4 | 64.4 | 89.1 | 91.8 |
+| `tvHomeTitle` | TextView | 安全中心 | 6 | 8 | 95.3 | 32.4 |
+| `View` | View |  | 110 | 89.4 | 140 | 140 |
+| `tvScore` | TextView | 100 | 137.6 | 113.5 | 84.8 | 72.9 |
+| `tvScoreUnit` | TextView | 分 | 173 | 186.4 | 14 | 18.9 |
+| `LinearLayout` | LinearLayout |  | 137.6 | 113.5 | 84.8 | 91.8 |
 | `FrameLayout` | FrameLayout |  | 85 | 64.4 | 190 | 190 |
 | `tvState` | TextView | 设备状态良好,未发现威胁 | 6 | 274.4 | 348 | 23 |
 | `btnOptimize` | MaterialButton | 一键优化 | 54 | 313.4 | 252 | 48 |
 | `ImageView` | ImageView |  | 22 | 401.4 | 26 | 26 |
 | `TextView: 清理存储` | TextView | 清理存储 | 22 | 451.4 | 72 | 24.3 |
-| `tvCleanSub` | TextView | 查看可释放空间 | 22 | 479.7 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 6 | 385.4 | 174 | 128 |
-| `tileClean` | MaterialCardView |  | 6 | 385.4 | 174 | 128 |
-| `ImageView` | ImageView |  | 206 | 401.4 | 26 | 26 |
-| `TextView: 病毒风险` | TextView | 病毒风险 | 206 | 451.4 | 72 | 24.3 |
-| `tvVirusSub` | TextView | 尚未扫描 | 206 | 479.7 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 190 | 385.4 | 174 | 128 |
-| `tileVirus` | MaterialCardView |  | 190 | 385.4 | 174 | 128 |
+| `tvCleanSub` | TextView | 查看可释放空间 | 22 | 479.7 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 6 | 385.4 | 169 | 128 |
+| `tileClean` | MaterialCardView |  | 6 | 385.4 | 169 | 128 |
+| `ImageView` | ImageView |  | 201 | 401.4 | 26 | 26 |
+| `TextView: 病毒风险` | TextView | 病毒风险 | 201 | 451.4 | 72 | 24.3 |
+| `tvVirusSub` | TextView | 尚未扫描 | 201 | 479.7 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 185 | 385.4 | 169 | 128 |
+| `tileVirus` | MaterialCardView |  | 185 | 385.4 | 169 | 128 |
 | `LinearLayout` | LinearLayout |  | 6 | 385.4 | 348 | 128 |
 | `ImageView` | ImageView |  | 22 | 539.4 | 26 | 26 |
 | `TextView: 网络审计` | TextView | 网络审计 | 22 | 589.4 | 72 | 24.3 |
-| `tvNetworkSub` | TextView | 查看网络连接 | 22 | 617.6 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 6 | 523.4 | 174 | 128 |
-| `tileNetwork` | MaterialCardView |  | 6 | 523.4 | 174 | 128 |
-| `ImageView` | ImageView |  | 206 | 539.4 | 26 | 26 |
-| `TextView: 应用管理` | TextView | 应用管理 | 206 | 589.4 | 72 | 24.3 |
-| `tvApplockSub` | TextView | 管理应用锁 | 206 | 617.6 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 190 | 523.4 | 174 | 128 |
-| `tileApplock` | MaterialCardView |  | 190 | 523.4 | 174 | 128 |
+| `tvNetworkSub` | TextView | 查看网络连接 | 22 | 617.6 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 6 | 523.4 | 169 | 128 |
+| `tileNetwork` | MaterialCardView |  | 6 | 523.4 | 169 | 128 |
+| `ImageView` | ImageView |  | 201 | 539.4 | 26 | 26 |
+| `TextView: 应用管理` | TextView | 应用管理 | 201 | 589.4 | 72 | 24.3 |
+| `tvApplockSub` | TextView | 管理应用锁 | 201 | 617.6 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 185 | 523.4 | 169 | 128 |
+| `tileApplock` | MaterialCardView |  | 185 | 523.4 | 169 | 128 |
 | `LinearLayout` | LinearLayout |  | 6 | 523.4 | 348 | 128 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 728 |
 | `ScrollView` | ScrollView |  | 0 | 0 | 360 | 728 |
@@ -220,17 +220,17 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 检测` | TextView | 检测 | 16 | 16 | 48 | 32.4 |
+| `TextView: 检测` | TextView | 检测 | 16 | 16 | 47.8 | 32.4 |
 | `segDetectVirus` | MaterialButton | 病毒扫描 | 18 | 66.4 | 162 | 48 |
 | `segDetectTrojan` | MaterialButton | 木马查杀 | 180 | 66.4 | 162 | 48 |
 | `segDetect` | MaterialButtonToggleGroup |  | 18 | 66.4 | 324 | 48 |
 | `LinearLayout` | LinearLayout |  | 16 | 64.4 | 328 | 52 |
 | `btnStartScan` | MaterialButton | 开始全盘扫描 | 16 | 132.4 | 328 | 48 |
 | `tvStatus` | TextView | 点击下方按钮开始扫描 | 16 | 212.4 | 328 | 18.9 |
-| `rvResults` | RecyclerView |  | 16 | 247.3 | 328 | 512.7 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 247.3 | 328 | 512.7 |
-| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 611.6 |
-| `detectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 611.6 |
+| `rvResults` | RecyclerView |  | 16 | 247.3 | 328 | 480.7 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 247.3 | 328 | 480.7 |
+| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 595.6 |
+| `detectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 595.6 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 728 |
 | `container` | FrameLayout |  | 0 | 0 | 360 | 800 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 800 |
@@ -246,7 +246,7 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 检测` | TextView | 检测 | 16 | 16 | 48 | 32.4 |
+| `TextView: 检测` | TextView | 检测 | 16 | 16 | 47.8 | 32.4 |
 | `segDetectVirus` | MaterialButton | 病毒扫描 | 18 | 66.4 | 162 | 48 |
 | `segDetectTrojan` | MaterialButton | 木马查杀 | 180 | 66.4 | 162 | 48 |
 | `segDetect` | MaterialButtonToggleGroup |  | 18 | 66.4 | 324 | 48 |
@@ -254,30 +254,30 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `btnTrojanScan` | MaterialButton | 开始木马查杀 | 16 | 132.4 | 328 | 48 |
 | `tvStatus` | TextView | 点击开始,多引擎检测木马与后门 | 16 | 212.4 | 328 | 18.9 |
 | `btnRootkit` | MaterialButton | Rootkit / 提权后门检测 | 16 | 247.3 | 328 | 56 |
-| `ImageView` | ImageView |  | 16 | 265.3 | 20 | 20 |
+| `ImageView` | ImageView |  | 308 | 265.3 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 16 | 247.3 | 328 | 56 |
 | `View` | View |  | 72 | 303.3 | 272 | 1 |
 | `btnModules` | MaterialButton | 恶意模块 / SU 脚本检测 | 16 | 304.3 | 328 | 56 |
-| `ImageView` | ImageView |  | 16 | 322.3 | 20 | 20 |
+| `ImageView` | ImageView |  | 308 | 322.3 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 16 | 304.3 | 328 | 56 |
 | `View` | View |  | 72 | 360.3 | 272 | 1 |
 | `btnLocker` | MaterialButton | 锁机软件检测 | 16 | 361.3 | 328 | 56 |
-| `ImageView` | ImageView |  | 16 | 379.3 | 20 | 20 |
+| `ImageView` | ImageView |  | 308 | 379.3 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 16 | 361.3 | 328 | 56 |
 | `View` | View |  | 72 | 417.3 | 272 | 1 |
 | `btnDeepScan` | MaterialButton | 深度查杀(内存 · 全盘 · 分区) | 16 | 418.3 | 328 | 56 |
-| `ImageView` | ImageView |  | 16 | 436.3 | 20 | 20 |
+| `ImageView` | ImageView |  | 308 | 436.3 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 16 | 418.3 | 328 | 56 |
 | `View` | View |  | 72 | 474.3 | 272 | 1 |
 | `btnVirusCenter` | MaterialButton | 病毒查杀中心 | 16 | 475.3 | 328 | 56 |
-| `ImageView` | ImageView |  | 16 | 493.3 | 20 | 20 |
+| `ImageView` | ImageView |  | 308 | 493.3 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 16 | 475.3 | 328 | 56 |
 | `LinearLayout` | LinearLayout |  | 16 | 247.3 | 328 | 284 |
 | `MaterialCardView` | MaterialCardView |  | 16 | 247.3 | 328 | 284 |
-| `rvTrojan` | RecyclerView |  | 16 | 543.3 | 328 | 212.7 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 543.3 | 328 | 212.7 |
-| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 611.6 |
-| `detectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 611.6 |
+| `rvTrojan` | RecyclerView |  | 16 | 543.3 | 328 | 184.7 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 543.3 | 328 | 184.7 |
+| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 595.6 |
+| `detectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 595.6 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 728 |
 | `container` | FrameLayout |  | 0 | 0 | 360 | 800 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 800 |
@@ -293,7 +293,7 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 防护` | TextView | 防护 | 16 | 16 | 48 | 32.4 |
+| `TextView: 防护` | TextView | 防护 | 16 | 16 | 47.8 | 32.4 |
 | `segProtectLock` | MaterialButton | 应用锁 | 18 | 66.4 | 108 | 48 |
 | `segProtectAudit` | MaterialButton | 权限审计 | 126 | 66.4 | 108 | 48 |
 | `segProtectTools` | MaterialButton | 工具箱 | 234 | 66.4 | 108 | 48 |
@@ -307,10 +307,10 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `btnAccessibility` | MaterialButton | 开启无障碍权限(用于应用锁) | 16 | 271.4 | 328 | 56 |
 | `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 195 |
 | `MaterialCardView` | MaterialCardView |  | 16 | 132.4 | 328 | 195 |
-| `rvLockApps` | RecyclerView |  | 16 | 343.4 | 328 | 416.6 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 343.4 | 328 | 416.6 |
-| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 611.6 |
-| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 611.6 |
+| `rvLockApps` | RecyclerView |  | 16 | 343.4 | 328 | 384.6 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 343.4 | 328 | 384.6 |
+| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 595.6 |
+| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 595.6 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 728 |
 | `container` | FrameLayout |  | 0 | 0 | 360 | 800 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 800 |
@@ -326,19 +326,19 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 防护` | TextView | 防护 | 16 | 16 | 48 | 32.4 |
+| `TextView: 防护` | TextView | 防护 | 16 | 16 | 47.8 | 32.4 |
 | `segProtectLock` | MaterialButton | 应用锁 | 18 | 66.4 | 108 | 48 |
 | `segProtectAudit` | MaterialButton | 权限审计 | 126 | 66.4 | 108 | 48 |
 | `segProtectTools` | MaterialButton | 工具箱 | 234 | 66.4 | 108 | 48 |
 | `segProtect` | MaterialButtonToggleGroup |  | 18 | 66.4 | 324 | 48 |
 | `LinearLayout` | LinearLayout |  | 16 | 64.4 | 328 | 52 |
-| `TextView: 权限审计` | TextView | 权限审计 | 32 | 156.4 | 52 | 17.6 |
+| `TextView: 权限审计` | TextView | 权限审计 | 32 | 156.4 | 52.8 | 17.6 |
 | `tvSummary` | TextView |  | 16 | 181.9 | 328 | 24 |
 | `MaterialCardView` | MaterialCardView |  | 16 | 181.9 | 328 | 24 |
-| `rvAudit` | RecyclerView |  | 16 | 221.9 | 328 | 538.1 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 221.9 | 328 | 538.1 |
-| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 611.6 |
-| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 611.6 |
+| `rvAudit` | RecyclerView |  | 16 | 221.9 | 328 | 506.1 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 221.9 | 328 | 506.1 |
+| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 595.6 |
+| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 595.6 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 728 |
 | `container` | FrameLayout |  | 0 | 0 | 360 | 800 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 800 |
@@ -354,28 +354,28 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 防护` | TextView | 防护 | 16 | 16 | 48 | 32.4 |
+| `TextView: 防护` | TextView | 防护 | 16 | 16 | 47.8 | 32.4 |
 | `segProtectLock` | MaterialButton | 应用锁 | 18 | 66.4 | 108 | 48 |
 | `segProtectAudit` | MaterialButton | 权限审计 | 126 | 66.4 | 108 | 48 |
 | `segProtectTools` | MaterialButton | 工具箱 | 234 | 66.4 | 108 | 48 |
 | `segProtect` | MaterialButtonToggleGroup |  | 18 | 66.4 | 324 | 48 |
 | `LinearLayout` | LinearLayout |  | 16 | 64.4 | 328 | 52 |
-| `TextView: 防护开关` | TextView | 防护开关 | 32 | 156.4 | 52 | 17.6 |
+| `TextView: 防护开关` | TextView | 防护开关 | 32 | 156.4 | 52.8 | 17.6 |
 | `View` | View |  | 72 | 237.9 | 272 | 1 |
-| `tvRootState` | TextView | Root 模式:未启用(开启下方开关将请求 su 授权) | 32 | 250.9 | 287.2 | 24.2 |
+| `tvRootState` | TextView | Root 模式:未启用(开启下方开关将请求 su 授权) | 32 | 250.9 | 300.2 | 24.2 |
 | `View` | View |  | 72 | 287.1 | 272 | 1 |
 | `View` | View |  | 72 | 344.1 | 272 | 1 |
 | `LinearLayout` | LinearLayout |  | 16 | 181.9 | 328 | 219.2 |
 | `MaterialCardView` | MaterialCardView |  | 16 | 181.9 | 328 | 219.2 |
-| `TextView: 安全设置` | TextView | 安全设置 | 32 | 425.1 | 52 | 17.6 |
+| `TextView: 安全设置` | TextView | 安全设置 | 32 | 425.1 | 52.8 | 17.6 |
 | `View` | View |  | 72 | 506.7 | 272 | 1 |
 | `LinearLayout` | LinearLayout |  | 16 | 450.7 | 328 | 113 |
 | `MaterialCardView` | MaterialCardView |  | 16 | 450.7 | 328 | 113 |
-| `TextView: 工具` | TextView | 工具 | 32 | 587.7 | 26 | 17.6 |
-| `rvTools` | RecyclerView |  | 16 | 613.2 | 328 | 130.8 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 613.2 | 328 | 130.8 |
-| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 611.6 |
-| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 611.6 |
+| `TextView: 工具` | TextView | 工具 | 32 | 587.7 | 26.3 | 17.6 |
+| `rvTools` | RecyclerView |  | 16 | 613.2 | 328 | 114.8 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 613.2 | 328 | 114.8 |
+| `LinearLayout` | LinearLayout |  | 16 | 132.4 | 328 | 595.6 |
+| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 595.6 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 728 |
 | `container` | FrameLayout |  | 0 | 0 | 360 | 800 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 800 |
@@ -385,7 +385,7 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 ### act-deep-scan · 独立页 · 深度扫描
 
 - 源文件:`app/src/main/res/layout/activity_deep_scan.xml`
-- 画布:360 × 165.8 dp
+- 画布:360 × 290 dp
 - SVG:`parts/light/act-deep-scan.svg` / `parts/night/act-deep-scan.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
@@ -394,160 +394,160 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `btnStart` | MaterialButton | 开始深度查杀 | 16 | 16 | 328 | 48 |
 | `tvPhase` | TextView | 三阶段:进程内存 → 全设备目录 → 底层分区。Root 模式下效果完整,耗时较长。 | 16 | 96 | 328 | 37.8 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 133.8 |
-| `rvList` | RecyclerView |  | 16 | 149.8 | 328 | 32 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 149.8 | 328 | 32 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 165.8 |
+| `rvList` | RecyclerView |  | 16 | 149.8 | 328 | 124.2 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 149.8 | 328 | 124.2 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 290 |
 
 ### act-lock · 独立页 · 解锁(PIN 键盘)
 
 - 源文件:`app/src/main/res/layout/activity_lock.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 434 dp
 - SVG:`parts/light/act-lock.svg` / `parts/night/act-lock.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
 | `ImageView` | ImageView |  | 152 | 24 | 56 | 56 |
-| `tvDots` | TextView | 请输入 PIN 码解锁 | 110 | 96 | 140 | 21.6 |
-| `btn1` | MaterialButton | 1 | 28 | 145.6 | 104 | 64 |
-| `btn2` | MaterialButton | 2 | 140 | 145.6 | 104 | 64 |
-| `btn3` | MaterialButton | 3 | 252 | 145.6 | 104 | 64 |
+| `tvDots` | TextView | 请输入 PIN 码解锁 | 78 | 96 | 204 | 21.6 |
+| `btn1` | MaterialButton | 1 | 28 | 145.6 | 96 | 64 |
+| `btn2` | MaterialButton | 2 | 132 | 145.6 | 96 | 64 |
+| `btn3` | MaterialButton | 3 | 236 | 145.6 | 96 | 64 |
 | `LinearLayout` | LinearLayout |  | 24 | 141.6 | 312 | 72 |
-| `btn4` | MaterialButton | 4 | 28 | 217.6 | 104 | 64 |
-| `btn5` | MaterialButton | 5 | 140 | 217.6 | 104 | 64 |
-| `btn6` | MaterialButton | 6 | 252 | 217.6 | 104 | 64 |
+| `btn4` | MaterialButton | 4 | 28 | 217.6 | 96 | 64 |
+| `btn5` | MaterialButton | 5 | 132 | 217.6 | 96 | 64 |
+| `btn6` | MaterialButton | 6 | 236 | 217.6 | 96 | 64 |
 | `LinearLayout` | LinearLayout |  | 24 | 213.6 | 312 | 72 |
-| `btn7` | MaterialButton | 7 | 28 | 289.6 | 104 | 64 |
-| `btn8` | MaterialButton | 8 | 140 | 289.6 | 104 | 64 |
-| `btn9` | MaterialButton | 9 | 252 | 289.6 | 104 | 64 |
+| `btn7` | MaterialButton | 7 | 28 | 289.6 | 96 | 64 |
+| `btn8` | MaterialButton | 8 | 132 | 289.6 | 96 | 64 |
+| `btn9` | MaterialButton | 9 | 236 | 289.6 | 96 | 64 |
 | `LinearLayout` | LinearLayout |  | 24 | 285.6 | 312 | 72 |
-| `Space` | Space |  | 24 | 357.6 | 104 | 1 |
-| `btn0` | MaterialButton | 0 | 132 | 361.6 | 104 | 64 |
-| `btnDel` | MaterialButton |  | 244 | 361.6 | 104 | 64 |
+| `Space` | Space |  | 24 | 357.6 | 98.7 | 1 |
+| `btn0` | MaterialButton | 0 | 126.7 | 361.6 | 98.7 | 64 |
+| `btnDel` | MaterialButton |  | 233.3 | 361.6 | 98.7 | 64 |
 | `LinearLayout` | LinearLayout |  | 24 | 357.6 | 312 | 72 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 434 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 434 |
 
 ### act-result-list · 独立页 · 结果列表
 
 - 源文件:`app/src/main/res/layout/activity_result_list.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 208 dp
 - SVG:`parts/light/act-result-list.svg` / `parts/night/act-result-list.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
 | `tvTitle` | TextView |  | 0 | 0 | 360 | 32 |
-| `rvList` | RecyclerView |  | 16 | 68 | 328 | 68 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 68 | 328 | 68 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `rvList` | RecyclerView |  | 16 | 68 | 328 | 124 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 68 | 328 | 124 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 208 |
 
 ### act-virus-center · 独立页 · 病毒风险中心
 
 - 源文件:`app/src/main/res/layout/activity_virus_center.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 292 dp
 - SVG:`parts/light/act-virus-center.svg` / `parts/night/act-virus-center.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
 | `tvTitle` | TextView |  | 16 | 0 | 328 | 16 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 16 |
-| `rvActions` | RecyclerView |  | 16 | 32 | 328 | 104 |
-| `MaterialCardView` | MaterialCardView |  | 16 | 32 | 328 | 104 |
-| `menuState` | LinearLayout |  | 16 | 32 | 328 | 104 |
-| `FrameLayout` | FrameLayout |  | 16 | 32 | 328 | 104 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `rvActions` | RecyclerView |  | 16 | 32 | 328 | 244 |
+| `MaterialCardView` | MaterialCardView |  | 16 | 32 | 328 | 244 |
+| `menuState` | LinearLayout |  | 16 | 32 | 328 | 244 |
+| `FrameLayout` | FrameLayout |  | 16 | 32 | 328 | 244 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 292 |
 
 ### frag-dashboard · Fragment · 首页
 
 - 源文件:`app/src/main/res/layout/fragment_dashboard.xml`
-- 画布:360 × 651.35 dp
+- 画布:360 × 655.5 dp
 - SVG:`parts/light/frag-dashboard.svg` / `parts/night/frag-dashboard.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `tvHomeTitle` | TextView | 安全中心 | 6 | 8 | 96 | 32.4 |
-| `View` | View |  | 110 | 64.4 | 140 | 140 |
-| `tvScore` | TextView | 100 | 135.4 | 64.4 | 89.1 | 72.9 |
-| `tvScoreUnit` | TextView | 分 | 173 | 137.3 | 14 | 18.9 |
-| `LinearLayout` | LinearLayout |  | 135.4 | 64.4 | 89.1 | 91.8 |
+| `tvHomeTitle` | TextView | 安全中心 | 6 | 8 | 95.3 | 32.4 |
+| `View` | View |  | 110 | 89.4 | 140 | 140 |
+| `tvScore` | TextView | 100 | 137.6 | 113.5 | 84.8 | 72.9 |
+| `tvScoreUnit` | TextView | 分 | 173 | 186.4 | 14 | 18.9 |
+| `LinearLayout` | LinearLayout |  | 137.6 | 113.5 | 84.8 | 91.8 |
 | `FrameLayout` | FrameLayout |  | 85 | 64.4 | 190 | 190 |
 | `tvState` | TextView | 设备状态良好,未发现威胁 | 6 | 274.4 | 348 | 23 |
 | `btnOptimize` | MaterialButton | 一键优化 | 54 | 313.4 | 252 | 48 |
 | `ImageView` | ImageView |  | 22 | 401.4 | 26 | 26 |
 | `TextView: 清理存储` | TextView | 清理存储 | 22 | 451.4 | 72 | 24.3 |
-| `tvCleanSub` | TextView | 查看可释放空间 | 22 | 479.7 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 6 | 385.4 | 174 | 128 |
-| `tileClean` | MaterialCardView |  | 6 | 385.4 | 174 | 128 |
-| `ImageView` | ImageView |  | 206 | 401.4 | 26 | 26 |
-| `TextView: 病毒风险` | TextView | 病毒风险 | 206 | 451.4 | 72 | 24.3 |
-| `tvVirusSub` | TextView | 尚未扫描 | 206 | 479.7 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 190 | 385.4 | 174 | 128 |
-| `tileVirus` | MaterialCardView |  | 190 | 385.4 | 174 | 128 |
+| `tvCleanSub` | TextView | 查看可释放空间 | 22 | 479.7 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 6 | 385.4 | 169 | 128 |
+| `tileClean` | MaterialCardView |  | 6 | 385.4 | 169 | 128 |
+| `ImageView` | ImageView |  | 201 | 401.4 | 26 | 26 |
+| `TextView: 病毒风险` | TextView | 病毒风险 | 201 | 451.4 | 72 | 24.3 |
+| `tvVirusSub` | TextView | 尚未扫描 | 201 | 479.7 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 185 | 385.4 | 169 | 128 |
+| `tileVirus` | MaterialCardView |  | 185 | 385.4 | 169 | 128 |
 | `LinearLayout` | LinearLayout |  | 6 | 385.4 | 348 | 128 |
 | `ImageView` | ImageView |  | 22 | 539.4 | 26 | 26 |
 | `TextView: 网络审计` | TextView | 网络审计 | 22 | 589.4 | 72 | 24.3 |
-| `tvNetworkSub` | TextView | 查看网络连接 | 22 | 617.6 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 6 | 523.4 | 174 | 128 |
-| `tileNetwork` | MaterialCardView |  | 6 | 523.4 | 174 | 128 |
-| `ImageView` | ImageView |  | 206 | 539.4 | 26 | 26 |
-| `TextView: 应用管理` | TextView | 应用管理 | 206 | 589.4 | 72 | 24.3 |
-| `tvApplockSub` | TextView | 管理应用锁 | 206 | 617.6 | 142 | 20.2 |
-| `LinearLayout` | LinearLayout |  | 190 | 523.4 | 174 | 128 |
-| `tileApplock` | MaterialCardView |  | 190 | 523.4 | 174 | 128 |
+| `tvNetworkSub` | TextView | 查看网络连接 | 22 | 617.6 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 6 | 523.4 | 169 | 128 |
+| `tileNetwork` | MaterialCardView |  | 6 | 523.4 | 169 | 128 |
+| `ImageView` | ImageView |  | 201 | 539.4 | 26 | 26 |
+| `TextView: 应用管理` | TextView | 应用管理 | 201 | 589.4 | 72 | 24.3 |
+| `tvApplockSub` | TextView | 管理应用锁 | 201 | 617.6 | 137 | 20.2 |
+| `LinearLayout` | LinearLayout |  | 185 | 523.4 | 169 | 128 |
+| `tileApplock` | MaterialCardView |  | 185 | 523.4 | 169 | 128 |
 | `LinearLayout` | LinearLayout |  | 6 | 523.4 | 348 | 128 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 651.4 |
-| `ScrollView` | ScrollView |  | 0 | 0 | 360 | 651.4 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 655.5 |
+| `ScrollView` | ScrollView |  | 0 | 0 | 360 | 655.5 |
 
 ### frag-detect · Fragment · 检测(分段外壳)
 
 - 源文件:`app/src/main/res/layout/fragment_detect.xml`
-- 画布:360 × 132.4 dp
+- 画布:360 × 192.5 dp
 - SVG:`parts/light/frag-detect.svg` / `parts/night/frag-detect.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 检测` | TextView | 检测 | 16 | 16 | 48 | 32.4 |
+| `TextView: 检测` | TextView | 检测 | 16 | 16 | 47.8 | 32.4 |
 | `segDetectVirus` | MaterialButton | 病毒扫描 | 18 | 66.4 | 162 | 48 |
 | `segDetectTrojan` | MaterialButton | 木马查杀 | 180 | 66.4 | 162 | 48 |
 | `segDetect` | MaterialButtonToggleGroup |  | 18 | 66.4 | 324 | 48 |
 | `LinearLayout` | LinearLayout |  | 16 | 64.4 | 328 | 52 |
-| `detectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 16 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 132.4 |
+| `detectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 60.1 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 192.5 |
 
 ### frag-protect · Fragment · 防护(分段外壳)
 
 - 源文件:`app/src/main/res/layout/fragment_protect.xml`
-- 画布:360 × 132.4 dp
+- 画布:360 × 192.5 dp
 - SVG:`parts/light/frag-protect.svg` / `parts/night/frag-protect.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 防护` | TextView | 防护 | 16 | 16 | 48 | 32.4 |
+| `TextView: 防护` | TextView | 防护 | 16 | 16 | 47.8 | 32.4 |
 | `segProtectLock` | MaterialButton | 应用锁 | 18 | 66.4 | 108 | 48 |
 | `segProtectAudit` | MaterialButton | 权限审计 | 126 | 66.4 | 108 | 48 |
 | `segProtectTools` | MaterialButton | 工具箱 | 234 | 66.4 | 108 | 48 |
 | `segProtect` | MaterialButtonToggleGroup |  | 18 | 66.4 | 324 | 48 |
 | `LinearLayout` | LinearLayout |  | 16 | 64.4 | 328 | 52 |
-| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 16 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 132.4 |
+| `protectContainer` | FrameLayout |  | 16 | 132.4 | 328 | 60.1 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 192.5 |
 
 ### frag-scanner · Fragment · 病毒扫描
 
 - 源文件:`app/src/main/res/layout/fragment_scanner.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 239 dp
 - SVG:`parts/light/frag-scanner.svg` / `parts/night/frag-scanner.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
 | `btnStartScan` | MaterialButton | 开始全盘扫描 | 0 | 0 | 360 | 48 |
 | `tvStatus` | TextView | 点击下方按钮开始扫描 | 0 | 80 | 360 | 18.9 |
-| `rvResults` | RecyclerView |  | 0 | 114.9 | 360 | 21.1 |
-| `MaterialCardView` | MaterialCardView |  | 0 | 114.9 | 360 | 21.1 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `rvResults` | RecyclerView |  | 0 | 114.9 | 360 | 124.1 |
+| `MaterialCardView` | MaterialCardView |  | 0 | 114.9 | 360 | 124.1 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 239 |
 
 ### frag-trojan · Fragment · 木马查杀
 
 - 源文件:`app/src/main/res/layout/fragment_trojan.xml`
-- 画布:360 × 410.9 dp
+- 画布:360 × 535 dp
 - SVG:`parts/light/frag-trojan.svg` / `parts/night/frag-trojan.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
@@ -555,34 +555,34 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `btnTrojanScan` | MaterialButton | 开始木马查杀 | 0 | 0 | 360 | 48 |
 | `tvStatus` | TextView | 点击开始,多引擎检测木马与后门 | 0 | 80 | 360 | 18.9 |
 | `btnRootkit` | MaterialButton | Rootkit / 提权后门检测 | 0 | 114.9 | 360 | 56 |
-| `ImageView` | ImageView |  | 0 | 132.9 | 20 | 20 |
+| `ImageView` | ImageView |  | 324 | 132.9 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 0 | 114.9 | 360 | 56 |
 | `View` | View |  | 56 | 170.9 | 304 | 1 |
 | `btnModules` | MaterialButton | 恶意模块 / SU 脚本检测 | 0 | 171.9 | 360 | 56 |
-| `ImageView` | ImageView |  | 0 | 189.9 | 20 | 20 |
+| `ImageView` | ImageView |  | 324 | 189.9 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 0 | 171.9 | 360 | 56 |
 | `View` | View |  | 56 | 227.9 | 304 | 1 |
 | `btnLocker` | MaterialButton | 锁机软件检测 | 0 | 228.9 | 360 | 56 |
-| `ImageView` | ImageView |  | 0 | 246.9 | 20 | 20 |
+| `ImageView` | ImageView |  | 324 | 246.9 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 0 | 228.9 | 360 | 56 |
 | `View` | View |  | 56 | 284.9 | 304 | 1 |
 | `btnDeepScan` | MaterialButton | 深度查杀(内存 · 全盘 · 分区) | 0 | 285.9 | 360 | 56 |
-| `ImageView` | ImageView |  | 0 | 303.9 | 20 | 20 |
+| `ImageView` | ImageView |  | 324 | 303.9 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 0 | 285.9 | 360 | 56 |
 | `View` | View |  | 56 | 341.9 | 304 | 1 |
 | `btnVirusCenter` | MaterialButton | 病毒查杀中心 | 0 | 342.9 | 360 | 56 |
-| `ImageView` | ImageView |  | 0 | 360.9 | 20 | 20 |
+| `ImageView` | ImageView |  | 324 | 360.9 | 20 | 20 |
 | `FrameLayout` | FrameLayout |  | 0 | 342.9 | 360 | 56 |
 | `LinearLayout` | LinearLayout |  | 0 | 114.9 | 360 | 284 |
 | `MaterialCardView` | MaterialCardView |  | 0 | 114.9 | 360 | 284 |
-| `rvTrojan` | RecyclerView |  | 0 | 410.9 | 360 | 12 |
-| `MaterialCardView` | MaterialCardView |  | 0 | 410.9 | 360 | 12 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 410.9 |
+| `rvTrojan` | RecyclerView |  | 0 | 410.9 | 360 | 124.1 |
+| `MaterialCardView` | MaterialCardView |  | 0 | 410.9 | 360 | 124.1 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 535 |
 
 ### frag-app-lock · Fragment · 应用锁
 
 - 源文件:`app/src/main/res/layout/fragment_app_lock.xml`
-- 画布:360 × 211 dp
+- 画布:360 × 335 dp
 - SVG:`parts/light/frag-app-lock.svg` / `parts/night/frag-app-lock.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
@@ -595,53 +595,53 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `btnAccessibility` | MaterialButton | 开启无障碍权限(用于应用锁) | 0 | 139 | 360 | 56 |
 | `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 195 |
 | `MaterialCardView` | MaterialCardView |  | 0 | 0 | 360 | 195 |
-| `rvLockApps` | RecyclerView |  | 0 | 211 | 360 | 16 |
-| `MaterialCardView` | MaterialCardView |  | 0 | 211 | 360 | 16 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 211 |
+| `rvLockApps` | RecyclerView |  | 0 | 211 | 360 | 124 |
+| `MaterialCardView` | MaterialCardView |  | 0 | 211 | 360 | 124 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 335 |
 
 ### frag-audit · Fragment · 权限审计
 
 - 源文件:`app/src/main/res/layout/fragment_permission_audit.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 214 dp
 - SVG:`parts/light/frag-audit.svg` / `parts/night/frag-audit.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 权限审计` | TextView | 权限审计 | 16 | 24 | 52 | 17.6 |
+| `TextView: 权限审计` | TextView | 权限审计 | 16 | 24 | 52.8 | 17.6 |
 | `tvSummary` | TextView |  | 0 | 49.5 | 360 | 24 |
 | `MaterialCardView` | MaterialCardView |  | 0 | 49.5 | 360 | 24 |
-| `rvAudit` | RecyclerView |  | 0 | 89.5 | 360 | 46.5 |
-| `MaterialCardView` | MaterialCardView |  | 0 | 89.5 | 360 | 46.5 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `rvAudit` | RecyclerView |  | 0 | 89.5 | 360 | 124.4 |
+| `MaterialCardView` | MaterialCardView |  | 0 | 89.5 | 360 | 124.4 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 214 |
 
 ### frag-tools · Fragment · 工具箱
 
 - 源文件:`app/src/main/res/layout/fragment_tools.xml`
-- 画布:360 × 480.85 dp
+- 画布:360 × 605 dp
 - SVG:`parts/light/frag-tools.svg` / `parts/night/frag-tools.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `TextView: 防护开关` | TextView | 防护开关 | 16 | 24 | 52 | 17.6 |
+| `TextView: 防护开关` | TextView | 防护开关 | 16 | 24 | 52.8 | 17.6 |
 | `View` | View |  | 56 | 105.5 | 304 | 1 |
-| `tvRootState` | TextView | Root 模式:未启用(开启下方开关将请求 su 授权) | 16 | 118.5 | 287.2 | 24.2 |
+| `tvRootState` | TextView | Root 模式:未启用(开启下方开关将请求 su 授权) | 16 | 118.5 | 300.2 | 24.2 |
 | `View` | View |  | 56 | 154.8 | 304 | 1 |
 | `View` | View |  | 56 | 211.8 | 304 | 1 |
 | `LinearLayout` | LinearLayout |  | 0 | 49.5 | 360 | 219.2 |
 | `MaterialCardView` | MaterialCardView |  | 0 | 49.5 | 360 | 219.2 |
-| `TextView: 安全设置` | TextView | 安全设置 | 16 | 292.8 | 52 | 17.6 |
+| `TextView: 安全设置` | TextView | 安全设置 | 16 | 292.8 | 52.8 | 17.6 |
 | `View` | View |  | 56 | 374.3 | 304 | 1 |
 | `LinearLayout` | LinearLayout |  | 0 | 318.3 | 360 | 113 |
 | `MaterialCardView` | MaterialCardView |  | 0 | 318.3 | 360 | 113 |
-| `TextView: 工具` | TextView | 工具 | 16 | 455.3 | 26 | 17.6 |
-| `rvTools` | RecyclerView |  | 0 | 480.9 | 360 | 0 |
-| `MaterialCardView` | MaterialCardView |  | 0 | 480.9 | 360 | 0 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 480.8 |
+| `TextView: 工具` | TextView | 工具 | 16 | 455.3 | 26.3 | 17.6 |
+| `rvTools` | RecyclerView |  | 0 | 480.9 | 360 | 124.1 |
+| `MaterialCardView` | MaterialCardView |  | 0 | 480.9 | 360 | 124.1 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 605 |
 
 ### dialog-set-pin · 对话框 · 设置 PIN
 
 - 源文件:`app/src/main/res/layout/dialog_set_pin.xml`
-- 画布:360 × 148 dp
+- 画布:360 × 152 dp
 - SVG:`parts/light/dialog-set-pin.svg` / `parts/night/dialog-set-pin.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
@@ -650,54 +650,54 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `TextInputLayout` | TextInputLayout |  | 24 | 24 | 312 | 56 |
 | `etPinConfirm` | TextInputEditText |  | 24 | 92 | 312 | 56 |
 | `TextInputLayout` | TextInputLayout |  | 24 | 92 | 312 | 56 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 148 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 152 |
 
 ### widget-security · 桌面小组件 · 安全状态
 
 - 源文件:`app/src/main/res/layout/widget_security.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 124 dp
 - SVG:`parts/light/widget-security.svg` / `parts/night/widget-security.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `widgetIcon` | ImageView |  | 16 | 40 | 40 | 40 |
-| `widgetTitle` | TextView | 安卫安全助手 | 68 | 39.8 | 204 | 21.6 |
-| `widgetScan` | TextView | 病毒扫描 | 68 | 61.4 | 56 | 18.9 |
-| `LinearLayout` | LinearLayout |  | 68 | 39.8 | 204 | 40.5 |
-| `widgetOpen` | TextView | 安卫安全助手 | 272 | 50.5 | 84 | 18.9 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `widgetIcon` | ImageView |  | 16 | 42 | 40 | 40 |
+| `widgetTitle` | TextView | 安卫安全助手 | 68 | 41.8 | 192 | 21.6 |
+| `widgetScan` | TextView | 病毒扫描 | 68 | 63.4 | 56 | 18.9 |
+| `LinearLayout` | LinearLayout |  | 68 | 41.8 | 192 | 40.5 |
+| `widgetOpen` | TextView | 安卫安全助手 | 260 | 52.5 | 84 | 18.9 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 124 |
 
 ### item-audit · 列表项 · 权限审计行
 
 - 源文件:`app/src/main/res/layout/item_audit.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 124 dp
 - SVG:`parts/light/item-audit.svg` / `parts/night/item-audit.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `tvAppName` | TextView |  | 16 | 59 | 0 | 0 |
-| `tvPerms` | TextView |  | 16 | 61 | 0 | 0 |
-| `LinearLayout` | LinearLayout |  | 16 | 59 | 0 | 2 |
-| `tvScore` | TextView |  | 28 | 60 | 328 | 0 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `tvAppName` | TextView |  | 16 | 61 | 0 | 0 |
+| `tvPerms` | TextView |  | 16 | 63 | 0 | 0 |
+| `LinearLayout` | LinearLayout |  | 16 | 61 | 0 | 2 |
+| `tvScore` | TextView |  | 28 | 62 | 328 | 0 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 124 |
 
 ### item-lock-app · 列表项 · 应用锁行
 
 - 源文件:`app/src/main/res/layout/item_lock_app.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 124 dp
 - SVG:`parts/light/item-lock-app.svg` / `parts/night/item-lock-app.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
-| `tvName` | TextView |  | 16 | 60 | 284 | 0 |
-| `tvPkg` | TextView |  | 16 | 60 | 284 | 0 |
-| `LinearLayout` | LinearLayout |  | 16 | 60 | 284 | 0 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `tvName` | TextView |  | 16 | 62 | 284 | 0 |
+| `tvPkg` | TextView |  | 16 | 62 | 284 | 0 |
+| `LinearLayout` | LinearLayout |  | 16 | 62 | 284 | 0 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 124 |
 
 ### item-scan-result · 列表项 · 扫描结果行
 
 - 源文件:`app/src/main/res/layout/item_scan_result.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 124 dp
 - SVG:`parts/light/item-scan-result.svg` / `parts/night/item-scan-result.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
@@ -705,24 +705,24 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `tvAppName` | TextView |  | 16 | 12 | 328 | 0 |
 | `tvPackage` | TextView |  | 16 | 12 | 328 | 0 |
 | `tvStatus` | TextView |  | 16 | 14 | 328 | 0 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 124 |
 
 ### item-tool · 列表项 · 工具/动作行
 
 - 源文件:`app/src/main/res/layout/item_tool.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 124 dp
 - SVG:`parts/light/item-tool.svg` / `parts/night/item-tool.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
 | --- | --- | --- | --- | --- | --- | --- |
 | `tvTitle` | TextView |  | 16 | 12 | 328 | 0 |
 | `tvSub` | TextView |  | 16 | 14 | 328 | 0 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 124 |
 
 ### item-trojan · 列表项 · 木马检测行
 
 - 源文件:`app/src/main/res/layout/item_trojan.xml`
-- 画布:360 × 120 dp
+- 画布:360 × 124 dp
 - SVG:`parts/light/item-trojan.svg` / `parts/night/item-trojan.svg`
 
 | 图层 id | 类型 | 文本 | x | y | w | h |
@@ -734,7 +734,7 @@ Theme.SecureDroid(activity_main.xml:FrameLayout + bg_page 渐变底)
 | `btnUninstall` | MaterialButton | 立即卸载 | 16 | 30 | 64 | 48 |
 | `btnFix` | MaterialButton | 执行 | 88 | 30 | 32 | 48 |
 | `LinearLayout` | LinearLayout |  | 16 | 30 | 104 | 48 |
-| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 120 |
+| `LinearLayout` | LinearLayout |  | 0 | 0 | 360 | 124 |
 
 ## 4. 图标(drawable/*.xml 里的 vector)
 
