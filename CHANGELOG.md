@@ -2,6 +2,33 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.7.2] - 2026-10-02
+
+### Fixed
+
+- **查杀历史指纹与风险分为空**:定时查杀(`feature/DailyScanRunner.kt`)与手动查杀(`ui/ScanViewModel.kt`)
+  落库时把 `sha256` 写死为空串、`riskScore` 写死为 0,于是历史列表与威胁报告导出
+  (`vscan/ThreatReport.kt`)`里的 APK 指纹、风险分全是空的 —— 记录条数看着正常,内容却是占位符。
+  现由 `trojan/TrojanScanner.kt` 的 `Report` 携带真实值:指纹复用 `HashCache`(扫描时已算过,
+  零额外开销),风险分取 `PermissionAuditor.scoreFor(info)`(与 `ScannerEngine.permissionRiskScore`
+  同一语义),单包信息查询由 `flags = 0` 改为 `PackageManager.GET_PERMISSIONS`,与权限评分共用同一次绑定器调用。
+
+### Changed
+
+- 强停/清数据命令(`am force-stop` / `pm clear`)的包名改用 `ShellBridge.quote()` 包裹
+  (`vscan/ParallelScanner.kt`、`ui/VirusCenterActivity.kt` 共 3 处)。包名来自 PackageManager、
+  不含单引号,实际无可利用风险,本次仅为消除"同一类命令两种写法"的不一致。
+
+### Removed
+
+- 删除 `root/PrivilegeManager.kt` 的 `execBatch()`:全仓(含测试)无任何调用方,且内部仍在使用
+  上一版已废弃的 `runSu(...) != null` 成功判据 —— 留着就是下一次误用的入口。
+
+### Added
+
+- `app/src/test/java/com/armorlab/securedroid/feature/ScanHistoryTest.kt`(4 项):报告携带真实
+  指纹/风险分、两个写入方不得再落空值、`execBatch` 已被移除、强停命令包名走 `quote`。
+
 ## [1.7.1] - 2026-10-02
 
 ### Security

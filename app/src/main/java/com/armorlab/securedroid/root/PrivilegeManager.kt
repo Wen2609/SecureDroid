@@ -206,45 +206,6 @@ object PrivilegeManager {
         return PrivResult(ok, out, false, if (ok) null else "执行失败或未授权", System.currentTimeMillis() - started)
     }
 
-    /**
-     * 批量执行:合并为单次 su 会话(减少往返,性能关键路径)。
-     * 返回与输入等长的结果数组;被策略拒绝的位置为 null。
-     */
-    fun execBatch(cmds: List<String>, timeoutMs: Long = 30_000L): List<String?> {
-        if (cmds.isEmpty()) return emptyList()
-        val started = System.currentTimeMillis()
-        val results = arrayOfNulls<String>(cmds.size)
-        val allowed = ArrayList<Pair<Int, String>>(cmds.size)
-        cmds.forEachIndexed { idx, cmd ->
-            when (PrivilegedPolicy.check(cmd)) {
-                is PolicyVerdict.Deny ->
-                    record(PrivLevel.ROOT, cmd, ok = false, denied = true, System.currentTimeMillis() - started)
-                PolicyVerdict.Allow -> allowed.add(idx to cmd)
-            }
-        }
-        if (allowed.isEmpty()) return results.toList()
-
-        val sb = StringBuilder()
-        for ((idx, cmd) in allowed) {
-            sb.append(cmd).append(" 2>&1; echo '__SD_").append(idx).append("__'\n")
-        }
-        val out = ShellBridge.runSu(sb.toString(), timeoutMs)
-        if (out != null) {
-            var cursor = 0
-            for ((idx, _) in allowed) {
-                val marker = "__SD_" + idx + "__"
-                val at = out.indexOf(marker, cursor)
-                if (at >= 0) {
-                    results[idx] = out.substring(cursor, at).trim()
-                    cursor = at + marker.length
-                }
-            }
-        }
-        record(PrivLevel.ROOT, "batch(" + cmds.size + ") ok=" + (out != null), out != null, false,
-            System.currentTimeMillis() - started)
-        return results.toList()
-    }
-
     /** 一批只读探测:存在性判断合并为单次 su */
     fun existsAll(paths: List<String>, timeoutMs: Long = 15_000L): Set<String> {
         if (paths.isEmpty()) return emptySet()

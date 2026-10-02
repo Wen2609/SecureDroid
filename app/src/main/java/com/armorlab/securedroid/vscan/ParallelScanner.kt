@@ -2,6 +2,7 @@ package com.armorlab.securedroid.vscan
 
 import android.content.Context
 import com.armorlab.securedroid.core.PackageSnapshot
+import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.trojan.TrojanScanner
 import com.armorlab.securedroid.ui.TrojanAdapter
@@ -162,7 +163,8 @@ object ParallelScanner {
                     r.detections.joinToString("; ") { it.engine + ":" + it.name },
                     r.worstLevel ?: ThreatLevel.HIGH,
                     "并行查杀命中,建议处理", null,
-                    "am force-stop '" + r.packageName + "' ; pm clear '" + r.packageName + "'",
+                    "am force-stop " + ShellBridge.quote(r.packageName) +
+                        " ; pm clear " + ShellBridge.quote(r.packageName),
                     "强停清数据"
                 )
             )

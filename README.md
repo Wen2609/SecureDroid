@@ -37,6 +37,8 @@
 - **性能优化第五轮(v1.7.0)**:修复并行查杀的线程池缺陷 —— 原实现 `corePoolSize = 0` 配无界队列,池里永远只有 1 个 worker,"并行查杀"实际串行,现令 `core == maximum == CPU 自适应并发度` 且允许核心线程超时回收;DEX 行为规则从"每个模式都全量扫一遍 dex 字符串集合"(单应用 35~45 遍)改为**单遍多模式匹配**(新增 MultiPatternMatcher),锁机检测同步改造;新增 PackageSnapshot 快照层,14 处 PackageManager 枚举与 loadLabel 收口,全盘扫描的 N+1 绑定器调用归零;DexVerdictCache 改为内存 LRU 索引 + 真实负缓存(未命中写 `~clean` 标记)+ 满 32 条批量落盘;正则与 SimpleDateFormat 提为共享实例(core/Re、core/TimeFmt);首页刷新加 1s 节流;网络审计按 uid 记忆应用归属;9 个 RecyclerView 声明 `setHasFixedSize(true)`;新增 5 个性能测试套件(共 109 项 JVM 测试);
 - **root 执行加固(v1.7.1)**:审计发现的两处提权执行缺陷已修复 —— ①`ShellBridge.runSu()` 把 stdout+stderr 合并后恒返回非 null,全仓 9 处把它当作成功判据,`su` 被拒绝或命令报错时界面/通知/审计日志仍会宣称"已隔离 / 已断网 / 已自动处置";现新增 `runSuResult()`(带退出码)与 `runSuChecked()`(策略放行 → 进程已启动 → `exitCode == 0` → 输出不含 permission denied / not found / read-only 等失败标记),并对隔离、断网结果做存在性/规则复核;②所有拼进 `su` 命令行的路径改为 `ShellBridge.quote()`(`'` → `'\''`),此前文件名含单引号即可越出引号、以 root 执行任意命令,涉及 15 个文件。新增 `ShellHardeningTest` 9 项(共 118 项 JVM 测试);
 
+- **查杀历史与死代码修复(v1.7.2)**:定时查杀 `DailyScanRunner` 与手动查杀 `ScanViewModel` 落库时把 `sha256` 写死为空串、`riskScore` 写死为 0 —— 历史列表与威胁报告导出的指纹/风险分因此全为空。现由 `TrojanScanner.Report` 携带真实值:指纹复用 `HashCache`(已算过,零额外开销),风险分取 `PermissionAuditor.scoreFor(info)`(与 `ScannerEngine.permissionRiskScore` 同语义),包信息查询由 flags=0 改为 `GET_PERMISSIONS` 与评分共用同一次绑定器调用;同时删除无调用方的 `PrivilegeManager.execBatch()`(且仍在用已废弃的 `runSu(...) != null` 判据),强停/清数据命令(`am force-stop` / `pm clear`)的包名统一走 `ShellBridge.quote()`。新增 `ScanHistoryTest` 4 项(共 122 项 JVM 测试)。
+
 ## 技术栈
 
 - Kotlin 1.9.24 / AGP 8.5.2 / Gradle 8.7 / JDK 17
@@ -82,7 +84,7 @@
 
 ### 测试与验证
 
-    ./gradlew testDebugUnitTest     # 118 项 JVM 单元测试(含 Robolectric 冒烟)
+    ./gradlew testDebugUnitTest     # 122 项 JVM 单元测试(含 Robolectric 冒烟)
     ./gradlew assembleRelease       # R8 混淆 + 签名发布包
 
 ### 运行时冒烟测试(Robolectric)
@@ -111,6 +113,7 @@
 | DexVerdictCacheTest | 5 | DEX 判定缓存:负缓存(`~clean`)落盘与重载、威胁名含 `|` 往返、空 SHA 不入缓存 |
 | PerfGuardTest | 8 | 性能不变量守卫:并行池核心线程数、正则/时间格式化集中、PM 调用收口快照层、列表 `setHasFixedSize` |
 | ShellHardeningTest | 9 | root 执行加固:退出码/失败标记才是成功判据、路径引号转义与逆运算、注入载荷只算一个参数、策略放行真实命令且拦截灾难命令、源码守卫(禁止 `runSu(...) != null` 与引号内直接插值) |
+| ScanHistoryTest | 4 | 查杀历史落库:报告携带真实指纹/风险分、两个写入方不得再落空值、死代码 `execBatch` 已移除、强停命令包名走 `quote` |
 
 运行时验证已抓出并修复两个**致命缺陷**(编译、Lint、静态测试均无法发现):
 WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超限导致主界面无法启动。详见 CHANGELOG。
@@ -226,12 +229,12 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.7.1-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.7.2-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 A45AABF0E5E12640DE4794C5A2A4FBC93BE133F886F46E7C024F0A0362C363C0
-    大小    1,998,638 字节    versionCode 11 / versionName 1.7.1(root 执行加固:命令注入与“假成功”修复)
+    SHA-256 C8866BA8B6EF4989B4167051935C2353E7E395BC0449B98A879033A18005C3A9
+    大小    1,998,875 字节    versionCode 12 / versionName 1.7.2(查杀历史落真实指纹与风险分、死代码清理)
 
-  更早版本 apks/SecureDroid-v1.0.0 / v1.0.1 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 / v1.5.0 / v1.6.0 / v1.7.0 保留用于回退。
+  更早版本 apks/SecureDroid-v1.0.0 / v1.0.1 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 / v1.5.0 / v1.6.0 / v1.7.0 / v1.7.1 保留用于回退。
 
 ## 注意事项
 

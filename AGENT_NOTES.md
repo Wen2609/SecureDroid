@@ -117,4 +117,6 @@
 - 任何拼进 shell 的路径/参数必须过 `ShellBridge.quote()`(`'` → `'\''`):破坏性动作 + 可控文件名 = root 命令注入
 - 处置结果要复核:隔离后确认文件真的移动了、断网后回读 iptables 规则,别只信命令回显
 - `PrivilegedPolicy.check()` 是唯一的灾害命令闸门,新增处置命令前先确认它不会被误判为 Allow/Deny (PrivilegedPolicyTest + ShellHardeningTest 会跑真实命令清单)
+- 查杀历史必须落真实值:`TrojanScanner.Report` 已携带 `sha256` / `riskScore`,写入方(DailyScanRunner / ScanViewModel)
+  不许再写 `sha256 = ""` / `riskScore = 0`;`PrivilegeManager.execBatch()` 已删除,别再复活(ScanHistoryTest 会拦)
 

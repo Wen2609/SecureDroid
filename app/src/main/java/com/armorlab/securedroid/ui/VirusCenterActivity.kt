@@ -174,7 +174,8 @@ class VirusCenterActivity : AppCompatActivity() {
                     level = finalLevel,
                     suggestion = if (verdict == VerdictArbiter.Verdict.SUSPICIOUS) "仅单一证据源,降级为待观察(多引擎仲裁)" else null,
                     uninstallPkg = null,
-                    fixCommand = if (fixable) "am force-stop '" + pkg + "' ; pm clear '" + pkg + "'" else null,
+                    fixCommand = if (fixable) "am force-stop " + ShellBridge.quote(pkg) +
+                        " ; pm clear " + ShellBridge.quote(pkg) else null,
                     fixLabel = if (fixable) "强停清数据" else null
                 )
             )
@@ -223,7 +224,8 @@ class VirusCenterActivity : AppCompatActivity() {
                         r.detections.joinToString("; ") { it.engine + ":" + it.name },
                         r.worstLevel ?: ThreatLevel.HIGH,
                         "差异扫描命中,建议处理", null,
-                        "am force-stop '" + r.packageName + "' ; pm clear '" + r.packageName + "'",
+                        "am force-stop " + ShellBridge.quote(r.packageName) +
+                            " ; pm clear " + ShellBridge.quote(r.packageName),
                         "强停清数据"
                     )
                 )

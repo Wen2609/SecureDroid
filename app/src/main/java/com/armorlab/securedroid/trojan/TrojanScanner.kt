@@ -1,7 +1,9 @@
 package com.armorlab.securedroid.trojan
 
 import android.content.Context
+import android.content.pm.PackageManager
 import com.armorlab.securedroid.core.PackageSnapshot
+import com.armorlab.securedroid.permissions.PermissionAuditor
 import com.armorlab.securedroid.scan.ScannerEngine
 import com.armorlab.securedroid.scan.SignatureDatabase
 import com.armorlab.securedroid.scan.ThreatLevel
@@ -29,7 +31,11 @@ object TrojanScanner {
     data class Report(
         val packageName: String,
         val appName: String,
-        val detections: List<Detection>
+        val detections: List<Detection>,
+        /** APK 指纹(供查杀历史落库,原实现写空串) */
+        val sha256: String = "",
+        /** 权限风险分 0-100(与 ScannerEngine.permissionRiskScore 同一语义) */
+        val riskScore: Int = 0
     ) {
         val isInfected: Boolean get() = detections.isNotEmpty()
         val worstLevel: ThreatLevel?
@@ -38,19 +44,20 @@ object TrojanScanner {
 
     fun scanPackage(context: Context, pkg: String): Report {
         // 性能:单包信息 / 应用标签走快照层,避免同一应用在一次扫描中被反复查询
-        val info = PackageSnapshot.packageInfo(context, pkg, 0)
+        val info = PackageSnapshot.packageInfo(context, pkg, PackageManager.GET_PERMISSIONS)
             ?: return Report(pkg, pkg, emptyList())
         val appInfo = info.applicationInfo
         val appName = PackageSnapshot.label(context, appInfo)
         val detections = mutableListOf<Detection>()
-        val apkPath = appInfo?.sourceDir
+        val apkPath = appInfo.sourceDir
+        var sha = ""
         if (apkPath != null) {
             val apkFile = File(apkPath)
             // 哈希缓存:APK 未更新直接复用指纹,免重复读取大文件
-            val sha = com.armorlab.securedroid.vscan.HashCache.cachedSha256(
+            sha = com.armorlab.securedroid.vscan.HashCache.cachedSha256(
                 context, apkPath, info.lastUpdateTime, apkFile.length()
             )
-            val isSystemApp = ((appInfo?.flags ?: 0) and
+            val isSystemApp = (appInfo.flags and
                 android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
 
             // 引擎 1:内置哈希特征库
@@ -81,6 +88,7 @@ object TrojanScanner {
                 }
             }
         }
-        return Report(pkg, appName, detections)
+        // 历史记录要真实指纹 + 风险分:定时查杀与手动查杀共用本路径,不再落空值
+        return Report(pkg, appName, detections, sha, PermissionAuditor.scoreFor(info).first)
     }
 }

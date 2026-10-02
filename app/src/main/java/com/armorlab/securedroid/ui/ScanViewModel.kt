@@ -41,9 +41,9 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
                 ScanRecordEntity(
                     packageName = r.packageName,
                     appName = r.appName,
-                    sha256 = "",
+                    sha256 = r.sha256,
                     threatName = r.detections.maxByOrNull { it.level.ordinal }?.name,
-                    riskScore = 0,
+                    riskScore = r.riskScore,
                     scannedAt = now
                 )
             })
