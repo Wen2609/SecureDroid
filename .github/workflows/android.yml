@@ -24,12 +24,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Layouts match the design-token generator
-        run: |
-          node design/generate_layouts.mjs
-          git diff --exit-code -- app/src/main/res/layout
-
-      - name: Unit tests (security policy / classifier / manifest / resources / design rules)
+      - name: Unit tests (security policy / classifier / manifest / resources / layout rules)
         run: ./gradlew testDebugUnitTest --console=plain
 
       - name: Android Lint (errors block the build)

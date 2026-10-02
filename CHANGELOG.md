@@ -2,6 +2,18 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [Unreleased]
+
+### Removed
+
+- **整套设计系统移除**:删除 `design/` 全部 9 个文件(设计文档 DESIGN.md、布局生成器
+  generate_layouts.mjs、HTML/PNG 渲染器与视觉稿),界面不再由脚本生成;
+- 同步删除只服务于生成器的 `DesignRuleTest.everyLayoutIsGenerated` 与 CI 中"重跑生成器 +
+  git diff"步骤;20 个布局 XML 保留为普通文件(仅去掉"请勿手改"的头注释),**外观零改动**;
+- 清理 README / AGENT_NOTES / 颜色令牌注释里指向设计稿与 DESIGN.md 的引用:README 的
+  "视觉设计系统(按设计稿重建)"一节改写为"界面外观(现状)",AGENT_NOTES 里并存的三套风格
+  基线(Swiss / Apple HIG / 旧记录)合并为一条"设计系统已移除,布局可手改"的约定。
+
 ## [1.7.2] - 2026-10-02
 
 ### Fixed

@@ -74,29 +74,17 @@
 - 新板块页面实现 ui/SectionHost,MainActivity.navigateTo(板块 id, 分段下标) 可跨板块直达
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
-## 视觉设计约定(Swiss Style,改 UI 前必读)
-- 风格基线来自 ui-ux-pro-max 的 design-system 解析:Minimalism & Swiss Style + Trust navy 色板
-  (`--design-system "mobile security utility antivirus app dark protective"`);改风格要重跑技能,不要凭口味改
-- 分隔语言 = 1dp 边框 + 留白,卡片 0dp 阴影;强调色只有一个(accent),同一颜色不得两义
-- 令牌只有一套语义体系:c_* 是本体,sd_*/ios_*/status_* 只是别名;新增颜色请走 c_* 角色名
-- **布局由 design/generate_layouts.mjs 生成**,手改 XML 会在下次生成时被覆盖;要改布局改脚本
-- 自检:触摸 ≥48dp、相邻 ≥8dp、正文 16sp/行高 1.5、状态不靠颜色单独表意
-
-## 视觉设计约定(旧记录 · Apple 风格)
-- 风格基线是 iOS HIG:系统色(systemBlue/Green/Orange/Red、label/secondaryLabel/separator、
-  systemGroupedBackground/systemFill)、Dynamic Type 字号、inset grouped 列表、分段控件、通栏标签栏
-- 冲突裁决:与 Android 规范冲突时取更严的一方(行高 48dp > iOS 44pt);不照搬依赖 iOS 系统行为的外形
-- 列表分隔线由 ui/InsetDividerDecoration 绘制(只画行间);item_*.xml 是"行"不是"卡片",分组卡由 fragment 提供
-- 标签栏图标用实心(ic_tab_*),内容区图标用线性(ic_*),不要混层
-- 装饰性图标必须 importantForAccessibility="no"
-
-## 视觉设计约定(旧记录)
-- 令牌在 res/values(浅色)+ res/values-night(深色):配色/圆角/间距只改这两处,别在布局里写字面值
-- **陷阱**:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
+## 界面约定(2026-10-02 起 · 设计系统已整体移除)
+- `design/` 目录(设计文档 / 布局生成器 / 视觉稿)与并存的三套风格基线(Swiss Style、Apple HIG、
+  更早的旧记录)已全部删除;界面不再有"必须照某个风格做"的约束
+- 20 个布局现在就是普通 XML,可直接手改;**改了不会被任何脚本覆盖**(生成器已不存在)
+- 仍然生效、会被测试拦的硬规则:触摸目标 ≥48dp、颜色与字号必须走 res/values 令牌不许写字面值、
+  带点号样式名必须显式写 parent、深色令牌必须放在与 values 平级的 res/values-night
+- 配色/尺寸的当前实际取值见 README「界面外观(现状)」;颜色与尺寸令牌仍在 res/values 与 res/values-night,未改动
+- `陷阱`:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
   构建/Lint/测试全绿但深色模式失效;NightThemeTokenTest 已盯住这一点
 - 布局里 60 个 View ID 被 Kotlin 引用(见 ui/ 下 binding.xxx),重排布局时 ID 一个都不能改
-- 玻璃材质只用于功能层(工具栏/底部入口条);内容卡片用 Widget.SecureDroid.Card 的 1dp 光边
-- 设计稿:python design/render_mockup.py 重新渲染 design/mockup-sheet.png;令牌与脚本内的色值需同步
+- 装饰性图标必须 importantForAccessibility="no";列表分隔线由 ui/InsetDividerDecoration 绘制(只画行间)
 
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)

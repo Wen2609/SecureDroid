@@ -84,7 +84,7 @@
 
 ### 测试与验证
 
-    ./gradlew testDebugUnitTest     # 122 项 JVM 单元测试(含 Robolectric 冒烟)
+    ./gradlew testDebugUnitTest     # 121 项 JVM 单元测试(含 Robolectric 冒烟)
     ./gradlew assembleRelease       # R8 混淆 + 签名发布包
 
 ### 运行时冒烟测试(Robolectric)
@@ -132,27 +132,20 @@ WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超�
 
 CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、Lint、构建 debug 包并上传产物。
 
-## 视觉设计系统(按设计稿重建)
+## 界面外观(现状)
 
-本版界面按用户提供的设计稿**逐项实测重建**:先用 Pillow 对设计稿做像素级取样(字簇宽度反推字号、
-色值取样、圆角与间距测量),再落成设计令牌。风格从上一版的 Swiss 直角边框换成
-**大圆角白卡 + 品牌绿进度环 + 悬浮导航条**。完整来源、实测数据、令牌表、映射表与刻意偏差见
-[design/DESIGN.md](design/DESIGN.md)。
+**设计系统已于 2026-10-02 整体移除**:`design/` 目录(设计文档、布局生成器、HTML/PNG 视觉稿)全部删除,
+界面不再由脚本生成。布局文件现在就是普通 XML,可以直接手改;下面的配色与几何是当前成品的实际取值,
+数值未做任何改动。
 
-- 品牌色取设计稿实测值:主色 `#04BD19`、进度环 `#31D027`、环底 `#E4EDE2`、内盘 `#EAF4E8`;
+- 品牌色:主色 `#04BD19`、进度环 `#31D027`、环底 `#E4EDE2`、内盘 `#EAF4E8`;
 - 页面背景为纵向渐变(`bg_page`,顶 `#F3F8EE` → 底 `#EFF0F0`),卡片纯白、24dp 圆角、极淡阴影;
 - 几何:标题 24sp、环内数字 54sp、卡标题 18sp、状态文案 17sp、卡副标题 15sp;进度环 190dp
   (描边 25dp、内盘 140dp)、主按钮 48dp 高、悬浮导航 60dp 高;
-- **全部 20 个布局由脚本从令牌生成**(`design/generate_layouts.mjs`),改令牌重跑即可,不存在逐页漂移;
-- 设计规则可自动验收:`DesignRuleTest`(触摸目标 / 令牌化 / 生成器一致性)+ `ColorContrastTest`(WCAG 对比度);
-- **可交互视觉稿**:`design/mockup.html` / `design/mockup-dark.html` 是自包含单页(内联 CSS + 内联 SVG,零外部请求),
-  由 `design/render_html.mjs` 现读同一套令牌渲染,含 5 屏与令牌对比度实测表,浏览器直接打开即可;
-  `node design/render_html.mjs` 可随时重新生成。
-
-![设计稿](design/mockup-sheet.png)
-
-> 上图由 `design/render_mockup.py` **现读 res/values 令牌**渲染生成(1080×2400),**不是真机截图**。
-> 想点开看?用浏览器打开 [`design/mockup.html`](design/mockup.html)(浅色)或 [`design/mockup-dark.html`](design/mockup-dark.html)(深色)。
+- 20 个布局全部在 `app/src/main/res/layout/` 下手工维护,不再有生成器(原先"改脚本重跑"的流程作废);
+- 仍可自动验收的规则:`DesignRuleTest`(触摸目标 ≥48dp / 颜色与字号必须令牌化 / 样式名显式 parent)
+  与 `ColorContrastTest`(WCAG 对比度,含一处已记录的例外)。
+- 令牌仍在 `res/values`(浅色)与 `res/values-night`(深色),同一份布局适配两套主题。
 
 **顶层只有三个板块**:首页只看结论,会改变设备行为的开关一律下沉:
 
@@ -168,8 +161,8 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 - 底部导航为**悬浮圆角白条**(高 60dp、圆角 24dp、左右 6dp、贴底 4dp),选中态为品牌绿图标 + 文字,**无指示条**;
 - 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色,全量覆盖同一套令牌),同一份布局适配两套主题;
 - 列表用 inset grouped:圆角分组卡 + 内缩分隔线(`InsetDividerDecoration`),行高 56dp、触摸下限 48dp;
-- **刻意的对比度偏差**:设计稿主按钮为品牌绿 `#04BD19` + 白字 = **2.53:1**,低于 WCAG AA 的 4.5:1。
-  本轮以"严格还原设计稿"为先,该配对在 `ColorContrastTest` 中显式记为 2.4:1 下限,并由
+- **保留的对比度偏差**:主按钮为品牌绿 `#04BD19` + 白字 = **2.53:1**,低于 WCAG AA 的 4.5:1。
+  这是既有外观(改色即改界面),该配对在 `ColorContrastTest` 中显式记为 2.4:1 下限,并由
   `brandCtaContrastDeviationIsDocumented` 守住 —— **偏差一旦被修好,测试就会失败**,提醒撤销这个例外。
   其余全部文字配对仍要求 ≥4.5:1(实测:正文/卡片 17.40、副文/卡片 5.33、副文/页面 4.81)。
 
