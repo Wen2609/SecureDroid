@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.core.PackageSnapshot
 import com.armorlab.securedroid.data.AppDatabase
-import com.armorlab.securedroid.data.AutoActionEntity
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.deep.FilesystemScanner
 import com.armorlab.securedroid.feature.DailyScanRunner
@@ -198,10 +197,10 @@ class RealtimeProtectionService : Service() {
             val cmd = f.fixCommand ?: continue
             // 处置阈值策略:低于阈值只报告;隔离模式下文件类处置改为进隔离区
             if (f.level.ordinal < ActionPolicy.level(this).ordinal) continue
-            val ok = if (ActionPolicy.autoQuarantine(this) && cmd.startsWith("rm -f '")) {
-                Quarantine.quarantine(this, cmd.removePrefix("rm -f '").removeSuffix("'"))
+            val ok = if (ActionPolicy.autoQuarantine(this) && cmd.startsWith("rm -f ")) {
+                Quarantine.quarantine(this, ShellBridge.unquote(cmd.removePrefix("rm -f ").trim()))
             } else {
-                ShellBridge.runSu(cmd) != null
+                ShellBridge.runSuChecked(cmd)
             }
             RootGuard.record(
                 this,
@@ -217,7 +216,7 @@ class RealtimeProtectionService : Service() {
         for (f in LockerDetector.scan(this)) {
             if (f.level != ThreatLevel.CRITICAL) continue
             val cmd = f.fixCommand ?: continue
-            val ok = ShellBridge.runSu(cmd) != null
+            val ok = ShellBridge.runSuChecked(cmd)
             RootGuard.record(
                 this, "REMOVE_LOCKER", f.sub, f.detail.take(200), ok
             )
@@ -227,7 +226,7 @@ class RealtimeProtectionService : Service() {
         // 极速巡检:临时目录恶意载荷自动清除(CRITICAL)
         for (f in FilesystemScanner.quickTmpProbe()) {
             if (f.level != ThreatLevel.CRITICAL) continue
-            val ok = ShellBridge.runSu("rm -f '" + f.path + "'") != null
+            val ok = ShellBridge.runSuChecked("rm -f " + ShellBridge.quote(f.path))
             RootGuard.record(this, "REMOVE_FILE", f.path, f.reason, ok)
             notifyAutoAction((if (ok) "已自动清除恶意文件: " else "清除失败: ") + f.path)
         }
@@ -254,17 +253,6 @@ class RealtimeProtectionService : Service() {
         PrivilegeManager.flushAudit(this)
     }
 
-    private suspend fun recordAction(type: String, target: String, reason: String, ok: Boolean) {
-        AppDatabase.get(applicationContext).autoActionDao().insert(
-            AutoActionEntity(
-                actionType = type,
-                target = target,
-                reason = reason,
-                success = ok,
-                actedAt = System.currentTimeMillis()
-            )
-        )
-    }
 
     /** 统一走 SecurityNotifier(与 WorkManager 路径共享去重与样式) */
     private fun notifyAutoAction(text: String) {

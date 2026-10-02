@@ -129,7 +129,7 @@ object PartitionScanner {
 
     private fun readRaw(path: String, cap: Long): ByteArray? {
         val b64 = ShellBridge.runSu(
-            "dd if='" + path + "' bs=4096 count=" + (cap / 4096) +
+            "dd if=" + ShellBridge.quote(path) + " bs=4096 count=" + (cap / 4096) +
                 " 2>/dev/null | base64", 90_000L
         ) ?: return null
         return try { Base64.decode(b64.trim(), Base64.DEFAULT) } catch (_: Exception) { null }

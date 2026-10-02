@@ -25,9 +25,7 @@ object Quarantine {
         val dst = File(dir(context),
             path.substringAfterLast('/').replace(Re.UNSAFE_FILENAME, "_") +
                 "." + System.currentTimeMillis() + ".qtn").absolutePath
-        val ok = ShellBridge.runSu(
-            "mv '" + path + "' '" + dst + "' && chmod 600 '" + dst + "'"
-        ) != null
+        val ok = ShellBridge.runSuChecked("mv " + ShellBridge.quote(path) + " " + ShellBridge.quote(dst) + " && chmod 600 " + ShellBridge.quote(dst)) && ShellBridge.existsBestEffort(dst)
         if (ok) {
             val p = prefs(context)
             val set = LinkedHashSet(p.getStringSet(KEY, emptySet()) ?: emptySet())
@@ -49,7 +47,7 @@ object Quarantine {
     }
 
     fun destroy(context: Context, item: Item): Boolean {
-        val ok = ShellBridge.runSu("rm -f '" + item.quarantinedPath + "'") != null
+        val ok = ShellBridge.runSuChecked("rm -f " + ShellBridge.quote(item.quarantinedPath)) && !File(item.quarantinedPath).exists()
         if (ok) removeRecord(context, item)
         return ok
     }

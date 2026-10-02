@@ -2,6 +2,38 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.7.1] - 2026-10-02
+
+### Security
+
+- **root 命令注入修复(P1)**:所有拼进 `su` 命令行的路径改为走新增的 `ShellBridge.quote()`
+  (POSIX 单引号转义 `'\''`)。此前形如 `"rm -f '" + path + "'"` 的写法在文件名含单引号时可越出引号,
+  在 `/data/local/tmp` 放一个特制文件名即可在用户点"立即处置"或自动处置时以 root 执行任意命令。
+  涉及 `vscan/Quarantine.kt`、`vscan/NetKill.kt`、`vscan/ResidueScanner.kt`、`root/RootGuard.kt`、
+  `root/ModuleScanner.kt`、`root/SystemIntegrity.kt`、`root/LockerDetector.kt`、`root/PrivilegeManager.kt`、
+  `deep/FilesystemScanner.kt`、`deep/PartitionScanner.kt`、`trojan/RootkitDetector.kt`、
+  `feature/CleanerTool.kt`、`realtime/RealtimeProtectionService.kt`、`ui/TrojanAdapter.kt`、
+  `ui/VirusCenterActivity.kt` 共 15 个文件。
+
+### Fixed
+
+- **"假成功"修复(P0)**:`ShellBridge.runSu()` 合并 stdout+stderr 后恒返回非 null 字符串,
+  而全仓 9 处把它当作成功判据(`runSu(...) != null`),导致 `su` 被拒或命令报错时,
+  界面/通知/审计日志仍会宣称"已隔离 / 已断网 / 已自动处置"。
+  新增 `runSuResult()`(带 `exitCode`)与 `runSuChecked()`(`PrivilegedPolicy` 放行 → 进程已启动 →
+  `exitCode == 0` → 输出不含 permission denied / not found / read-only file system 等失败标记),
+  所有会改动系统的调用点改为校验退出码,并做结果复核(隔离后确认文件真的存在/消失、
+  断网后回读 iptables 规则)。
+- **死代码清理**:`RealtimeProtectionService.recordAction()` 从未被调用(日志实际走 `RootGuard.record`),
+  已删除。
+
+### Added
+
+- **回归测试** `root/ShellHardeningTest.kt`(9 项):引号转义/逆运算与恶意文件名往返、
+  注入载荷必须仍是一个参数、`PrivilegedPolicy` 放行应用真实使用的 15 条命令且拦截 14 条灾难命令,
+  外加源码守卫(主源码中 `runSu(...) != null` 必须为 0、9 类"引号内直接插值"写法必须为 0、
+  处置调用点必须走加固入口)。
+
 ## [1.7.0] - 2026-10-02
 
 ### Performance

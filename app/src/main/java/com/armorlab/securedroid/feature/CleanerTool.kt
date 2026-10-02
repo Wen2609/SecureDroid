@@ -30,5 +30,5 @@ object CleanerTool {
         return entries.sortedByDescending { it.sizeKb }
     }
 
-    fun cleanAll(): Boolean = ShellBridge.runSu("rm -rf /data/data/*/cache/* 2>/dev/null") != null
+    fun cleanAll(): Boolean = ShellBridge.runSuChecked("rm -rf /data/data/*/cache/* 2>/dev/null")
 }

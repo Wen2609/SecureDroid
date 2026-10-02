@@ -55,16 +55,16 @@ object RootGuard {
 
     /** 禁用模块:各 Root 框架通用的 disable 文件机制 */
     fun disableModule(dir: String): Boolean =
-        ShellBridge.runSu("touch '" + dir + "/disable'") != null
+        ShellBridge.runSuChecked("touch " + ShellBridge.quote(dir + "/disable"))
 
     /** 删除恶意 su 脚本 */
     fun removeScript(path: String): Boolean =
-        ShellBridge.runSu("rm -f '" + path + "'") != null
+        ShellBridge.runSuChecked("rm -f " + ShellBridge.quote(path))
 
     /** root 卸载应用(当前用户) */
     fun uninstallApp(pkg: String): Boolean {
-        val out = ShellBridge.runSu("pm uninstall --user 0 '" + pkg + "'") ?: return false
-        return out.lowercase().contains("success")
+        val result = ShellBridge.runSuResult("pm uninstall --user 0 " + ShellBridge.quote(pkg)) ?: return false
+        return result.exitCode == 0 && result.output.lowercase().contains("success")
     }
 
     /** 处置审计落库 */

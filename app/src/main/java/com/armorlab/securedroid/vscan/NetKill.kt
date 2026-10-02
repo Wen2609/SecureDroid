@@ -14,7 +14,7 @@ import com.armorlab.securedroid.ui.TrojanAdapter
 object NetKill {
 
     private fun uidOf(context: Context, pkg: String): Int? = try {
-        context.packageManager.getApplicationInfo(pkg, 0)?.uid
+        context.packageManager.getApplicationInfo(pkg, 0).uid
     } catch (_: Exception) { null }
 
     private fun blockedUids(): Set<Int>? {
@@ -31,16 +31,19 @@ object NetKill {
 
     fun block(context: Context, pkg: String): Boolean {
         val uid = uidOf(context, pkg) ?: return false
-        return ShellBridge.runSu("iptables -I OUTPUT 1 -m owner --uid-owner " + uid + " -j DROP") != null
+        val cmd = "iptables -I OUTPUT 1 -m owner --uid-owner " + uid + " -j DROP"
+        if (!ShellBridge.runSuChecked(cmd)) return false
+        return blockedUids()?.contains(uid) == true
     }
 
     fun unblock(context: Context, pkg: String): Boolean {
         val uid = uidOf(context, pkg) ?: return false
-        return ShellBridge.runSu("iptables -D OUTPUT -m owner --uid-owner " + uid + " -j DROP") != null
+        val cmd = "iptables -D OUTPUT -m owner --uid-owner " + uid + " -j DROP"
+        if (!ShellBridge.runSuChecked(cmd)) return false
+        return blockedUids()?.contains(uid) != true
     }
 
     fun items(context: Context): List<TrojanAdapter.UiItem> {
-        val pm = context.packageManager
         val items = mutableListOf<TrojanAdapter.UiItem>()
         var blockedCount = 0
         // 单次拉取 iptables 规则表,内存匹配(避免每应用一次 su)

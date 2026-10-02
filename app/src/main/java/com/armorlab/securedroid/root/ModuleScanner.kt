@@ -125,7 +125,7 @@ object ModuleScanner {
                         "脚本风险评分 " + w.score + "/100\n" + hits.joinToString("\n"),
                         w.level,
                         "模块启动脚本包含风险行为;可禁用后人工审查,确认恶意再删除整个模块目录",
-                        "touch '" + dir + "/disable'", "禁用模块"
+                        "touch " + ShellBridge.quote(dir + "/disable"), "禁用模块"
                     )
                 )
             }
@@ -141,7 +141,7 @@ object ModuleScanner {
                         "风险评分 " + v.score + "/100 — " + v.hits.joinToString("; ") { it.label },
                         v.level,
                         "开机脚本包含风险行为;确认来源后删除(删除前建议先备份脚本内容)",
-                        "rm -f '" + path + "'", "删除脚本"
+                        "rm -f " + ShellBridge.quote(path), "删除脚本"
                     )
                 )
             }
@@ -181,7 +181,7 @@ object ModuleScanner {
                                 v.hits.joinToString("; ") { it.label },
                             level = v.level,
                             suggestion = "开机脚本包含风险行为;确认来源后删除(删除前建议先备份脚本内容)",
-                            fixCommand = "rm -f '" + path + "'",
+                            fixCommand = "rm -f " + ShellBridge.quote(path),
                             fixLabel = "删除脚本"
                         )
                     )
@@ -220,7 +220,7 @@ object ModuleScanner {
                     detail = "脚本风险评分 " + worst.score + "/100\n" + scriptHits.joinToString("\n"),
                     level = worst.level,
                     suggestion = "模块启动脚本包含风险行为;可通过 disable 禁用后人工审查,确认恶意再删除整个模块目录",
-                    fixCommand = "touch '" + dir + "/disable'",
+                    fixCommand = "touch " + ShellBridge.quote(dir + "/disable"),
                     fixLabel = "禁用模块"
                 )
             )

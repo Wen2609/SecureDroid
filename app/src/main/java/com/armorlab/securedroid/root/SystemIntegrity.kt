@@ -68,7 +68,7 @@ object SystemIntegrity {
     fun captureBaseline(context: Context): Int {
         if (!PrivilegeManager.isRoot(context)) return -1
         val cmd = watchPaths.joinToString(" ") { d ->
-            "[ -d '" + d + "' ] && find '" + d + "' -maxdepth 1 -type f 2>/dev/null | head -400 | " +
+            "[ -d " + ShellBridge.quote(d) + " ] && find " + ShellBridge.quote(d) + " -maxdepth 1 -type f 2>/dev/null | head -400 | " +
                 "while read f; do stat -c '%n|%s|%Y' \"\$f\" 2>/dev/null; done;"
         }
         val out = ShellBridge.runSu(cmd, 60_000L) ?: return -1
@@ -111,7 +111,7 @@ object SystemIntegrity {
         if (!PrivilegeManager.isRoot(context)) return IntegrityDiff(emptyList(), emptyList(), emptyList(), at)
 
         val cmd = watchPaths.joinToString(" ") { d ->
-            "[ -d '" + d + "' ] && find '" + d + "' -maxdepth 1 -type f 2>/dev/null | head -400 | " +
+            "[ -d " + ShellBridge.quote(d) + " ] && find " + ShellBridge.quote(d) + " -maxdepth 1 -type f 2>/dev/null | head -400 | " +
                 "while read f; do stat -c '%n|%s|%Y' \"\$f\" 2>/dev/null; done;"
         }
         val out = ShellBridge.runSu(cmd, 60_000L)
@@ -136,7 +136,7 @@ object SystemIntegrity {
         if (!PrivilegeManager.isRoot(context)) return null
         val targets = criticalFiles.filter { ShellBridge.existsBestEffort(it) }
         if (targets.isEmpty()) return null
-        val quoted = targets.joinToString(" ") { "'" + it + "'" }
+        val quoted = targets.joinToString(" ") { ShellBridge.quote(it) }
         // chattr 支持性探测 + 批量施加,合并为单次 su 会话
         val cmd = "if chattr +i " + quoted + " 2>/dev/null; then echo __IMMUTABLE__; " +
             "else chmod 0444 " + quoted + " 2>/dev/null && echo __READONLY__; fi"
@@ -158,7 +158,7 @@ object SystemIntegrity {
         val locked = (prefs(context).getString(KEY_LOCKED, "") ?: "")
             .split(',').filter { it.isNotEmpty() }
         if (locked.isEmpty()) return true
-        val quoted = locked.joinToString(" ") { "'" + it + "'" }
+        val quoted = locked.joinToString(" ") { ShellBridge.quote(it) }
         val out = ShellBridge.runSu("chattr -i " + quoted + " 2>/dev/null; chmod 0644 " + quoted + " 2>/dev/null; echo __DONE__", 20_000L)
         val ok = out?.contains("__DONE__") == true
         if (ok) prefs(context).edit().putString(KEY_LOCKED, "").apply()
@@ -236,7 +236,7 @@ object SystemIntegrity {
                     "Integrity.Added · " + p.substringAfterLast('/'), p,
                     "基线之外新增的系统文件(常见于模块注入 / 脚本落地)",
                     ThreatLevel.HIGH, "确认来源;可疑文件可用『删除文件』处置",
-                    null, null, "rm -f '" + p + "'", "删除文件"
+                    null, null, "rm -f " + ShellBridge.quote(p), "删除文件"
                 )
             )
         }

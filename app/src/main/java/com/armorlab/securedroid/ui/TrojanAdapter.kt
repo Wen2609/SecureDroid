@@ -72,11 +72,11 @@ class TrojanAdapter : ListAdapter<TrojanAdapter.UiItem, TrojanAdapter.VH>(DIFF) 
                     .setMessage(ctx.getString(R.string.fix_confirm_msg) + "\n\n" + cmd)
                     .setPositiveButton(R.string.fix_run) { _, _ ->
                         Thread {
-                            val out = ShellBridge.runSu(cmd)
+                            val ok = ShellBridge.runSuChecked(cmd)
                             android.os.Handler(android.os.Looper.getMainLooper()).post {
                                 Toast.makeText(
                                     ctx,
-                                    if (out != null) R.string.fix_done else R.string.fix_failed,
+                                    if (ok) R.string.fix_done else R.string.fix_failed,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }

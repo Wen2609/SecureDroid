@@ -43,6 +43,7 @@ import com.armorlab.securedroid.vscan.Timeline
 import com.armorlab.securedroid.vscan.ThreatReport
 import com.armorlab.securedroid.vscan.TrustStore
 import com.armorlab.securedroid.vscan.VerdictArbiter
+import com.armorlab.securedroid.root.ShellBridge
 import java.util.Date
 import kotlinx.coroutines.runBlocking
 
@@ -150,7 +151,6 @@ class VirusCenterActivity : AppCompatActivity() {
 
     private fun recentDeepScan(): List<TrojanAdapter.UiItem> {
         ScanControl.reset()
-        val pm = packageManager
         val weekAgo = System.currentTimeMillis() - 7L * 24 * 3600 * 1000
         val recent = PackageSnapshot.installedPackages(applicationContext, 0).filter { it.firstInstallTime > weekAgo }
         if (recent.isEmpty()) {
@@ -196,7 +196,6 @@ class VirusCenterActivity : AppCompatActivity() {
 
     private fun diffScan(): List<TrojanAdapter.UiItem> {
         ScanControl.reset()
-        val pm = packageManager
         val all = PackageSnapshot.installedPackages(applicationContext, 0)
         val changed = mutableListOf<android.content.pm.PackageInfo>()
         for (info in all) {
@@ -240,7 +239,6 @@ class VirusCenterActivity : AppCompatActivity() {
     }
 
     private fun embeddedScan(): List<TrojanAdapter.UiItem> {
-        val pm = packageManager
         val items = mutableListOf<TrojanAdapter.UiItem>()
         for (info in PackageSnapshot.installedPackages(applicationContext, 0)) {
             if (ScanControl.cancelled) break
@@ -388,7 +386,7 @@ class VirusCenterActivity : AppCompatActivity() {
                 ThreatLevel.MEDIUM,
                 "隔离文件已脱离执行路径;确认无用可销毁",
                 null, null,
-                "rm -f '" + it.quarantinedPath + "'",
+                "rm -f " + ShellBridge.quote(it.quarantinedPath),
                 "销毁"
             )
         }
@@ -449,7 +447,6 @@ class VirusCenterActivity : AppCompatActivity() {
     private fun showCertMarkDialog() {
         // 应用枚举 + 标签解析放后台线程(设备应用多时避免主线程卡顿 / ANR)
         Thread {
-            val pm = packageManager
             val thirdParty = try {
                 PackageSnapshot.installedApplications(applicationContext, 0)
                     .filter { (it.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0 }

@@ -89,8 +89,8 @@ object LockerDetector {
                         "疑似锁机木马:锁屏后重置密码进行勒索;命令将先解除管理员再卸载(root)"
                     else
                         "确认是否本人启用的找回/管控类应用;非本人启用请移除管理员并卸载",
-                    fixCommand = "dpm remove-active-admin '" + compName +
-                        "' ; pm uninstall --user 0 '" + pkg + "'",
+                    fixCommand = "dpm remove-active-admin " + ShellBridge.quote(compName) +
+                        " ; pm uninstall --user 0 " + ShellBridge.quote(pkg),
                     fixLabel = "解除管理员并卸载"
                 )
             )

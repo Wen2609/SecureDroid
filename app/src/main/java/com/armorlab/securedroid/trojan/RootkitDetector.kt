@@ -52,7 +52,7 @@ object RootkitDetector {
         }
         if (needSu.isNotEmpty()) {
             val probeOut = ShellBridge.runSu(
-                needSu.joinToString(" ") { "[ -e '" + it + "' ] && echo '" + it + "';" },
+                needSu.joinToString(" ") { "[ -e " + ShellBridge.quote(it) + " ] && echo " + ShellBridge.quote(it) + ";" },
                 15_000L
             ) ?: ""
             probeOut.lines().map { it.trim() }

@@ -32,7 +32,7 @@ object FilesystemScanner {
         val out = mutableListOf<TmpFile>()
         // 单次 find 覆盖全部临时目录(减少 su 往返)
         val entries = ShellBridge.runSu(
-            "find " + tmpDirs.joinToString(" ") { "'" + it + "'" } +
+            "find " + tmpDirs.joinToString(" ") { ShellBridge.quote(it) } +
                 " -maxdepth 2 -type f 2>/dev/null | head -300", 20_000L
         ) ?: return out
         run {
@@ -73,7 +73,7 @@ object FilesystemScanner {
                     f.path, f.reason, f.level,
                     if (critical) "临时目录中的载荷文件是木马投递的典型形态,确认后删除" else null,
                     null, null,
-                    if (critical) "rm -f '" + f.path + "'" else null,
+                    if (critical) "rm -f " + ShellBridge.quote(f.path) else null,
                     if (critical) "删除文件" else null
                 )
             )
@@ -94,7 +94,7 @@ object FilesystemScanner {
                         "FS.RawDex", t, "全盘扫描发现可执行 dex/jar 文件",
                         ThreatLevel.CRITICAL,
                         "系统与正常应用目录之外的可执行 dex 是注入/免杀常见形态",
-                        null, null, "rm -f '" + t + "'", "删除文件"
+                        null, null, "rm -f " + ShellBridge.quote(t), "删除文件"
                     )
                 )
             }
@@ -113,7 +113,7 @@ object FilesystemScanner {
                     v.level,
                     if (v.isMalicious) "脚本包含恶意行为组合,确认后删除" else "脚本包含可疑行为,建议人工审查",
                     null, null,
-                    if (v.isMalicious) "rm -f '" + p + "'" else null,
+                    if (v.isMalicious) "rm -f " + ShellBridge.quote(p) else null,
                     if (v.isMalicious) "删除文件" else null
                 )
             )
@@ -130,7 +130,7 @@ object FilesystemScanner {
                 TrojanAdapter.UiItem(
                     "FS.WorldWritable", path, "系统分区文件对全局可写,可被任意进程篡改",
                     ThreatLevel.HIGH, "建议修复为 644 并排查篡改来源",
-                    null, null, "chmod 644 '" + path + "'", "修复权限"
+                    null, null, "chmod 644 " + ShellBridge.quote(path), "修复权限"
                 )
             )
         }
@@ -145,7 +145,7 @@ object FilesystemScanner {
                 TrojanAdapter.UiItem(
                     "FS.SuRemnant", path, "发现历史 root 方案残留文件",
                     ThreatLevel.MEDIUM, "废弃 root 方案残留是提权后门常见入口,确认后删除",
-                    null, null, "rm -f '" + path + "'", "删除文件"
+                    null, null, "rm -f " + ShellBridge.quote(path), "删除文件"
                 )
             )
         }
@@ -192,7 +192,7 @@ object FilesystemScanner {
                     TrojanAdapter.UiItem(
                         "FS.ClamAvHit · " + sig, p, "文件命中 ClamAV 字节码特征",
                         ThreatLevel.CRITICAL, "命中病毒特征库,建议立即删除",
-                        null, null, "rm -f '" + p + "'", "删除文件"
+                        null, null, "rm -f " + ShellBridge.quote(p), "删除文件"
                     )
                 )
             }
@@ -207,7 +207,7 @@ object FilesystemScanner {
         } catch (_: Exception) {
         }
         val b64 = ShellBridge.runSu(
-            "base64 '" + path + "' 2>/dev/null | head -c " + ((cap / 3) * 4 + 8), 60_000L
+            "base64 " + ShellBridge.quote(path) + " 2>/dev/null | head -c " + ((cap / 3) * 4 + 8), 60_000L
         ) ?: return null
         return try { Base64.decode(b64.trim(), Base64.DEFAULT) } catch (_: Exception) { null }
     }

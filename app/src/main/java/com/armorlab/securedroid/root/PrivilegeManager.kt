@@ -199,8 +199,9 @@ object PrivilegeManager {
             }
             PolicyVerdict.Allow -> Unit
         }
-        val out = ShellBridge.runSu(cmd, timeoutMs)
-        val ok = out != null
+        val result = ShellBridge.runSuResult(cmd, timeoutMs)
+        val out = result?.output
+        val ok = result != null && result.exitCode == 0
         record(PrivLevel.ROOT, cmd, ok, false, System.currentTimeMillis() - started)
         return PrivResult(ok, out, false, if (ok) null else "执行失败或未授权", System.currentTimeMillis() - started)
     }
@@ -215,7 +216,7 @@ object PrivilegeManager {
         val results = arrayOfNulls<String>(cmds.size)
         val allowed = ArrayList<Pair<Int, String>>(cmds.size)
         cmds.forEachIndexed { idx, cmd ->
-            when (val v = PrivilegedPolicy.check(cmd)) {
+            when (PrivilegedPolicy.check(cmd)) {
                 is PolicyVerdict.Deny ->
                     record(PrivLevel.ROOT, cmd, ok = false, denied = true, System.currentTimeMillis() - started)
                 PolicyVerdict.Allow -> allowed.add(idx to cmd)
@@ -247,7 +248,7 @@ object PrivilegeManager {
     /** 一批只读探测:存在性判断合并为单次 su */
     fun existsAll(paths: List<String>, timeoutMs: Long = 15_000L): Set<String> {
         if (paths.isEmpty()) return emptySet()
-        val cmd = paths.joinToString(" ") { "[ -e '" + it + "' ] && echo '" + it + "';" }
+        val cmd = paths.joinToString(" ") { "[ -e " + ShellBridge.quote(it) + " ] && echo " + ShellBridge.quote(it) + ";" }
         val out = ShellBridge.runSu(cmd, timeoutMs) ?: return emptySet()
         return out.lines().map { it.trim() }.filter { it.isNotEmpty() }.toSet()
     }

@@ -33,7 +33,7 @@ object ResidueScanner {
                     ThreatLevel.MEDIUM,
                     "确认应用确实已卸载后可清理残留",
                     null, null,
-                    "rm -rf '/data/data/" + t + "'",
+                    "rm -rf " + ShellBridge.quote("/data/data/" + t),
                     "清理残留"
                 )
             )

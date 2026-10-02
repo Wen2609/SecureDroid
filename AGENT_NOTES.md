@@ -110,3 +110,11 @@
 - DexVerdictCache 的负缓存(~clean)也要落盘;写入攒批,任务收尾必须 flush(ParallelScanner 已调)
 - 新增 RecyclerView 列表页记得 setHasFixedSize(true);首页/面板刷新走 1s 节流,别在每个生命周期回调里重复拉数据
 
+## root 提权执行不变量(v1.7.1 起 · ShellHardeningTest 会拦)
+- `ShellBridge.runSu()` 合并了 stderr,**返回值非 null 不代表成功**(空字符串也是非 null):只读查询才用它
+- 一切会改动系统的命令走 `ShellBridge.runSuChecked()`(策略放行 → 进程启动 → exitCode == 0 → 输出无 permission denied / not found / read-only 等标记);
+  需要看输出时用 `runSuResult()` 自己判 exitCode
+- 任何拼进 shell 的路径/参数必须过 `ShellBridge.quote()`(`'` → `'\''`):破坏性动作 + 可控文件名 = root 命令注入
+- 处置结果要复核:隔离后确认文件真的移动了、断网后回读 iptables 规则,别只信命令回显
+- `PrivilegedPolicy.check()` 是唯一的灾害命令闸门,新增处置命令前先确认它不会被误判为 Allow/Deny (PrivilegedPolicyTest + ShellHardeningTest 会跑真实命令清单)
+
