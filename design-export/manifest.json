@@ -1,0 +1,188 @@
+{
+  "generatedAt": "2026-10-02 12:39:21",
+  "generator": "design-export/export_ui.py",
+  "canvas": {
+    "widthDp": 360.0,
+    "heightDp": 800.0,
+    "svgScale": 3.0
+  },
+  "screens": [
+    {
+      "key": "01-home",
+      "title": "首页 · 设备状态",
+      "heightDp": 800.0,
+      "elements": 36
+    },
+    {
+      "key": "02-detect-virus",
+      "title": "检测 · 病毒扫描",
+      "heightDp": 800.0,
+      "elements": 16
+    },
+    {
+      "key": "03-detect-trojan",
+      "title": "检测 · 木马查杀",
+      "heightDp": 800.0,
+      "elements": 37
+    },
+    {
+      "key": "04-protect-applock",
+      "title": "防护 · 应用锁",
+      "heightDp": 800.0,
+      "elements": 23
+    },
+    {
+      "key": "05-protect-audit",
+      "title": "防护 · 权限审计",
+      "heightDp": 800.0,
+      "elements": 18
+    },
+    {
+      "key": "06-protect-tools",
+      "title": "防护 · 工具箱",
+      "heightDp": 800.0,
+      "elements": 27
+    }
+  ],
+  "parts": [
+    {
+      "key": "act-deep-scan",
+      "title": "独立页 · 深度扫描",
+      "heightDp": 165.8,
+      "elements": 7
+    },
+    {
+      "key": "act-lock",
+      "title": "独立页 · 解锁(PIN 键盘)",
+      "heightDp": 120.0,
+      "elements": 20
+    },
+    {
+      "key": "act-result-list",
+      "title": "独立页 · 结果列表",
+      "heightDp": 120.0,
+      "elements": 4
+    },
+    {
+      "key": "act-virus-center",
+      "title": "独立页 · 病毒风险中心",
+      "heightDp": 120.0,
+      "elements": 7
+    },
+    {
+      "key": "frag-dashboard",
+      "title": "Fragment · 首页",
+      "heightDp": 651.35,
+      "elements": 32
+    },
+    {
+      "key": "frag-detect",
+      "title": "Fragment · 检测(分段外壳)",
+      "heightDp": 132.4,
+      "elements": 7
+    },
+    {
+      "key": "frag-protect",
+      "title": "Fragment · 防护(分段外壳)",
+      "heightDp": 132.4,
+      "elements": 8
+    },
+    {
+      "key": "frag-scanner",
+      "title": "Fragment · 病毒扫描",
+      "heightDp": 120.0,
+      "elements": 5
+    },
+    {
+      "key": "frag-trojan",
+      "title": "Fragment · 木马查杀",
+      "heightDp": 410.9,
+      "elements": 26
+    },
+    {
+      "key": "frag-app-lock",
+      "title": "Fragment · 应用锁",
+      "heightDp": 211.0,
+      "elements": 11
+    },
+    {
+      "key": "frag-audit",
+      "title": "Fragment · 权限审计",
+      "heightDp": 120.0,
+      "elements": 6
+    },
+    {
+      "key": "frag-tools",
+      "title": "Fragment · 工具箱",
+      "heightDp": 480.84999999999997,
+      "elements": 15
+    },
+    {
+      "key": "dialog-set-pin",
+      "title": "对话框 · 设置 PIN",
+      "heightDp": 148.0,
+      "elements": 5
+    },
+    {
+      "key": "widget-security",
+      "title": "桌面小组件 · 安全状态",
+      "heightDp": 120.0,
+      "elements": 6
+    },
+    {
+      "key": "item-audit",
+      "title": "列表项 · 权限审计行",
+      "heightDp": 120.0,
+      "elements": 5
+    },
+    {
+      "key": "item-lock-app",
+      "title": "列表项 · 应用锁行",
+      "heightDp": 120.0,
+      "elements": 4
+    },
+    {
+      "key": "item-scan-result",
+      "title": "列表项 · 扫描结果行",
+      "heightDp": 120.0,
+      "elements": 4
+    },
+    {
+      "key": "item-tool",
+      "title": "列表项 · 工具/动作行",
+      "heightDp": 120.0,
+      "elements": 3
+    },
+    {
+      "key": "item-trojan",
+      "title": "列表项 · 木马检测行",
+      "heightDp": 120.0,
+      "elements": 8
+    }
+  ],
+  "icons": [
+    "ic_backspace",
+    "ic_bug",
+    "ic_chevron",
+    "ic_clean",
+    "ic_grid",
+    "ic_launcher_foreground",
+    "ic_lock",
+    "ic_network",
+    "ic_scan",
+    "ic_shield",
+    "ic_tab_detect",
+    "ic_tab_protect",
+    "ic_tab_status"
+  ],
+  "shapes": [
+    "bg_chip",
+    "bg_nav_bar",
+    "bg_page",
+    "bg_ring_disc",
+    "bg_segment_track",
+    "progress_fluid"
+  ],
+  "colors": 29,
+  "dimens": 36
+}

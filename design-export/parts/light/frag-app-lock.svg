@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="633" viewBox="0 0 360 211"
+     data-export="design-export/export_ui.py" data-mode="light"
+     data-source="app/src/main/res/layout/fragment_app_lock.xml">
+  <title>Fragment · 应用锁</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="211">
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="0" data-w="360" data-h="195">
+      <rect x="0" y="0" width="360" height="195" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="195">
+    <g id="tvPinState" data-name="tvPinState" data-type="TextView" data-x="0" data-y="0" data-w="360" data-h="24">
+    </g>
+    <g id="View" data-name="View" data-type="View" data-x="56" data-y="24" data-w="304" data-h="1">
+      <rect x="56" y="24" width="304" height="1" fill="#DFE4DD"/>
+    </g>
+    <g id="btnSetPin" data-name="btnSetPin" data-type="MaterialButton" data-x="0" data-y="25" data-w="360" data-h="56">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#15803D" text-anchor="middle" letter-spacing="0" data-text="设置 / 修改 PIN 码">
+        <tspan x="180" y="55">设置 / 修改 PIN 码</tspan>
+      </text>
+    </g>
+    <g id="View" data-name="View" data-type="View" data-x="56" data-y="81" data-w="304" data-h="1">
+      <rect x="56" y="81" width="304" height="1" fill="#DFE4DD"/>
+    </g>
+    <g id="swDecoy" data-name="swDecoy" data-type="MaterialSwitch" data-x="0" data-y="82" data-w="360" data-h="56">
+      <rect x="0" y="94" width="52" height="32" fill="#04BD19" rx="16" ry="16"/>
+      <circle cx="38" cy="110" r="12" fill="None"/>
+    </g>
+    <g id="View" data-name="View" data-type="View" data-x="56" data-y="138" data-w="304" data-h="1">
+      <rect x="56" y="138" width="304" height="1" fill="#DFE4DD"/>
+    </g>
+    <g id="btnAccessibility" data-name="btnAccessibility" data-type="MaterialButton" data-x="0" data-y="139" data-w="360" data-h="56">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#15803D" text-anchor="middle" letter-spacing="0" data-text="开启无障碍权限(用于应用锁)">
+        <tspan x="180" y="169">开启无障碍权限(用于应用锁)</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="211" data-w="360" data-h="16">
+      <rect x="0" y="211" width="360" height="16" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="rvLockApps" data-name="rvLockApps" data-type="RecyclerView" data-x="0" data-y="211" data-w="360" data-h="16">
+      <rect x="8" y="219" width="344" height="48" fill="#E6EDE4" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="8" y="219">RecyclerView · 列表项 item_*.xml</text>
+    </g>
+    </g>
+    </g>
+</svg>

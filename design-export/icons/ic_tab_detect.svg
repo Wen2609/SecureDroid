@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" data-export="design-export/export_ui.py" data-source="app/src/main/res/drawable/ic_tab_detect.xml">
+  <title>ic_tab_detect</title>
+  <path d="M10.5,3 A7,7 0 1,0 10.5,17 A7,7 0 1,0 10.5,3 Z M10.5,5.6 A4.4,4.4 0 1,1 10.5,14.4 A4.4,4.4 0 1,1 10.5,5.6 Z" fill="#000000"/>
+  <path d="M15.6,15.6 L20,20" fill="none" stroke="#000000" stroke-width="2.6"/>
+</svg>

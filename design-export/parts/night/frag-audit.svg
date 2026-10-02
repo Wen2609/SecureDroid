@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+     data-export="design-export/export_ui.py" data-mode="night"
+     data-source="app/src/main/res/layout/fragment_permission_audit.xml">
+  <title>Fragment · 权限审计</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="TextView: 权限审计" data-name="TextView: 权限审计" data-type="TextView" data-x="16" data-y="24" data-w="52" data-h="17.55">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="13" font-weight="bold" fill="#A9B3A7" text-anchor="start" letter-spacing="0.26" data-text="权限审计">
+        <tspan x="16" y="35.05">权限审计</tspan>
+      </text>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="49.55" data-w="360" data-h="24">
+      <rect x="0" y="49.55" width="360" height="24" fill="#171B18" rx="24" ry="24"/>
+    <g id="tvSummary" data-name="tvSummary" data-type="TextView" data-x="0" data-y="49.55" data-w="360" data-h="24">
+    </g>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="89.55" data-w="360" data-h="46.45">
+      <rect x="0" y="89.55" width="360" height="46.45" fill="#171B18" rx="24" ry="24"/>
+    <g id="rvAudit" data-name="rvAudit" data-type="RecyclerView" data-x="0" data-y="89.55" data-w="360" data-h="46.45">
+      <rect x="8" y="97.55" width="344" height="48" fill="#232823" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="8" y="128">RecyclerView · 列表项 item_*.xml</text>
+    </g>
+    </g>
+    </g>
+</svg>

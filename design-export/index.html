@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>SecureDroid 界面结构 · 导出预览</title>
+<style>
+  body { margin: 0; padding: 24px 32px 80px; background: #EFF2ED; color: #1A1A1A;
+         font: 14px/1.6 "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 32px 0 12px; }
+  .meta { color: #6B6B6B; font-size: 12px; margin-bottom: 18px; }
+  label { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+  figure { margin: 0; background: #fff; border-radius: 16px; padding: 12px; width: 268px;
+           box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  img { width: 244px; height: auto; display: block; border-radius: 10px;
+        outline: 1px solid rgba(0,0,0,.06); }
+  figcaption { font-size: 12px; color: #444; margin-top: 8px; }
+  code { color: #6B6B6B; font-size: 11px; }
+  .icons { display: flex; flex-wrap: wrap; gap: 10px; }
+  .icons img { width: 40px; padding: 8px; background: #F5F8F4; border-radius: 8px; }
+</style>
+</head>
+<body>
+<h1>SecureDroid 界面结构(从 res/ 导出)</h1>
+<div class="meta">生成时间 2026-10-02 12:39:21 · 画布 360×800dp · SVG 输出 1080 宽 · 生成器
+<code>design-export/export_ui.py</code></div>
+<label><input type="checkbox" id="mode"> 深色模式预览(切换深色 SVG)</label>
+
+<h2>成品画板(6)</h2>
+<div class="grid">
+      <figure>
+        <img data-light="screens/light/01-home.svg" data-dark="screens/dark/01-home.svg" src="screens/light/01-home.svg" alt="首页 · 设备状态">
+        <figcaption><b>首页 · 设备状态</b><br><code>app/src/main/res/layout/activity_main.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="screens/light/02-detect-virus.svg" data-dark="screens/dark/02-detect-virus.svg" src="screens/light/02-detect-virus.svg" alt="检测 · 病毒扫描">
+        <figcaption><b>检测 · 病毒扫描</b><br><code>app/src/main/res/layout/activity_main.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="screens/light/03-detect-trojan.svg" data-dark="screens/dark/03-detect-trojan.svg" src="screens/light/03-detect-trojan.svg" alt="检测 · 木马查杀">
+        <figcaption><b>检测 · 木马查杀</b><br><code>app/src/main/res/layout/activity_main.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="screens/light/04-protect-applock.svg" data-dark="screens/dark/04-protect-applock.svg" src="screens/light/04-protect-applock.svg" alt="防护 · 应用锁">
+        <figcaption><b>防护 · 应用锁</b><br><code>app/src/main/res/layout/activity_main.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="screens/light/05-protect-audit.svg" data-dark="screens/dark/05-protect-audit.svg" src="screens/light/05-protect-audit.svg" alt="防护 · 权限审计">
+        <figcaption><b>防护 · 权限审计</b><br><code>app/src/main/res/layout/activity_main.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="screens/light/06-protect-tools.svg" data-dark="screens/dark/06-protect-tools.svg" src="screens/light/06-protect-tools.svg" alt="防护 · 工具箱">
+        <figcaption><b>防护 · 工具箱</b><br><code>app/src/main/res/layout/activity_main.xml</code></figcaption>
+      </figure>
+</div>
+
+<h2>Fragment / Activity / 列表项 / 对话框 / 小组件(19)</h2>
+<div class="grid">
+      <figure>
+        <img data-light="parts/light/act-deep-scan.svg" data-dark="parts/dark/act-deep-scan.svg" src="parts/light/act-deep-scan.svg" alt="独立页 · 深度扫描">
+        <figcaption><b>独立页 · 深度扫描</b><br><code>app/src/main/res/layout/activity_deep_scan.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/act-lock.svg" data-dark="parts/dark/act-lock.svg" src="parts/light/act-lock.svg" alt="独立页 · 解锁(PIN 键盘)">
+        <figcaption><b>独立页 · 解锁(PIN 键盘)</b><br><code>app/src/main/res/layout/activity_lock.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/act-result-list.svg" data-dark="parts/dark/act-result-list.svg" src="parts/light/act-result-list.svg" alt="独立页 · 结果列表">
+        <figcaption><b>独立页 · 结果列表</b><br><code>app/src/main/res/layout/activity_result_list.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/act-virus-center.svg" data-dark="parts/dark/act-virus-center.svg" src="parts/light/act-virus-center.svg" alt="独立页 · 病毒风险中心">
+        <figcaption><b>独立页 · 病毒风险中心</b><br><code>app/src/main/res/layout/activity_virus_center.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-dashboard.svg" data-dark="parts/dark/frag-dashboard.svg" src="parts/light/frag-dashboard.svg" alt="Fragment · 首页">
+        <figcaption><b>Fragment · 首页</b><br><code>app/src/main/res/layout/fragment_dashboard.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-detect.svg" data-dark="parts/dark/frag-detect.svg" src="parts/light/frag-detect.svg" alt="Fragment · 检测(分段外壳)">
+        <figcaption><b>Fragment · 检测(分段外壳)</b><br><code>app/src/main/res/layout/fragment_detect.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-protect.svg" data-dark="parts/dark/frag-protect.svg" src="parts/light/frag-protect.svg" alt="Fragment · 防护(分段外壳)">
+        <figcaption><b>Fragment · 防护(分段外壳)</b><br><code>app/src/main/res/layout/fragment_protect.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-scanner.svg" data-dark="parts/dark/frag-scanner.svg" src="parts/light/frag-scanner.svg" alt="Fragment · 病毒扫描">
+        <figcaption><b>Fragment · 病毒扫描</b><br><code>app/src/main/res/layout/fragment_scanner.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-trojan.svg" data-dark="parts/dark/frag-trojan.svg" src="parts/light/frag-trojan.svg" alt="Fragment · 木马查杀">
+        <figcaption><b>Fragment · 木马查杀</b><br><code>app/src/main/res/layout/fragment_trojan.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-app-lock.svg" data-dark="parts/dark/frag-app-lock.svg" src="parts/light/frag-app-lock.svg" alt="Fragment · 应用锁">
+        <figcaption><b>Fragment · 应用锁</b><br><code>app/src/main/res/layout/fragment_app_lock.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-audit.svg" data-dark="parts/dark/frag-audit.svg" src="parts/light/frag-audit.svg" alt="Fragment · 权限审计">
+        <figcaption><b>Fragment · 权限审计</b><br><code>app/src/main/res/layout/fragment_permission_audit.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/frag-tools.svg" data-dark="parts/dark/frag-tools.svg" src="parts/light/frag-tools.svg" alt="Fragment · 工具箱">
+        <figcaption><b>Fragment · 工具箱</b><br><code>app/src/main/res/layout/fragment_tools.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/dialog-set-pin.svg" data-dark="parts/dark/dialog-set-pin.svg" src="parts/light/dialog-set-pin.svg" alt="对话框 · 设置 PIN">
+        <figcaption><b>对话框 · 设置 PIN</b><br><code>app/src/main/res/layout/dialog_set_pin.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/widget-security.svg" data-dark="parts/dark/widget-security.svg" src="parts/light/widget-security.svg" alt="桌面小组件 · 安全状态">
+        <figcaption><b>桌面小组件 · 安全状态</b><br><code>app/src/main/res/layout/widget_security.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/item-audit.svg" data-dark="parts/dark/item-audit.svg" src="parts/light/item-audit.svg" alt="列表项 · 权限审计行">
+        <figcaption><b>列表项 · 权限审计行</b><br><code>app/src/main/res/layout/item_audit.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/item-lock-app.svg" data-dark="parts/dark/item-lock-app.svg" src="parts/light/item-lock-app.svg" alt="列表项 · 应用锁行">
+        <figcaption><b>列表项 · 应用锁行</b><br><code>app/src/main/res/layout/item_lock_app.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/item-scan-result.svg" data-dark="parts/dark/item-scan-result.svg" src="parts/light/item-scan-result.svg" alt="列表项 · 扫描结果行">
+        <figcaption><b>列表项 · 扫描结果行</b><br><code>app/src/main/res/layout/item_scan_result.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/item-tool.svg" data-dark="parts/dark/item-tool.svg" src="parts/light/item-tool.svg" alt="列表项 · 工具/动作行">
+        <figcaption><b>列表项 · 工具/动作行</b><br><code>app/src/main/res/layout/item_tool.xml</code></figcaption>
+      </figure>
+      <figure>
+        <img data-light="parts/light/item-trojan.svg" data-dark="parts/dark/item-trojan.svg" src="parts/light/item-trojan.svg" alt="列表项 · 木马检测行">
+        <figcaption><b>列表项 · 木马检测行</b><br><code>app/src/main/res/layout/item_trojan.xml</code></figcaption>
+      </figure>
+</div>
+
+<h2>图标(13)</h2>
+<div class="icons">
+  <img src="icons/ic_backspace.svg" alt="ic_backspace" title="ic_backspace">
+  <img src="icons/ic_bug.svg" alt="ic_bug" title="ic_bug">
+  <img src="icons/ic_chevron.svg" alt="ic_chevron" title="ic_chevron">
+  <img src="icons/ic_clean.svg" alt="ic_clean" title="ic_clean">
+  <img src="icons/ic_grid.svg" alt="ic_grid" title="ic_grid">
+  <img src="icons/ic_launcher_foreground.svg" alt="ic_launcher_foreground" title="ic_launcher_foreground">
+  <img src="icons/ic_lock.svg" alt="ic_lock" title="ic_lock">
+  <img src="icons/ic_network.svg" alt="ic_network" title="ic_network">
+  <img src="icons/ic_scan.svg" alt="ic_scan" title="ic_scan">
+  <img src="icons/ic_shield.svg" alt="ic_shield" title="ic_shield">
+  <img src="icons/ic_tab_detect.svg" alt="ic_tab_detect" title="ic_tab_detect">
+  <img src="icons/ic_tab_protect.svg" alt="ic_tab_protect" title="ic_tab_protect">
+  <img src="icons/ic_tab_status.svg" alt="ic_tab_status" title="ic_tab_status">
+</div>
+
+<script>
+var box = document.getElementById('mode');
+box.addEventListener('change', function () {
+  var dark = box.checked;
+  document.querySelectorAll('img[data-light]').forEach(function (img) {
+    img.src = dark ? img.dataset.dark : img.dataset.light;
+  });
+  document.body.style.background = dark ? '#0B0F0C' : '#EFF2ED';
+  document.body.style.color = dark ? '#EDF2EC' : '#1A1A1A';
+  document.querySelectorAll('figure').forEach(function (f) {
+    f.style.background = dark ? '#171B18' : '#fff';
+  });
+  document.querySelectorAll('figcaption').forEach(function (f) {
+    f.style.color = dark ? '#A9B3A7' : '#444';
+  });
+});
+</script>
+</body>
+</html>

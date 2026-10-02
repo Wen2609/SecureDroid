@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="2400" viewBox="0 0 360 800"
+     data-export="design-export/export_ui.py" data-mode="light"
+     data-source="app/src/main/res/layout/activity_main.xml">
+  <title>防护 · 权限审计</title>
+  <desc>防护板块第 2 段:权限风险清单</desc>
+  <defs>
+  <linearGradient id="grad_bg_page_light" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+    <stop offset="0" stop-color="#F3F8EE"/>
+    <stop offset="1" stop-color="#EFF0F0"/>
+  </linearGradient>
+  </defs>
+    <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="0" data-y="0" data-w="360" data-h="800">
+      <rect x="0" y="0" width="360" height="800" fill="url(#grad_bg_page_light)"/>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="800">
+    <g id="container" data-name="container" data-type="FrameLayout" data-x="0" data-y="0" data-w="360" data-h="800">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="728">
+    <g id="TextView: 防护" data-name="TextView: 防护" data-type="TextView" data-x="16" data-y="16" data-w="48" data-h="32.4">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="-0.24" data-text="防护">
+        <tspan x="16" y="36.4">防护</tspan>
+      </text>
+    </g>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="64.4" data-w="328" data-h="52">
+      <rect x="16" y="64.4" width="328" height="52" fill="#E6EDE4" rx="16" ry="16"/>
+    <g id="segProtect" data-name="segProtect" data-type="MaterialButtonToggleGroup" data-x="18" data-y="66.4" data-w="324" data-h="48">
+    <g id="segProtectLock" data-name="segProtectLock" data-type="MaterialButton" data-x="18" data-y="66.4" data-w="108" data-h="48">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#6B6B6B" text-anchor="middle" letter-spacing="0" data-text="应用锁">
+        <tspan x="72" y="92.15">应用锁</tspan>
+      </text>
+    </g>
+    <g id="segProtectAudit" data-name="segProtectAudit" data-type="MaterialButton" data-x="126" data-y="66.4" data-w="108" data-h="48">
+      <rect x="126" y="66.4" width="108" height="48" fill="#FFFFFF" rx="16" ry="16"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="0" data-text="权限审计">
+        <tspan x="180" y="92.15">权限审计</tspan>
+      </text>
+    </g>
+    <g id="segProtectTools" data-name="segProtectTools" data-type="MaterialButton" data-x="234" data-y="66.4" data-w="108" data-h="48">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#6B6B6B" text-anchor="middle" letter-spacing="0" data-text="工具箱">
+        <tspan x="288" y="92.15">工具箱</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    <g id="protectContainer" data-name="protectContainer" data-type="FrameLayout" data-x="16" data-y="132.4" data-w="328" data-h="611.6">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="132.4" data-w="328" data-h="611.6">
+    <g id="TextView: 权限审计" data-name="TextView: 权限审计" data-type="TextView" data-x="32" data-y="156.4" data-w="52" data-h="17.55">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="13" font-weight="bold" fill="#6B6B6B" text-anchor="start" letter-spacing="0.26" data-text="权限审计">
+        <tspan x="32" y="167.45">权限审计</tspan>
+      </text>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="181.95" data-w="328" data-h="24">
+      <rect x="16" y="181.95" width="328" height="24" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="tvSummary" data-name="tvSummary" data-type="TextView" data-x="16" data-y="181.95" data-w="328" data-h="24">
+    </g>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="221.95" data-w="328" data-h="538.05">
+      <rect x="16" y="221.95" width="328" height="538.05" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="rvAudit" data-name="rvAudit" data-type="RecyclerView" data-x="16" data-y="221.95" data-w="328" data-h="538.05">
+      <rect x="24" y="229.95" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
+      <rect x="24" y="285.95" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
+      <rect x="24" y="341.95" width="312" height="48" fill="#E6EDE4" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="752">RecyclerView · item_audit.xml</text>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+    <g id="bottomNav" data-name="bottomNav" data-type="TabLayout" data-x="6" data-y="736" data-w="348" data-h="60">
+      <rect x="6" y="736" width="348" height="60" fill="#FDFDFD" rx="24" ry="24"/>
+      <g data-name="icon:ic_tab_status" transform="translate(52,746) scale(1)">
+        <path d="M12,2.4 L4.4,5.5 V11.6 c0,4.7 3.2,8.6 7.6,9.8 4.4,-1.2 7.6,-5.1 7.6,-9.8 V5.5 Z M10.4,15.6 L7.6,12.8 8.7,11.7 10.4,13.4 15.2,8.6 16.3,9.7 Z" fill="#6B6B6B"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#6B6B6B" text-anchor="middle" x="64" y="784">首页</text>
+      <g data-name="icon:ic_tab_detect" transform="translate(168,746) scale(1)">
+        <path d="M10.5,3 A7,7 0 1,0 10.5,17 A7,7 0 1,0 10.5,3 Z M10.5,5.6 A4.4,4.4 0 1,1 10.5,14.4 A4.4,4.4 0 1,1 10.5,5.6 Z" fill="#6B6B6B"/>
+        <path d="M15.6,15.6 L20,20" fill="#6B6B6B" stroke="#000000" stroke-width="2.6"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#6B6B6B" text-anchor="middle" x="180" y="784">检测</text>
+      <g data-name="icon:ic_tab_protect" transform="translate(284,746) scale(1)">
+        <path d="M6.4,10.2 h11.2 a1.9,1.9 0 0,1 1.9,1.9 v7 a1.9,1.9 0 0,1 -1.9,1.9 h-11.2 a1.9,1.9 0 0,1 -1.9,-1.9 v-7 a1.9,1.9 0 0,1 1.9,-1.9 z" fill="#04BD19"/>
+        <path d="M8.4,10.2 V8 a3.6,3.6 0 0,1 7.2,0 v2.2" fill="#04BD19" stroke="#000000" stroke-width="2.2"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#04BD19" text-anchor="middle" x="296" y="784">防护</text>
+    </g>
+    </g>
+</svg>

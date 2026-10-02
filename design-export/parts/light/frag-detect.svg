@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="397.2" viewBox="0 0 360 132.4"
+     data-export="design-export/export_ui.py" data-mode="light"
+     data-source="app/src/main/res/layout/fragment_detect.xml">
+  <title>Fragment · 检测(分段外壳)</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="132.4">
+    <g id="TextView: 检测" data-name="TextView: 检测" data-type="TextView" data-x="16" data-y="16" data-w="48" data-h="32.4">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="-0.24" data-text="检测">
+        <tspan x="16" y="36.4">检测</tspan>
+      </text>
+    </g>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="64.4" data-w="328" data-h="52">
+      <rect x="16" y="64.4" width="328" height="52" fill="#E6EDE4" rx="16" ry="16"/>
+    <g id="segDetect" data-name="segDetect" data-type="MaterialButtonToggleGroup" data-x="18" data-y="66.4" data-w="324" data-h="48">
+    <g id="segDetectVirus" data-name="segDetectVirus" data-type="MaterialButton" data-x="18" data-y="66.4" data-w="162" data-h="48">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#6B6B6B" text-anchor="middle" letter-spacing="0" data-text="病毒扫描">
+        <tspan x="99" y="92.15">病毒扫描</tspan>
+      </text>
+    </g>
+    <g id="segDetectTrojan" data-name="segDetectTrojan" data-type="MaterialButton" data-x="180" data-y="66.4" data-w="162" data-h="48">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#6B6B6B" text-anchor="middle" letter-spacing="0" data-text="木马查杀">
+        <tspan x="261" y="92.15">木马查杀</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    <g id="detectContainer" data-name="detectContainer" data-type="FrameLayout" data-x="16" data-y="132.4" data-w="328" data-h="16">
+    </g>
+    </g>
+</svg>

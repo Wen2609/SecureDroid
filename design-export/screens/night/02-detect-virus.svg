@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="2400" viewBox="0 0 360 800"
+     data-export="design-export/export_ui.py" data-mode="night"
+     data-source="app/src/main/res/layout/activity_main.xml">
+  <title>检测 · 病毒扫描</title>
+  <desc>检测板块第 1 段:扫描入口与结果</desc>
+  <defs>
+  <linearGradient id="grad_bg_page_night" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+    <stop offset="0" stop-color="#101711"/>
+    <stop offset="1" stop-color="#0B0E0C"/>
+  </linearGradient>
+  </defs>
+    <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="0" data-y="0" data-w="360" data-h="800">
+      <rect x="0" y="0" width="360" height="800" fill="url(#grad_bg_page_night)"/>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="800">
+    <g id="container" data-name="container" data-type="FrameLayout" data-x="0" data-y="0" data-w="360" data-h="800">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="728">
+    <g id="TextView: 检测" data-name="TextView: 检测" data-type="TextView" data-x="16" data-y="16" data-w="48" data-h="32.4">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="bold" fill="#EDF2EC" text-anchor="start" letter-spacing="-0.24" data-text="检测">
+        <tspan x="16" y="36.4">检测</tspan>
+      </text>
+    </g>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="64.4" data-w="328" data-h="52">
+      <rect x="16" y="64.4" width="328" height="52" fill="#232823" rx="16" ry="16"/>
+    <g id="segDetect" data-name="segDetect" data-type="MaterialButtonToggleGroup" data-x="18" data-y="66.4" data-w="324" data-h="48">
+    <g id="segDetectVirus" data-name="segDetectVirus" data-type="MaterialButton" data-x="18" data-y="66.4" data-w="162" data-h="48">
+      <rect x="18" y="66.4" width="162" height="48" fill="#171B18" rx="16" ry="16"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="病毒扫描">
+        <tspan x="99" y="92.15">病毒扫描</tspan>
+      </text>
+    </g>
+    <g id="segDetectTrojan" data-name="segDetectTrojan" data-type="MaterialButton" data-x="180" data-y="66.4" data-w="162" data-h="48">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#A9B3A7" text-anchor="middle" letter-spacing="0" data-text="木马查杀">
+        <tspan x="261" y="92.15">木马查杀</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    <g id="detectContainer" data-name="detectContainer" data-type="FrameLayout" data-x="16" data-y="132.4" data-w="328" data-h="611.6">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="132.4" data-w="328" data-h="611.6">
+    <g id="btnStartScan" data-name="btnStartScan" data-type="MaterialButton" data-x="16" data-y="132.4" data-w="328" data-h="48">
+      <rect x="16" y="132.4" width="328" height="48" fill="#4ADE80" rx="24" ry="24"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="bold" fill="#052E16" text-anchor="middle" letter-spacing="0" data-text="开始全盘扫描">
+        <tspan x="180" y="158.4">开始全盘扫描</tspan>
+      </text>
+    </g>
+    <g id="progress" data-name="progress" data-type="ProgressBar" data-x="16" data-y="196.4" data-w="328" data-h="4">
+      <rect x="16" y="196.4" width="328" height="4" fill="#232823" rx="2" ry="2"/>
+      <rect x="16" y="196.4" width="131.2" height="4" fill="#31D027" rx="2" ry="2"/>
+    </g>
+    <g id="tvStatus" data-name="tvStatus" data-type="TextView" data-x="16" data-y="212.4" data-w="328" data-h="18.9">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#A9B3A7" text-anchor="start" letter-spacing="0" data-text="点击下方按钮开始扫描">
+        <tspan x="16" y="224.3">点击下方按钮开始扫描</tspan>
+      </text>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="247.3" data-w="328" data-h="512.7">
+      <rect x="16" y="247.3" width="328" height="512.7" fill="#171B18" rx="24" ry="24"/>
+    <g id="rvResults" data-name="rvResults" data-type="RecyclerView" data-x="16" data-y="247.3" data-w="328" data-h="512.7">
+      <rect x="24" y="255.3" width="312" height="48" fill="#232823" rx="8" ry="8"/>
+      <rect x="24" y="311.3" width="312" height="48" fill="#232823" rx="8" ry="8"/>
+      <rect x="24" y="367.3" width="312" height="48" fill="#232823" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="752">RecyclerView · item_scan_result.xml</text>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+    <g id="bottomNav" data-name="bottomNav" data-type="TabLayout" data-x="6" data-y="736" data-w="348" data-h="60">
+      <rect x="6" y="736" width="348" height="60" fill="#191E1A" rx="24" ry="24"/>
+      <g data-name="icon:ic_tab_status" transform="translate(52,746) scale(1)">
+        <path d="M12,2.4 L4.4,5.5 V11.6 c0,4.7 3.2,8.6 7.6,9.8 4.4,-1.2 7.6,-5.1 7.6,-9.8 V5.5 Z M10.4,15.6 L7.6,12.8 8.7,11.7 10.4,13.4 15.2,8.6 16.3,9.7 Z" fill="#A9B3A7"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#A9B3A7" text-anchor="middle" x="64" y="784">首页</text>
+      <g data-name="icon:ic_tab_detect" transform="translate(168,746) scale(1)">
+        <path d="M10.5,3 A7,7 0 1,0 10.5,17 A7,7 0 1,0 10.5,3 Z M10.5,5.6 A4.4,4.4 0 1,1 10.5,14.4 A4.4,4.4 0 1,1 10.5,5.6 Z" fill="#31D027"/>
+        <path d="M15.6,15.6 L20,20" fill="#31D027" stroke="#000000" stroke-width="2.6"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#31D027" text-anchor="middle" x="180" y="784">检测</text>
+      <g data-name="icon:ic_tab_protect" transform="translate(284,746) scale(1)">
+        <path d="M6.4,10.2 h11.2 a1.9,1.9 0 0,1 1.9,1.9 v7 a1.9,1.9 0 0,1 -1.9,1.9 h-11.2 a1.9,1.9 0 0,1 -1.9,-1.9 v-7 a1.9,1.9 0 0,1 1.9,-1.9 z" fill="#A9B3A7"/>
+        <path d="M8.4,10.2 V8 a3.6,3.6 0 0,1 7.2,0 v2.2" fill="#A9B3A7" stroke="#000000" stroke-width="2.2"/>
+      </g>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#A9B3A7" text-anchor="middle" x="296" y="784">防护</text>
+    </g>
+    </g>
+</svg>

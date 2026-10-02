@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" data-export="design-export/export_ui.py" data-source="app/src/main/res/drawable/ic_tab_status.xml">
+  <title>ic_tab_status</title>
+  <path d="M12,2.4 L4.4,5.5 V11.6 c0,4.7 3.2,8.6 7.6,9.8 4.4,-1.2 7.6,-5.1 7.6,-9.8 V5.5 Z M10.4,15.6 L7.6,12.8 8.7,11.7 10.4,13.4 15.2,8.6 16.3,9.7 Z" fill="#000000"/>
+</svg>

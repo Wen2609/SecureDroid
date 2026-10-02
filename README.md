@@ -63,8 +63,16 @@
     │  └─ ui/                        # 仪表盘 / 扫描 / 审计 / 应用锁 / 木马查杀 / 工具箱页面
     ├─ app/src/main/res/             # 布局、字符串、图标、无障碍配置
     ├─ app/src/main/assets/signatures/  # 内置演示签名(ClamAV .hsb/.ndb 格式)
+    ├─ design-export/                # 界面结构导出(SVG/令牌/结构文档;不参与构建)
     ├─ app/build.gradle.kts
     └─ LICENSE                       # Apache-2.0 开源许可
+
+## 界面结构导出(design-export/)
+
+- `design-export/` 是从 `app/src/main/res` 反向导出的界面结构:6 个成品画板 + 19 个组件板的 SVG(浅色/深色各一套)、13 个图标 SVG、DTCG 令牌 JSON 与 CSV、结构化 JSON/Markdown,以及本地预览 `index.html`。
+- 用途:把界面交给 Figma / Sketch / Axure / 即时设计 / Penpot 等工具继续设计、做标注或建组件库;不看图也可以直接读 `ui-structure.md`。
+- 重新生成:`python design-export/export_ui.py`(仅 Python 标准库)。该目录不参与 APK 构建,CI 不运行,也不影响单元测试。
+- 保真度:结构级线框 —— 颜色/尺寸/字号取真实令牌值,但文字宽度为估算值、列表内容与进度值为静态示意,详见 `design-export/README.md`。
 
 ## 构建步骤
 

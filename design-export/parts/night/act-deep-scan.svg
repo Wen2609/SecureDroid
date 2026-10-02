@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="497.4" viewBox="0 0 360 165.8"
+     data-export="design-export/export_ui.py" data-mode="night"
+     data-source="app/src/main/res/layout/activity_deep_scan.xml">
+  <title>独立页 · 深度扫描</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="165.8">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="133.8">
+    <g id="tvTitle" data-name="tvTitle" data-type="TextView" data-x="16" data-y="0" data-w="328" data-h="16">
+    </g>
+    <g id="btnStart" data-name="btnStart" data-type="MaterialButton" data-x="16" data-y="16" data-w="328" data-h="48">
+      <rect x="16" y="16" width="328" height="48" fill="#4ADE80" rx="24" ry="24"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="bold" fill="#052E16" text-anchor="middle" letter-spacing="0" data-text="开始深度查杀">
+        <tspan x="180" y="42">开始深度查杀</tspan>
+      </text>
+    </g>
+    <g id="progress" data-name="progress" data-type="ProgressBar" data-x="16" data-y="80" data-w="328" data-h="4">
+      <rect x="16" y="80" width="328" height="4" fill="#232823" rx="2" ry="2"/>
+      <rect x="16" y="80" width="131.2" height="4" fill="#31D027" rx="2" ry="2"/>
+    </g>
+    <g id="tvPhase" data-name="tvPhase" data-type="TextView" data-x="16" data-y="96" data-w="328" data-h="37.8">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#A9B3A7" text-anchor="start" letter-spacing="0" data-text="三阶段:进程内存 → 全设备目录 → 底层分区。Root 模式下效果完整,耗时较长。">
+        <tspan x="16" y="107.9">三阶段:进程内存 → 全设备目录 → 底层分区。Root</tspan>
+        <tspan x="16" y="126.8"> 模式下效果完整,耗时较长。</tspan>
+      </text>
+    </g>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="16" data-y="149.8" data-w="328" data-h="32">
+      <rect x="16" y="149.8" width="328" height="32" fill="#171B18" rx="24" ry="24"/>
+    <g id="rvList" data-name="rvList" data-type="RecyclerView" data-x="16" data-y="149.8" data-w="328" data-h="32">
+      <rect x="24" y="157.8" width="312" height="48" fill="#232823" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="24" y="173.8">RecyclerView · 列表项 item_*.xml</text>
+    </g>
+    </g>
+    </g>
+</svg>

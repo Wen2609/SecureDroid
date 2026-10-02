@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+     data-export="design-export/export_ui.py" data-mode="night"
+     data-source="app/src/main/res/layout/item_trojan.xml">
+  <title>列表项 · 木马检测行</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="tvTitle" data-name="tvTitle" data-type="TextView" data-x="16" data-y="12" data-w="328" data-h="0">
+    </g>
+    <g id="tvSub" data-name="tvSub" data-type="TextView" data-x="16" data-y="12" data-w="328" data-h="0">
+    </g>
+    <g id="tvDetail" data-name="tvDetail" data-type="TextView" data-x="16" data-y="14" data-w="328" data-h="0">
+    </g>
+    <g id="tvSuggestion" data-name="tvSuggestion" data-type="TextView" data-x="16" data-y="22" data-w="328" data-h="0">
+    </g>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="30" data-w="104" data-h="48">
+    <g id="btnUninstall" data-name="btnUninstall" data-type="MaterialButton" data-x="16" data-y="30" data-w="64" data-h="48">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="立即卸载">
+        <tspan x="48" y="56">立即卸载</tspan>
+      </text>
+    </g>
+    <g id="btnFix" data-name="btnFix" data-type="MaterialButton" data-x="88" data-y="30" data-w="32" data-h="48">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="normal" fill="#EDF2EC" text-anchor="middle" letter-spacing="0" data-text="执行">
+        <tspan x="104" y="56">执行</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+</svg>

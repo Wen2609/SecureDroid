@@ -1,0 +1,1073 @@
+{
+  "$description": "SecureDroid 界面令牌(W3C DTCG 格式)。core = 浅色基准,night = 深色覆盖;来源 app/src/main/res/values 与 values-night。",
+  "core": {
+    "color": {
+      "c_accent": {
+        "$type": "color",
+        "$value": "#15803D",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_accent"
+          }
+        }
+      },
+      "c_background": {
+        "$type": "color",
+        "$value": "#F2F4EF",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_background"
+          }
+        }
+      },
+      "c_bg_bottom": {
+        "$type": "color",
+        "$value": "#EFF0F0",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_bg_bottom"
+          }
+        }
+      },
+      "c_bg_top": {
+        "$type": "color",
+        "$value": "#F3F8EE",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_bg_top"
+          }
+        }
+      },
+      "c_border": {
+        "$type": "color",
+        "$value": "#DFE4DD",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_border"
+          }
+        }
+      },
+      "c_card": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_card"
+          }
+        }
+      },
+      "c_destructive": {
+        "$type": "color",
+        "$value": "#D03B37",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_destructive"
+          }
+        }
+      },
+      "c_foreground": {
+        "$type": "color",
+        "$value": "#1A1A1A",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_foreground"
+          }
+        }
+      },
+      "c_gold": {
+        "$type": "color",
+        "$value": "#A16207",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_gold"
+          }
+        }
+      },
+      "c_muted": {
+        "$type": "color",
+        "$value": "#E6EDE4",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_muted"
+          }
+        }
+      },
+      "c_muted_foreground": {
+        "$type": "color",
+        "$value": "#6B6B6B",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_muted_foreground"
+          }
+        }
+      },
+      "c_nav": {
+        "$type": "color",
+        "$value": "#FDFDFD",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_nav"
+          }
+        }
+      },
+      "c_on_accent": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_accent"
+          }
+        }
+      },
+      "c_on_destructive": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_destructive"
+          }
+        }
+      },
+      "c_on_primary": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_primary"
+          }
+        }
+      },
+      "c_on_primary_container": {
+        "$type": "color",
+        "$value": "#06330B",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_primary_container"
+          }
+        }
+      },
+      "c_primary": {
+        "$type": "color",
+        "$value": "#04BD19",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_primary"
+          }
+        }
+      },
+      "c_primary_container": {
+        "$type": "color",
+        "$value": "#D8F4D9",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_primary_container"
+          }
+        }
+      },
+      "c_ring": {
+        "$type": "color",
+        "$value": "#31D027",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_ring"
+          }
+        }
+      },
+      "c_ring_disc": {
+        "$type": "color",
+        "$value": "#EAF4E8",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_ring_disc"
+          }
+        }
+      },
+      "c_ring_track": {
+        "$type": "color",
+        "$value": "#E4EDE2",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_ring_track"
+          }
+        }
+      },
+      "c_success": {
+        "$type": "color",
+        "$value": "#15803D",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_success"
+          }
+        }
+      },
+      "ic_launcher_background": {
+        "$type": "color",
+        "$value": "#0B7A1C",
+        "$extensions": {
+          "android": {
+            "resource": "@color/ic_launcher_background"
+          }
+        }
+      },
+      "sd_danger": {
+        "$type": "color",
+        "$value": "#D03B37",
+        "$extensions": {
+          "android": {
+            "resource": "@color/sd_danger"
+          }
+        }
+      },
+      "sd_hairline": {
+        "$type": "color",
+        "$value": "#DFE4DD",
+        "$extensions": {
+          "android": {
+            "resource": "@color/sd_hairline"
+          }
+        }
+      },
+      "sd_warn": {
+        "$type": "color",
+        "$value": "#A16207",
+        "$extensions": {
+          "android": {
+            "resource": "@color/sd_warn"
+          }
+        }
+      },
+      "status_malicious": {
+        "$type": "color",
+        "$value": "#D03B37",
+        "$extensions": {
+          "android": {
+            "resource": "@color/status_malicious"
+          }
+        }
+      },
+      "status_risky": {
+        "$type": "color",
+        "$value": "#A16207",
+        "$extensions": {
+          "android": {
+            "resource": "@color/status_risky"
+          }
+        }
+      },
+      "status_safe": {
+        "$type": "color",
+        "$value": "#15803D",
+        "$extensions": {
+          "android": {
+            "resource": "@color/status_safe"
+          }
+        }
+      }
+    },
+    "dimension": {
+      "sd_btn_height": {
+        "$type": "dimension",
+        "$value": "48dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_btn_height",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_cta_height": {
+        "$type": "dimension",
+        "$value": "48dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_cta_height",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_cta_inset": {
+        "$type": "dimension",
+        "$value": "48dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_cta_inset",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_cta_top": {
+        "$type": "dimension",
+        "$value": "16dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_cta_top",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_divider_inset": {
+        "$type": "dimension",
+        "$value": "56dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_divider_inset",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_grid_gap": {
+        "$type": "dimension",
+        "$value": "10dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_grid_gap",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_grid_top": {
+        "$type": "dimension",
+        "$value": "24dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_grid_top",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_gutter": {
+        "$type": "dimension",
+        "$value": "16dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_gutter",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_hairline_width": {
+        "$type": "dimension",
+        "$value": "1dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_hairline_width",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_home_margin": {
+        "$type": "dimension",
+        "$value": "6dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_home_margin",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_home_title_top": {
+        "$type": "dimension",
+        "$value": "8dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_home_title_top",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_nav_clearance": {
+        "$type": "dimension",
+        "$value": "72dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_nav_clearance",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_nav_margin_bottom": {
+        "$type": "dimension",
+        "$value": "4dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_nav_margin_bottom",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_nav_margin_h": {
+        "$type": "dimension",
+        "$value": "6dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_nav_margin_h",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_nav_radius": {
+        "$type": "dimension",
+        "$value": "24dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_nav_radius",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_radius_card": {
+        "$type": "dimension",
+        "$value": "24dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_radius_card",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_radius_chip": {
+        "$type": "dimension",
+        "$value": "12dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_radius_chip",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_radius_inner": {
+        "$type": "dimension",
+        "$value": "16dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_radius_inner",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_radius_pill": {
+        "$type": "dimension",
+        "$value": "24dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_radius_pill",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_ring_disc": {
+        "$type": "dimension",
+        "$value": "140dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_ring_disc",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_ring_size": {
+        "$type": "dimension",
+        "$value": "190dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_ring_size",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_ring_stroke": {
+        "$type": "dimension",
+        "$value": "25dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_ring_stroke",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_ring_top": {
+        "$type": "dimension",
+        "$value": "24dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_ring_top",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_row_height": {
+        "$type": "dimension",
+        "$value": "56dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_row_height",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_segment_hit": {
+        "$type": "dimension",
+        "$value": "48dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_segment_hit",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_space_1": {
+        "$type": "dimension",
+        "$value": "4dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_space_1",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_space_2": {
+        "$type": "dimension",
+        "$value": "8dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_space_2",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_space_3": {
+        "$type": "dimension",
+        "$value": "12dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_space_3",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_space_4": {
+        "$type": "dimension",
+        "$value": "16dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_space_4",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_space_5": {
+        "$type": "dimension",
+        "$value": "24dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_space_5",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_status_top": {
+        "$type": "dimension",
+        "$value": "20dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_status_top",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_tabbar_height": {
+        "$type": "dimension",
+        "$value": "60dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_tabbar_height",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_tile_height": {
+        "$type": "dimension",
+        "$value": "128dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_tile_height",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_tile_icon": {
+        "$type": "dimension",
+        "$value": "26dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_tile_icon",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_tile_padding": {
+        "$type": "dimension",
+        "$value": "16dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_tile_padding",
+            "unit": "dp"
+          }
+        }
+      },
+      "sd_touch_min": {
+        "$type": "dimension",
+        "$value": "48dp",
+        "$extensions": {
+          "android": {
+            "resource": "@dimen/sd_touch_min",
+            "unit": "dp"
+          }
+        }
+      }
+    },
+    "typography": {
+      "Body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "16dp",
+          "fontWeight": 400,
+          "letterSpacing": "0",
+          "lineHeight": "21.6dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Body",
+            "lineSpacingExtra": "6dp"
+          }
+        }
+      },
+      "Caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "13dp",
+          "fontWeight": 400,
+          "letterSpacing": "0",
+          "lineHeight": "17.55dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Caption",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Headline": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "18dp",
+          "fontWeight": 700,
+          "letterSpacing": "0",
+          "lineHeight": "24.3dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Headline",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Keypad": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "24dp",
+          "fontWeight": 400,
+          "letterSpacing": "0",
+          "lineHeight": "32.4dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Keypad",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "14dp",
+          "fontWeight": 400,
+          "letterSpacing": "0",
+          "lineHeight": "18.9dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Label",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Nav": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "12dp",
+          "fontWeight": 700,
+          "letterSpacing": "0",
+          "lineHeight": "16.2dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Nav",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Score": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "54dp",
+          "fontWeight": 700,
+          "letterSpacing": "-0.04",
+          "lineHeight": "72.9dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Score",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Section": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "13dp",
+          "fontWeight": 700,
+          "letterSpacing": "0.02",
+          "lineHeight": "17.55dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Section",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Status": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "17dp",
+          "fontWeight": 400,
+          "letterSpacing": "0",
+          "lineHeight": "22.95dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Status",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Tile": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "15dp",
+          "fontWeight": 400,
+          "letterSpacing": "0",
+          "lineHeight": "20.25dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Tile",
+            "lineSpacingExtra": null
+          }
+        }
+      },
+      "Title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Noto Sans CJK SC",
+          "fontSize": "24dp",
+          "fontWeight": 700,
+          "letterSpacing": "-0.01",
+          "lineHeight": "32.4dp"
+        },
+        "$extensions": {
+          "android": {
+            "style": "TextAppearance.SecureDroid.Title",
+            "lineSpacingExtra": null
+          }
+        }
+      }
+    }
+  },
+  "night": {
+    "color": {
+      "c_accent": {
+        "$type": "color",
+        "$value": "#4ADE80",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_accent"
+          }
+        }
+      },
+      "c_background": {
+        "$type": "color",
+        "$value": "#0B0F0C",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_background"
+          }
+        }
+      },
+      "c_bg_bottom": {
+        "$type": "color",
+        "$value": "#0B0E0C",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_bg_bottom"
+          }
+        }
+      },
+      "c_bg_top": {
+        "$type": "color",
+        "$value": "#101711",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_bg_top"
+          }
+        }
+      },
+      "c_border": {
+        "$type": "color",
+        "$value": "#2C332D",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_border"
+          }
+        }
+      },
+      "c_card": {
+        "$type": "color",
+        "$value": "#171B18",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_card"
+          }
+        }
+      },
+      "c_destructive": {
+        "$type": "color",
+        "$value": "#FF6B6B",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_destructive"
+          }
+        }
+      },
+      "c_foreground": {
+        "$type": "color",
+        "$value": "#EDF2EC",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_foreground"
+          }
+        }
+      },
+      "c_gold": {
+        "$type": "color",
+        "$value": "#FBBF24",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_gold"
+          }
+        }
+      },
+      "c_muted": {
+        "$type": "color",
+        "$value": "#232823",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_muted"
+          }
+        }
+      },
+      "c_muted_foreground": {
+        "$type": "color",
+        "$value": "#A9B3A7",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_muted_foreground"
+          }
+        }
+      },
+      "c_nav": {
+        "$type": "color",
+        "$value": "#191E1A",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_nav"
+          }
+        }
+      },
+      "c_on_accent": {
+        "$type": "color",
+        "$value": "#052E16",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_accent"
+          }
+        }
+      },
+      "c_on_destructive": {
+        "$type": "color",
+        "$value": "#08120A",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_destructive"
+          }
+        }
+      },
+      "c_on_primary": {
+        "$type": "color",
+        "$value": "#06210A",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_primary"
+          }
+        }
+      },
+      "c_on_primary_container": {
+        "$type": "color",
+        "$value": "#D8F4D9",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_on_primary_container"
+          }
+        }
+      },
+      "c_primary": {
+        "$type": "color",
+        "$value": "#31D027",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_primary"
+          }
+        }
+      },
+      "c_primary_container": {
+        "$type": "color",
+        "$value": "#1B3A20",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_primary_container"
+          }
+        }
+      },
+      "c_ring_disc": {
+        "$type": "color",
+        "$value": "#16241A",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_ring_disc"
+          }
+        }
+      },
+      "c_ring_track": {
+        "$type": "color",
+        "$value": "#22301F",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_ring_track"
+          }
+        }
+      },
+      "c_success": {
+        "$type": "color",
+        "$value": "#4ADE80",
+        "$extensions": {
+          "android": {
+            "resource": "@color/c_success"
+          }
+        }
+      },
+      "sd_danger": {
+        "$type": "color",
+        "$value": "#FF6B6B",
+        "$extensions": {
+          "android": {
+            "resource": "@color/sd_danger"
+          }
+        }
+      },
+      "sd_hairline": {
+        "$type": "color",
+        "$value": "#2C332D",
+        "$extensions": {
+          "android": {
+            "resource": "@color/sd_hairline"
+          }
+        }
+      },
+      "sd_warn": {
+        "$type": "color",
+        "$value": "#FBBF24",
+        "$extensions": {
+          "android": {
+            "resource": "@color/sd_warn"
+          }
+        }
+      },
+      "status_malicious": {
+        "$type": "color",
+        "$value": "#FF6B6B",
+        "$extensions": {
+          "android": {
+            "resource": "@color/status_malicious"
+          }
+        }
+      },
+      "status_risky": {
+        "$type": "color",
+        "$value": "#FBBF24",
+        "$extensions": {
+          "android": {
+            "resource": "@color/status_risky"
+          }
+        }
+      },
+      "status_safe": {
+        "$type": "color",
+        "$value": "#4ADE80",
+        "$extensions": {
+          "android": {
+            "resource": "@color/status_safe"
+          }
+        }
+      }
+    }
+  },
+  "$themes": [
+    {
+      "id": "light",
+      "name": "Light",
+      "selectedTokenSets": {
+        "core": "enabled",
+        "night": "disabled"
+      }
+    },
+    {
+      "id": "night",
+      "name": "Night",
+      "selectedTokenSets": {
+        "core": "enabled",
+        "night": "enabled"
+      }
+    }
+  ]
+}

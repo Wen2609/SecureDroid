@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1954.05" viewBox="0 0 360 651.35"
+     data-export="design-export/export_ui.py" data-mode="light"
+     data-source="app/src/main/res/layout/fragment_dashboard.xml">
+  <title>Fragment · 首页</title>
+  <desc></desc>
+    <g id="ScrollView" data-name="ScrollView" data-type="ScrollView" data-x="0" data-y="0" data-w="360" data-h="651.35">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="651.35">
+    <g id="tvHomeTitle" data-name="tvHomeTitle" data-type="TextView" data-x="6" data-y="8" data-w="96" data-h="32.4">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="24" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="-0.24" data-text="安全中心">
+        <tspan x="6" y="28.4">安全中心</tspan>
+      </text>
+    </g>
+    <g id="FrameLayout" data-name="FrameLayout" data-type="FrameLayout" data-x="85" data-y="64.4" data-w="190" data-h="190">
+    <g id="View" data-name="View" data-type="View" data-x="110" data-y="64.4" data-w="140" data-h="140">
+      <ellipse cx="180" cy="134.4" rx="70" ry="70" fill="#EAF4E8"/>
+    </g>
+    <g id="scoreRing" data-name="scoreRing" data-type="CircularProgressIndicator" data-x="85" data-y="64.4" data-w="190" data-h="190">
+      <circle cx="180" cy="159.4" r="82.5" fill="none" stroke="#E4EDE2" stroke-width="25"/>
+      <path d="M 180 76.9 A 82.5 82.5 0 1 1 98.9613 174.859" fill="none" stroke="#31D027" stroke-width="25" stroke-linecap="round"/>
+    </g>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="135.45" data-y="64.4" data-w="89.1" data-h="91.8">
+    <g id="tvScore" data-name="tvScore" data-type="TextView" data-x="135.45" data-y="64.4" data-w="89.1" data-h="72.9">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="54" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="-2.16" data-text="100">
+        <tspan x="135.45" y="110.3">100</tspan>
+      </text>
+    </g>
+    <g id="tvScoreUnit" data-name="tvScoreUnit" data-type="TextView" data-x="173" data-y="137.3" data-w="14" data-h="18.9">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#6B6B6B" text-anchor="start" letter-spacing="0" data-text="分">
+        <tspan x="173" y="149.2">分</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    <g id="tvState" data-name="tvState" data-type="TextView" data-x="6" data-y="274.4" data-w="348" data-h="22.95">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="17" font-weight="normal" fill="#6B6B6B" text-anchor="middle" letter-spacing="0" data-text="设备状态良好,未发现威胁">
+        <tspan x="180" y="288.85">设备状态良好,未发现威胁</tspan>
+      </text>
+    </g>
+    <g id="btnOptimize" data-name="btnOptimize" data-type="MaterialButton" data-x="54" data-y="313.35" data-w="252" data-h="48">
+      <rect x="54" y="313.35" width="252" height="48" fill="#04BD19" rx="24" ry="24"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="0" data-text="一键优化">
+        <tspan x="180" y="339.35">一键优化</tspan>
+      </text>
+    </g>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="6" data-y="385.35" data-w="348" data-h="128">
+    <g id="tileClean" data-name="tileClean" data-type="MaterialCardView" data-x="6" data-y="385.35" data-w="174" data-h="128">
+      <rect x="6" y="385.35" width="174" height="128" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="6" data-y="385.35" data-w="174" data-h="128">
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="22" data-y="401.35" data-w="26" data-h="26">
+      <g data-name="icon:ic_clean" transform="translate(22,401.35) scale(1.08333)">
+        <path d="M10.4,3.9 L11.9,9 L17,10.5 L11.9,12 L10.4,17.1 L8.9,12 L3.8,10.5 L8.9,9 Z" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M17.6,14.2 L18.6,16.6 L21,17.6 L18.6,18.6 L17.6,21 L16.6,18.6 L14.2,17.6 L16.6,16.6 Z" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+      </g>
+    </g>
+    <g id="TextView: 清理存储" data-name="TextView: 清理存储" data-type="TextView" data-x="22" data-y="451.35" data-w="72" data-h="24.3">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="18" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="0" data-text="清理存储">
+        <tspan x="22" y="466.65">清理存储</tspan>
+      </text>
+    </g>
+    <g id="tvCleanSub" data-name="tvCleanSub" data-type="TextView" data-x="22" data-y="479.65" data-w="142" data-h="20.25">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="15" font-weight="normal" fill="#6B6B6B" text-anchor="start" letter-spacing="0" data-text="查看可释放空间">
+        <tspan x="22" y="492.4">查看可释放空间</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    <g id="tileVirus" data-name="tileVirus" data-type="MaterialCardView" data-x="190" data-y="385.35" data-w="174" data-h="128">
+      <rect x="190" y="385.35" width="174" height="128" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="190" data-y="385.35" data-w="174" data-h="128">
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="206" data-y="401.35" data-w="26" data-h="26">
+      <g data-name="icon:ic_bug" transform="translate(206,401.35) scale(1.08333)">
+        <path d="M12,7.5 a4.8,4.8 0 0,1 4.8,4.8 v1.4 a4.8,4.8 0 0,1 -9.6,0 v-1.4 A4.8,4.8 0 0,1 12,7.5 z" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M12,7.5 V5.2" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M7.2,10.2 L4.6,8.4" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M16.8,10.2 L19.4,8.4" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M7.4,14.6 L4.8,15.8" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M16.6,14.6 L19.2,15.8" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+      </g>
+    </g>
+    <g id="TextView: 病毒风险" data-name="TextView: 病毒风险" data-type="TextView" data-x="206" data-y="451.35" data-w="72" data-h="24.3">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="18" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="0" data-text="病毒风险">
+        <tspan x="206" y="466.65">病毒风险</tspan>
+      </text>
+    </g>
+    <g id="tvVirusSub" data-name="tvVirusSub" data-type="TextView" data-x="206" data-y="479.65" data-w="142" data-h="20.25">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="15" font-weight="normal" fill="#6B6B6B" text-anchor="start" letter-spacing="0" data-text="尚未扫描">
+        <tspan x="206" y="492.4">尚未扫描</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    </g>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="6" data-y="523.35" data-w="348" data-h="128">
+    <g id="tileNetwork" data-name="tileNetwork" data-type="MaterialCardView" data-x="6" data-y="523.35" data-w="174" data-h="128">
+      <rect x="6" y="523.35" width="174" height="128" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="6" data-y="523.35" data-w="174" data-h="128">
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="22" data-y="539.35" data-w="26" data-h="26">
+      <g data-name="icon:ic_network" transform="translate(22,539.35) scale(1.08333)">
+        <path d="M12,3.6 a8.4,8.4 0 1,0 0,16.8 a8.4,8.4 0 1,0 0,-16.8 Z" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M3.6,12 h16.8" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M12,3.6 c3.6,3 3.6,13.8 0,16.8 c-3.6,-3 -3.6,-13.8 0,-16.8 Z" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+      </g>
+    </g>
+    <g id="TextView: 网络审计" data-name="TextView: 网络审计" data-type="TextView" data-x="22" data-y="589.35" data-w="72" data-h="24.3">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="18" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="0" data-text="网络审计">
+        <tspan x="22" y="604.65">网络审计</tspan>
+      </text>
+    </g>
+    <g id="tvNetworkSub" data-name="tvNetworkSub" data-type="TextView" data-x="22" data-y="617.65" data-w="142" data-h="20.25">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="15" font-weight="normal" fill="#6B6B6B" text-anchor="start" letter-spacing="0" data-text="查看网络连接">
+        <tspan x="22" y="630.4">查看网络连接</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    <g id="tileApplock" data-name="tileApplock" data-type="MaterialCardView" data-x="190" data-y="523.35" data-w="174" data-h="128">
+      <rect x="190" y="523.35" width="174" height="128" fill="#FFFFFF" rx="24" ry="24"/>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="190" data-y="523.35" data-w="174" data-h="128">
+    <g id="ImageView" data-name="ImageView" data-type="ImageView" data-x="206" data-y="539.35" data-w="26" data-h="26">
+      <g data-name="icon:ic_lock" transform="translate(206,539.35) scale(1.08333)">
+        <path d="M7.4,10.4 h9.2 a2.2,2.2 0 0,1 2.2,2.2 v5.2 a2.2,2.2 0 0,1 -2.2,2.2 h-9.2 a2.2,2.2 0 0,1 -2.2,-2.2 v-5.2 a2.2,2.2 0 0,1 2.2,-2.2 z" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+        <path d="M8.9,10.4 V8.3 a3.1,3.1 0 0,1 6.2,0 v2.1" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+      </g>
+    </g>
+    <g id="TextView: 应用管理" data-name="TextView: 应用管理" data-type="TextView" data-x="206" data-y="589.35" data-w="72" data-h="24.3">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="18" font-weight="bold" fill="#1A1A1A" text-anchor="start" letter-spacing="0" data-text="应用管理">
+        <tspan x="206" y="604.65">应用管理</tspan>
+      </text>
+    </g>
+    <g id="tvApplockSub" data-name="tvApplockSub" data-type="TextView" data-x="206" data-y="617.65" data-w="142" data-h="20.25">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="15" font-weight="normal" fill="#6B6B6B" text-anchor="start" letter-spacing="0" data-text="管理应用锁">
+        <tspan x="206" y="630.4">管理应用锁</tspan>
+      </text>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+    </g>
+</svg>

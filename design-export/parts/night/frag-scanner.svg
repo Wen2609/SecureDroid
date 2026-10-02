@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+     data-export="design-export/export_ui.py" data-mode="night"
+     data-source="app/src/main/res/layout/fragment_scanner.xml">
+  <title>Fragment · 病毒扫描</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="btnStartScan" data-name="btnStartScan" data-type="MaterialButton" data-x="0" data-y="0" data-w="360" data-h="48">
+      <rect x="0" y="0" width="360" height="48" fill="#4ADE80" rx="24" ry="24"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="16" font-weight="bold" fill="#052E16" text-anchor="middle" letter-spacing="0" data-text="开始全盘扫描">
+        <tspan x="180" y="26">开始全盘扫描</tspan>
+      </text>
+    </g>
+    <g id="progress" data-name="progress" data-type="ProgressBar" data-x="0" data-y="64" data-w="360" data-h="4">
+      <rect x="0" y="64" width="360" height="4" fill="#232823" rx="2" ry="2"/>
+      <rect x="0" y="64" width="144" height="4" fill="#31D027" rx="2" ry="2"/>
+    </g>
+    <g id="tvStatus" data-name="tvStatus" data-type="TextView" data-x="0" data-y="80" data-w="360" data-h="18.9">
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="14" font-weight="normal" fill="#A9B3A7" text-anchor="start" letter-spacing="0" data-text="点击下方按钮开始扫描">
+        <tspan x="0" y="91.9">点击下方按钮开始扫描</tspan>
+      </text>
+    </g>
+    <g id="MaterialCardView" data-name="MaterialCardView" data-type="MaterialCardView" data-x="0" data-y="114.9" data-w="360" data-h="21.1">
+      <rect x="0" y="114.9" width="360" height="21.1" fill="#171B18" rx="24" ry="24"/>
+    <g id="rvResults" data-name="rvResults" data-type="RecyclerView" data-x="0" data-y="114.9" data-w="360" data-h="21.1">
+      <rect x="8" y="122.9" width="344" height="48" fill="#232823" rx="8" ry="8"/>
+      <text font-family="Noto Sans CJK SC, Source Han Sans SC, PingFang SC, Microsoft YaHei, Roboto, sans-serif" font-size="10" fill="#7A8A79" x="8" y="128">RecyclerView · 列表项 item_*.xml</text>
+    </g>
+    </g>
+    </g>
+</svg>

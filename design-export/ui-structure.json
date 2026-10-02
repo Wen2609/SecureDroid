@@ -1,0 +1,4909 @@
+{
+  "generatedAt": "2026-10-02 12:39:21",
+  "generator": "design-export/export_ui.py",
+  "canvas": {
+    "widthDp": 360.0,
+    "heightDp": 800.0,
+    "svgScale": 3.0,
+    "note": "1dp = 1 SVG 单位;SVG width/height = viewBox × 3"
+  },
+  "navigation": {
+    "bottomNav": [
+      {
+        "id": "ic_tab_status",
+        "title": "首页"
+      },
+      {
+        "id": "ic_tab_detect",
+        "title": "检测"
+      },
+      {
+        "id": "ic_tab_protect",
+        "title": "防护"
+      }
+    ],
+    "boards": [
+      {
+        "tab": 0,
+        "id": "nav_status",
+        "fragment": "DashboardFragment",
+        "layout": "fragment_dashboard.xml"
+      },
+      {
+        "tab": 1,
+        "id": "nav_detect",
+        "fragment": "DetectFragment",
+        "layout": "fragment_detect.xml",
+        "segments": [
+          {
+            "index": 0,
+            "title": "病毒扫描",
+            "fragment": "ScannerFragment",
+            "layout": "fragment_scanner.xml"
+          },
+          {
+            "index": 1,
+            "title": "木马查杀",
+            "fragment": "TrojanFragment",
+            "layout": "fragment_trojan.xml"
+          }
+        ]
+      },
+      {
+        "tab": 2,
+        "id": "nav_protect",
+        "fragment": "ProtectFragment",
+        "layout": "fragment_protect.xml",
+        "segments": [
+          {
+            "index": 0,
+            "title": "应用锁",
+            "fragment": "AppLockFragment",
+            "layout": "fragment_app_lock.xml"
+          },
+          {
+            "index": 1,
+            "title": "权限审计",
+            "fragment": "PermissionAuditFragment",
+            "layout": "fragment_permission_audit.xml"
+          },
+          {
+            "index": 2,
+            "title": "工具箱",
+            "fragment": "ToolsFragment",
+            "layout": "fragment_tools.xml"
+          }
+        ]
+      }
+    ],
+    "standaloneActivities": [
+      {
+        "activity": "DeepScanActivity",
+        "layout": "activity_deep_scan.xml"
+      },
+      {
+        "activity": "LockActivity",
+        "layout": "activity_lock.xml"
+      },
+      {
+        "activity": "BaseListToolActivity",
+        "layout": "activity_result_list.xml"
+      },
+      {
+        "activity": "VirusCenterActivity",
+        "layout": "activity_virus_center.xml"
+      }
+    ],
+    "dialogsAndWidgets": [
+      {
+        "host": "AppLockFragment:96",
+        "layout": "dialog_set_pin.xml"
+      },
+      {
+        "host": "SecurityWidgetProvider",
+        "layout": "widget_security.xml"
+      }
+    ],
+    "adapters": [
+      {
+        "adapter": "ScanAdapter",
+        "item": "item_scan_result.xml"
+      },
+      {
+        "adapter": "TrojanAdapter",
+        "item": "item_trojan.xml"
+      },
+      {
+        "adapter": "AppLockAdapter",
+        "item": "item_lock_app.xml"
+      },
+      {
+        "adapter": "PermissionAuditAdapter",
+        "item": "item_audit.xml"
+      },
+      {
+        "adapter": "ToolsAdapter",
+        "item": "item_tool.xml"
+      },
+      {
+        "adapter": "VirusActionAdapter",
+        "item": "item_tool.xml"
+      }
+    ]
+  },
+  "tokens": {
+    "$description": "SecureDroid 界面令牌(W3C DTCG 格式)。core = 浅色基准,night = 深色覆盖;来源 app/src/main/res/values 与 values-night。",
+    "core": {
+      "color": {
+        "c_accent": {
+          "$type": "color",
+          "$value": "#15803D",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_accent"
+            }
+          }
+        },
+        "c_background": {
+          "$type": "color",
+          "$value": "#F2F4EF",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_background"
+            }
+          }
+        },
+        "c_bg_bottom": {
+          "$type": "color",
+          "$value": "#EFF0F0",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_bg_bottom"
+            }
+          }
+        },
+        "c_bg_top": {
+          "$type": "color",
+          "$value": "#F3F8EE",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_bg_top"
+            }
+          }
+        },
+        "c_border": {
+          "$type": "color",
+          "$value": "#DFE4DD",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_border"
+            }
+          }
+        },
+        "c_card": {
+          "$type": "color",
+          "$value": "#FFFFFF",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_card"
+            }
+          }
+        },
+        "c_destructive": {
+          "$type": "color",
+          "$value": "#D03B37",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_destructive"
+            }
+          }
+        },
+        "c_foreground": {
+          "$type": "color",
+          "$value": "#1A1A1A",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_foreground"
+            }
+          }
+        },
+        "c_gold": {
+          "$type": "color",
+          "$value": "#A16207",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_gold"
+            }
+          }
+        },
+        "c_muted": {
+          "$type": "color",
+          "$value": "#E6EDE4",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_muted"
+            }
+          }
+        },
+        "c_muted_foreground": {
+          "$type": "color",
+          "$value": "#6B6B6B",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_muted_foreground"
+            }
+          }
+        },
+        "c_nav": {
+          "$type": "color",
+          "$value": "#FDFDFD",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_nav"
+            }
+          }
+        },
+        "c_on_accent": {
+          "$type": "color",
+          "$value": "#FFFFFF",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_accent"
+            }
+          }
+        },
+        "c_on_destructive": {
+          "$type": "color",
+          "$value": "#FFFFFF",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_destructive"
+            }
+          }
+        },
+        "c_on_primary": {
+          "$type": "color",
+          "$value": "#FFFFFF",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_primary"
+            }
+          }
+        },
+        "c_on_primary_container": {
+          "$type": "color",
+          "$value": "#06330B",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_primary_container"
+            }
+          }
+        },
+        "c_primary": {
+          "$type": "color",
+          "$value": "#04BD19",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_primary"
+            }
+          }
+        },
+        "c_primary_container": {
+          "$type": "color",
+          "$value": "#D8F4D9",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_primary_container"
+            }
+          }
+        },
+        "c_ring": {
+          "$type": "color",
+          "$value": "#31D027",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_ring"
+            }
+          }
+        },
+        "c_ring_disc": {
+          "$type": "color",
+          "$value": "#EAF4E8",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_ring_disc"
+            }
+          }
+        },
+        "c_ring_track": {
+          "$type": "color",
+          "$value": "#E4EDE2",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_ring_track"
+            }
+          }
+        },
+        "c_success": {
+          "$type": "color",
+          "$value": "#15803D",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_success"
+            }
+          }
+        },
+        "ic_launcher_background": {
+          "$type": "color",
+          "$value": "#0B7A1C",
+          "$extensions": {
+            "android": {
+              "resource": "@color/ic_launcher_background"
+            }
+          }
+        },
+        "sd_danger": {
+          "$type": "color",
+          "$value": "#D03B37",
+          "$extensions": {
+            "android": {
+              "resource": "@color/sd_danger"
+            }
+          }
+        },
+        "sd_hairline": {
+          "$type": "color",
+          "$value": "#DFE4DD",
+          "$extensions": {
+            "android": {
+              "resource": "@color/sd_hairline"
+            }
+          }
+        },
+        "sd_warn": {
+          "$type": "color",
+          "$value": "#A16207",
+          "$extensions": {
+            "android": {
+              "resource": "@color/sd_warn"
+            }
+          }
+        },
+        "status_malicious": {
+          "$type": "color",
+          "$value": "#D03B37",
+          "$extensions": {
+            "android": {
+              "resource": "@color/status_malicious"
+            }
+          }
+        },
+        "status_risky": {
+          "$type": "color",
+          "$value": "#A16207",
+          "$extensions": {
+            "android": {
+              "resource": "@color/status_risky"
+            }
+          }
+        },
+        "status_safe": {
+          "$type": "color",
+          "$value": "#15803D",
+          "$extensions": {
+            "android": {
+              "resource": "@color/status_safe"
+            }
+          }
+        }
+      },
+      "dimension": {
+        "sd_btn_height": {
+          "$type": "dimension",
+          "$value": "48dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_btn_height",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_cta_height": {
+          "$type": "dimension",
+          "$value": "48dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_cta_height",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_cta_inset": {
+          "$type": "dimension",
+          "$value": "48dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_cta_inset",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_cta_top": {
+          "$type": "dimension",
+          "$value": "16dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_cta_top",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_divider_inset": {
+          "$type": "dimension",
+          "$value": "56dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_divider_inset",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_grid_gap": {
+          "$type": "dimension",
+          "$value": "10dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_grid_gap",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_grid_top": {
+          "$type": "dimension",
+          "$value": "24dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_grid_top",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_gutter": {
+          "$type": "dimension",
+          "$value": "16dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_gutter",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_hairline_width": {
+          "$type": "dimension",
+          "$value": "1dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_hairline_width",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_home_margin": {
+          "$type": "dimension",
+          "$value": "6dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_home_margin",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_home_title_top": {
+          "$type": "dimension",
+          "$value": "8dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_home_title_top",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_nav_clearance": {
+          "$type": "dimension",
+          "$value": "72dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_nav_clearance",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_nav_margin_bottom": {
+          "$type": "dimension",
+          "$value": "4dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_nav_margin_bottom",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_nav_margin_h": {
+          "$type": "dimension",
+          "$value": "6dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_nav_margin_h",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_nav_radius": {
+          "$type": "dimension",
+          "$value": "24dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_nav_radius",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_radius_card": {
+          "$type": "dimension",
+          "$value": "24dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_radius_card",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_radius_chip": {
+          "$type": "dimension",
+          "$value": "12dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_radius_chip",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_radius_inner": {
+          "$type": "dimension",
+          "$value": "16dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_radius_inner",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_radius_pill": {
+          "$type": "dimension",
+          "$value": "24dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_radius_pill",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_ring_disc": {
+          "$type": "dimension",
+          "$value": "140dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_ring_disc",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_ring_size": {
+          "$type": "dimension",
+          "$value": "190dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_ring_size",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_ring_stroke": {
+          "$type": "dimension",
+          "$value": "25dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_ring_stroke",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_ring_top": {
+          "$type": "dimension",
+          "$value": "24dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_ring_top",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_row_height": {
+          "$type": "dimension",
+          "$value": "56dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_row_height",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_segment_hit": {
+          "$type": "dimension",
+          "$value": "48dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_segment_hit",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_space_1": {
+          "$type": "dimension",
+          "$value": "4dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_space_1",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_space_2": {
+          "$type": "dimension",
+          "$value": "8dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_space_2",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_space_3": {
+          "$type": "dimension",
+          "$value": "12dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_space_3",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_space_4": {
+          "$type": "dimension",
+          "$value": "16dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_space_4",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_space_5": {
+          "$type": "dimension",
+          "$value": "24dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_space_5",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_status_top": {
+          "$type": "dimension",
+          "$value": "20dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_status_top",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_tabbar_height": {
+          "$type": "dimension",
+          "$value": "60dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_tabbar_height",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_tile_height": {
+          "$type": "dimension",
+          "$value": "128dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_tile_height",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_tile_icon": {
+          "$type": "dimension",
+          "$value": "26dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_tile_icon",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_tile_padding": {
+          "$type": "dimension",
+          "$value": "16dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_tile_padding",
+              "unit": "dp"
+            }
+          }
+        },
+        "sd_touch_min": {
+          "$type": "dimension",
+          "$value": "48dp",
+          "$extensions": {
+            "android": {
+              "resource": "@dimen/sd_touch_min",
+              "unit": "dp"
+            }
+          }
+        }
+      },
+      "typography": {
+        "Body": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "16dp",
+            "fontWeight": 400,
+            "letterSpacing": "0",
+            "lineHeight": "21.6dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Body",
+              "lineSpacingExtra": "6dp"
+            }
+          }
+        },
+        "Caption": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "13dp",
+            "fontWeight": 400,
+            "letterSpacing": "0",
+            "lineHeight": "17.55dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Caption",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Headline": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "18dp",
+            "fontWeight": 700,
+            "letterSpacing": "0",
+            "lineHeight": "24.3dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Headline",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Keypad": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "24dp",
+            "fontWeight": 400,
+            "letterSpacing": "0",
+            "lineHeight": "32.4dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Keypad",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Label": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "14dp",
+            "fontWeight": 400,
+            "letterSpacing": "0",
+            "lineHeight": "18.9dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Label",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Nav": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "12dp",
+            "fontWeight": 700,
+            "letterSpacing": "0",
+            "lineHeight": "16.2dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Nav",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Score": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "54dp",
+            "fontWeight": 700,
+            "letterSpacing": "-0.04",
+            "lineHeight": "72.9dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Score",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Section": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "13dp",
+            "fontWeight": 700,
+            "letterSpacing": "0.02",
+            "lineHeight": "17.55dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Section",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Status": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "17dp",
+            "fontWeight": 400,
+            "letterSpacing": "0",
+            "lineHeight": "22.95dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Status",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Tile": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "15dp",
+            "fontWeight": 400,
+            "letterSpacing": "0",
+            "lineHeight": "20.25dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Tile",
+              "lineSpacingExtra": null
+            }
+          }
+        },
+        "Title": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "Noto Sans CJK SC",
+            "fontSize": "24dp",
+            "fontWeight": 700,
+            "letterSpacing": "-0.01",
+            "lineHeight": "32.4dp"
+          },
+          "$extensions": {
+            "android": {
+              "style": "TextAppearance.SecureDroid.Title",
+              "lineSpacingExtra": null
+            }
+          }
+        }
+      }
+    },
+    "night": {
+      "color": {
+        "c_accent": {
+          "$type": "color",
+          "$value": "#4ADE80",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_accent"
+            }
+          }
+        },
+        "c_background": {
+          "$type": "color",
+          "$value": "#0B0F0C",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_background"
+            }
+          }
+        },
+        "c_bg_bottom": {
+          "$type": "color",
+          "$value": "#0B0E0C",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_bg_bottom"
+            }
+          }
+        },
+        "c_bg_top": {
+          "$type": "color",
+          "$value": "#101711",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_bg_top"
+            }
+          }
+        },
+        "c_border": {
+          "$type": "color",
+          "$value": "#2C332D",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_border"
+            }
+          }
+        },
+        "c_card": {
+          "$type": "color",
+          "$value": "#171B18",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_card"
+            }
+          }
+        },
+        "c_destructive": {
+          "$type": "color",
+          "$value": "#FF6B6B",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_destructive"
+            }
+          }
+        },
+        "c_foreground": {
+          "$type": "color",
+          "$value": "#EDF2EC",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_foreground"
+            }
+          }
+        },
+        "c_gold": {
+          "$type": "color",
+          "$value": "#FBBF24",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_gold"
+            }
+          }
+        },
+        "c_muted": {
+          "$type": "color",
+          "$value": "#232823",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_muted"
+            }
+          }
+        },
+        "c_muted_foreground": {
+          "$type": "color",
+          "$value": "#A9B3A7",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_muted_foreground"
+            }
+          }
+        },
+        "c_nav": {
+          "$type": "color",
+          "$value": "#191E1A",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_nav"
+            }
+          }
+        },
+        "c_on_accent": {
+          "$type": "color",
+          "$value": "#052E16",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_accent"
+            }
+          }
+        },
+        "c_on_destructive": {
+          "$type": "color",
+          "$value": "#08120A",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_destructive"
+            }
+          }
+        },
+        "c_on_primary": {
+          "$type": "color",
+          "$value": "#06210A",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_primary"
+            }
+          }
+        },
+        "c_on_primary_container": {
+          "$type": "color",
+          "$value": "#D8F4D9",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_on_primary_container"
+            }
+          }
+        },
+        "c_primary": {
+          "$type": "color",
+          "$value": "#31D027",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_primary"
+            }
+          }
+        },
+        "c_primary_container": {
+          "$type": "color",
+          "$value": "#1B3A20",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_primary_container"
+            }
+          }
+        },
+        "c_ring_disc": {
+          "$type": "color",
+          "$value": "#16241A",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_ring_disc"
+            }
+          }
+        },
+        "c_ring_track": {
+          "$type": "color",
+          "$value": "#22301F",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_ring_track"
+            }
+          }
+        },
+        "c_success": {
+          "$type": "color",
+          "$value": "#4ADE80",
+          "$extensions": {
+            "android": {
+              "resource": "@color/c_success"
+            }
+          }
+        },
+        "sd_danger": {
+          "$type": "color",
+          "$value": "#FF6B6B",
+          "$extensions": {
+            "android": {
+              "resource": "@color/sd_danger"
+            }
+          }
+        },
+        "sd_hairline": {
+          "$type": "color",
+          "$value": "#2C332D",
+          "$extensions": {
+            "android": {
+              "resource": "@color/sd_hairline"
+            }
+          }
+        },
+        "sd_warn": {
+          "$type": "color",
+          "$value": "#FBBF24",
+          "$extensions": {
+            "android": {
+              "resource": "@color/sd_warn"
+            }
+          }
+        },
+        "status_malicious": {
+          "$type": "color",
+          "$value": "#FF6B6B",
+          "$extensions": {
+            "android": {
+              "resource": "@color/status_malicious"
+            }
+          }
+        },
+        "status_risky": {
+          "$type": "color",
+          "$value": "#FBBF24",
+          "$extensions": {
+            "android": {
+              "resource": "@color/status_risky"
+            }
+          }
+        },
+        "status_safe": {
+          "$type": "color",
+          "$value": "#4ADE80",
+          "$extensions": {
+            "android": {
+              "resource": "@color/status_safe"
+            }
+          }
+        }
+      }
+    },
+    "$themes": [
+      {
+        "id": "light",
+        "name": "Light",
+        "selectedTokenSets": {
+          "core": "enabled",
+          "night": "disabled"
+        }
+      },
+      {
+        "id": "night",
+        "name": "Night",
+        "selectedTokenSets": {
+          "core": "enabled",
+          "night": "enabled"
+        }
+      }
+    ]
+  },
+  "widgetStyles": {
+    "Widget.SecureDroid.Card": {
+      "parent": "Widget.Material3.CardView.Elevated",
+      "items": {
+        "cardBackgroundColor": "@color/c_card",
+        "cardCornerRadius": "@dimen/sd_radius_card",
+        "cardElevation": "2dp",
+        "strokeWidth": "0dp",
+        "rippleColor": "@color/c_muted"
+      }
+    },
+    "Widget.SecureDroid.Tile": {
+      "parent": "Widget.SecureDroid.Card",
+      "items": {
+        "android:clickable": "true",
+        "android:focusable": "true"
+      }
+    },
+    "Widget.SecureDroid.Button": {
+      "parent": "Widget.Material3.Button",
+      "items": {
+        "android:minHeight": "@dimen/sd_cta_height",
+        "android:insetTop": "0dp",
+        "android:insetBottom": "0dp",
+        "android:textSize": "16sp",
+        "android:textStyle": "bold",
+        "android:textAllCaps": "false",
+        "android:letterSpacing": "0",
+        "cornerRadius": "@dimen/sd_radius_pill",
+        "backgroundTint": "@color/c_primary",
+        "android:textColor": "@color/c_on_primary",
+        "iconTint": "@color/c_on_primary",
+        "iconPadding": "@dimen/sd_space_2"
+      }
+    },
+    "Widget.SecureDroid.Button.Accent": {
+      "parent": "Widget.SecureDroid.Button",
+      "items": {
+        "backgroundTint": "@color/c_accent",
+        "android:textColor": "@color/c_on_accent",
+        "iconTint": "@color/c_on_accent"
+      }
+    },
+    "Widget.SecureDroid.Button.Outlined": {
+      "parent": "Widget.Material3.Button.OutlinedButton",
+      "items": {
+        "android:minHeight": "@dimen/sd_touch_min",
+        "cornerRadius": "@dimen/sd_radius_pill",
+        "strokeColor": "@color/c_border",
+        "android:textColor": "@color/c_foreground",
+        "iconTint": "@color/c_foreground",
+        "android:textAllCaps": "false"
+      }
+    },
+    "Widget.SecureDroid.Button.Row": {
+      "parent": "Widget.Material3.Button.TextButton",
+      "items": {
+        "android:minHeight": "@dimen/sd_row_height",
+        "android:insetTop": "0dp",
+        "android:insetBottom": "0dp",
+        "android:gravity": "start|center_vertical",
+        "android:paddingStart": "@dimen/sd_space_4",
+        "android:paddingEnd": "44dp",
+        "cornerRadius": "0dp",
+        "iconGravity": "textStart",
+        "iconPadding": "@dimen/sd_space_3",
+        "iconTint": "@color/c_muted_foreground",
+        "android:textColor": "@color/c_foreground",
+        "android:textSize": "16sp",
+        "android:textAllCaps": "false",
+        "rippleColor": "@color/c_muted",
+        "android:stateListAnimator": "@null"
+      }
+    },
+    "Widget.SecureDroid.Segment": {
+      "parent": "Widget.Material3.Button.TextButton",
+      "items": {
+        "android:textSize": "14sp",
+        "android:minHeight": "@dimen/sd_segment_hit",
+        "android:stateListAnimator": "@null",
+        "cornerRadius": "@dimen/sd_radius_inner",
+        "backgroundTint": "@color/seg_bg",
+        "android:textColor": "@color/seg_text",
+        "strokeWidth": "0dp",
+        "rippleColor": "@color/c_muted"
+      }
+    },
+    "Widget.SecureDroid.Chip": {
+      "parent": "",
+      "items": {
+        "android:background": "@drawable/bg_chip",
+        "android:paddingStart": "@dimen/sd_space_2",
+        "android:paddingEnd": "@dimen/sd_space_2",
+        "android:paddingTop": "@dimen/sd_space_1",
+        "android:paddingBottom": "@dimen/sd_space_1",
+        "android:textSize": "12sp",
+        "android:textStyle": "bold",
+        "android:letterSpacing": "0.04"
+      }
+    },
+    "Widget.SecureDroid.Divider": {
+      "parent": "",
+      "items": {
+        "android:layout_width": "match_parent",
+        "android:layout_height": "@dimen/sd_hairline_width",
+        "android:layout_marginStart": "@dimen/sd_divider_inset",
+        "android:background": "@color/c_border"
+      }
+    }
+  },
+  "shapes": {
+    "bg_chip": {
+      "kind": "shape",
+      "radius": "@dimen/sd_radius_chip",
+      "radiusTop": null,
+      "solid": "@color/c_muted"
+    },
+    "bg_nav_bar": {
+      "kind": "shape",
+      "solid": "@color/c_nav",
+      "radius": "@dimen/sd_nav_radius",
+      "radiusTop": null
+    },
+    "bg_page": {
+      "kind": "shape",
+      "gradient": {
+        "start": "@color/c_bg_top",
+        "end": "@color/c_bg_bottom",
+        "angle": "270",
+        "type": "linear"
+      }
+    },
+    "bg_ring_disc": {
+      "kind": "shape",
+      "oval": true,
+      "solid": "@color/c_ring_disc"
+    },
+    "bg_segment_track": {
+      "kind": "shape",
+      "radius": "@dimen/sd_radius_inner",
+      "radiusTop": null,
+      "solid": "@color/c_muted"
+    },
+    "progress_fluid": {
+      "kind": "layer-list"
+    }
+  },
+  "icons": {
+    "ic_backspace": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 1
+    },
+    "ic_bug": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 6
+    },
+    "ic_chevron": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 1
+    },
+    "ic_clean": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 2
+    },
+    "ic_grid": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 4
+    },
+    "ic_launcher_foreground": {
+      "viewport": [
+        108.0,
+        108.0
+      ],
+      "paths": 2
+    },
+    "ic_lock": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 2
+    },
+    "ic_network": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 3
+    },
+    "ic_scan": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 2
+    },
+    "ic_shield": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 2
+    },
+    "ic_tab_detect": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 2
+    },
+    "ic_tab_protect": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 2
+    },
+    "ic_tab_status": {
+      "viewport": [
+        24.0,
+        24.0
+      ],
+      "paths": 1
+    }
+  },
+  "frames": [
+    {
+      "key": "01-home",
+      "title": "首页 · 设备状态",
+      "kind": "screen",
+      "source": "app/src/main/res/layout/activity_main.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 800.0
+      },
+      "svg": {
+        "light": "screens/light/01-home.svg",
+        "night": "screens/night/01-home.svg"
+      },
+      "elements": [
+        {
+          "id": "tvHomeTitle",
+          "type": "TextView",
+          "text": "安全中心",
+          "x": 6.0,
+          "y": 8.0,
+          "w": 96.0,
+          "h": 32.4
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 110.0,
+          "y": 64.4,
+          "w": 140.0,
+          "h": 140.0
+        },
+        {
+          "id": "tvScore",
+          "type": "TextView",
+          "text": "100",
+          "x": 135.4,
+          "y": 64.4,
+          "w": 89.1,
+          "h": 72.9
+        },
+        {
+          "id": "tvScoreUnit",
+          "type": "TextView",
+          "text": "分",
+          "x": 173.0,
+          "y": 137.3,
+          "w": 14.0,
+          "h": 18.9
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 135.4,
+          "y": 64.4,
+          "w": 89.1,
+          "h": 91.8
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 85.0,
+          "y": 64.4,
+          "w": 190.0,
+          "h": 190.0
+        },
+        {
+          "id": "tvState",
+          "type": "TextView",
+          "text": "设备状态良好,未发现威胁",
+          "x": 6.0,
+          "y": 274.4,
+          "w": 348.0,
+          "h": 23.0
+        },
+        {
+          "id": "btnOptimize",
+          "type": "MaterialButton",
+          "text": "一键优化",
+          "x": 54.0,
+          "y": 313.4,
+          "w": 252.0,
+          "h": 48.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 22.0,
+          "y": 401.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 清理存储",
+          "type": "TextView",
+          "text": "清理存储",
+          "x": 22.0,
+          "y": 451.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvCleanSub",
+          "type": "TextView",
+          "text": "查看可释放空间",
+          "x": 22.0,
+          "y": 479.7,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileClean",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 6.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 206.0,
+          "y": 401.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 病毒风险",
+          "type": "TextView",
+          "text": "病毒风险",
+          "x": 206.0,
+          "y": 451.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvVirusSub",
+          "type": "TextView",
+          "text": "尚未扫描",
+          "x": 206.0,
+          "y": 479.7,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 190.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileVirus",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 190.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 385.4,
+          "w": 348.0,
+          "h": 128.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 22.0,
+          "y": 539.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 网络审计",
+          "type": "TextView",
+          "text": "网络审计",
+          "x": 22.0,
+          "y": 589.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvNetworkSub",
+          "type": "TextView",
+          "text": "查看网络连接",
+          "x": 22.0,
+          "y": 617.6,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileNetwork",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 6.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 206.0,
+          "y": 539.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 应用管理",
+          "type": "TextView",
+          "text": "应用管理",
+          "x": 206.0,
+          "y": 589.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvApplockSub",
+          "type": "TextView",
+          "text": "管理应用锁",
+          "x": 206.0,
+          "y": 617.6,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 190.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileApplock",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 190.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 523.4,
+          "w": 348.0,
+          "h": 128.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 728.0
+        },
+        {
+          "id": "ScrollView",
+          "type": "ScrollView",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 728.0
+        },
+        {
+          "id": "container",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "bottomNav",
+          "type": "TabLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 736.0,
+          "w": 348.0,
+          "h": 60.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        }
+      ]
+    },
+    {
+      "key": "02-detect-virus",
+      "title": "检测 · 病毒扫描",
+      "kind": "screen",
+      "source": "app/src/main/res/layout/activity_main.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 800.0
+      },
+      "svg": {
+        "light": "screens/light/02-detect-virus.svg",
+        "night": "screens/night/02-detect-virus.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 检测",
+          "type": "TextView",
+          "text": "检测",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 48.0,
+          "h": 32.4
+        },
+        {
+          "id": "segDetectVirus",
+          "type": "MaterialButton",
+          "text": "病毒扫描",
+          "x": 18.0,
+          "y": 66.4,
+          "w": 162.0,
+          "h": 48.0
+        },
+        {
+          "id": "segDetectTrojan",
+          "type": "MaterialButton",
+          "text": "木马查杀",
+          "x": 180.0,
+          "y": 66.4,
+          "w": 162.0,
+          "h": 48.0
+        },
+        {
+          "id": "segDetect",
+          "type": "MaterialButtonToggleGroup",
+          "text": null,
+          "x": 18.0,
+          "y": 66.4,
+          "w": 324.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 64.4,
+          "w": 328.0,
+          "h": 52.0
+        },
+        {
+          "id": "btnStartScan",
+          "type": "MaterialButton",
+          "text": "开始全盘扫描",
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 48.0
+        },
+        {
+          "id": "tvStatus",
+          "type": "TextView",
+          "text": "点击下方按钮开始扫描",
+          "x": 16.0,
+          "y": 212.4,
+          "w": 328.0,
+          "h": 18.9
+        },
+        {
+          "id": "rvResults",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 247.3,
+          "w": 328.0,
+          "h": 512.7
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 247.3,
+          "w": 328.0,
+          "h": 512.7
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "detectContainer",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 728.0
+        },
+        {
+          "id": "container",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "bottomNav",
+          "type": "TabLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 736.0,
+          "w": 348.0,
+          "h": 60.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        }
+      ]
+    },
+    {
+      "key": "03-detect-trojan",
+      "title": "检测 · 木马查杀",
+      "kind": "screen",
+      "source": "app/src/main/res/layout/activity_main.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 800.0
+      },
+      "svg": {
+        "light": "screens/light/03-detect-trojan.svg",
+        "night": "screens/night/03-detect-trojan.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 检测",
+          "type": "TextView",
+          "text": "检测",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 48.0,
+          "h": 32.4
+        },
+        {
+          "id": "segDetectVirus",
+          "type": "MaterialButton",
+          "text": "病毒扫描",
+          "x": 18.0,
+          "y": 66.4,
+          "w": 162.0,
+          "h": 48.0
+        },
+        {
+          "id": "segDetectTrojan",
+          "type": "MaterialButton",
+          "text": "木马查杀",
+          "x": 180.0,
+          "y": 66.4,
+          "w": 162.0,
+          "h": 48.0
+        },
+        {
+          "id": "segDetect",
+          "type": "MaterialButtonToggleGroup",
+          "text": null,
+          "x": 18.0,
+          "y": 66.4,
+          "w": 324.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 64.4,
+          "w": 328.0,
+          "h": 52.0
+        },
+        {
+          "id": "btnTrojanScan",
+          "type": "MaterialButton",
+          "text": "开始木马查杀",
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 48.0
+        },
+        {
+          "id": "tvStatus",
+          "type": "TextView",
+          "text": "点击开始,多引擎检测木马与后门",
+          "x": 16.0,
+          "y": 212.4,
+          "w": 328.0,
+          "h": 18.9
+        },
+        {
+          "id": "btnRootkit",
+          "type": "MaterialButton",
+          "text": "Rootkit / 提权后门检测",
+          "x": 16.0,
+          "y": 247.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 16.0,
+          "y": 265.3,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 247.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 303.3,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnModules",
+          "type": "MaterialButton",
+          "text": "恶意模块 / SU 脚本检测",
+          "x": 16.0,
+          "y": 304.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 16.0,
+          "y": 322.3,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 304.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 360.3,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnLocker",
+          "type": "MaterialButton",
+          "text": "锁机软件检测",
+          "x": 16.0,
+          "y": 361.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 16.0,
+          "y": 379.3,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 361.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 417.3,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnDeepScan",
+          "type": "MaterialButton",
+          "text": "深度查杀(内存 · 全盘 · 分区)",
+          "x": 16.0,
+          "y": 418.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 16.0,
+          "y": 436.3,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 418.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 474.3,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnVirusCenter",
+          "type": "MaterialButton",
+          "text": "病毒查杀中心",
+          "x": 16.0,
+          "y": 475.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 16.0,
+          "y": 493.3,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 475.3,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 247.3,
+          "w": 328.0,
+          "h": 284.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 247.3,
+          "w": 328.0,
+          "h": 284.0
+        },
+        {
+          "id": "rvTrojan",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 543.3,
+          "w": 328.0,
+          "h": 212.7
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 543.3,
+          "w": 328.0,
+          "h": 212.7
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "detectContainer",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 728.0
+        },
+        {
+          "id": "container",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "bottomNav",
+          "type": "TabLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 736.0,
+          "w": 348.0,
+          "h": 60.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        }
+      ]
+    },
+    {
+      "key": "04-protect-applock",
+      "title": "防护 · 应用锁",
+      "kind": "screen",
+      "source": "app/src/main/res/layout/activity_main.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 800.0
+      },
+      "svg": {
+        "light": "screens/light/04-protect-applock.svg",
+        "night": "screens/night/04-protect-applock.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 防护",
+          "type": "TextView",
+          "text": "防护",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 48.0,
+          "h": 32.4
+        },
+        {
+          "id": "segProtectLock",
+          "type": "MaterialButton",
+          "text": "应用锁",
+          "x": 18.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectAudit",
+          "type": "MaterialButton",
+          "text": "权限审计",
+          "x": 126.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectTools",
+          "type": "MaterialButton",
+          "text": "工具箱",
+          "x": 234.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtect",
+          "type": "MaterialButtonToggleGroup",
+          "text": null,
+          "x": 18.0,
+          "y": 66.4,
+          "w": 324.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 64.4,
+          "w": 328.0,
+          "h": 52.0
+        },
+        {
+          "id": "tvPinState",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 24.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 156.4,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnSetPin",
+          "type": "MaterialButton",
+          "text": "设置 / 修改 PIN 码",
+          "x": 16.0,
+          "y": 157.4,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 213.4,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 270.4,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnAccessibility",
+          "type": "MaterialButton",
+          "text": "开启无障碍权限(用于应用锁)",
+          "x": 16.0,
+          "y": 271.4,
+          "w": 328.0,
+          "h": 56.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 195.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 195.0
+        },
+        {
+          "id": "rvLockApps",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 343.4,
+          "w": 328.0,
+          "h": 416.6
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 343.4,
+          "w": 328.0,
+          "h": 416.6
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "protectContainer",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 728.0
+        },
+        {
+          "id": "container",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "bottomNav",
+          "type": "TabLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 736.0,
+          "w": 348.0,
+          "h": 60.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        }
+      ]
+    },
+    {
+      "key": "05-protect-audit",
+      "title": "防护 · 权限审计",
+      "kind": "screen",
+      "source": "app/src/main/res/layout/activity_main.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 800.0
+      },
+      "svg": {
+        "light": "screens/light/05-protect-audit.svg",
+        "night": "screens/night/05-protect-audit.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 防护",
+          "type": "TextView",
+          "text": "防护",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 48.0,
+          "h": 32.4
+        },
+        {
+          "id": "segProtectLock",
+          "type": "MaterialButton",
+          "text": "应用锁",
+          "x": 18.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectAudit",
+          "type": "MaterialButton",
+          "text": "权限审计",
+          "x": 126.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectTools",
+          "type": "MaterialButton",
+          "text": "工具箱",
+          "x": 234.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtect",
+          "type": "MaterialButtonToggleGroup",
+          "text": null,
+          "x": 18.0,
+          "y": 66.4,
+          "w": 324.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 64.4,
+          "w": 328.0,
+          "h": 52.0
+        },
+        {
+          "id": "TextView: 权限审计",
+          "type": "TextView",
+          "text": "权限审计",
+          "x": 32.0,
+          "y": 156.4,
+          "w": 52.0,
+          "h": 17.6
+        },
+        {
+          "id": "tvSummary",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 181.9,
+          "w": 328.0,
+          "h": 24.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 181.9,
+          "w": 328.0,
+          "h": 24.0
+        },
+        {
+          "id": "rvAudit",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 221.9,
+          "w": 328.0,
+          "h": 538.1
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 221.9,
+          "w": 328.0,
+          "h": 538.1
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "protectContainer",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 728.0
+        },
+        {
+          "id": "container",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "bottomNav",
+          "type": "TabLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 736.0,
+          "w": 348.0,
+          "h": 60.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        }
+      ]
+    },
+    {
+      "key": "06-protect-tools",
+      "title": "防护 · 工具箱",
+      "kind": "screen",
+      "source": "app/src/main/res/layout/activity_main.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 800.0
+      },
+      "svg": {
+        "light": "screens/light/06-protect-tools.svg",
+        "night": "screens/night/06-protect-tools.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 防护",
+          "type": "TextView",
+          "text": "防护",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 48.0,
+          "h": 32.4
+        },
+        {
+          "id": "segProtectLock",
+          "type": "MaterialButton",
+          "text": "应用锁",
+          "x": 18.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectAudit",
+          "type": "MaterialButton",
+          "text": "权限审计",
+          "x": 126.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectTools",
+          "type": "MaterialButton",
+          "text": "工具箱",
+          "x": 234.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtect",
+          "type": "MaterialButtonToggleGroup",
+          "text": null,
+          "x": 18.0,
+          "y": 66.4,
+          "w": 324.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 64.4,
+          "w": 328.0,
+          "h": 52.0
+        },
+        {
+          "id": "TextView: 防护开关",
+          "type": "TextView",
+          "text": "防护开关",
+          "x": 32.0,
+          "y": 156.4,
+          "w": 52.0,
+          "h": 17.6
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 237.9,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "tvRootState",
+          "type": "TextView",
+          "text": "Root 模式:未启用(开启下方开关将请求 su 授权)",
+          "x": 32.0,
+          "y": 250.9,
+          "w": 287.2,
+          "h": 24.2
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 287.1,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 344.1,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 181.9,
+          "w": 328.0,
+          "h": 219.2
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 181.9,
+          "w": 328.0,
+          "h": 219.2
+        },
+        {
+          "id": "TextView: 安全设置",
+          "type": "TextView",
+          "text": "安全设置",
+          "x": 32.0,
+          "y": 425.1,
+          "w": 52.0,
+          "h": 17.6
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 72.0,
+          "y": 506.7,
+          "w": 272.0,
+          "h": 1.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 450.7,
+          "w": 328.0,
+          "h": 113.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 450.7,
+          "w": 328.0,
+          "h": 113.0
+        },
+        {
+          "id": "TextView: 工具",
+          "type": "TextView",
+          "text": "工具",
+          "x": 32.0,
+          "y": 587.7,
+          "w": 26.0,
+          "h": 17.6
+        },
+        {
+          "id": "rvTools",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 613.2,
+          "w": 328.0,
+          "h": 130.8
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 613.2,
+          "w": 328.0,
+          "h": 130.8
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "protectContainer",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 611.6
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 728.0
+        },
+        {
+          "id": "container",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        },
+        {
+          "id": "bottomNav",
+          "type": "TabLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 736.0,
+          "w": 348.0,
+          "h": 60.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 800.0
+        }
+      ]
+    },
+    {
+      "key": "act-deep-scan",
+      "title": "独立页 · 深度扫描",
+      "kind": "part",
+      "source": "app/src/main/res/layout/activity_deep_scan.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 165.8
+      },
+      "svg": {
+        "light": "parts/light/act-deep-scan.svg",
+        "night": "parts/night/act-deep-scan.svg"
+      },
+      "elements": [
+        {
+          "id": "tvTitle",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 0.0,
+          "w": 328.0,
+          "h": 16.0
+        },
+        {
+          "id": "btnStart",
+          "type": "MaterialButton",
+          "text": "开始深度查杀",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 328.0,
+          "h": 48.0
+        },
+        {
+          "id": "tvPhase",
+          "type": "TextView",
+          "text": "三阶段:进程内存 → 全设备目录 → 底层分区。Root 模式下效果完整,耗时较长。",
+          "x": 16.0,
+          "y": 96.0,
+          "w": 328.0,
+          "h": 37.8
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 133.8
+        },
+        {
+          "id": "rvList",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 149.8,
+          "w": 328.0,
+          "h": 32.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 149.8,
+          "w": 328.0,
+          "h": 32.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 165.8
+        }
+      ]
+    },
+    {
+      "key": "act-lock",
+      "title": "独立页 · 解锁(PIN 键盘)",
+      "kind": "part",
+      "source": "app/src/main/res/layout/activity_lock.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/act-lock.svg",
+        "night": "parts/night/act-lock.svg"
+      },
+      "elements": [
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 152.0,
+          "y": 24.0,
+          "w": 56.0,
+          "h": 56.0
+        },
+        {
+          "id": "tvDots",
+          "type": "TextView",
+          "text": "请输入 PIN 码解锁",
+          "x": 110.0,
+          "y": 96.0,
+          "w": 140.0,
+          "h": 21.6
+        },
+        {
+          "id": "btn1",
+          "type": "MaterialButton",
+          "text": "1",
+          "x": 28.0,
+          "y": 145.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "btn2",
+          "type": "MaterialButton",
+          "text": "2",
+          "x": 140.0,
+          "y": 145.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "btn3",
+          "type": "MaterialButton",
+          "text": "3",
+          "x": 252.0,
+          "y": 145.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 24.0,
+          "y": 141.6,
+          "w": 312.0,
+          "h": 72.0
+        },
+        {
+          "id": "btn4",
+          "type": "MaterialButton",
+          "text": "4",
+          "x": 28.0,
+          "y": 217.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "btn5",
+          "type": "MaterialButton",
+          "text": "5",
+          "x": 140.0,
+          "y": 217.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "btn6",
+          "type": "MaterialButton",
+          "text": "6",
+          "x": 252.0,
+          "y": 217.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 24.0,
+          "y": 213.6,
+          "w": 312.0,
+          "h": 72.0
+        },
+        {
+          "id": "btn7",
+          "type": "MaterialButton",
+          "text": "7",
+          "x": 28.0,
+          "y": 289.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "btn8",
+          "type": "MaterialButton",
+          "text": "8",
+          "x": 140.0,
+          "y": 289.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "btn9",
+          "type": "MaterialButton",
+          "text": "9",
+          "x": 252.0,
+          "y": 289.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 24.0,
+          "y": 285.6,
+          "w": 312.0,
+          "h": 72.0
+        },
+        {
+          "id": "Space",
+          "type": "Space",
+          "text": null,
+          "x": 24.0,
+          "y": 357.6,
+          "w": 104.0,
+          "h": 1.0
+        },
+        {
+          "id": "btn0",
+          "type": "MaterialButton",
+          "text": "0",
+          "x": 132.0,
+          "y": 361.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "btnDel",
+          "type": "MaterialButton",
+          "text": null,
+          "x": 244.0,
+          "y": 361.6,
+          "w": 104.0,
+          "h": 64.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 24.0,
+          "y": 357.6,
+          "w": 312.0,
+          "h": 72.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "act-result-list",
+      "title": "独立页 · 结果列表",
+      "kind": "part",
+      "source": "app/src/main/res/layout/activity_result_list.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/act-result-list.svg",
+        "night": "parts/night/act-result-list.svg"
+      },
+      "elements": [
+        {
+          "id": "tvTitle",
+          "type": "TextView",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 32.0
+        },
+        {
+          "id": "rvList",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 68.0,
+          "w": 328.0,
+          "h": 68.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 68.0,
+          "w": 328.0,
+          "h": 68.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "act-virus-center",
+      "title": "独立页 · 病毒风险中心",
+      "kind": "part",
+      "source": "app/src/main/res/layout/activity_virus_center.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/act-virus-center.svg",
+        "night": "parts/night/act-virus-center.svg"
+      },
+      "elements": [
+        {
+          "id": "tvTitle",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 0.0,
+          "w": 328.0,
+          "h": 16.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 16.0
+        },
+        {
+          "id": "rvActions",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 16.0,
+          "y": 32.0,
+          "w": 328.0,
+          "h": 104.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 16.0,
+          "y": 32.0,
+          "w": 328.0,
+          "h": 104.0
+        },
+        {
+          "id": "menuState",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 32.0,
+          "w": 328.0,
+          "h": 104.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 32.0,
+          "w": 328.0,
+          "h": 104.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "frag-dashboard",
+      "title": "Fragment · 首页",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_dashboard.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 651.35
+      },
+      "svg": {
+        "light": "parts/light/frag-dashboard.svg",
+        "night": "parts/night/frag-dashboard.svg"
+      },
+      "elements": [
+        {
+          "id": "tvHomeTitle",
+          "type": "TextView",
+          "text": "安全中心",
+          "x": 6.0,
+          "y": 8.0,
+          "w": 96.0,
+          "h": 32.4
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 110.0,
+          "y": 64.4,
+          "w": 140.0,
+          "h": 140.0
+        },
+        {
+          "id": "tvScore",
+          "type": "TextView",
+          "text": "100",
+          "x": 135.4,
+          "y": 64.4,
+          "w": 89.1,
+          "h": 72.9
+        },
+        {
+          "id": "tvScoreUnit",
+          "type": "TextView",
+          "text": "分",
+          "x": 173.0,
+          "y": 137.3,
+          "w": 14.0,
+          "h": 18.9
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 135.4,
+          "y": 64.4,
+          "w": 89.1,
+          "h": 91.8
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 85.0,
+          "y": 64.4,
+          "w": 190.0,
+          "h": 190.0
+        },
+        {
+          "id": "tvState",
+          "type": "TextView",
+          "text": "设备状态良好,未发现威胁",
+          "x": 6.0,
+          "y": 274.4,
+          "w": 348.0,
+          "h": 23.0
+        },
+        {
+          "id": "btnOptimize",
+          "type": "MaterialButton",
+          "text": "一键优化",
+          "x": 54.0,
+          "y": 313.4,
+          "w": 252.0,
+          "h": 48.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 22.0,
+          "y": 401.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 清理存储",
+          "type": "TextView",
+          "text": "清理存储",
+          "x": 22.0,
+          "y": 451.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvCleanSub",
+          "type": "TextView",
+          "text": "查看可释放空间",
+          "x": 22.0,
+          "y": 479.7,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileClean",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 6.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 206.0,
+          "y": 401.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 病毒风险",
+          "type": "TextView",
+          "text": "病毒风险",
+          "x": 206.0,
+          "y": 451.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvVirusSub",
+          "type": "TextView",
+          "text": "尚未扫描",
+          "x": 206.0,
+          "y": 479.7,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 190.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileVirus",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 190.0,
+          "y": 385.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 385.4,
+          "w": 348.0,
+          "h": 128.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 22.0,
+          "y": 539.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 网络审计",
+          "type": "TextView",
+          "text": "网络审计",
+          "x": 22.0,
+          "y": 589.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvNetworkSub",
+          "type": "TextView",
+          "text": "查看网络连接",
+          "x": 22.0,
+          "y": 617.6,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileNetwork",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 6.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 206.0,
+          "y": 539.4,
+          "w": 26.0,
+          "h": 26.0
+        },
+        {
+          "id": "TextView: 应用管理",
+          "type": "TextView",
+          "text": "应用管理",
+          "x": 206.0,
+          "y": 589.4,
+          "w": 72.0,
+          "h": 24.3
+        },
+        {
+          "id": "tvApplockSub",
+          "type": "TextView",
+          "text": "管理应用锁",
+          "x": 206.0,
+          "y": 617.6,
+          "w": 142.0,
+          "h": 20.2
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 190.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "tileApplock",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 190.0,
+          "y": 523.4,
+          "w": 174.0,
+          "h": 128.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 6.0,
+          "y": 523.4,
+          "w": 348.0,
+          "h": 128.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 651.4
+        },
+        {
+          "id": "ScrollView",
+          "type": "ScrollView",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 651.4
+        }
+      ]
+    },
+    {
+      "key": "frag-detect",
+      "title": "Fragment · 检测(分段外壳)",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_detect.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 132.4
+      },
+      "svg": {
+        "light": "parts/light/frag-detect.svg",
+        "night": "parts/night/frag-detect.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 检测",
+          "type": "TextView",
+          "text": "检测",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 48.0,
+          "h": 32.4
+        },
+        {
+          "id": "segDetectVirus",
+          "type": "MaterialButton",
+          "text": "病毒扫描",
+          "x": 18.0,
+          "y": 66.4,
+          "w": 162.0,
+          "h": 48.0
+        },
+        {
+          "id": "segDetectTrojan",
+          "type": "MaterialButton",
+          "text": "木马查杀",
+          "x": 180.0,
+          "y": 66.4,
+          "w": 162.0,
+          "h": 48.0
+        },
+        {
+          "id": "segDetect",
+          "type": "MaterialButtonToggleGroup",
+          "text": null,
+          "x": 18.0,
+          "y": 66.4,
+          "w": 324.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 64.4,
+          "w": 328.0,
+          "h": 52.0
+        },
+        {
+          "id": "detectContainer",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 16.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 132.4
+        }
+      ]
+    },
+    {
+      "key": "frag-protect",
+      "title": "Fragment · 防护(分段外壳)",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_protect.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 132.4
+      },
+      "svg": {
+        "light": "parts/light/frag-protect.svg",
+        "night": "parts/night/frag-protect.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 防护",
+          "type": "TextView",
+          "text": "防护",
+          "x": 16.0,
+          "y": 16.0,
+          "w": 48.0,
+          "h": 32.4
+        },
+        {
+          "id": "segProtectLock",
+          "type": "MaterialButton",
+          "text": "应用锁",
+          "x": 18.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectAudit",
+          "type": "MaterialButton",
+          "text": "权限审计",
+          "x": 126.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtectTools",
+          "type": "MaterialButton",
+          "text": "工具箱",
+          "x": 234.0,
+          "y": 66.4,
+          "w": 108.0,
+          "h": 48.0
+        },
+        {
+          "id": "segProtect",
+          "type": "MaterialButtonToggleGroup",
+          "text": null,
+          "x": 18.0,
+          "y": 66.4,
+          "w": 324.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 64.4,
+          "w": 328.0,
+          "h": 52.0
+        },
+        {
+          "id": "protectContainer",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 132.4,
+          "w": 328.0,
+          "h": 16.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 132.4
+        }
+      ]
+    },
+    {
+      "key": "frag-scanner",
+      "title": "Fragment · 病毒扫描",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_scanner.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/frag-scanner.svg",
+        "night": "parts/night/frag-scanner.svg"
+      },
+      "elements": [
+        {
+          "id": "btnStartScan",
+          "type": "MaterialButton",
+          "text": "开始全盘扫描",
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 48.0
+        },
+        {
+          "id": "tvStatus",
+          "type": "TextView",
+          "text": "点击下方按钮开始扫描",
+          "x": 0.0,
+          "y": 80.0,
+          "w": 360.0,
+          "h": 18.9
+        },
+        {
+          "id": "rvResults",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 0.0,
+          "y": 114.9,
+          "w": 360.0,
+          "h": 21.1
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 114.9,
+          "w": 360.0,
+          "h": 21.1
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "frag-trojan",
+      "title": "Fragment · 木马查杀",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_trojan.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 410.9
+      },
+      "svg": {
+        "light": "parts/light/frag-trojan.svg",
+        "night": "parts/night/frag-trojan.svg"
+      },
+      "elements": [
+        {
+          "id": "btnTrojanScan",
+          "type": "MaterialButton",
+          "text": "开始木马查杀",
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 48.0
+        },
+        {
+          "id": "tvStatus",
+          "type": "TextView",
+          "text": "点击开始,多引擎检测木马与后门",
+          "x": 0.0,
+          "y": 80.0,
+          "w": 360.0,
+          "h": 18.9
+        },
+        {
+          "id": "btnRootkit",
+          "type": "MaterialButton",
+          "text": "Rootkit / 提权后门检测",
+          "x": 0.0,
+          "y": 114.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 0.0,
+          "y": 132.9,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 114.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 170.9,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnModules",
+          "type": "MaterialButton",
+          "text": "恶意模块 / SU 脚本检测",
+          "x": 0.0,
+          "y": 171.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 0.0,
+          "y": 189.9,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 171.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 227.9,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnLocker",
+          "type": "MaterialButton",
+          "text": "锁机软件检测",
+          "x": 0.0,
+          "y": 228.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 0.0,
+          "y": 246.9,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 228.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 284.9,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnDeepScan",
+          "type": "MaterialButton",
+          "text": "深度查杀(内存 · 全盘 · 分区)",
+          "x": 0.0,
+          "y": 285.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 0.0,
+          "y": 303.9,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 285.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 341.9,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnVirusCenter",
+          "type": "MaterialButton",
+          "text": "病毒查杀中心",
+          "x": 0.0,
+          "y": 342.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "ImageView",
+          "type": "ImageView",
+          "text": null,
+          "x": 0.0,
+          "y": 360.9,
+          "w": 20.0,
+          "h": 20.0
+        },
+        {
+          "id": "FrameLayout",
+          "type": "FrameLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 342.9,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 114.9,
+          "w": 360.0,
+          "h": 284.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 114.9,
+          "w": 360.0,
+          "h": 284.0
+        },
+        {
+          "id": "rvTrojan",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 0.0,
+          "y": 410.9,
+          "w": 360.0,
+          "h": 12.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 410.9,
+          "w": 360.0,
+          "h": 12.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 410.9
+        }
+      ]
+    },
+    {
+      "key": "frag-app-lock",
+      "title": "Fragment · 应用锁",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_app_lock.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 211.0
+      },
+      "svg": {
+        "light": "parts/light/frag-app-lock.svg",
+        "night": "parts/night/frag-app-lock.svg"
+      },
+      "elements": [
+        {
+          "id": "tvPinState",
+          "type": "TextView",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 24.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 24.0,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnSetPin",
+          "type": "MaterialButton",
+          "text": "设置 / 修改 PIN 码",
+          "x": 0.0,
+          "y": 25.0,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 81.0,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 138.0,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "btnAccessibility",
+          "type": "MaterialButton",
+          "text": "开启无障碍权限(用于应用锁)",
+          "x": 0.0,
+          "y": 139.0,
+          "w": 360.0,
+          "h": 56.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 195.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 195.0
+        },
+        {
+          "id": "rvLockApps",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 0.0,
+          "y": 211.0,
+          "w": 360.0,
+          "h": 16.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 211.0,
+          "w": 360.0,
+          "h": 16.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 211.0
+        }
+      ]
+    },
+    {
+      "key": "frag-audit",
+      "title": "Fragment · 权限审计",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_permission_audit.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/frag-audit.svg",
+        "night": "parts/night/frag-audit.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 权限审计",
+          "type": "TextView",
+          "text": "权限审计",
+          "x": 16.0,
+          "y": 24.0,
+          "w": 52.0,
+          "h": 17.6
+        },
+        {
+          "id": "tvSummary",
+          "type": "TextView",
+          "text": null,
+          "x": 0.0,
+          "y": 49.5,
+          "w": 360.0,
+          "h": 24.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 49.5,
+          "w": 360.0,
+          "h": 24.0
+        },
+        {
+          "id": "rvAudit",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 0.0,
+          "y": 89.5,
+          "w": 360.0,
+          "h": 46.5
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 89.5,
+          "w": 360.0,
+          "h": 46.5
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "frag-tools",
+      "title": "Fragment · 工具箱",
+      "kind": "part",
+      "source": "app/src/main/res/layout/fragment_tools.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 480.84999999999997
+      },
+      "svg": {
+        "light": "parts/light/frag-tools.svg",
+        "night": "parts/night/frag-tools.svg"
+      },
+      "elements": [
+        {
+          "id": "TextView: 防护开关",
+          "type": "TextView",
+          "text": "防护开关",
+          "x": 16.0,
+          "y": 24.0,
+          "w": 52.0,
+          "h": 17.6
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 105.5,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "tvRootState",
+          "type": "TextView",
+          "text": "Root 模式:未启用(开启下方开关将请求 su 授权)",
+          "x": 16.0,
+          "y": 118.5,
+          "w": 287.2,
+          "h": 24.2
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 154.8,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 211.8,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 49.5,
+          "w": 360.0,
+          "h": 219.2
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 49.5,
+          "w": 360.0,
+          "h": 219.2
+        },
+        {
+          "id": "TextView: 安全设置",
+          "type": "TextView",
+          "text": "安全设置",
+          "x": 16.0,
+          "y": 292.8,
+          "w": 52.0,
+          "h": 17.6
+        },
+        {
+          "id": "View",
+          "type": "View",
+          "text": null,
+          "x": 56.0,
+          "y": 374.3,
+          "w": 304.0,
+          "h": 1.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 318.3,
+          "w": 360.0,
+          "h": 113.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 318.3,
+          "w": 360.0,
+          "h": 113.0
+        },
+        {
+          "id": "TextView: 工具",
+          "type": "TextView",
+          "text": "工具",
+          "x": 16.0,
+          "y": 455.3,
+          "w": 26.0,
+          "h": 17.6
+        },
+        {
+          "id": "rvTools",
+          "type": "RecyclerView",
+          "text": null,
+          "x": 0.0,
+          "y": 480.9,
+          "w": 360.0,
+          "h": 0.0
+        },
+        {
+          "id": "MaterialCardView",
+          "type": "MaterialCardView",
+          "text": null,
+          "x": 0.0,
+          "y": 480.9,
+          "w": 360.0,
+          "h": 0.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 480.8
+        }
+      ]
+    },
+    {
+      "key": "dialog-set-pin",
+      "title": "对话框 · 设置 PIN",
+      "kind": "part",
+      "source": "app/src/main/res/layout/dialog_set_pin.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 148.0
+      },
+      "svg": {
+        "light": "parts/light/dialog-set-pin.svg",
+        "night": "parts/night/dialog-set-pin.svg"
+      },
+      "elements": [
+        {
+          "id": "etPin",
+          "type": "TextInputEditText",
+          "text": null,
+          "x": 24.0,
+          "y": 24.0,
+          "w": 312.0,
+          "h": 56.0
+        },
+        {
+          "id": "TextInputLayout",
+          "type": "TextInputLayout",
+          "text": null,
+          "x": 24.0,
+          "y": 24.0,
+          "w": 312.0,
+          "h": 56.0
+        },
+        {
+          "id": "etPinConfirm",
+          "type": "TextInputEditText",
+          "text": null,
+          "x": 24.0,
+          "y": 92.0,
+          "w": 312.0,
+          "h": 56.0
+        },
+        {
+          "id": "TextInputLayout",
+          "type": "TextInputLayout",
+          "text": null,
+          "x": 24.0,
+          "y": 92.0,
+          "w": 312.0,
+          "h": 56.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 148.0
+        }
+      ]
+    },
+    {
+      "key": "widget-security",
+      "title": "桌面小组件 · 安全状态",
+      "kind": "part",
+      "source": "app/src/main/res/layout/widget_security.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/widget-security.svg",
+        "night": "parts/night/widget-security.svg"
+      },
+      "elements": [
+        {
+          "id": "widgetIcon",
+          "type": "ImageView",
+          "text": null,
+          "x": 16.0,
+          "y": 40.0,
+          "w": 40.0,
+          "h": 40.0
+        },
+        {
+          "id": "widgetTitle",
+          "type": "TextView",
+          "text": "安卫安全助手",
+          "x": 68.0,
+          "y": 39.8,
+          "w": 204.0,
+          "h": 21.6
+        },
+        {
+          "id": "widgetScan",
+          "type": "TextView",
+          "text": "病毒扫描",
+          "x": 68.0,
+          "y": 61.4,
+          "w": 56.0,
+          "h": 18.9
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 68.0,
+          "y": 39.8,
+          "w": 204.0,
+          "h": 40.5
+        },
+        {
+          "id": "widgetOpen",
+          "type": "TextView",
+          "text": "安卫安全助手",
+          "x": 272.0,
+          "y": 50.5,
+          "w": 84.0,
+          "h": 18.9
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "item-audit",
+      "title": "列表项 · 权限审计行",
+      "kind": "part",
+      "source": "app/src/main/res/layout/item_audit.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/item-audit.svg",
+        "night": "parts/night/item-audit.svg"
+      },
+      "elements": [
+        {
+          "id": "tvAppName",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 59.0,
+          "w": 0.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvPerms",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 61.0,
+          "w": 0.0,
+          "h": 0.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 59.0,
+          "w": 0.0,
+          "h": 2.0
+        },
+        {
+          "id": "tvScore",
+          "type": "TextView",
+          "text": null,
+          "x": 28.0,
+          "y": 60.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "item-lock-app",
+      "title": "列表项 · 应用锁行",
+      "kind": "part",
+      "source": "app/src/main/res/layout/item_lock_app.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/item-lock-app.svg",
+        "night": "parts/night/item-lock-app.svg"
+      },
+      "elements": [
+        {
+          "id": "tvName",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 60.0,
+          "w": 284.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvPkg",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 60.0,
+          "w": 284.0,
+          "h": 0.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 60.0,
+          "w": 284.0,
+          "h": 0.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "item-scan-result",
+      "title": "列表项 · 扫描结果行",
+      "kind": "part",
+      "source": "app/src/main/res/layout/item_scan_result.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/item-scan-result.svg",
+        "night": "parts/night/item-scan-result.svg"
+      },
+      "elements": [
+        {
+          "id": "tvAppName",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 12.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvPackage",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 12.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvStatus",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 14.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "item-tool",
+      "title": "列表项 · 工具/动作行",
+      "kind": "part",
+      "source": "app/src/main/res/layout/item_tool.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/item-tool.svg",
+        "night": "parts/night/item-tool.svg"
+      },
+      "elements": [
+        {
+          "id": "tvTitle",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 12.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvSub",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 14.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "key": "item-trojan",
+      "title": "列表项 · 木马检测行",
+      "kind": "part",
+      "source": "app/src/main/res/layout/item_trojan.xml",
+      "canvas": {
+        "w": 360.0,
+        "h": 120.0
+      },
+      "svg": {
+        "light": "parts/light/item-trojan.svg",
+        "night": "parts/night/item-trojan.svg"
+      },
+      "elements": [
+        {
+          "id": "tvTitle",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 12.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvSub",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 12.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvDetail",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 14.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "tvSuggestion",
+          "type": "TextView",
+          "text": null,
+          "x": 16.0,
+          "y": 22.0,
+          "w": 328.0,
+          "h": 0.0
+        },
+        {
+          "id": "btnUninstall",
+          "type": "MaterialButton",
+          "text": "立即卸载",
+          "x": 16.0,
+          "y": 30.0,
+          "w": 64.0,
+          "h": 48.0
+        },
+        {
+          "id": "btnFix",
+          "type": "MaterialButton",
+          "text": "执行",
+          "x": 88.0,
+          "y": 30.0,
+          "w": 32.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 16.0,
+          "y": 30.0,
+          "w": 104.0,
+          "h": 48.0
+        },
+        {
+          "id": "LinearLayout",
+          "type": "LinearLayout",
+          "text": null,
+          "x": 0.0,
+          "y": 0.0,
+          "w": 360.0,
+          "h": 120.0
+        }
+      ]
+    }
+  ]
+}

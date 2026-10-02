@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="360" viewBox="0 0 360 120"
+     data-export="design-export/export_ui.py" data-mode="night"
+     data-source="app/src/main/res/layout/item_lock_app.xml">
+  <title>列表项 · 应用锁行</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="120">
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="16" data-y="60" data-w="284" data-h="0">
+    <g id="tvName" data-name="tvName" data-type="TextView" data-x="16" data-y="60" data-w="284" data-h="0">
+    </g>
+    <g id="tvPkg" data-name="tvPkg" data-type="TextView" data-x="16" data-y="60" data-w="284" data-h="0">
+    </g>
+    </g>
+    <g id="swLock" data-name="swLock" data-type="MaterialSwitch" data-x="300" data-y="44" data-w="52" data-h="32">
+      <rect x="300" y="44" width="52" height="32" fill="#31D027" rx="16" ry="16"/>
+      <circle cx="338" cy="60" r="12" fill="None"/>
+    </g>
+    </g>
+</svg>

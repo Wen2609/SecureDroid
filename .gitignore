@@ -20,6 +20,10 @@ keystore.properties
 # Robolectric offline runtime (150MB, machine-local)
 robolectric-deps/
 
+# Python cache from design-export/export_ui.py
+__pycache__/
+*.pyc
+
 # Build logs
 *.log
 build_out.log

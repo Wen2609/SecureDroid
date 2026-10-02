@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="444" viewBox="0 0 360 148"
+     data-export="design-export/export_ui.py" data-mode="light"
+     data-source="app/src/main/res/layout/dialog_set_pin.xml">
+  <title>对话框 · 设置 PIN</title>
+  <desc></desc>
+    <g id="LinearLayout" data-name="LinearLayout" data-type="LinearLayout" data-x="0" data-y="0" data-w="360" data-h="148">
+    <g id="TextInputLayout" data-name="TextInputLayout" data-type="TextInputLayout" data-x="24" data-y="24" data-w="312" data-h="56">
+    <g id="etPin" data-name="etPin" data-type="TextInputEditText" data-x="24" data-y="24" data-w="312" data-h="56">
+    </g>
+    </g>
+    <g id="TextInputLayout" data-name="TextInputLayout" data-type="TextInputLayout" data-x="24" data-y="92" data-w="312" data-h="56">
+    <g id="etPinConfirm" data-name="etPinConfirm" data-type="TextInputEditText" data-x="24" data-y="92" data-w="312" data-h="56">
+    </g>
+    </g>
+    </g>
+</svg>
