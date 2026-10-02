@@ -37,12 +37,21 @@ object TrojanScanner {
         /** 权限风险分 0-100(与 ScannerEngine.permissionRiskScore 同一语义) */
         val riskScore: Int = 0
     ) {
-        val isInfected: Boolean get() = detections.isNotEmpty()
+        /**
+         * 只有 MEDIUM 及以上才算"感染"。
+         * LOW 命中是提示级(见 BehaviorRules 的分级下调):正常应用普遍带这些 API 组合,
+         * 若计入感染会让查杀结果里满是误报。
+         */
+        val isInfected: Boolean
+            get() = detections.any { it.level.ordinal >= ThreatLevel.MEDIUM.ordinal }
         val worstLevel: ThreatLevel?
             get() = detections.maxByOrNull { it.level.ordinal }?.level
     }
 
     fun scanPackage(context: Context, pkg: String): Report {
+        // 不扫自己:本应用内置了全部"检测用"字符串常量(su 路径、锁机 API、反向 Shell 关键字),
+        // 行为规则与自检特征必然命中自己 —— 实测这是最顽固的一个误报。
+        if (pkg == context.packageName) return Report(pkg, pkg, emptyList())
         // 性能:单包信息 / 应用标签走快照层,避免同一应用在一次扫描中被反复查询
         val info = PackageSnapshot.packageInfo(context, pkg, PackageManager.GET_PERMISSIONS)
             ?: return Report(pkg, pkg, emptyList())

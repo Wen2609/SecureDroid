@@ -9,8 +9,10 @@
 # 任意位置匹配:ASCII "APK-TROJAN-TEST-SIGNATURE"
 Test.Trojan.Marker:0:*:41504B2D54524F4A414E2D544553542D5349474E4154555245
 
-# 绝对偏移匹配:DEX 文件头魔数 "dex\n035"(偏移 0)
-Test.Trojan.DexHeader:0:0:6465780A303335
+# 绝对偏移匹配:自检用唯一标记 "APK-HEADER-MARKER"(偏移 0)
+# 注意:禁止把通用文件魔数(dex\n035、PK\x03\x04、ELF)写成特征 ——
+# 实测那会把所有同版本 dex 的正常应用(含厂商系统应用)整片判成木马。
+Test.Trojan.HeaderMarker:0:0:41504B2D4845414445522D4D41524B4552
 
 # 文件尾偏移匹配:末尾 4 字节为 "EVIL"
 Test.Trojan.TailMarker:0:EOF-4:4556494C

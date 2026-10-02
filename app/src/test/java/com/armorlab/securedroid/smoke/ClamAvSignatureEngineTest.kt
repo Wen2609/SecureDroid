@@ -47,17 +47,39 @@ class ClamAvSignatureEngineTest {
 
     @Test
     fun absoluteOffsetSignatureMatchesOnlyAtThatOffset() {
-        val dexMagic = byteArrayOf(0x64, 0x65, 0x78, 0x0A, 0x30, 0x33, 0x35)
-        val atZero = dexMagic + ByteArray(64)
+        // 自检用唯一标记 "APK-HEADER-MARKER"。
+        // 注意:绝不能拿 dex\n035 这类通用魔数当特征 —— 实测那会把所有同版本 dex 的
+        // 正常应用(含一加厂商"备份与恢复")整片判成木马。
+        val marker = "APK-HEADER-MARKER".toByteArray()
+        val atZero = marker + ByteArray(64)
         assertTrue(
             "绝对偏移签名应在偏移 0 处命中",
-            ClamAvSignatures.scanBytes(atZero).contains("Test.Trojan.DexHeader")
+            ClamAvSignatures.scanBytes(atZero).contains("Test.Trojan.HeaderMarker")
         )
-        val shifted = ByteArray(8) + dexMagic + ByteArray(64)
+        val shifted = ByteArray(8) + marker + ByteArray(64)
         assertFalse(
             "同样的字节出现在偏移 8 时,绝对偏移签名不应命中",
-            ClamAvSignatures.scanBytes(shifted).contains("Test.Trojan.DexHeader")
+            ClamAvSignatures.scanBytes(shifted).contains("Test.Trojan.HeaderMarker")
         )
+    }
+
+    @Test
+    fun genericFileMagicIsNeverASignature() {
+        // 回归(误报修复 v1.7.3):任何通用文件魔数都不允许出现在内置特征库里。
+        // 一旦命中判定建立在"这是 dex / zip / elf"这种无差别事实上,误报面就是全部正常应用。
+        val magics = mapOf(
+            "dex\n035" to byteArrayOf(0x64, 0x65, 0x78, 0x0A, 0x30, 0x33, 0x35),
+            "dex\n038" to byteArrayOf(0x64, 0x65, 0x78, 0x0A, 0x30, 0x33, 0x38),
+            "zip" to byteArrayOf(0x50, 0x4B, 0x03, 0x04),
+            "elf" to byteArrayOf(0x7F, 0x45, 0x4C, 0x46)
+        )
+        for ((label, magic) in magics) {
+            val data = magic + ByteArray(64)
+            assertTrue(
+                "通用魔数(" + label + ")不得命中任何内置特征",
+                ClamAvSignatures.scanBytes(data).isEmpty()
+            )
+        }
     }
 
     @Test

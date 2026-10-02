@@ -30,3 +30,7 @@ build_out.log
 build_err.log
 rel.log
 rel.err.log
+
+# Local scratch (probe scripts, headless screenshots)
+.tmp-audit/
+.tmp-shot/

@@ -107,7 +107,9 @@ object PermissionAuditor {
         val app = context.applicationContext
         return countCache.getOrLoad(threshold) {
             PackageSnapshot.installedPackages(app, PackageManager.GET_PERMISSIONS)
-                .count { scoreFor(it).first >= threshold }
+                // 自查不给自己扣分:本应用自身声明了 QUERY_ALL_PACKAGES 等权限,
+                // 把它算进"高风险应用数"没有意义(用户关心的是别的应用)。
+                .count { it.packageName != app.packageName && scoreFor(it).first >= threshold }
         }
     }
 

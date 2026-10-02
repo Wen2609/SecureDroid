@@ -27,6 +27,13 @@ object DexVerdictCache {
     private const val MAX_APPS = 300
     private const val FLUSH_THRESHOLD = 32
     private const val CLEAN = "~clean"
+    private const val KEY_VERSION = "dex_verdict_cache_version"
+
+    /**
+     * 判定语义版本号。行为规则 / 特征库语义变化(如 v1.7.3 的误报修复)后必须自增:
+     * 旧版本写进缓存的 HIGH 判定是按老规则得出的,继续复用会让修复在老设备上完全不生效。
+     */
+    private const val VERSION = 2
 
     private class Acc {
         var clean = false
@@ -55,6 +62,13 @@ object DexVerdictCache {
         synchronized(lock) {
             if (loaded) return
             val p = context.applicationContext.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+            if (p.getInt(KEY_VERSION, 0) != VERSION) {
+                // 规则语义升级:整表丢弃(旧判定不再可信),只写入新版本号
+                p.edit().remove(KEY).putInt(KEY_VERSION, VERSION).apply()
+                prefs = p
+                loaded = true
+                return
+            }
             val acc = HashMap<String, Acc>()
             for (e in p.getStringSet(KEY, emptySet()) ?: emptySet()) {
                 val parts = e.split('|')

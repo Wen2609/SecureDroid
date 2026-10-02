@@ -14,6 +14,49 @@
   "视觉设计系统(按设计稿重建)"一节改写为"界面外观(现状)",AGENT_NOTES 里并存的三套风格
   基线(Swiss / Apple HIG / 旧记录)合并为一条"设计系统已移除,布局可手改"的约定。
 
+## [1.7.3] - 2026-10-02
+
+### Fixed
+
+- **检测链系统性误报(用真实语料实测复现)**:行为规则用纯 `contains` 在 DEX 字符串碎片上匹配,
+  且只要凑够模式数量就升级为感染。实测结果 —— 一加官方"备份与恢复"被判 10 条(含 CRITICAL
+  短信扣费 / 提权 / 反向 Shell),Dute 等 4 个正常应用各 7-10 条,本应用扫描自己时 14 条规则全中。
+  三处根因分别修复:
+  ① 匹配改为**词边界**匹配(新增 `scan/TokenMatch.kt`):`exec` 不再命中 `execute`/`execSQL`/`executor`,
+  `xposed` 不再命中查杀应用自带的 `xposedcheck`;
+  ② 新增**强特征门槛**(`BehaviorRules.Rule.strong`):纯 API 组合(`Ljava/net/Socket;` + `exec`、
+  `Ljavax/crypto/Cipher;` + BTC、`xposed`)在正常应用里到处都是,必须同时命中真正的恶意落点
+  (真实 shell 路径 `/system/bin/sh`/`/system/xbin/sh`、`.locked`/`readme.txt`、`resetPassword`)才判该条;
+  ③ **分级下调**:除反向 Shell / 勒索 / 锁机勒索三条有判别性证据的规则外,其余 11 条降为 LOW 提示级。
+- **LOW 命中不再算"感染"**(`trojan/TrojanScanner.kt`):`Report.isInfected` 由
+  `detections.isNotEmpty()` 改为"存在 MEDIUM 及以上命中";提示级信息仍留在结果里供 UI 展示。
+- **扫描自己**:应用内置了全部"检测用"字符串常量,行为规则必然命中自己。`TrojanScanner.scanPackage`
+  遇到本应用直接返回空报告;新增纯函数 `ParallelScanner.scanTargets()`,扫描目标同时排除本应用与信任列表。
+- **锁机判定收紧**(`root/LockerDetector.kt`):原实现"命中 lockNow / resetPassword / wipeData 中任 2 项"
+  即判锁机木马,而厂商设备管理组件普遍同时带 `lockNow` + `wipeData`;现要求必须命中
+  `resetPassword`(重置锁屏密码勒索)才判 CRITICAL。
+- **通用文件魔数不得作为特征**:演示特征库 `assets/signatures/trojan_demo.ndb` 中的
+  `Test.Trojan.DexHeader`(绝对偏移 0 匹配 `dex\n035`)会让所有同版本 dex 的正常应用被整片判成木马,
+  现替换为自检用唯一标记 `APK-HEADER-MARKER`。
+- **判定缓存加语义版本号**(`vscan/DexVerdictCache.kt`):新增 `dex_verdict_cache_version`(当前 2),
+  规则语义变化后自增 —— 否则老设备会继续沿用按旧规则写入的 HIGH 判定,误报修复等于无效。
+- **自查不给自己扣分**:`PermissionAuditor.riskyAppCount()` 统计高风险应用数量时排除本应用
+  (自身声明了 `QUERY_ALL_PACKAGES` 等权限)。
+
+### Added
+
+- `FalsePositiveTest` 10 项:真实第三方 APK 字符串画像不得判为感染、纯子串语料不产生判定、
+  合成恶意样本(反向 Shell / 勒索 / 锁机勒索)仍必须命中、只有 MEDIUM+ 才算感染、
+  锁机判定要求 `resetPassword`、扫描目标排除自己与信任列表、特征库不含通用魔数、自排除与边界匹配的源码守卫。
+- ClamAV 引擎冒烟测试新增 `genericFileMagicIsNeverASignature`:dex\n035 / dex\n038 / zip / elf
+  四类通用魔数都不得命中任何内置特征。
+
+### Changed
+
+- 检测能力的已知取舍:单纯"短信扣费"样本降为 LOW 提示(仅凭字符串无法与正常短信应用区分);
+  `Trojan.Sms.Premium`、`Trojan.PrivEsc`、`WebViewRce`、`HookFramework` 等 11 条规则改为提示级。
+  真实语料误报由 7-10 条 MEDIUM+ 降到 0 条,合成恶意样本仍全部命中。
+
 ## [1.7.2] - 2026-10-02
 
 ### Fixed

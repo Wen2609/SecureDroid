@@ -39,6 +39,8 @@
 
 - **查杀历史与死代码修复(v1.7.2)**:定时查杀 `DailyScanRunner` 与手动查杀 `ScanViewModel` 落库时把 `sha256` 写死为空串、`riskScore` 写死为 0 —— 历史列表与威胁报告导出的指纹/风险分因此全为空。现由 `TrojanScanner.Report` 携带真实值:指纹复用 `HashCache`(已算过,零额外开销),风险分取 `PermissionAuditor.scoreFor(info)`(与 `ScannerEngine.permissionRiskScore` 同语义),包信息查询由 flags=0 改为 `GET_PERMISSIONS` 与评分共用同一次绑定器调用;同时删除无调用方的 `PrivilegeManager.execBatch()`(且仍在用已废弃的 `runSu(...) != null` 判据),强停/清数据命令(`am force-stop` / `pm clear`)的包名统一走 `ShellBridge.quote()`。新增 `ScanHistoryTest` 4 项(共 122 项 JVM 测试)。
 
+- **误报修复(v1.7.3)**:行为规则此前用纯 `contains` 匹配 DEX 字符串碎片,且凑够模式数量就升级为感染 —— 实测一加官方"备份与恢复"被判 10 条(含 CRITICAL 短信扣费/提权/反向 Shell)、Dute 等 4 个正常应用各 7-10 条、本应用扫描自己时 14 条规则全中。现三处修复:①匹配改为**词边界**(新增 `scan/TokenMatch.kt`,`exec` 不再命中 `execute`/`execSQL`);②新增**强特征门槛**(`BehaviorRules.Rule.strong`,纯 API 组合必须叠加真实恶意落点才算);③**分级下调**(11 条规则降为 LOW 提示),且 `Report.isInfected` 只认 MEDIUM 及以上;同时排除扫描自己、收紧锁机判定(必须命中 `resetPassword`)、删除演示特征库里的通用 dex 头魔数、给判定缓存加语义版本号(`DexVerdictCache` VERSION=2,否则老设备沿用旧误报)。真实语料误报 0 条 MEDIUM+,合成恶意样本仍全部命中。新增 `FalsePositiveTest` 10 项(共 132 项 JVM 测试)。
+
 ## 技术栈
 
 - Kotlin 1.9.24 / AGP 8.5.2 / Gradle 8.7 / JDK 17
@@ -92,7 +94,7 @@
 
 ### 测试与验证
 
-    ./gradlew testDebugUnitTest     # 121 项 JVM 单元测试(含 Robolectric 冒烟)
+    ./gradlew testDebugUnitTest     # 132 项 JVM 单元测试(含 Robolectric 冒烟)
     ./gradlew assembleRelease       # R8 混淆 + 签名发布包
 
 ### 运行时冒烟测试(Robolectric)
@@ -122,6 +124,7 @@
 | PerfGuardTest | 8 | 性能不变量守卫:并行池核心线程数、正则/时间格式化集中、PM 调用收口快照层、列表 `setHasFixedSize` |
 | ShellHardeningTest | 9 | root 执行加固:退出码/失败标记才是成功判据、路径引号转义与逆运算、注入载荷只算一个参数、策略放行真实命令且拦截灾难命令、源码守卫(禁止 `runSu(...) != null` 与引号内直接插值) |
 | ScanHistoryTest | 4 | 查杀历史落库:报告携带真实指纹/风险分、两个写入方不得再落空值、死代码 `execBatch` 已移除、强停命令包名走 `quote` |
+| FalsePositiveTest | 10 | 检测误报回归:真实第三方 APK 字符串画像不得判为感染、纯子串不算命中、合成恶意样本仍必须命中、只有 MEDIUM+ 才计感染、锁机判定要求 `resetPassword`、扫描目标排除自己与信任列表、特征库不含通用魔数(dex/zip/elf)、自排除与词边界匹配的源码守卫 |
 
 运行时验证已抓出并修复两个**致命缺陷**(编译、Lint、静态测试均无法发现):
 WorkManager 未初始化导致启动即崩溃、`BottomNavigationView` 6 项超限导致主界面无法启动。详见 CHANGELOG。
@@ -230,12 +233,12 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.7.2-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.7.3-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 C8866BA8B6EF4989B4167051935C2353E7E395BC0449B98A879033A18005C3A9
-    大小    1,998,875 字节    versionCode 12 / versionName 1.7.2(查杀历史落真实指纹与风险分、死代码清理)
+    SHA-256 B4E67B5240AED9AAE17045A24762C46B2FDC71365B89BE0B9316ED541DB2D140
+    大小    1,999,311 字节    versionCode 13 / versionName 1.7.3(检测链误报修复:整词匹配 + 强特征门槛 + 分级下调)
 
-  更早版本 apks/SecureDroid-v1.0.0 / v1.0.1 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 / v1.5.0 / v1.6.0 / v1.7.0 / v1.7.1 保留用于回退。
+  更早版本 apks/SecureDroid-v1.0.0 / v1.0.1 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 / v1.5.0 / v1.6.0 / v1.7.0 / v1.7.1 / v1.7.2 保留用于回退。
 
 ## 注意事项
 

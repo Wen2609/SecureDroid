@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.armorlab.securedroid.scan.MultiPatternMatcher
 import com.armorlab.securedroid.scan.ThreatLevel
+import com.armorlab.securedroid.scan.TokenMatch
 import com.armorlab.securedroid.trojan.DexScanner
 
 /**
@@ -18,8 +19,8 @@ import com.armorlab.securedroid.trojan.DexScanner
  * 检测逻辑:
  * 1. 枚举当前所有设备管理员(DevicePolicyManager.activeAdmins);
  * 2. 系统内置管理员(如企业/厂商组件)跳过;
- * 3. 第三方管理员:扫描其 DEX 是否组合使用 lockNow / resetPassword / wipeData,
- *    组合命中(>=2)判定为锁机木马(CRITICAL),否则标记为可疑第三方管理员(MEDIUM);
+ * 3. 第三方管理员:扫描其 DEX,必须命中 resetPassword(重置锁屏密码勒索)才判锁机木马
+ *    (CRITICAL),否则标记为可疑第三方管理员(MEDIUM);
  * 4. 生成处置命令:dpm remove-active-admin + pm uninstall --user 0(root 可用)。
  */
 object LockerDetector {
@@ -34,7 +35,16 @@ object LockerDetector {
         val fixLabel: String?
     )
 
-    private val lockApis = listOf("lockNow", "resetPassword", "wipeData")
+    /** 真正的勒索落点:重置锁屏密码。lockNow / wipeData 是正规设备管理 API,单独出现不算锁机 */
+    private const val RESET_PASSWORD = "resetPassword"
+
+    private val lockApis = listOf("lockNow", RESET_PASSWORD, "wipeData")
+
+    /**
+     * 锁机判定:必须命中 resetPassword(重置密码勒索),而不是"锁机 API 命中 2 项"。
+     * 实测:厂商设备管理 / 找回类组件同时带 lockNow + wipeData,按数量判定会直接误报。
+     */
+    internal fun lockerVerdict(hits: List<String>): Boolean = hits.contains(RESET_PASSWORD)
 
     /** 性能:单遍多模式匹配,替代"每个 API 都对整个 dex 字符串集做一次全量扫描" */
     private val lockMatcher = MultiPatternMatcher(lockApis)
@@ -62,18 +72,21 @@ object LockerDetector {
             } catch (_: Exception) { pkg }
 
             // 扫描该管理员的 DEX,判定锁机行为组合
-            var hits = mutableListOf<String>()
+            val hits = mutableListOf<String>()
             try {
                 val apk = pm.getApplicationInfo(pkg, 0).sourceDir
                 if (apk != null) {
                     val strings = DexScanner.dexStringsFromApk(apk)
                     val matched = lockMatcher.scan(strings)
-                    for (i in lockApis.indices) if (matched[i]) hits.add(lockApis[i])
+                    for (i in lockApis.indices) {
+                        // 位图预筛 + 词边界复核:lockNow 不再命中 lockNowInternal 之类的子串
+                        if (matched[i] && TokenMatch.occursIn(strings, lockApis[i])) hits.add(lockApis[i])
+                    }
                 }
             } catch (_: Exception) {
             }
 
-            val isLocker = hits.size >= 2
+            val isLocker = lockerVerdict(hits)
             val compName = comp.flattenToShortString()
             findings.add(
                 LockerFinding(

@@ -63,6 +63,19 @@ object ParallelScanner {
 
     internal fun configurePoolForTest(workers: Int) = configurePool(workers)
 
+    /**
+     * 扫描目标筛选(纯函数,便于单测):全部包 - 信任列表 - 本应用自己。
+     *
+     * 排除自己是修掉"自扫描误报"的关键:本应用内置了全部检测用字符串常量,
+     * 行为规则必然命中自己(TrojanScanner.scanPackage 里还有一道同样的自排除)。
+     * 信任列表已在 TrustStore 里维护,这里只做集合运算。
+     */
+    internal fun scanTargets(
+        all: List<String>,
+        trusted: Set<String>,
+        selfPackage: String
+    ): List<String> = all.filter { it != selfPackage && it !in trusted }
+
     data class Outcome(
         val reports: List<TrojanScanner.Report>,
         val cancelled: Boolean,
@@ -78,7 +91,7 @@ object ParallelScanner {
     ): Outcome {
         ScanControl.reset()
         val trusted = TrustStore.trusted(context)
-        val pkgs = PackageSnapshot.packageNames(context).filter { it !in trusted }
+        val pkgs = scanTargets(PackageSnapshot.packageNames(context), trusted, context.packageName)
         val total = pkgs.size
         if (total == 0) return Outcome(emptyList(), false, 0)
 

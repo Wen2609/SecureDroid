@@ -108,3 +108,18 @@
 - 查杀历史必须落真实值:`TrojanScanner.Report` 已携带 `sha256` / `riskScore`,写入方(DailyScanRunner / ScanViewModel)
   不许再写 `sha256 = ""` / `riskScore = 0`;`PrivilegeManager.execBatch()` 已删除,别再复活(ScanHistoryTest 会拦)
 
+## 误报防线不变量(v1.7.3 起 · FalsePositiveTest / ClamAvSignatureEngineTest 会拦)
+
+- **行为规则必须"整词"匹配**:DEX 字符串级匹配一律走 `scan/TokenMatch.kt` 的 `occurs/occursIn`,
+  不得再用裸 `contains` —— `exec` 命中 `execute`/`execSQL`、`xposed` 命中 `xposedcheck` 是实测的误报主因;
+- **判感染需要"强特征"**:`BehaviorRules.Rule.strong` 非空时,必须命中其中至少一个模式才算该规则
+  (纯 API 组合如 Socket+exec、Cipher+BTC 在正常应用里遍地都是,不足以定罪);
+- **只有 MEDIUM 及以上算感染**:`TrojanScanner.Report.isInfected` 只认 `level.ordinal >= MEDIUM`,
+  LOW 只是提示;改这条等于改"什么算病毒",必须同步改 UI 文案与 FalsePositiveTest;
+- **不得拿通用文件魔数当特征**:`dex\n035`、`PK\x03\x04`、`ELF` 之类不得写进 `.ndb`/`.ndu`
+  (会把所有同版本 dex 的正常应用整片判成木马);演示库只放 `APK-HEADER-MARKER` 这类自检唯一串;
+- **不扫自己**:`TrojanScanner.scanPackage` 遇到本应用直接返回空报告,`ParallelScanner.scanTargets`
+  同时排除本应用与信任列表(应用内置全部检测用字符串,必然命中自己);
+- **判定缓存带语义版本**:改动行为规则或特征库后,必须自增 `DexVerdictCache.VERSION`
+  (并同步 `KEY_VERSION` 的期望值),否则老设备继续沿用旧判定,修复无效。
+
