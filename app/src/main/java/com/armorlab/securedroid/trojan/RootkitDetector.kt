@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.trojan
 
+import com.armorlab.securedroid.core.Re
 import android.content.Context
 import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ThreatLevel
@@ -91,14 +92,14 @@ object RootkitDetector {
                     "存在 systemless 覆盖挂载;检查 Magisk 模块列表,移除未知模块"
                 )
             )
-            if (Regex("(^|\\s)/system\\s+.*\\boverlay\\b").containsMatchIn(mounts)) findings.add(
+            if (Re.MOUNT_OVERLAY.containsMatchIn(mounts)) findings.add(
                 RootFinding(
                     "Rootkit.SystemOverlay", ThreatLevel.CRITICAL,
                     "/system 分区被 overlay 方式覆盖挂载",
                     "系统分区疑似被篡改;建议备份后恢复出厂并刷入官方镜像"
                 )
             )
-            if (Regex("\\s/system\\s+\\S+\\s+\\S*rw[\\s,]").containsMatchIn(mounts)) findings.add(
+            if (Re.MOUNT_RW.containsMatchIn(mounts)) findings.add(
                 RootFinding(
                     "Policy.SystemWritable", ThreatLevel.MEDIUM,
                     "/system 分区以可写(rw)方式挂载",

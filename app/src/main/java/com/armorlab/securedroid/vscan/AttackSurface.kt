@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
 import android.content.pm.PackageManager
 import com.armorlab.securedroid.scan.ThreatLevel
@@ -15,7 +16,7 @@ object AttackSurface {
     fun items(context: Context): List<TrojanAdapter.UiItem> {
         val pm = context.packageManager
         val rows = mutableListOf<Triple<String, Int, Int>>() // label+pkg, exportedCount, exportedProviders
-        for (info in pm.getInstalledPackages(FLAGS)) {
+        for (info in PackageSnapshot.installedPackages(context, FLAGS)) {
             val app = info.applicationInfo ?: continue
             if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) continue
             var exported = 0
@@ -25,7 +26,7 @@ object AttackSurface {
             info.receivers?.forEach { if (it.exported) exported++ }
             info.providers?.forEach { if (it.exported) providers++ }
             if (exported + providers > 0) {
-                rows.add(Triple((app.loadLabel(pm).toString()) + "|" + info.packageName, exported, providers))
+                rows.add(Triple(PackageSnapshot.label(context, app) + "|" + info.packageName, exported, providers))
             }
         }
         val items = mutableListOf<TrojanAdapter.UiItem>()

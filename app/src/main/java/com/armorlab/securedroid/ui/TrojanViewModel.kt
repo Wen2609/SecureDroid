@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.ui
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -31,7 +32,7 @@ class TrojanViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch(Dispatchers.IO) {
             val context = getApplication<Application>()
             ClamAvSignatures.ensureLoaded(context)
-            val pkgs = context.packageManager.getInstalledPackages(0)
+            val pkgs = PackageSnapshot.installedPackages(context, 0)
             val items = mutableListOf<TrojanAdapter.UiItem>()
             var infected = 0
             pkgs.forEachIndexed { index, info ->

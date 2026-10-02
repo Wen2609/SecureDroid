@@ -1,13 +1,11 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.TimeFmt
 import android.content.Context
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
 import kotlinx.coroutines.flow.first
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /** 查杀历史时间线:扫描记录按日期分组,回溯每天的扫描量与威胁数 */
 object Timeline {
@@ -17,8 +15,7 @@ object Timeline {
         if (records.isEmpty()) {
             return listOf(TrojanAdapter.UiItem("Timeline.Empty", "暂无扫描记录", "", ThreatLevel.LOW, null, null))
         }
-        val dayFmt = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val grouped = records.groupBy { dayFmt.format(Date(it.scannedAt)) }
+        val grouped = records.groupBy { TimeFmt.dateDay(it.scannedAt) }
         return grouped.entries.sortedByDescending { it.key }.take(14).map { (day, list) ->
             val threats = list.count { it.threatName != null }
             TrojanAdapter.UiItem(

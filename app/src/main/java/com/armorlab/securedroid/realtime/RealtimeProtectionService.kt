@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.armorlab.securedroid.R
+import com.armorlab.securedroid.core.PackageSnapshot
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.AutoActionEntity
 import com.armorlab.securedroid.data.ScanRecordEntity
@@ -109,6 +110,9 @@ class RealtimeProtectionService : Service() {
                 val pkg = intent.data?.schemeSpecificPart ?: return
                 if (pkg == packageName) return
                 scope.launch {
+                    // 包发生安装/更新:让 PackageManager 快照立即失效,
+                    // 否则接下来 30s 内仍会读到旧标签、旧列表(新装应用查不到)
+                    PackageSnapshot.invalidate()
                     val result = ScannerEngine.scanPackage(applicationContext, pkg)
                     AppDatabase.get(applicationContext).scanRecordDao().insert(
                         ScanRecordEntity(

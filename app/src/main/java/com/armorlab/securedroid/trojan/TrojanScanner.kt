@@ -1,6 +1,7 @@
 package com.armorlab.securedroid.trojan
 
 import android.content.Context
+import com.armorlab.securedroid.core.PackageSnapshot
 import com.armorlab.securedroid.scan.ScannerEngine
 import com.armorlab.securedroid.scan.SignatureDatabase
 import com.armorlab.securedroid.scan.ThreatLevel
@@ -36,14 +37,11 @@ object TrojanScanner {
     }
 
     fun scanPackage(context: Context, pkg: String): Report {
-        val pm = context.packageManager
-        val info = try {
-            pm.getPackageInfo(pkg, 0)
-        } catch (e: Exception) {
-            return Report(pkg, pkg, emptyList())
-        }
+        // 性能:单包信息 / 应用标签走快照层,避免同一应用在一次扫描中被反复查询
+        val info = PackageSnapshot.packageInfo(context, pkg, 0)
+            ?: return Report(pkg, pkg, emptyList())
         val appInfo = info.applicationInfo
-        val appName = appInfo?.loadLabel(pm)?.toString() ?: pkg
+        val appName = PackageSnapshot.label(context, appInfo)
         val detections = mutableListOf<Detection>()
         val apkPath = appInfo?.sourceDir
         if (apkPath != null) {

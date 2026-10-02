@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.trojan
 
+import com.armorlab.securedroid.scan.MultiPatternMatcher
 import com.armorlab.securedroid.scan.ThreatLevel
 
 /**
@@ -90,15 +91,42 @@ object BehaviorRules {
         )
     )
 
+    @Volatile private var matcherKey: List<List<String>>? = null
+    @Volatile private var matcher: MultiPatternMatcher? = null
+
+    /**
+     * 按"规则模式集合"缓存多模式匹配器。
+     * 关键性能:一整套规则的模式数在 40 个左右,集中到一个匹配器里只编译一次。
+     */
+    private fun matcherFor(all: List<Rule>): MultiPatternMatcher {
+        val key = all.map { it.patterns }
+        matcher?.let { m -> if (matcherKey == key) return m }
+        synchronized(this) {
+            val m = matcher
+            if (m != null && matcherKey == key) return m
+            val built = MultiPatternMatcher(key.flatten())
+            matcherKey = key
+            matcher = built
+            return built
+        }
+    }
+
     fun match(
         strings: Set<String>,
         extra: List<Rule> = emptyList()
     ): List<TrojanScanner.Detection> {
         val detections = mutableListOf<TrojanScanner.Detection>()
-        for (rule in rules + extra) {
+        val all = rules + extra
+        // 性能:单遍多模式匹配。原实现是「每条规则的每个模式都做一次 strings.any { it.contains(p) }」,
+        // 即对整个 DEX 字符串集做 40 遍左右的全量扫描(深度扫描最热的 CPU 循环);
+        // 现在一次扫描拿到全部模式的命中位图,再按规则聚合。
+        val m = matcherFor(all)
+        val hits = m.scan(strings)
+        for (rule in all) {
             val matched = mutableListOf<String>()
             for (p in rule.patterns) {
-                if (strings.any { it.contains(p) }) matched.add(p)
+                val idx = m.indexOf(p)
+                if (idx >= 0 && hits[idx]) matched.add(p)
             }
             if (matched.size >= rule.minHits) {
                 detections.add(

@@ -1,6 +1,8 @@
 package com.armorlab.securedroid.feature
 
 import android.content.Context
+import com.armorlab.securedroid.core.PackageSnapshot
+import com.armorlab.securedroid.core.Re
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.root.ShellBridge
 import java.io.File
@@ -17,25 +19,28 @@ object NetAudit {
         if (RootGuard.isRootMode(context)) {
             raw = ShellBridge.runSu("cat /proc/net/tcp") ?: raw
         }
-        val pm = context.packageManager
         val out = mutableListOf<Conn>()
         val seen = HashSet<String>()
+        // 性能:同一 UID 在一次审计里可能占几十条连接,
+        // 原实现每条连接都做 getPackagesForUid + getApplicationInfo + loadLabel 三次跨进程查询。
+        val owners = HashMap<Int, Pair<String, String>>()
         for (line0 in raw.lines()) {
             val line = line0.trim()
             if (line.isEmpty() || !line[0].isDigit()) continue
-            val f = line.split(Regex("\\s+"))
+            val f = line.split(Re.WS)
             if (f.size < 8) continue
             if (f[3] != "01") continue // 仅 ESTABLISHED
             val uid = f[7].toIntOrNull() ?: continue
             val remote = try { hexIpPort(f[2]) } catch (_: Exception) { continue }
             if (remote.startsWith("0.0.0.0") || remote.startsWith("127.0.0.1")) continue
-            val pkg = pm.getPackagesForUid(uid)?.firstOrNull() ?: ("uid:" + uid)
-            val label = try {
-                pm.getApplicationInfo(pkg, 0)?.loadLabel(pm)?.toString() ?: pkg
-            } catch (_: Exception) { pkg }
+            val owner = owners.getOrPut(uid) {
+                val pkg = PackageSnapshot.packagesForUid(context, uid).firstOrNull() ?: ("uid:" + uid)
+                Pair(pkg, PackageSnapshot.labelFor(context, pkg))
+            }
+            val pkg = owner.first
             val key = pkg + "|" + remote
             if (!seen.add(key)) continue
-            out.add(Conn(label, pkg, remote))
+            out.add(Conn(owner.second, pkg, remote))
             if (out.size >= limit) break
         }
         return out

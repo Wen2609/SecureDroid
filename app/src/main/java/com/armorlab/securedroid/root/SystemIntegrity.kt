@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.root
 
+import com.armorlab.securedroid.core.TimeFmt
 import android.content.Context
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
@@ -206,12 +207,11 @@ object SystemIntegrity {
         }
 
         val d = diff(context)
-        val fmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
         items.add(
             TrojanAdapter.UiItem(
                 "Integrity.Summary",
                 if (d.hasChanges) "发现 " + d.total + " 处系统文件变化" else "系统文件与基线一致",
-                "基线时间: " + fmt.format(java.util.Date(d.baselineAt)),
+                "基线时间: " + TimeFmt.dateMinute(d.baselineAt),
                 if (d.hasChanges) ThreatLevel.HIGH else ThreatLevel.LOW,
                 if (d.hasChanges) "系统文件被改动可能是木马驻留或模块注入的痕迹" else null,
                 null

@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.Re
 import android.content.Context
 import com.armorlab.securedroid.root.ShellBridge
 import java.io.File
@@ -22,7 +23,7 @@ object Quarantine {
 
     fun quarantine(context: Context, path: String): Boolean {
         val dst = File(dir(context),
-            path.substringAfterLast('/').replace(Regex("[^A-Za-z0-9._-]"), "_") +
+            path.substringAfterLast('/').replace(Re.UNSAFE_FILENAME, "_") +
                 "." + System.currentTimeMillis() + ".qtn").absolutePath
         val ok = ShellBridge.runSu(
             "mv '" + path + "' '" + dst + "' && chmod 600 '" + dst + "'"

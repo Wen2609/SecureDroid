@@ -41,6 +41,7 @@ class ToolsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvTools.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTools.setHasFixedSize(true)
         binding.rvTools.addItemDecoration(InsetDividerDecoration(requireContext()))
         binding.rvTools.adapter = adapter
         adapter.submitList(entries())

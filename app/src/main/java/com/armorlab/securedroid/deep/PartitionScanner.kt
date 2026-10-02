@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.deep
 
+import com.armorlab.securedroid.core.Re
 import android.content.Context
 import android.util.Base64
 import com.armorlab.securedroid.root.RootGuard
@@ -51,7 +52,7 @@ object PartitionScanner {
         val sizes = HashMap<String, Long>()
         ShellBridge.runSu("cat /proc/partitions", 20_000L)?.let { pt ->
             for (line in pt.lines()) {
-                val f = line.trim().split(Regex("\\s+"))
+                val f = line.trim().split(Re.WS)
                 if (f.size >= 4) sizes[f[3]] = f[2].toLongOrNull() ?: 0L
             }
         }

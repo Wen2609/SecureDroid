@@ -1,9 +1,11 @@
 package com.armorlab.securedroid.root
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.armorlab.securedroid.scan.MultiPatternMatcher
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.trojan.DexScanner
 
@@ -34,6 +36,9 @@ object LockerDetector {
 
     private val lockApis = listOf("lockNow", "resetPassword", "wipeData")
 
+    /** 性能:单遍多模式匹配,替代"每个 API 都对整个 dex 字符串集做一次全量扫描" */
+    private val lockMatcher = MultiPatternMatcher(lockApis)
+
     fun scan(context: Context): List<LockerFinding> {
         val findings = mutableListOf<LockerFinding>()
         val dpm = context.getSystemService(DevicePolicyManager::class.java)
@@ -53,7 +58,7 @@ object LockerDetector {
             if (isSystem) continue
 
             val label = try {
-                pm.getApplicationInfo(pkg, 0).loadLabel(pm).toString()
+                PackageSnapshot.labelFor(context, pkg)
             } catch (_: Exception) { pkg }
 
             // 扫描该管理员的 DEX,判定锁机行为组合
@@ -62,9 +67,8 @@ object LockerDetector {
                 val apk = pm.getApplicationInfo(pkg, 0).sourceDir
                 if (apk != null) {
                     val strings = DexScanner.dexStringsFromApk(apk)
-                    for (api in lockApis) {
-                        if (strings.any { it.contains(api) }) hits.add(api)
-                    }
+                    val matched = lockMatcher.scan(strings)
+                    for (i in lockApis.indices) if (matched[i]) hits.add(lockApis[i])
                 }
             } catch (_: Exception) {
             }

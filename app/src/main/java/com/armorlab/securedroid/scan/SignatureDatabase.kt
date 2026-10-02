@@ -41,24 +41,53 @@ object SignatureDatabase {
 
     fun size(): Int = synchronized(lock) { signatures.size }
 
+    private var loadedPath: String? = null
+    private var loadedLength = -1L
+    private var loadedMtime = -1L
+
+    /**
+     * 载入本地特征库更新(files/signatures.txt)。
+     *
+     * 性能:以 (路径, 大小, mtime) 记忆化。扫描链路里每个应用都会调用一次本方法
+     * (ScannerEngine.scanAll / TrojanScanner 前置),原实现每次都重读并重新解析整份文件,
+     * 特征库越大越亏;现在文件未变化时直接返回。
+     */
     fun loadLocalUpdate(context: Context) {
         val file = File(context.filesDir, "signatures.txt")
         if (!file.exists()) return
-        file.readLines().forEach { line ->
-            val trimmed = line.trim()
-            if (trimmed.isEmpty() || trimmed.startsWith("#")) return@forEach
-            val parts = trimmed.split('|')
-            if (parts.size >= 2 && parts[0].length == 64) {
-                val levelIdx = parts.getOrNull(2)?.toIntOrNull()?.coerceIn(0, 3) ?: 3
-                add(
-                    parts[0],
-                    ThreatInfo(
-                        parts[1],
-                        ThreatLevel.entries[levelIdx],
-                        parts.getOrNull(3) ?: ""
+        val length = file.length()
+        val mtime = file.lastModified()
+        synchronized(lock) {
+            if (file.path == loadedPath && length == loadedLength && mtime == loadedMtime) return
+        }
+        val parsed = ArrayList<Pair<String, ThreatInfo>>()
+        try {
+            file.readLines().forEach { line ->
+                val trimmed = line.trim()
+                if (trimmed.isEmpty() || trimmed.startsWith("#")) return@forEach
+                val parts = trimmed.split('|')
+                if (parts.size >= 2 && parts[0].length == 64) {
+                    val levelIdx = parts.getOrNull(2)?.toIntOrNull()?.coerceIn(0, 3) ?: 3
+                    parsed.add(
+                        Pair(
+                            parts[0],
+                            ThreatInfo(
+                                parts[1],
+                                ThreatLevel.entries[levelIdx],
+                                parts.getOrNull(3) ?: ""
+                            )
+                        )
                     )
-                )
+                }
             }
+        } catch (_: Exception) {
+            return
+        }
+        synchronized(lock) {
+            for ((hash, info) in parsed) signatures[hash.lowercase()] = info
+            loadedPath = file.path
+            loadedLength = length
+            loadedMtime = mtime
         }
     }
 }

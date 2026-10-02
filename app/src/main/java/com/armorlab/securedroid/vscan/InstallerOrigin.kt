@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,7 +14,7 @@ object InstallerOrigin {
         val pm = context.packageManager
         val items = mutableListOf<TrojanAdapter.UiItem>()
         var sideloaded = 0
-        for (info in pm.getInstalledPackages(0)) {
+        for (info in PackageSnapshot.installedPackages(context, 0)) {
             val pkg = info.packageName
             val app = info.applicationInfo ?: continue
             if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) continue
@@ -25,7 +26,7 @@ object InstallerOrigin {
                     pm.getInstallerPackageName(pkg)
                 } catch (_: Exception) { null }
             }
-            val label = app.loadLabel(pm).toString()
+            val label = PackageSnapshot.label(context, app)
             if (installer == null) {
                 sideloaded++
                 items.add(

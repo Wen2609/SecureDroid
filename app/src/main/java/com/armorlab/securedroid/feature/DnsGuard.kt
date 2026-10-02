@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.feature
 
+import com.armorlab.securedroid.core.Re
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.URL
@@ -37,7 +38,7 @@ object DnsGuard {
         val body = conn.inputStream.bufferedReader().readText()
         conn.disconnect()
         val result = HashSet<String>()
-        val rex = Regex("\"data\"\\s*:\\s*\"([0-9]{1,3}(?:\\.[0-9]{1,3}){3})\"")
+        val rex = Re.DNS_A_RECORD
         for (m in rex.findAll(body)) result.add(m.groupValues[1])
         return result
     }

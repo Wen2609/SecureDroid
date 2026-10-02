@@ -1,5 +1,7 @@
 package com.armorlab.securedroid.deep
 
+import com.armorlab.securedroid.core.Re
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.root.ShellBridge
@@ -58,7 +60,7 @@ object ProcessScanner {
         val pm = context.packageManager
         for (p in procs) {
             val exe = exeMap[p.pid]
-            val label = resolveLabel(pm, p)
+            val label = resolveLabel(context, pm, p)
             val dets = mutableListOf<Triple<String, ThreatLevel, String>>()
 
             if (p.pid in hidden) {
@@ -132,7 +134,7 @@ object ProcessScanner {
             val line = line0.trim()
             if (line.isEmpty()) continue
             if (first) { first = false; if (line.startsWith("USER")) continue }
-            val f = line.split(Regex("\\s+"), limit = 9)
+            val f = line.split(Re.WS, limit = 9)
             if (f.size < 9) continue
             val pid = f[1].toIntOrNull() ?: continue
             list.add(Proc(pid, f[0], f[2].toIntOrNull() ?: 0, f[8]))
@@ -182,7 +184,7 @@ object ProcessScanner {
             val sp = line.split(' ', limit = 2)
             val pid = sp[0].removePrefix("P").toIntOrNull() ?: continue
             val rest = sp.getOrNull(1)?.substringAfterLast(')') ?: continue
-            val f = rest.trim().split(Regex("\\s+"))
+            val f = rest.trim().split(Re.WS)
             if (f.size < 13) continue
             val ut = f[11].toLongOrNull() ?: 0L
             val st = f[12].toLongOrNull() ?: 0L
@@ -191,11 +193,11 @@ object ProcessScanner {
         return map
     }
 
-    private fun resolveLabel(pm: android.content.pm.PackageManager, p: Proc): String? {
+    private fun resolveLabel(context: Context, pm: android.content.pm.PackageManager, p: Proc): String? {
         try {
             if (p.name.contains(".")) {
                 pm.getApplicationInfo(p.name, 0)?.let {
-                    return it.loadLabel(pm).toString()
+                    return PackageSnapshot.label(context, it)
                 }
             }
         } catch (_: Exception) {
@@ -204,8 +206,8 @@ object ProcessScanner {
             val m = Pattern.compile("u(\\d+)a(\\d+)").matcher(p.user)
             if (m.matches()) {
                 val uid = m.group(1)!!.toInt() * 100000 + 10000 + m.group(2)!!.toInt()
-                val pkg = pm.getPackagesForUid(uid)?.firstOrNull() ?: return null
-                return pm.getApplicationInfo(pkg, 0)?.loadLabel(pm)?.toString()
+                val pkg = PackageSnapshot.packagesForUid(context, uid).firstOrNull() ?: return null
+                return PackageSnapshot.labelFor(context, pkg)
             }
         } catch (_: Exception) {
         }

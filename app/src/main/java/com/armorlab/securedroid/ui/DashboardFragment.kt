@@ -57,11 +57,16 @@ class DashboardFragment : Fragment() {
     private var scoreCacheAt = 0L
     private var scoreCacheScore = 0
     private var scoreCacheState = 0
+    private var lastRefreshAt = 0L
 
     private fun refresh() {
         val ctx = requireContext()
+        // onViewCreated 紧接着 onResume,启动时会把整段 IO(数据库 + 连接表 + 锁列表 + StatFs)跑两遍
+        val nowAt = System.currentTimeMillis()
+        if (nowAt - lastRefreshAt < 1_000L) return
+        lastRefreshAt = nowAt
         // 5 分钟缓存:权限审计要遍历全部已安装应用,不能在每次回到首页时重跑
-        val fresh = scoreCacheScore == 0 || System.currentTimeMillis() - scoreCacheAt >= 300_000L
+        val fresh = scoreCacheScore == 0 || nowAt - scoreCacheAt >= 300_000L
         if (!fresh) applyScore(scoreCacheScore, scoreCacheState)
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
@@ -85,7 +90,8 @@ class DashboardFragment : Fragment() {
             var score = scoreCacheScore
             var stateRes = scoreCacheState
             if (fresh) {
-                val risky = PermissionAuditor.audit(ctx).count { it.score >= 40 }
+                // 只需要"高风险应用数量":riskyAppCount 不取应用标签、不排序,比 audit().count{} 便宜得多
+                val risky = PermissionAuditor.riskyAppCount(ctx, 40)
                 score = (100 - threats * 20 - risky * 5).coerceIn(5, 100)
                 stateRes = when {
                     threats > 0 -> R.string.dashboard_state_bad

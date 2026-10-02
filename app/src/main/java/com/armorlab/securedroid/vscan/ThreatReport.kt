@@ -1,19 +1,17 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.TimeFmt
 import android.content.Context
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
 import kotlinx.coroutines.flow.first
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /** 威胁报告导出 + 查杀统计仪表(数据源:Room 扫描记录 / 自动处置审计) */
 object ThreatReport {
 
     // 不缓存 Locale:用户在系统里切换语言后,旧的 Locale 会让时间格式停留在旧语言
-    private fun fmt() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    private fun fmt(ms: Long = System.currentTimeMillis()): String = TimeFmt.dateSecond(ms)
 
     /** #17 统计仪表 */
     suspend fun stats(context: Context): List<TrojanAdapter.UiItem> {
@@ -24,7 +22,7 @@ object ThreatReport {
         return listOf(
             TrojanAdapter.UiItem(
                 "Stats.Records", "累计扫描记录 " + records.size + " 条",
-                "最近一次: " + (records.firstOrNull()?.let { fmt().format(Date(it.scannedAt)) } ?: "无"),
+                "最近一次: " + (records.firstOrNull()?.let { fmt(it.scannedAt) } ?: "无"),
                 ThreatLevel.LOW, null, null
             ),
             TrojanAdapter.UiItem(
@@ -53,17 +51,17 @@ object ThreatReport {
         val actions = db.autoActionDao().observeRecent().first()
         val sb = StringBuilder()
         sb.append("安卫安全助手 — 威胁情报报告\n")
-        sb.append("导出时间: ").append(fmt().format(Date())).append("\n\n")
+        sb.append("导出时间: ").append(fmt()).append("\n\n")
         sb.append("== 威胁记录 (").append(records.size).append(") ==\n")
         for (r in records) {
-            sb.append(fmt().format(Date(r.scannedAt)))
+            sb.append(fmt(r.scannedAt))
                 .append(" | ").append(r.appName).append("(").append(r.packageName).append(")")
                 .append(" | ").append(r.threatName)
                 .append(" | 风险分 ").append(r.riskScore).append("\n")
         }
         sb.append("\n== 自动处置审计 (").append(actions.size).append(") ==\n")
         for (a in actions) {
-            sb.append(fmt().format(Date(a.actedAt)))
+            sb.append(fmt(a.actedAt))
                 .append(" | ").append(a.actionType)
                 .append(" | ").append(a.target)
                 .append(" | ").append(if (a.success) "成功" else "失败")

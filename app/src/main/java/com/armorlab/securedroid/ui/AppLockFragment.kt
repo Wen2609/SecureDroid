@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.ui
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -37,6 +38,7 @@ class AppLockFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvLockApps.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvLockApps.setHasFixedSize(true)
         binding.rvLockApps.addItemDecoration(InsetDividerDecoration(requireContext()))
         binding.rvLockApps.adapter = adapter
         binding.btnSetPin.setOnClickListener { showPinDialog() }
@@ -74,11 +76,11 @@ class AppLockFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val pm = ctx.packageManager
             val self = ctx.packageName
-            val items = pm.getInstalledApplications(0)
+            val items = PackageSnapshot.installedApplications(ctx, 0)
                 .filter { it.packageName != self }
                 .map {
                     AppLockAdapter.Item(
-                        it.loadLabel(pm).toString(),
+                        PackageSnapshot.label(ctx, it),
                         it.packageName,
                         AppLockStore.isLocked(ctx, it.packageName)
                     )

@@ -25,6 +25,7 @@ abstract class BaseListToolActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.tvTitle.setText(titleRes())
         binding.rvList.layoutManager = LinearLayoutManager(this)
+        binding.rvList.setHasFixedSize(true)
         binding.rvList.adapter = adapter
         lifecycleScope.launch(Dispatchers.IO) {
             val items = try { load() } catch (_: Exception) { emptyList<TrojanAdapter.UiItem>() }

@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
 import android.content.Intent
 import com.armorlab.securedroid.scan.ThreatLevel
@@ -22,7 +23,7 @@ object VpnAppsScanner {
         }
         return services.map { s ->
             val app = s.serviceInfo.applicationInfo
-            val label = try { app?.loadLabel(pm)?.toString() } catch (_: Exception) { null }
+            val label = app?.let { PackageSnapshot.label(context, it) }
             val isSystem = ((app?.flags ?: 0) and
                 android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
             TrojanAdapter.UiItem(

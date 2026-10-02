@@ -27,6 +27,7 @@ class ScannerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvResults.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvResults.setHasFixedSize(true)
         binding.rvResults.addItemDecoration(InsetDividerDecoration(requireContext()))
         binding.rvResults.adapter = adapter
 

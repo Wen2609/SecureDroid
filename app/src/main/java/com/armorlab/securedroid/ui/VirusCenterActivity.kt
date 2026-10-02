@@ -1,5 +1,7 @@
 package com.armorlab.securedroid.ui
 
+import com.armorlab.securedroid.core.TimeFmt
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -49,8 +51,7 @@ class VirusCenterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVirusCenterBinding
     private val actionsAdapter = VirusActionAdapter { action -> onAction(action) }
     private val resultsAdapter = TrojanAdapter()
-    private val fmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
-    private var running = false
+        private var running = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,8 +59,10 @@ class VirusCenterActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.tvTitle.setText(R.string.vc_title)
         binding.rvActions.layoutManager = LinearLayoutManager(this)
+        binding.rvActions.setHasFixedSize(true)
         binding.rvActions.adapter = actionsAdapter
         binding.rvList.layoutManager = LinearLayoutManager(this)
+        binding.rvList.setHasFixedSize(true)
         binding.rvList.adapter = resultsAdapter
         actionsAdapter.submitList(menu())
         binding.btnBack.setOnClickListener {
@@ -149,7 +152,7 @@ class VirusCenterActivity : AppCompatActivity() {
         ScanControl.reset()
         val pm = packageManager
         val weekAgo = System.currentTimeMillis() - 7L * 24 * 3600 * 1000
-        val recent = pm.getInstalledPackages(0).filter { it.firstInstallTime > weekAgo }
+        val recent = PackageSnapshot.installedPackages(applicationContext, 0).filter { it.firstInstallTime > weekAgo }
         if (recent.isEmpty()) {
             return listOf(TrojanAdapter.UiItem("Recent.None", "最近 7 天没有新安装应用", "", ThreatLevel.LOW, null, null))
         }
@@ -157,7 +160,7 @@ class VirusCenterActivity : AppCompatActivity() {
         for (info in recent) {
             if (ScanControl.cancelled) break
             val pkg = info.packageName
-            val name = info.applicationInfo?.loadLabel(pm)?.toString() ?: pkg
+            val name = info.applicationInfo?.let { PackageSnapshot.label(applicationContext, it) } ?: pkg
             val score = CombinedScore.evaluate(this, pkg)
             // #18 多引擎仲裁:单一引擎高危降级为待观察
             val verdict = VerdictArbiter.arbitrate(score.highEngineHits, score.score)
@@ -194,7 +197,7 @@ class VirusCenterActivity : AppCompatActivity() {
     private fun diffScan(): List<TrojanAdapter.UiItem> {
         ScanControl.reset()
         val pm = packageManager
-        val all = pm.getInstalledPackages(0)
+        val all = PackageSnapshot.installedPackages(applicationContext, 0)
         val changed = mutableListOf<android.content.pm.PackageInfo>()
         for (info in all) {
             if (ScanControl.cancelled) break
@@ -239,9 +242,9 @@ class VirusCenterActivity : AppCompatActivity() {
     private fun embeddedScan(): List<TrojanAdapter.UiItem> {
         val pm = packageManager
         val items = mutableListOf<TrojanAdapter.UiItem>()
-        for (info in pm.getInstalledPackages(0)) {
+        for (info in PackageSnapshot.installedPackages(applicationContext, 0)) {
             if (ScanControl.cancelled) break
-            val name = info.applicationInfo?.loadLabel(pm)?.toString() ?: info.packageName
+            val name = info.applicationInfo?.let { PackageSnapshot.label(applicationContext, it) } ?: info.packageName
             for (f in com.armorlab.securedroid.vscan.ApkInsights.analyze(this, info.packageName)) {
                 if (f.level == ThreatLevel.LOW) continue
                 items.add(TrojanAdapter.UiItem(f.name + " · " + name, info.packageName, f.detail, f.level, null, null))
@@ -381,7 +384,7 @@ class VirusCenterActivity : AppCompatActivity() {
             TrojanAdapter.UiItem(
                 "Quarantined · " + it.originalPath.substringAfterLast('/'),
                 it.quarantinedPath,
-                "原路径: " + it.originalPath + " · 隔离于 " + fmt.format(Date(it.time)),
+                "原路径: " + it.originalPath + " · 隔离于 " + TimeFmt.dateMinute(it.time),
                 ThreatLevel.MEDIUM,
                 "隔离文件已脱离执行路径;确认无用可销毁",
                 null, null,
@@ -448,14 +451,14 @@ class VirusCenterActivity : AppCompatActivity() {
         Thread {
             val pm = packageManager
             val thirdParty = try {
-                pm.getInstalledApplications(0)
+                PackageSnapshot.installedApplications(applicationContext, 0)
                     .filter { (it.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0 }
                     .take(80)
             } catch (_: Exception) {
                 emptyList()
             }
             val labels = thirdParty.map {
-                it.loadLabel(pm).toString() + " (" + it.packageName + ")"
+                PackageSnapshot.label(applicationContext, it) + " (" + it.packageName + ")"
             }.toTypedArray()
             runOnUiThread {
                 if (thirdParty.isEmpty()) {

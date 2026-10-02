@@ -2,6 +2,44 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.7.0] - 2026-10-02
+
+### Performance
+
+本轮只做性能与既有功能的健壮性优化,界面、能力集合与偏好键全部保持不变。
+
+- **并行查杀真正并行**:`vscan/ParallelScanner.kt` 原为 `ThreadPoolExecutor(corePoolSize = 0, maximumPoolSize = 6, LinkedBlockingQueue())`。
+  无界队列永远不会满,而 `execute()` 只在 `workerCount < corePoolSize` 时新建线程 —— 于是池里始终只有 1 个 worker,
+  "并行全盘查杀"实际是串行。现在 `corePoolSize == maximumPoolSize == 本次并发度`(按 CPU 核数取 2–6),
+  配合 `allowCoreThreadTimeOut(true)` 做到扫描时真并行、空闲时自动回收。
+- **单遍多模式匹配**:新增 `scan/MultiPatternMatcher.kt`(首字符分桶 + 单遍扫描)。`trojan/BehaviorRules.kt` 原先对**每个模式**
+  都跑一遍 `strings.any { it.contains(p) }`(单个应用对整个 DEX 字符串集约 35–45 遍全量扫描),现改为单遍;
+  `root/LockerDetector.kt` 同步改造。命中语义与暴力实现逐模式等价,由随机语料等价性测试保证。
+- **消除 N+1 绑定器调用**:新增 `core/PackageSnapshot.kt`(包列表 / 单包信息 TTL 30s + 同 key 单飞,应用标签进程内记忆化),
+  14 处 `getInstalledPackages` / `getInstalledApplications` / `loadLabel` / `getPackagesForUid` 调用点全部收口;
+  `scan/ScannerEngine.kt` 全盘扫描只枚举一次包列表,不再"列表一次 + 每包再 `getPackageInfo` 一次";
+  `trojan/TrojanScanner.kt` 同样改为复用快照。
+- **DEX 判定缓存重做**:`vscan/DexVerdictCache.kt` 改为内存 LRU 索引(命中 O(1),原实现每次命中都要逐条解析 ≤600 条字符串),
+  补上真实可用的**负缓存**(未命中任何规则时写入 `~clean` 标记,同一 APK 不再重复做"读 dex + 提取字符串 + 规则匹配"),
+  并改为批量落盘(满 32 条或扫描结束 flush 一次,替代原先每包整表重写 + `apply`)。
+- **热点路径不再重复编译正则**:新增 `core/Re.kt` 共享正则实例,替换循环内的 `Regex("...")`(进程/分区/网络审计等 10 处)。
+- **时间格式化不再重复构造**:新增 `core/TimeFmt.kt`(`ThreadLocal` 缓存 `SimpleDateFormat`,系统语言变化时自动重建),
+  替换 4 处每次调用 `new SimpleDateFormat` 的写法。
+- **其余热点**:本地特征库按 (路径, 大小, mtime) 记忆化;可信应用集合改用不可变快照;自定义规则映射记忆化;
+  权限审计增加 30s TTL 缓存与 `riskyAppCount()`(只计数,不再取标签、不再排序);首页刷新加 1s 节流
+  (修掉 `onViewCreated` + `onResume` 连续两次跑完整段 IO);网络审计按 uid 记忆应用归属(原每条连接三次跨进程查询);
+  取消扫描后不再投递剩余任务;9 个 RecyclerView 声明 `setHasFixedSize(true)`;包变化时使快照失效。
+
+### Added
+
+- 测试:`core/TtlCacheTest`(命中 / 过期 / 同 key 单飞 / 容量上限)、`scan/MultiPatternMatcherTest`(与暴力实现等价)、
+  `core/PackageSnapshotTest`、`vscan/DexVerdictCacheTest`(含负缓存落盘与重载)、`PerfGuardTest`(源码级性能不变量守卫,
+  含并行池核心数断言)。
+
+### Changed
+
+- `versionCode` 9 → 10,`versionName` 1.6.0 → 1.7.0。
+
 ## [1.6.0] - 2026-10-01
 
 ### Changed

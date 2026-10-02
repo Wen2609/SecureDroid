@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
 import android.content.pm.PackageManager
 import com.armorlab.securedroid.scan.ThreatLevel
@@ -44,12 +45,12 @@ object CertStore {
         val strict = strict(context)
         val items = mutableListOf<TrojanAdapter.UiItem>()
         var untrusted = 0
-        for (info in pm.getInstalledPackages(0).take(120)) {
+        for (info in PackageSnapshot.installedPackages(context, 0).take(120)) {
             val app = info.applicationInfo ?: continue
             if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) continue
             val hash = certHash(context, info.packageName) ?: continue
             val known = good.any { hash.startsWith(it) }
-            val label = app.loadLabel(pm).toString()
+            val label = PackageSnapshot.label(context, app)
             val level = when {
                 known -> ThreatLevel.LOW
                 strict -> ThreatLevel.HIGH

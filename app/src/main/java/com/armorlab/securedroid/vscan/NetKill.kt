@@ -1,5 +1,7 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.PackageSnapshot
+import com.armorlab.securedroid.core.Re
 import android.content.Context
 import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ThreatLevel
@@ -17,7 +19,7 @@ object NetKill {
 
     private fun blockedUids(): Set<Int>? {
         val out = ShellBridge.runSu("iptables -S OUTPUT 2>/dev/null") ?: return null
-        return Regex("--uid-owner (\\d+)").findAll(out)
+        return Re.UID_OWNER.findAll(out)
             .mapNotNull { it.groupValues[1].toIntOrNull() }
             .toSet()
     }
@@ -43,10 +45,10 @@ object NetKill {
         var blockedCount = 0
         // 单次拉取 iptables 规则表,内存匹配(避免每应用一次 su)
         val blockedUids = blockedUids() ?: emptySet()
-        for (info in pm.getInstalledApplications(0).take(100)) {
+        for (info in PackageSnapshot.installedApplications(context, 0).take(100)) {
             if (info.packageName == context.packageName) continue
             val blocked = info.uid in blockedUids
-            val label = info.loadLabel(pm).toString()
+            val label = PackageSnapshot.label(context, info)
             if (blocked) blockedCount++
             items.add(
                 TrojanAdapter.UiItem(

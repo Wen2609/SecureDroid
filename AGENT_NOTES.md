@@ -102,3 +102,11 @@
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
 - 编译错误集中修完再编译,别一轮一修
 - 读大文件用 offset/limit;build 日志读 build_err.log 里 ^e: 开头的行即可
+## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
+- 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
+- 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()
+- dex 行为规则用 MultiPatternMatcher 单遍扫描(BehaviorRules 走 matcherFor 缓存),不要再逐模式扫全量字符串集合
+- 并行查杀线程池 core == maximum 且 allowCoreThreadTimeOut(true):无界队列下真实并发度 = corePoolSize,设 0 就退化成串行
+- DexVerdictCache 的负缓存(~clean)也要落盘;写入攒批,任务收尾必须 flush(ParallelScanner 已调)
+- 新增 RecyclerView 列表页记得 setHasFixedSize(true);首页/面板刷新走 1s 节流,别在每个生命周期回调里重复拉数据
+

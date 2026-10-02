@@ -96,9 +96,21 @@ object CustomRules {
         bump(context)
     }
 
-    /** 转为内置规则引擎格式,供 TrojanScanner 合并 */
-    fun asRules(context: Context): List<BehaviorRules.Rule> =
-        list(context).map {
+    @Volatile private var cacheRulesVersion = -1
+    @Volatile private var cacheRules: List<BehaviorRules.Rule> = emptyList()
+
+    /**
+     * 转为内置规则引擎格式,供 TrojanScanner 合并。
+     * 与 list() 一样按规则版本记忆化:原实现每个应用都要重新 map + joinToString 造一遍规则对象。
+     */
+    fun asRules(context: Context): List<BehaviorRules.Rule> {
+        val version = prefs(context).getInt(KEY_VERSION, 0)
+        if (version == cacheRulesVersion) return cacheRules
+        val mapped = list(context).map {
             BehaviorRules.Rule(it.name, it.level, "自定义规则: " + it.patterns.joinToString("/"), it.patterns, it.minHits)
         }
+        cacheRulesVersion = version
+        cacheRules = mapped
+        return mapped
+    }
 }

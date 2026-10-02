@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.Re
 import android.content.Context
 import com.armorlab.securedroid.root.ShellBridge
 
@@ -22,7 +23,7 @@ object ProcessBaseline {
             val line = line0.trim()
             if (line.isEmpty()) continue
             if (first) { first = false; if (line.startsWith("USER")) continue }
-            val f = line.split(Regex("\\s+"), limit = 9)
+            val f = line.split(Re.WS, limit = 9)
             if (f.size < 9) continue
             names.add(f[8])
         }

@@ -20,6 +20,7 @@ class DeepScanActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.tvTitle.setText(R.string.deep_scan_title)
         binding.rvList.layoutManager = LinearLayoutManager(this)
+        binding.rvList.setHasFixedSize(true)
         binding.rvList.adapter = adapter
         binding.btnStart.setOnClickListener { if (!running) start() }
     }

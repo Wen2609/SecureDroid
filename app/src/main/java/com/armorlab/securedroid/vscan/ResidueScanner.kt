@@ -1,5 +1,6 @@
 package com.armorlab.securedroid.vscan
 
+import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.root.ShellBridge
@@ -17,7 +18,7 @@ object ResidueScanner {
                     ThreatLevel.MEDIUM, null, null
                 )
             )
-        val installed = context.packageManager.getInstalledPackages(0)
+        val installed = PackageSnapshot.installedPackages(context, 0)
             .map { it.packageName }.toSet()
         val items = mutableListOf<TrojanAdapter.UiItem>()
         for (pkg in entries.lines()) {
