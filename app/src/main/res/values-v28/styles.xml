@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 28+ 的按钮彩色阴影(设计稿里主按钮的绿色光晕)。
+     属性本身只存在于 API 28+,所以必须放在 values-v28 里,低版本自动回到普通阴影。 -->
+<resources>
+    <style name="Widget.SecureDroid.Button" parent="Widget.SecureDroid.Button.Base">
+        <item name="android:outlineSpotShadowColor">@color/c_primary</item>
+        <item name="android:outlineAmbientShadowColor">@color/c_primary</item>
+    </style>
+    <style name="Widget.SecureDroid.Button.Accent" parent="Widget.SecureDroid.Button">
+        <item name="backgroundTint">@color/c_accent</item>
+        <item name="android:textColor">@color/c_on_accent</item>
+        <item name="iconTint">@color/c_on_accent</item>
+        <item name="android:outlineSpotShadowColor">@color/c_accent</item>
+        <item name="android:outlineAmbientShadowColor">@color/c_accent</item>
+    </style>
+</resources>

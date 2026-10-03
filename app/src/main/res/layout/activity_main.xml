@@ -6,6 +6,51 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_page">
+
+    <!-- 柔和流动光晕:4 团大半径色斑,长时间缓慢漂移(对应上传稿的 .aurora / .blob) -->
+    <FrameLayout
+            android:id="@+id/auroraBg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no">
+        <ImageView
+                android:id="@+id/blob1"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="-80dp"
+                android:layout_marginTop="-90dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/aurora_blob_1" />
+        <ImageView
+                android:id="@+id/blob2"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="100dp"
+                android:layout_marginEnd="-100dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/aurora_blob_2" />
+        <ImageView
+                android:id="@+id/blob3"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:layout_gravity="bottom|start"
+                android:layout_marginStart="-60dp"
+                android:layout_marginBottom="-70dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/aurora_blob_3" />
+        <ImageView
+                android:id="@+id/blob4"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="-70dp"
+                android:layout_marginBottom="120dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/aurora_blob_4" />
+    </FrameLayout>
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -16,8 +61,8 @@
                 android:layout_height="wrap_content"
                 android:background="@color/c_destructive"
                 android:padding="@dimen/sd_space_3"
-                android:textColor="@color/c_on_destructive"
                 android:textAppearance="@style/TextAppearance.SecureDroid.Caption"
+                android:textColor="@color/c_on_destructive"
                 android:visibility="gone" />
         <FrameLayout
                 android:id="@+id/container"
@@ -25,24 +70,97 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:paddingBottom="@dimen/sd_nav_clearance" />
-        </LinearLayout>
-    <com.google.android.material.tabs.TabLayout
+    </LinearLayout>
+
+    <!-- 悬浮胶囊导航:毛玻璃底 + 3 个等分入口,选中项为渐变胶囊 -->
+    <LinearLayout
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sd_tabbar_height"
+            android:layout_height="@dimen/sd_dock_height"
             android:layout_gravity="bottom"
-            android:layout_marginStart="@dimen/sd_nav_margin_h"
-            android:layout_marginEnd="@dimen/sd_nav_margin_h"
-            android:layout_marginBottom="@dimen/sd_nav_margin_bottom"
-            android:background="@drawable/bg_nav_bar"
-            android:elevation="8dp"
-            app:tabGravity="fill"
-            app:tabIconTint="@color/tab_text"
-            app:tabIndicatorHeight="0dp"
-            app:tabMode="fixed"
-            app:tabPaddingEnd="@dimen/sd_space_3"
-            app:tabPaddingStart="@dimen/sd_space_3"
-            app:tabRippleColor="@color/c_muted"
-            app:tabTextAppearance="@style/TextAppearance.SecureDroid.Nav"
-            app:tabTextColor="@color/tab_text" />
-    </FrameLayout>
+            android:layout_marginStart="@dimen/sd_dock_margin_h"
+            android:layout_marginEnd="@dimen/sd_dock_margin_h"
+            android:layout_marginBottom="@dimen/sd_dock_margin_bottom"
+            android:background="@drawable/bg_dock"
+            android:elevation="10dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/sd_dock_pad">
+
+        <LinearLayout
+                android:id="@+id/nav_status"
+                style="@style/Widget.SecureDroid.DockItem"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+            <ImageView
+                    android:layout_width="@dimen/sd_dock_icon"
+                    android:layout_height="@dimen/sd_dock_icon"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_sd_home"
+                    app:tint="@color/dock_content" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/tab_status"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Nav"
+                    android:textColor="@color/dock_content" />
+        </LinearLayout>
+
+        <View
+                android:id="@+id/navDivider1"
+                android:layout_width="@dimen/sd_hairline_width"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/c_border" />
+
+        <LinearLayout
+                android:id="@+id/nav_detect"
+                style="@style/Widget.SecureDroid.DockItem"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+            <ImageView
+                    android:layout_width="@dimen/sd_dock_icon"
+                    android:layout_height="@dimen/sd_dock_icon"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_sd_search"
+                    app:tint="@color/dock_content" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/tab_detect"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Nav"
+                    android:textColor="@color/dock_content" />
+        </LinearLayout>
+
+        <View
+                android:id="@+id/navDivider2"
+                android:layout_width="@dimen/sd_hairline_width"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/c_border" />
+
+        <LinearLayout
+                android:id="@+id/nav_protect"
+                style="@style/Widget.SecureDroid.DockItem"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+            <ImageView
+                    android:layout_width="@dimen/sd_dock_icon"
+                    android:layout_height="@dimen/sd_dock_icon"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_sd_shield"
+                    app:tint="@color/dock_content" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/tab_protect"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Nav"
+                    android:textColor="@color/dock_content" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

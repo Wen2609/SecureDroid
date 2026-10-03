@@ -2,11 +2,10 @@
 <!-- 界面布局:可直接手改;颜色与尺寸引用 res/values 令牌(DesignRuleTest 校验触摸目标与令牌化) -->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:minHeight="@dimen/sd_row_height"
+        android:minHeight="64dp"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/sd_space_4"
         android:paddingVertical="@dimen/sd_space_3">
@@ -19,20 +18,27 @@
                 android:id="@+id/tvAppName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.SecureDroid.RowTitle"
                 android:textColor="@color/c_foreground" />
         <TextView
                 android:id="@+id/tvPerms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.SecureDroid.RowSub"
                 android:textColor="@color/c_muted_foreground" />
         </LinearLayout>
     <TextView
             android:id="@+id/tvScore"
+            style="@style/Widget.SecureDroid.Badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/sd_space_3"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Headline" />
+            android:background="@drawable/bg_badge"
+            android:textAppearance="@style/TextAppearance.SecureDroid.Badge"
+            android:textColor="@color/c_muted_foreground" />
     </LinearLayout>

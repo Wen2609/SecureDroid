@@ -61,11 +61,17 @@
 
     <!-- 卡片:白底 + 24dp 圆角 + 极淡阴影(设计图卡片没有描边) -->
     <style name="Widget.SecureDroid.Card" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardBackgroundColor">@color/c_card</item>
+        <item name="cardBackgroundColor">@color/c_glass</item>
         <item name="cardCornerRadius">@dimen/sd_radius_card</item>
         <item name="cardElevation">2dp</item>
-        <item name="strokeWidth">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/c_glass_border</item>
         <item name="rippleColor">@color/c_muted</item>
+    </style>
+    <!-- 列表容器卡:上下各留 4dp,让首/末行贴住圆角 -->
+    <style name="Widget.SecureDroid.CardList" parent="Widget.SecureDroid.Card">
+        <item name="android:paddingTop">@dimen/sd_card_list_pad</item>
+        <item name="android:paddingBottom">@dimen/sd_card_list_pad</item>
     </style>
     <!-- 首页四宫格入口卡:可点 + 固定高度 -->
     <style name="Widget.SecureDroid.Tile" parent="Widget.SecureDroid.Card">
@@ -73,8 +79,9 @@
         <item name="android:focusable">true</item>
     </style>
 
-    <!-- 主按钮:品牌绿胶囊 -->
-    <style name="Widget.SecureDroid.Button" parent="Widget.Material3.Button">
+    <!-- 主按钮:品牌绿胶囊。彩色阴影(outline*ShadowColor)是 API 28+ 才有的属性,
+         放在 values-v28/styles.xml 里追加,避免在低版本上被 Lint 判为 NewApi 错误。 -->
+    <style name="Widget.SecureDroid.Button.Base" parent="Widget.Material3.Button">
         <item name="android:minHeight">@dimen/sd_cta_height</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
@@ -87,7 +94,9 @@
         <item name="android:textColor">@color/c_on_primary</item>
         <item name="iconTint">@color/c_on_primary</item>
         <item name="iconPadding">@dimen/sd_space_2</item>
+        <item name="android:elevation">2dp</item>
     </style>
+    <style name="Widget.SecureDroid.Button" parent="Widget.SecureDroid.Button.Base" />
     <style name="Widget.SecureDroid.Button.Accent" parent="Widget.SecureDroid.Button">
         <item name="backgroundTint">@color/c_accent</item>
         <item name="android:textColor">@color/c_on_accent</item>
@@ -122,13 +131,24 @@
     <!-- 分段控件 -->
     <style name="Widget.SecureDroid.Segment" parent="Widget.Material3.Button.TextButton">
         <item name="android:textSize">14sp</item>
-        <item name="android:minHeight">@dimen/sd_segment_hit</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.005</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">@dimen/sd_seg_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
         <item name="android:stateListAnimator">@null</item>
-        <item name="cornerRadius">@dimen/sd_radius_inner</item>
+        <item name="cornerRadius">@dimen/sd_radius_pill</item>
         <item name="backgroundTint">@color/seg_bg</item>
         <item name="android:textColor">@color/seg_text</item>
         <item name="strokeWidth">0dp</item>
         <item name="rippleColor">@color/c_muted</item>
+    </style>
+    <!-- 分段轨道:浅底胶囊 + 3dp 内边距,内层按钮自带选中白胶囊 -->
+    <style name="Widget.SecureDroid.SegmentTrack" parent="">
+        <item name="android:background">@drawable/bg_seg_track</item>
+        <item name="android:padding">@dimen/sd_seg_track_pad</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="Widget.SecureDroid.Chip" parent="">
         <item name="android:background">@drawable/bg_chip</item>
@@ -145,6 +165,106 @@
         <item name="android:layout_height">@dimen/sd_hairline_width</item>
         <item name="android:layout_marginStart">@dimen/sd_divider_inset</item>
         <item name="android:background">@color/c_border</item>
+    </style>
+
+    <!-- ===== 新界面字阶(v1.8.0,字号/字距取自上传稿) ===== -->
+    <style name="TextAppearance.SecureDroid.PageTitle" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.018</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.Greeting" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.HeroTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.HeroMeta" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">13.5sp</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.StatValue" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.StatLabel" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">11.5sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.FeatureTitle" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.FeatureSub" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">12.5sp</item>
+        <item name="android:letterSpacing">0.005</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.ActivityTitle" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.ActivityTime" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.ScanHint" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.CardHead" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.EmptyHint" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.ProtectionTitle" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.ProtectionSub" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">12.5sp</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.RowTitle" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.RowSub" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.SecureDroid.Badge" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <!-- ===== 新界面组件 ===== -->
+    <style name="Widget.SecureDroid.DockItem" parent="">
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/selector_dock_item</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+    <style name="Widget.SecureDroid.Badge" parent="">
+        <item name="android:background">@drawable/bg_badge</item>
+        <item name="android:paddingStart">@dimen/sd_badge_pad_h</item>
+        <item name="android:paddingEnd">@dimen/sd_badge_pad_h</item>
+        <item name="android:paddingTop">@dimen/sd_badge_pad_v</item>
+        <item name="android:paddingBottom">@dimen/sd_badge_pad_v</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>

@@ -25,11 +25,13 @@ class PermissionAuditAdapter :
         holder.binding.tvAppName.text = result.appName
         holder.binding.tvPerms.text = result.risky.joinToString(", ")
         holder.binding.tvScore.text = result.score.toString()
-        val color = when (result.level) {
-            ThreatLevel.CRITICAL, ThreatLevel.HIGH -> R.color.status_malicious
-            ThreatLevel.MEDIUM -> R.color.status_risky
-            ThreatLevel.LOW -> R.color.status_safe
+        // 上传稿的徽标:底色是语义色的低透明度版本,文字用语义色本身
+        val (bg, color) = when (result.level) {
+            ThreatLevel.CRITICAL, ThreatLevel.HIGH -> R.drawable.bg_badge_danger to R.color.status_malicious
+            ThreatLevel.MEDIUM -> R.drawable.bg_badge_risky to R.color.status_risky
+            ThreatLevel.LOW -> R.drawable.bg_badge_safe to R.color.status_safe
         }
+        holder.binding.tvScore.setBackgroundResource(bg)
         holder.binding.tvScore.setTextColor(ContextCompat.getColor(ctx, color))
     }
 

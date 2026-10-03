@@ -53,6 +53,8 @@ class ScannerFragment : Fragment() {
                 is ScanUiState.Done -> {
                     binding.btnStartScan.isEnabled = true
                     binding.progress.isIndeterminate = false
+                    binding.tvEmpty.visibility =
+                        if (state.results.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE
                     adapter.submitList(state.results.sortedWith(
                         compareByDescending<com.armorlab.securedroid.trojan.TrojanScanner.Report> { it.isInfected }
                             .thenByDescending { it.worstLevel?.ordinal ?: -1 }

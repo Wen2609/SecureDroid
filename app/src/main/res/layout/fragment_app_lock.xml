@@ -7,66 +7,225 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
     <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.SecureDroid.Card"
+            style="@style/Widget.SecureDroid.CardList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-            <TextView
-                    android:id="@+id/tvPinState"
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
                     android:gravity="center_vertical"
                     android:minHeight="@dimen/sd_row_height"
-                    android:paddingHorizontal="@dimen/sd_space_4"
-                    android:paddingVertical="@dimen/sd_space_3"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-                    android:textColor="@color/c_foreground" />
-            <View
-                    style="@style/Widget.SecureDroid.Divider" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSetPin"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sd_row_height"
-                    android:text="@string/lock_set_pin"
-                    android:textColor="@color/c_accent" />
-            <View
-                    style="@style/Widget.SecureDroid.Divider" />
-            <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/swDecoy"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sd_row_height"
-                    android:paddingHorizontal="@dimen/sd_space_4"
-                    android:text="@string/lock_decoy_sw"
-                    android:textColor="@color/c_foreground"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-                    app:thumbTint="@color/switch_thumb"
-                    app:trackTint="@color/switch_track" />
-            <View
-                    style="@style/Widget.SecureDroid.Divider" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAccessibility"
-                    style="@style/Widget.SecureDroid.Button.Row"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sd_row_height"
-                    android:text="@string/lock_accessibility_go"
-                    android:textColor="@color/c_accent" />
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/sd_space_4"
+                    android:paddingTop="@dimen/sd_space_3"
+                    android:paddingEnd="@dimen/sd_space_4"
+                    android:paddingBottom="@dimen/sd_space_3">
+                <FrameLayout
+                        android:layout_width="@dimen/sd_protection_icon"
+                        android:layout_height="@dimen/sd_protection_icon"
+                        android:background="@drawable/bg_tint_green">
+                    <ImageView
+                            android:layout_width="@dimen/sd_protection_icon_inner"
+                            android:layout_height="@dimen/sd_protection_icon_inner"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_sd_lock"
+                            app:tint="@color/c_tint_green_fg" />
+                </FrameLayout>
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sd_space_3"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                    <TextView
+                            android:id="@+id/tvPinState"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.RowTitle"
+                            android:textColor="@color/c_foreground" />
+                </LinearLayout>
+
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            <View style="@style/Widget.SecureDroid.Divider" />
+            <LinearLayout
+                    android:id="@+id/btnSetPin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/sd_row_height"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/sd_space_4"
+                    android:paddingTop="@dimen/sd_space_3"
+                    android:paddingEnd="@dimen/sd_space_4"
+                    android:paddingBottom="@dimen/sd_space_3">
+                <FrameLayout
+                        android:layout_width="@dimen/sd_protection_icon"
+                        android:layout_height="@dimen/sd_protection_icon"
+                        android:background="@drawable/bg_tint_blue">
+                    <ImageView
+                            android:layout_width="@dimen/sd_protection_icon_inner"
+                            android:layout_height="@dimen/sd_protection_icon_inner"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_sd_shield"
+                            app:tint="@color/c_tint_blue_fg" />
+                </FrameLayout>
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sd_space_3"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/lock_set_pin"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.ProtectionTitle"
+                            android:textColor="@color/c_accent" />
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/lock_set_pin_sub"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.ProtectionSub"
+                            android:textColor="@color/c_muted_foreground" />
+                </LinearLayout>
+                <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_sd_chevron"
+                        app:tint="@color/c_muted_foreground" />
+            </LinearLayout>
+            <View style="@style/Widget.SecureDroid.Divider" />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/sd_row_height"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/sd_space_4"
+                    android:paddingTop="@dimen/sd_space_3"
+                    android:paddingEnd="@dimen/sd_space_4"
+                    android:paddingBottom="@dimen/sd_space_3">
+                <FrameLayout
+                        android:layout_width="@dimen/sd_protection_icon"
+                        android:layout_height="@dimen/sd_protection_icon"
+                        android:background="@drawable/bg_tint_amber">
+                    <ImageView
+                            android:layout_width="@dimen/sd_protection_icon_inner"
+                            android:layout_height="@dimen/sd_protection_icon_inner"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_sd_warning"
+                            app:tint="@color/c_tint_amber_fg" />
+                </FrameLayout>
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sd_space_3"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/lock_decoy_sw"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.ProtectionTitle"
+                            android:textColor="@color/c_foreground" />
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/lock_decoy_sub"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.ProtectionSub"
+                            android:textColor="@color/c_muted_foreground" />
+                </LinearLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swDecoy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/sd_touch_min"
+                        app:thumbTint="@color/switch_thumb"
+                        app:trackTint="@color/switch_track" />
+            </LinearLayout>
+            <View style="@style/Widget.SecureDroid.Divider" />
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/sd_row_height">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAccessibility"
+                        style="@style/Widget.SecureDroid.Button.Row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/sd_row_height"
+                        android:paddingStart="62dp"
+                        android:text="@string/lock_accessibility_go"
+                        android:textColor="@color/c_accent" />
+                <FrameLayout
+                        android:layout_width="@dimen/sd_protection_icon"
+                        android:layout_height="@dimen/sd_protection_icon"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginStart="@dimen/sd_space_4"
+                        android:background="@drawable/bg_tint_purple">
+                    <ImageView
+                            android:layout_width="@dimen/sd_protection_icon_inner"
+                            android:layout_height="@dimen/sd_protection_icon_inner"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_sd_accessibility"
+                            app:tint="@color/c_tint_purple_fg" />
+                </FrameLayout>
+                <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_sd_chevron"
+                        app:tint="@color/c_muted_foreground" />
+            </FrameLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.card.MaterialCardView
             style="@style/Widget.SecureDroid.Card"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/sd_space_4"
             android:layout_weight="1">
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvLockApps"
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:layoutAnimation="@anim/sd_list_layout" />
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
+                android:orientation="vertical">
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/sd_space_4"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="@dimen/sd_space_4"
+                    android:paddingBottom="@dimen/sd_space_3"
+                    android:text="@string/seg_applock"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.CardHead"
+                    android:textColor="@color/c_section" />
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sd_hairline_width"
+                    android:background="@color/c_border" />
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvLockApps"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clipToPadding="false"
+                    android:layoutAnimation="@anim/sd_list_layout" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

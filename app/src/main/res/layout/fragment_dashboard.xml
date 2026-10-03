@@ -10,145 +10,243 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="@dimen/sd_home_margin">
-        <TextView
-                android:id="@+id/tvHomeTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sd_home_title_top"
-                android:text="@string/home_title"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Title"
-                android:textColor="@color/c_foreground" />
-        <FrameLayout
-                android:layout_width="@dimen/sd_ring_size"
-                android:layout_height="@dimen/sd_ring_size"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/sd_ring_top">
-            <View
-                    android:layout_width="@dimen/sd_ring_disc"
-                    android:layout_height="@dimen/sd_ring_disc"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_ring_disc"
-                    android:importantForAccessibility="no" />
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                    android:id="@+id/scoreRing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:indeterminate="false"
-                    android:max="100"
-                    android:progress="100"
-                    app:indicatorColor="@color/c_ring"
-                    app:indicatorSize="@dimen/sd_ring_size"
-                    app:trackColor="@color/c_ring_track"
-                    app:trackCornerRadius="@dimen/sd_radius_chip"
-                    app:trackThickness="@dimen/sd_ring_stroke" />
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-                <TextView
-                        android:id="@+id/tvScore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:includeFontPadding="false"
-                        android:text="@string/sd_score_placeholder"
-                        android:textAppearance="@style/TextAppearance.SecureDroid.Score"
-                        android:textColor="@color/c_foreground" />
-                <TextView
-                        android:id="@+id/tvScoreUnit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/dashboard_score_unit"
-                        android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-                        android:textColor="@color/c_muted_foreground" />
-                </LinearLayout>
-            </FrameLayout>
-        <TextView
-                android:id="@+id/tvState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sd_status_top"
-                android:gravity="center"
-                android:text="@string/dashboard_state_good"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Status"
-                android:textColor="@color/c_muted_foreground" />
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOptimize"
-                style="@style/Widget.SecureDroid.Button"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sd_cta_height"
-                android:layout_marginTop="@dimen/sd_cta_top"
-                android:layout_marginStart="@dimen/sd_cta_inset"
-                android:layout_marginEnd="@dimen/sd_cta_inset"
-                android:text="@string/btn_optimize" />
+            android:paddingStart="@dimen/sd_page_pad"
+            android:paddingEnd="@dimen/sd_page_pad"
+            android:paddingBottom="@dimen/sd_space_5">
+
+        <!-- 顶部问候 -->
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/sd_grid_top">
-            <com.google.android.material.card.MaterialCardView
-                    style="@style/Widget.SecureDroid.Tile"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+            <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/sd_tile_height"
-                    android:id="@+id/tileClean"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/sd_grid_gap">
-                <LinearLayout
+                    android:orientation="vertical">
+                <TextView
+                        android:id="@+id/tvGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:textAppearance="@style/TextAppearance.SecureDroid.Greeting"
+                        android:textColor="@color/c_fg3" />
+                <TextView
+                        android:id="@+id/tvHomeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_title"
+                        android:textAppearance="@style/TextAppearance.SecureDroid.PageTitle"
+                        android:textColor="@color/c_foreground" />
+            </LinearLayout>
+            <TextView
+                    android:id="@+id/tvAvatar"
+                    android:layout_width="@dimen/sd_avatar"
+                    android:layout_height="@dimen/sd_avatar"
+                    android:background="@drawable/bg_avatar"
+                    android:gravity="center"
+                    android:text="@string/avatar_letter"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.FeatureTitle"
+                    android:textColor="@color/c_on_primary" />
+        </LinearLayout>
+
+        <!-- 主状态卡片 -->
+        <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.SecureDroid.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="@drawable/bg_hero_glow"
+                        android:importantForAccessibility="no" />
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
                         android:orientation="vertical"
-                        android:padding="@dimen/sd_tile_padding">
-                    <ImageView
-                            android:layout_width="@dimen/sd_tile_icon"
-                            android:layout_height="@dimen/sd_tile_icon"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_clean"
-                            app:tint="@color/c_foreground" />
+                        android:paddingStart="@dimen/sd_hero_pad_h"
+                        android:paddingTop="@dimen/sd_hero_pad_top"
+                        android:paddingEnd="@dimen/sd_hero_pad_h"
+                        android:paddingBottom="@dimen/sd_hero_pad_bottom">
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_hero_icon_wrap"
+                            android:layout_height="@dimen/sd_hero_icon_wrap"
+                            android:background="@drawable/bg_icon_wrap">
+                        <ImageView
+                                android:layout_width="@dimen/sd_hero_icon"
+                                android:layout_height="@dimen/sd_hero_icon"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_shield_check"
+                                app:tint="@color/c_primary" />
+                    </FrameLayout>
+                    <TextView
+                            android:id="@+id/tvHeroTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sd_space_4"
+                            android:text="@string/dashboard_hero_title"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.HeroTitle"
+                            android:textColor="@color/c_foreground" />
+                    <TextView
+                            android:id="@+id/tvHeroMeta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/dashboard_hero_meta_never"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.HeroMeta"
+                            android:textColor="@color/c_muted_foreground" />
+                    <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOptimize"
+                            style="@style/Widget.SecureDroid.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/sd_cta_height"
+                            android:layout_marginTop="20dp"
+                            android:text="@string/dashboard_cta_scan" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 状态概览条 -->
+        <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.SecureDroid.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp">
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp">
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+                    <TextView
+                            android:id="@+id/tvStatLib"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dashboard_stat_lib_ok"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.StatValue"
+                            android:textColor="@color/c_foreground" />
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sd_space_5"
-                            android:text="@string/tile_clean_title"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
+                            android:layout_marginTop="3dp"
+                            android:text="@string/dashboard_stat_lib"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.StatLabel"
+                            android:textColor="@color/c_muted_foreground" />
+                </LinearLayout>
+                <View
+                        android:layout_width="@dimen/sd_hairline_width"
+                        android:layout_height="@dimen/sd_stat_divider"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/c_border" />
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+                    <TextView
+                            android:id="@+id/tvStatScanned"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sd_score_placeholder"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.StatValue"
                             android:textColor="@color/c_foreground" />
                     <TextView
-                            android:id="@+id/tvCleanSub"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sd_space_1"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:text="@string/tile_clean_sub"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Tile"
+                            android:layout_marginTop="3dp"
+                            android:text="@string/dashboard_stat_scanned"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.StatLabel"
                             android:textColor="@color/c_muted_foreground" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+                <View
+                        android:layout_width="@dimen/sd_hairline_width"
+                        android:layout_height="@dimen/sd_stat_divider"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/c_border" />
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+                    <TextView
+                            android:id="@+id/tvStatProtected"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sd_score_placeholder"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.StatValue"
+                            android:textColor="@color/c_foreground" />
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:text="@string/dashboard_stat_protected"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.StatLabel"
+                            android:textColor="@color/c_muted_foreground" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 常用功能 -->
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/section_features"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Section"
+                android:textColor="@color/c_section" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
             <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/tileVirus"
                     style="@style/Widget.SecureDroid.Tile"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/sd_tile_height"
-                    android:id="@+id/tileVirus"
+                    android:layout_height="@dimen/sd_feature_min_height"
+                    android:layout_margin="5dp"
                     android:layout_weight="1">
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:padding="@dimen/sd_tile_padding">
-                    <ImageView
-                            android:layout_width="@dimen/sd_tile_icon"
-                            android:layout_height="@dimen/sd_tile_icon"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_bug"
-                            app:tint="@color/c_foreground" />
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_feature_icon"
+                            android:layout_height="@dimen/sd_feature_icon"
+                            android:background="@drawable/bg_tint_green">
+                        <ImageView
+                                android:layout_width="@dimen/sd_feature_icon_inner"
+                                android:layout_height="@dimen/sd_feature_icon_inner"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_search"
+                                app:tint="@color/c_tint_green_fg" />
+                    </FrameLayout>
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sd_space_5"
-                            android:text="@string/tile_virus_title"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
+                            android:layout_marginTop="14dp"
+                            android:text="@string/feature_scan"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureTitle"
                             android:textColor="@color/c_foreground" />
                     <TextView
                             android:id="@+id/tvVirusSub"
@@ -156,42 +254,91 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sd_space_1"
                             android:ellipsize="end"
-                            android:maxLines="1"
-                            android:text="@string/tile_virus_sub"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Tile"
+                            android:maxLines="2"
+                            android:text="@string/feature_scan_sub"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureSub"
                             android:textColor="@color/c_muted_foreground" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/sd_grid_gap">
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/tileTrojan"
                     style="@style/Widget.SecureDroid.Tile"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/sd_tile_height"
-                    android:id="@+id/tileNetwork"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/sd_grid_gap">
+                    android:layout_height="@dimen/sd_feature_min_height"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1">
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:padding="@dimen/sd_tile_padding">
-                    <ImageView
-                            android:layout_width="@dimen/sd_tile_icon"
-                            android:layout_height="@dimen/sd_tile_icon"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_network"
-                            app:tint="@color/c_foreground" />
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_feature_icon"
+                            android:layout_height="@dimen/sd_feature_icon"
+                            android:background="@drawable/bg_tint_amber">
+                        <ImageView
+                                android:layout_width="@dimen/sd_feature_icon_inner"
+                                android:layout_height="@dimen/sd_feature_icon_inner"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_bug"
+                                app:tint="@color/c_tint_amber_fg" />
+                    </FrameLayout>
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sd_space_5"
-                            android:text="@string/tile_network_title"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
+                            android:layout_marginTop="14dp"
+                            android:text="@string/feature_trojan"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureTitle"
+                            android:textColor="@color/c_foreground" />
+                    <TextView
+                            android:id="@+id/tvTrojanSub"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sd_space_1"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="@string/feature_trojan_sub"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureSub"
+                            android:textColor="@color/c_muted_foreground" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/tileNetwork"
+                    style="@style/Widget.SecureDroid.Tile"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/sd_feature_min_height"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="@dimen/sd_tile_padding">
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_feature_icon"
+                            android:layout_height="@dimen/sd_feature_icon"
+                            android:background="@drawable/bg_tint_blue">
+                        <ImageView
+                                android:layout_width="@dimen/sd_feature_icon_inner"
+                                android:layout_height="@dimen/sd_feature_icon_inner"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_globe"
+                                app:tint="@color/c_tint_blue_fg" />
+                    </FrameLayout>
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:text="@string/feature_network"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureTitle"
                             android:textColor="@color/c_foreground" />
                     <TextView
                             android:id="@+id/tvNetworkSub"
@@ -199,35 +346,42 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sd_space_1"
                             android:ellipsize="end"
-                            android:maxLines="1"
-                            android:text="@string/tile_network_sub"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Tile"
+                            android:maxLines="2"
+                            android:text="@string/feature_network_sub"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureSub"
                             android:textColor="@color/c_muted_foreground" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/tileApplock"
                     style="@style/Widget.SecureDroid.Tile"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/sd_tile_height"
-                    android:id="@+id/tileApplock"
+                    android:layout_height="@dimen/sd_feature_min_height"
+                    android:layout_margin="5dp"
                     android:layout_weight="1">
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:padding="@dimen/sd_tile_padding">
-                    <ImageView
-                            android:layout_width="@dimen/sd_tile_icon"
-                            android:layout_height="@dimen/sd_tile_icon"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_lock"
-                            app:tint="@color/c_foreground" />
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_feature_icon"
+                            android:layout_height="@dimen/sd_feature_icon"
+                            android:background="@drawable/bg_tint_purple">
+                        <ImageView
+                                android:layout_width="@dimen/sd_feature_icon_inner"
+                                android:layout_height="@dimen/sd_feature_icon_inner"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_grid"
+                                app:tint="@color/c_tint_purple_fg" />
+                    </FrameLayout>
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sd_space_5"
-                            android:text="@string/tile_applock_title"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
+                            android:layout_marginTop="14dp"
+                            android:text="@string/feature_applock"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureTitle"
                             android:textColor="@color/c_foreground" />
                     <TextView
                             android:id="@+id/tvApplockSub"
@@ -235,12 +389,178 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sd_space_1"
                             android:ellipsize="end"
-                            android:maxLines="1"
-                            android:text="@string/tile_applock_sub"
-                            android:textAppearance="@style/TextAppearance.SecureDroid.Tile"
+                            android:maxLines="2"
+                            android:text="@string/feature_applock_sub"
+                            android:textAppearance="@style/TextAppearance.SecureDroid.FeatureSub"
                             android:textColor="@color/c_muted_foreground" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </ScrollView>
+
+        <!-- 最近活动 -->
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/section_recent"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Section"
+                android:textColor="@color/c_section" />
+
+        <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.SecureDroid.CardList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/sd_space_4"
+                        android:paddingTop="@dimen/sd_space_3"
+                        android:paddingEnd="@dimen/sd_space_4"
+                        android:paddingBottom="@dimen/sd_space_3">
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_activity_icon"
+                            android:layout_height="@dimen/sd_activity_icon"
+                            android:background="@drawable/bg_tint_green">
+                        <ImageView
+                                android:layout_width="@dimen/sd_activity_icon_inner"
+                                android:layout_height="@dimen/sd_activity_icon_inner"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_check"
+                                app:tint="@color/c_tint_green_fg" />
+                    </FrameLayout>
+                    <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sd_space_3"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                        <TextView
+                                android:id="@+id/actScanTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/activity_scan_done"
+                                android:textAppearance="@style/TextAppearance.SecureDroid.ActivityTitle"
+                                android:textColor="@color/c_foreground" />
+                        <TextView
+                                android:id="@+id/actScanTime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/activity_scan_never"
+                                android:textAppearance="@style/TextAppearance.SecureDroid.ActivityTime"
+                                android:textColor="@color/c_muted_foreground" />
+                    </LinearLayout>
+                </LinearLayout>
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sd_hairline_width"
+                        android:layout_marginStart="@dimen/sd_activity_divider_inset"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:background="@color/c_border" />
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/sd_space_4"
+                        android:paddingTop="@dimen/sd_space_3"
+                        android:paddingEnd="@dimen/sd_space_4"
+                        android:paddingBottom="@dimen/sd_space_3">
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_activity_icon"
+                            android:layout_height="@dimen/sd_activity_icon"
+                            android:background="@drawable/bg_tint_blue">
+                        <ImageView
+                                android:layout_width="@dimen/sd_activity_icon_inner"
+                                android:layout_height="@dimen/sd_activity_icon_inner"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_trash"
+                                app:tint="@color/c_tint_blue_fg" />
+                    </FrameLayout>
+                    <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sd_space_3"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                        <TextView
+                                android:id="@+id/actCleanTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/activity_clean_done"
+                                android:textAppearance="@style/TextAppearance.SecureDroid.ActivityTitle"
+                                android:textColor="@color/c_foreground" />
+                        <TextView
+                                android:id="@+id/actCleanTime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/activity_clean_sub"
+                                android:textAppearance="@style/TextAppearance.SecureDroid.ActivityTime"
+                                android:textColor="@color/c_muted_foreground" />
+                    </LinearLayout>
+                </LinearLayout>
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sd_hairline_width"
+                        android:layout_marginStart="@dimen/sd_activity_divider_inset"
+                        android:layout_marginEnd="@dimen/sd_space_4"
+                        android:background="@color/c_border" />
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/sd_space_4"
+                        android:paddingTop="@dimen/sd_space_3"
+                        android:paddingEnd="@dimen/sd_space_4"
+                        android:paddingBottom="@dimen/sd_space_3">
+                    <FrameLayout
+                            android:layout_width="@dimen/sd_activity_icon"
+                            android:layout_height="@dimen/sd_activity_icon"
+                            android:background="@drawable/bg_tint_amber">
+                        <ImageView
+                                android:layout_width="@dimen/sd_activity_icon_inner"
+                                android:layout_height="@dimen/sd_activity_icon_inner"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_sd_warning"
+                                app:tint="@color/c_tint_amber_fg" />
+                    </FrameLayout>
+                    <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sd_space_3"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                        <TextView
+                                android:id="@+id/actRiskTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/activity_risk_perm"
+                                android:textAppearance="@style/TextAppearance.SecureDroid.ActivityTitle"
+                                android:textColor="@color/c_foreground" />
+                        <TextView
+                                android:id="@+id/actRiskTime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/activity_risk_none"
+                                android:textAppearance="@style/TextAppearance.SecureDroid.ActivityTime"
+                                android:textColor="@color/c_muted_foreground" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

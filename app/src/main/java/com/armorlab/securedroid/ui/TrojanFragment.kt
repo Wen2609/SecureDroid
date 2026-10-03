@@ -52,6 +52,8 @@ class TrojanFragment : Fragment() {
                 is TrojanUiState.Done -> {
                     setBusy(false)
                     binding.progress.isIndeterminate = false
+                    binding.tvEmpty.visibility =
+                        if (state.items.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE
                     adapter.submitList(state.items)
                     binding.tvStatus.text = state.summary
                 }

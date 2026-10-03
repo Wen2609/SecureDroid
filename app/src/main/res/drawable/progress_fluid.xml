@@ -1,17 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 进度条:4dp 中性轨道 + 品牌绿填充(规则:多步流程必须给出进度) -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
             <corners android:radius="2dp" />
-            <solid android:color="@color/c_muted" />
+            <solid android:color="@color/c_progress_track" />
         </shape>
     </item>
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
                 <corners android:radius="2dp" />
-                <solid android:color="@color/c_primary" />
+                <gradient android:angle="0" android:startColor="@color/c_primary" android:endColor="@color/c_ring" />
             </shape>
         </clip>
     </item>

@@ -2,41 +2,38 @@
 <!-- 界面布局:可直接手改;颜色与尺寸引用 res/values 令牌(DesignRuleTest 校验触摸目标与令牌化) -->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/sd_row_height"
         android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/sd_space_4"
-        android:paddingVertical="@dimen/sd_space_3">
+        android:padding="@dimen/sd_space_4">
     <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Body"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.SecureDroid.RowTitle"
             android:textColor="@color/c_foreground" />
     <TextView
             android:id="@+id/tvSub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.SecureDroid.RowSub"
             android:textColor="@color/c_muted_foreground" />
     <TextView
             android:id="@+id/tvDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="6dp"
             android:textAppearance="@style/TextAppearance.SecureDroid.Label"
             android:textColor="@color/c_muted_foreground" />
     <TextView
             android:id="@+id/tvSuggestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sd_space_2"
+            android:layout_marginTop="6dp"
             android:textAppearance="@style/TextAppearance.SecureDroid.Label"
-            android:textColor="@color/c_gold" />
+            android:textColor="@color/c_accent" />
     <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

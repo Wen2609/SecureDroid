@@ -47,4 +47,40 @@
     <color name="sd_hairline">@color/c_border</color>
     <color name="sd_warn">@color/c_gold</color>
     <color name="sd_danger">@color/c_destructive</color>
+
+    <!-- ===== 毛玻璃 / 光晕 / 彩色图标底(v1.8.0 新界面,数值取自上传稿) ===== -->
+    <color name="c_fg3">#FF8A9088</color>
+    <color name="c_section">#FF5F7A63</color>
+    <color name="c_glass">#9EFFFFFF</color>
+    <color name="c_glass_border">#B8FFFFFF</color>
+    <color name="c_glass_highlight">#99FFFFFF</color>
+    <color name="c_nav_glass">#ADFDFDFD</color>
+    <color name="c_nav_border">#B8FFFFFF</color>
+    <color name="c_seg_active">#F2FFFFFF</color>
+    <color name="c_aurora_1">#8CB7EFA9</color>
+    <color name="c_aurora_2">#7AB6E5FF</color>
+    <color name="c_aurora_3">#80D9F5C4</color>
+    <color name="c_aurora_4">#6BC9E9FF</color>
+    <color name="c_hero_glow">#1A04BD19</color>
+    <color name="c_icon_wrap_1">#2904BD19</color>
+    <color name="c_icon_wrap_2">#0F31D027</color>
+    <color name="c_icon_wrap_stroke">#2904BD19</color>
+    <color name="c_dock_active_1">#2904BD19</color>
+    <color name="c_dock_active_2">#0F31D027</color>
+    <color name="c_avatar_1">#FF04BD19</color>
+    <color name="c_avatar_2">#FF31D027</color>
+    <color name="c_avatar_border">#BFFFFFFF</color>
+    <color name="c_progress_track">@color/c_muted</color>
+    <color name="c_tint_green_bg">#2104BD19</color>
+    <color name="c_tint_green_fg">#FF04BD19</color>
+    <color name="c_tint_blue_bg">#213B82F6</color>
+    <color name="c_tint_blue_fg">#FF3B82F6</color>
+    <color name="c_tint_amber_bg">#21A16207</color>
+    <color name="c_tint_amber_fg">#FFA16207</color>
+    <color name="c_tint_purple_bg">#267C6CFF</color>
+    <color name="c_tint_purple_fg">#FF7C6CFF</color>
+    <color name="c_badge_safe_bg">#2415803D</color>
+    <color name="c_badge_risky_bg">#24A16207</color>
+    <color name="c_badge_danger_bg">#21D03B37</color>
+    <color name="ic_stroke">#FF1A1A1A</color>
 </resources>

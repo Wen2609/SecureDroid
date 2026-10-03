@@ -42,6 +42,7 @@ class PermissionAuditFragment : Fragment() {
                 val b = _binding ?: return@withContext
                 adapter.submitList(results)
                 b.tvSummary.text = getString(R.string.audit_summary, results.size)
+                b.tvEmpty.visibility = if (results.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE
             }
         }
     }

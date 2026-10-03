@@ -50,4 +50,36 @@
     <dimen name="sd_btn_height">48dp</dimen>
     <dimen name="sd_segment_hit">48dp</dimen>
     <dimen name="sd_divider_inset">56dp</dimen>
+
+    <!-- ===== 新界面几何(取自上传稿:360dp 基准) ===== -->
+    <dimen name="sd_page_pad">16dp</dimen>
+    <dimen name="sd_dock_height">60dp</dimen>
+    <dimen name="sd_dock_margin_h">12dp</dimen>
+    <dimen name="sd_dock_margin_bottom">20dp</dimen>
+    <dimen name="sd_dock_pad">5dp</dimen>
+    <dimen name="sd_dock_icon">22dp</dimen>
+    <dimen name="sd_seg_track_pad">3dp</dimen>
+    <dimen name="sd_seg_height">48dp</dimen>
+    <dimen name="sd_hero_pad_h">20dp</dimen>
+    <dimen name="sd_hero_pad_top">26dp</dimen>
+    <dimen name="sd_hero_pad_bottom">22dp</dimen>
+    <dimen name="sd_hero_icon_wrap">88dp</dimen>
+    <dimen name="sd_hero_icon">44dp</dimen>
+    <dimen name="sd_avatar">46dp</dimen>
+    <dimen name="sd_scan_circle">100dp</dimen>
+    <dimen name="sd_scan_icon">42dp</dimen>
+    <dimen name="sd_feature_icon">44dp</dimen>
+    <dimen name="sd_feature_icon_inner">22dp</dimen>
+    <dimen name="sd_feature_min_height">132dp</dimen>
+    <dimen name="sd_activity_icon">32dp</dimen>
+    <dimen name="sd_activity_icon_inner">16dp</dimen>
+    <dimen name="sd_activity_divider_inset">60dp</dimen>
+    <dimen name="sd_protection_icon">34dp</dimen>
+    <dimen name="sd_protection_icon_inner">18dp</dimen>
+    <dimen name="sd_protection_divider_inset">62dp</dimen>
+    <dimen name="sd_progress_height">4dp</dimen>
+    <dimen name="sd_badge_pad_h">10dp</dimen>
+    <dimen name="sd_badge_pad_v">3dp</dimen>
+    <dimen name="sd_stat_divider">24dp</dimen>
+    <dimen name="sd_card_list_pad">4dp</dimen>
 </resources>

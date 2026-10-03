@@ -13,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -29,6 +30,15 @@ import org.robolectric.annotation.Config
 class DatabaseAndManagersTest {
 
     private val ctx: Context get() = ApplicationProvider.getApplicationContext()
+
+    /**
+     * Robolectric 每个用例重建运行环境,而上一个用例留下的 Room 单例仍指向旧环境的
+     * SQLite 连接(报 "Illegal connection pointer")。这里每个用例都从干净实例开始。
+     */
+    @Before
+    fun freshDatabase() {
+        AppDatabase.resetForTest()
+    }
 
     @Test
     fun databaseOpensAndRoundTripsRecords() = runBlocking {

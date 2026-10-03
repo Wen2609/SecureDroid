@@ -74,16 +74,21 @@
 - 新板块页面实现 ui/SectionHost,MainActivity.navigateTo(板块 id, 分段下标) 可跨板块直达
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
-## 界面约定(2026-10-02 起 · 设计系统已整体移除)
-- `design/` 目录(设计文档 / 布局生成器 / 视觉稿)与并存的三套风格基线(Swiss Style、Apple HIG、
-  更早的旧记录)已全部删除;界面不再有"必须照某个风格做"的约束
-- 20 个布局现在就是普通 XML,可直接手改;**改了不会被任何脚本覆盖**(生成器已不存在)
-- 仍然生效、会被测试拦的硬规则:触摸目标 ≥48dp、颜色与字号必须走 res/values 令牌不许写字面值、
-  带点号样式名必须显式写 parent、深色令牌必须放在与 values 平级的 res/values-night
-- 配色/尺寸的当前实际取值见 README「界面外观(现状)」;颜色与尺寸令牌仍在 res/values 与 res/values-night,未改动
+## 界面约定(2026-10-03 起 · 基线是用户上传稿)
+- **基线**:用户上传的 `deepseek_html_20261003_008012.html`(毛玻璃 / 柔和流动光晕 / 悬浮胶囊导航)。
+  布局与令牌按它逐项实现;改界面前先看这份稿子,不要自行发明风格或配色
+- 映射关系:背景光晕 = `activity_main.xml` 的 auroraBg(4 个 `aurora_blob_*`,MainActivity.startAurora 按 drift1-4 关键帧平移+缩放);
+  卡片 = `Widget.SecureDroid.Card`(半透明 `c_glass` + 1dp `c_glass_border` 高光);导航 = 自定义 3 等分胶囊(已不是 TabLayout);
+  分段 = `Widget.SecureDroid.SegmentTrack` + `Widget.SecureDroid.Segment`;徽标 = `Widget.SecureDroid.Badge`;
+  图标统一 `ic_sd_*` 前缀(描边型,路径取自上传稿的内联 SVG)
+- 毛玻璃是**近似实现**:Android 没有跨视图的 backdrop-filter,用"半透明底 + 高光描边 + 阴影"表达,
+  不要去找真模糊(需要 RenderEffect 且拿不到背后内容,白折腾)
+- 仍然生效、会被测试拦的硬规则:触摸目标 ≥48dp(上传稿的 42px 分段按钮在 Android 上取 48dp)、
+  颜色与字号必须走 res/values 令牌不许写字面值、带点号样式名必须显式写 parent、深色令牌必须放在与 values 平级的 res/values-night
+- 配色/尺寸的当前实际取值见 README「界面外观(现状)」;新增颜色令牌必须同时在 `values/colors.xml` 与 `values-night/colors.xml` 定义
 - `陷阱`:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
   构建/Lint/测试全绿但深色模式失效;NightThemeTokenTest 已盯住这一点
-- 布局里 60 个 View ID 被 Kotlin 引用(见 ui/ 下 binding.xxx),重排布局时 ID 一个都不能改
+- 布局里 60+ 个 View ID 被 Kotlin 引用(见 ui/ 下 binding.xxx),重排布局时 ID 一个都不能改
 - 装饰性图标必须 importantForAccessibility="no";列表分隔线由 ui/InsetDividerDecoration 绘制(只画行间)
 
 ## 省钱须知(给 AI)

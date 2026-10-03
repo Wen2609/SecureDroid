@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/sd_gutter"
             android:paddingVertical="@dimen/sd_space_4"
-            android:textAppearance="@style/TextAppearance.SecureDroid.Title"
+            android:textAppearance="@style/TextAppearance.SecureDroid.PageTitle"
             android:textColor="@color/c_foreground" />
     <ProgressBar
             android:id="@+id/progress"

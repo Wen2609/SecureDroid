@@ -250,4 +250,55 @@
     <string name="keypad_7" translatable="false">7</string>
     <string name="keypad_8" translatable="false">8</string>
     <string name="keypad_9" translatable="false">9</string>
+    <!-- ===== 新界面文案(v1.8.0,结构取自上传稿) ===== -->
+    <string name="dashboard_greeting_fmt" translatable="false">%1$s · %2$s</string>
+    <string name="dashboard_hero_title">设备安全</string>
+    <string name="dashboard_hero_meta_never">尚未扫描,建议立即体检</string>
+    <string name="dashboard_hero_meta_fmt">上次扫描 · %1$s</string>
+    <string name="dashboard_cta_scan">立即扫描</string>
+    <string name="dashboard_stat_lib">病毒库</string>
+    <string name="dashboard_stat_lib_ok">已更新</string>
+    <string name="dashboard_stat_lib_missing">待更新</string>
+    <string name="dashboard_stat_scanned">已扫描</string>
+    <string name="dashboard_stat_protected">防护中</string>
+    <string name="dashboard_stat_count_fmt" translatable="false">%1$d 项</string>
+    <string name="section_features">常用功能</string>
+    <string name="section_recent">最近活动</string>
+    <string name="feature_scan">病毒扫描</string>
+    <string name="feature_scan_sub">全盘检测恶意软件</string>
+    <string name="feature_trojan">木马查杀</string>
+    <string name="feature_trojan_sub">多引擎深度检测</string>
+    <string name="feature_network">网络检测</string>
+    <string name="feature_network_sub">查看网络连接</string>
+    <string name="feature_applock">应用锁</string>
+    <string name="feature_applock_sub">保护敏感应用</string>
+    <string name="activity_scan_done">病毒扫描完成</string>
+    <string name="activity_scan_never">尚未扫描 · 建议立即体检</string>
+    <string name="activity_scan_clean">未发现威胁</string>
+    <string name="activity_scan_bad_fmt">发现 %1$d 个威胁</string>
+    <string name="activity_clean_done">垃圾清理完成</string>
+    <string name="activity_clean_sub">清理缓存与临时文件</string>
+    <string name="activity_risk_perm">发现风险权限</string>
+    <string name="activity_risk_fmt">%1$d 个应用</string>
+    <string name="activity_risk_none">未发现风险权限</string>
+    <string name="scan_results_head">扫描结果</string>
+    <string name="scan_empty">暂无扫描结果</string>
+    <string name="trojan_results_head">木马检测结果</string>
+    <string name="trojan_empty">暂无木马检测结果</string>
+    <string name="lock_pin_row_title">PIN 码</string>
+    <string name="lock_decoy_sub">进入应用时伪装崩溃</string>
+    <string name="lock_set_pin_sub">保护被锁应用</string>
+    <string name="lock_accessibility_sub">用于应用锁的自动解锁</string>
+    <string name="sw_realtime_sub">实时监控文件与进程</string>
+    <string name="sw_daily_scan_sub">每天自动扫描一次</string>
+    <string name="sw_sim_guard_sub">监控 SIM 卡变更</string>
+    <string name="sw_auto_disinfect_sub">自动禁用恶意模块与 su 脚本</string>
+    <string name="sw_auto_uninstall_sub">自动卸载恶意应用(root)</string>
+    <string name="root_mode_switch">Root 模式</string>
+    <string name="settings_update">检查更新</string>
+    <string name="settings_about">关于 SecureDroid</string>
+    <string name="audit_empty">未发现存在风险权限的应用</string>
+    <string name="avatar_letter" translatable="false">A</string>
+    <string name="dashboard_time_today">今天 %1$s</string>
+    <string name="dashboard_time_yesterday">昨天 %1$s</string>
 </resources>
