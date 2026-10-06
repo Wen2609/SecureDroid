@@ -25,31 +25,16 @@
     <color name="c_gold">#FFFBBF24</color>
     <color name="c_success">#FF4ADE80</color>
 
-    <color name="c_ring">#FF31D027</color>
 
     <color name="ic_launcher_background">#FF0B7A1C</color>
 
-    <color name="status_safe">@color/c_success</color>
-    <color name="status_risky">@color/c_gold</color>
-    <color name="status_malicious">@color/c_destructive</color>
 
     <!-- ===== 毛玻璃 / 光晕 / 彩色图标底(深色;同上传稿的 prefers-color-scheme: dark) ===== -->
     <color name="c_glass">#9E171B18</color>
     <color name="c_glass_border">#12FFFFFF</color>
-    <color name="c_aurora_1">#731E5A2A</color>
-    <color name="c_aurora_2">#6B12405C</color>
-    <color name="c_aurora_3">#6620501E</color>
-    <color name="c_aurora_4">#5C123A55</color>
-    <color name="c_icon_wrap_1">#2E31D027</color>
-    <color name="c_icon_wrap_2">#1231D027</color>
-    <color name="c_icon_wrap_stroke">#2E31D027</color>
-    <color name="c_progress_track">@color/c_muted</color>
-    <color name="c_tint_green_bg">#2E31D027</color>
-    <color name="c_tint_green_fg">#FF4ADE80</color>
     <color name="ic_stroke">#FFEDF2EC</color>
 
     <!-- ===== 弹窗玻璃化(v1.9.7,对齐 2026-10-04 设计令牌深色值) ===== -->
-    <color name="c_primary_hover">#FF28B820</color>
 
     <!-- ===== 界面统一修复(v1.9.8):玻璃警示条 / 键盘玻璃键 ===== -->
     <color name="c_destructive_glass">#1AFF6B6B</color>

@@ -6,11 +6,4 @@
         <item name="android:outlineSpotShadowColor">@color/c_primary</item>
         <item name="android:outlineAmbientShadowColor">@color/c_primary</item>
     </style>
-    <style name="Widget.SecureDroid.Button.Accent" parent="Widget.SecureDroid.Button">
-        <item name="backgroundTint">@color/c_accent</item>
-        <item name="android:textColor">@color/c_on_accent</item>
-        <item name="iconTint">@color/c_on_accent</item>
-        <item name="android:outlineSpotShadowColor">@color/c_accent</item>
-        <item name="android:outlineAmbientShadowColor">@color/c_accent</item>
-    </style>
 </resources>

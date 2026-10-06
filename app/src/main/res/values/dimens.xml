@@ -10,7 +10,6 @@
     <dimen name="sd_space_2">8dp</dimen>
     <dimen name="sd_space_3">12dp</dimen>
     <dimen name="sd_space_4">16dp</dimen>
-    <dimen name="sd_space_5">24dp</dimen>
     <dimen name="sd_gutter">16dp</dimen>
     <dimen name="sd_touch_min">48dp</dimen>
     <dimen name="sd_row_height">56dp</dimen>
@@ -27,18 +26,9 @@
     <!-- 悬浮底部导航 -->
 
     <!-- 其它 -->
-    <dimen name="sd_btn_height">48dp</dimen>
 
     <!-- ===== 新界面几何(取自上传稿:360dp 基准) ===== -->
     <dimen name="sd_hero_icon_wrap">88dp</dimen>
-    <dimen name="sd_scan_icon">42dp</dimen>
-    <dimen name="sd_protection_icon">34dp</dimen>
-    <dimen name="sd_protection_icon_inner">18dp</dimen>
-    <dimen name="sd_progress_height">4dp</dimen>
 
     <!-- 其他界面固定几何(v1.9.11 令牌化) -->
-    <dimen name="sd_lock_icon_wrap">56dp</dimen>
-    <dimen name="sd_lock_icon">28dp</dimen>
-    <dimen name="sd_keypad_height">64dp</dimen>
-    <dimen name="sd_chevron_size">20dp</dimen>
 </resources>

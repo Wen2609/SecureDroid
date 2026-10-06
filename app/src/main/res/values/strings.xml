@@ -11,16 +11,6 @@
 
 
 
-    <string name="lock_pin_title">设置 4 位 PIN 码</string>
-    <string name="lock_pin_sub">设置后每次进入应用锁需验证,用于保护锁定应用</string>
-    <string name="lock_pin_hint">请输入 4 位数字</string>
-    <string name="lock_pin_confirm_hint">请再次输入</string>
-    <string name="lock_save">保存</string>
-    <string name="lock_pin_saved">PIN 码已保存</string>
-    <string name="lock_pin_store_failed">PIN 保存失败:设备安全存储不可用,应用锁未启用</string>
-    <string name="lock_pin_mismatch">两次输入不一致或不是 4 位数字</string>
-    <string name="lock_unlock_title">应用已锁定</string>
-    <string name="lock_unlock_hint">请输入 PIN 码解锁</string>
     <string name="lock_unlock_ok">解锁成功</string>
     <string name="lock_wrong_pin">PIN 码错误</string>
 
@@ -31,18 +21,11 @@
     <string name="threat_found_title">发现恶意应用!</string>
     <string name="accessibility_desc">安卫应用锁使用无障碍服务检测前台应用,在受保护应用启动时要求输入 PIN 码。</string>
     <string name="trojan_done">查杀完成:%1$d 个应用,发现 %2$d 个感染项</string>
-    <string name="trojan_uninstall">立即卸载</string>
-    <string name="trojan_suggestion_label">处理建议:</string>
     <string name="rootkit_done">Rootkit 检测完成:发现 %1$d 项可疑痕迹</string>
     <string name="rootkit_clean">未发现 Rootkit 痕迹</string>
     <string name="modules_done">模块扫描完成:发现 %1$d 项可疑 / 恶意</string>
     <string name="modules_clean">模块与 su 脚本未发现恶意行为</string>
     <string name="modules_no_access">未检测到可读的模块目录;如已 root,请在 KernelSU / APatch / SukiSU / Magisk 管理器中为本应用授予 su 权限</string>
-    <string name="fix_confirm_title">执行处置命令</string>
-    <string name="fix_confirm_msg">将通过 su 执行以下命令:</string>
-    <string name="fix_run">执行</string>
-    <string name="fix_done">处置完成</string>
-    <string name="fix_failed">处置失败(未授权或命令执行出错)</string>
     <string name="root_mode_on">Root 模式:已启用(即时检测 + 自动杀毒可用)</string>
     <string name="root_mode_off">Root 模式:未启用(开启下方开关将请求 su 授权)</string>
     <string name="toast_root_enabled">Root 模式已启用,自动杀毒生效中</string>
@@ -50,15 +33,8 @@
     <string name="auto_disinfect_title">自动杀毒</string>
     <string name="locker_done">锁机检测完成:发现 %1$d 项风险</string>
     <string name="locker_clean">未发现锁机软件与可疑设备管理员</string>
-    <string name="tool_network">网络安全检测</string>
-    <string name="tool_network_sub">DNS 劫持对比 · hosts 篡改 · 连接审计</string>
     <string name="lock_too_many_attempts">尝试次数过多,请等待 %1$d 秒后再试</string>
     <string name="lock_alarm_triggered">检测到暴力破解尝试,已鸣响警报!</string>
-    <string name="deep_scan_title">深度查杀</string>
-    <string name="deep_btn_start">开始深度查杀</string>
-    <string name="deep_done_fmt">深度查杀完成:发现 %1$d 项</string>
-    <string name="deep_note">三阶段:进程内存 → 全设备目录 → 底层分区。Root 模式下效果完整,耗时较长。</string>
-    <string name="vc_title">病毒查杀中心</string>
     <string name="vc_recent">综合深扫(最近 7 天安装)</string>
     <string name="vc_embedded">嵌入式载荷检测(全部应用)</string>
     <string name="vc_diff">差异快速扫描(仅变更应用)</string>
@@ -71,14 +47,6 @@
     <string name="vc_quarantine">隔离区管理</string>
     <string name="vc_trust">信任列表管理</string>
     <string name="vc_report">威胁报告导出</string>
-    <string name="vc_done_fmt">完成:%1$d 项结果</string>
-    <string name="vc_update_url">特征文件 URL(.hsb / .ndb)</string>
-    <string name="vc_update_sha">校验 SHA-256(必填,确认特征库完整性)</string>
-    <string name="vc_update_btn">下载并加载</string>
-    <string name="vc_update_need_url">请输入特征文件 URL</string>
-    <string name="vc_trust_title">信任列表(点击移除信任)</string>
-    <string name="vc_trust_none">当前信任列表为空</string>
-    <string name="vc_trust_removed">已移除信任: </string>
     <string name="vc_phase_recent">正在对最近安装应用做综合深扫…</string>
     <string name="vc_phase_embedded">正在检测嵌入式载荷…</string>
     <string name="vc_phase_diff">正在执行差异快速扫描…</string>
@@ -87,12 +55,7 @@
     <string name="vc_phase_learn">正在学习进程基线…</string>
     <string name="vc_phase_stats">正在汇总查杀统计…</string>
     <string name="vc_phase_sig">正在读取签名库状态…</string>
-    <string name="vc_phase_update">正在下载并校验特征库…</string>
     <string name="vc_phase_quarantine">正在读取隔离区…</string>
-    <string name="vc_back">返回</string>
-    <string name="vc_cancel">取消查杀</string>
-    <string name="vc_running_hint">任务运行中,可先取消查杀</string>
-    <string name="vc_cancel_requested">已请求取消,正在停止…</string>
     <string name="vc_recent_sub">综合评分 + 多引擎仲裁 + APK 结构检测</string>
     <string name="vc_embedded_sub">PK 头 / 隐藏 DEX / assets so / 旧 targetSdk / 权限组合</string>
     <string name="vc_diff_sub">哈希缓存加速,仅扫变更应用</string>
@@ -118,9 +81,6 @@
     <string name="va_netblock_sub">实时连接 × 恶意 IP/域名模式</string>
     <string name="va_netblockmgr">管理黑名单</string>
     <string name="va_netblockmgr_sub">添加自定义恶意 IP/域名模式</string>
-    <string name="va_blocklist_hint">输入 IP 或域名模式(子串匹配)</string>
-    <string name="va_blocklist_current">当前模式:</string>
-    <string name="vc_blocklist_added">黑名单模式已添加</string>
     <string name="va_netkill">断网应急(root)</string>
     <string name="va_netkill_sub">iptables 按 UID 切断/恢复应用联网</string>
     <string name="va_vpn">VPN / 流量劫持面检测</string>
@@ -133,17 +93,10 @@
     <string name="va_cert_sub">签名指纹白名单与严格模式</string>
     <string name="va_certmark">标记证书白名单</string>
     <string name="va_certmark_sub">选择应用,将其签名指纹加入白名单</string>
-    <string name="vc_cert_marked">证书指纹已加入白名单: </string>
-    <string name="vc_cert_fail">读取签名失败</string>
     <string name="va_policy">处置阈值策略</string>
     <string name="va_policy_sub">设置自动处置的最低威胁等级</string>
-    <string name="va_policy_set">自动处置阈值已设为: </string>
-    <string name="va_policy_critical">仅 CRITICAL</string>
-    <string name="va_policy_high">HIGH 及以上(默认)</string>
-    <string name="va_policy_medium">MEDIUM 及以上</string>
     <string name="va_autq">自动隔离模式</string>
     <string name="va_autq_sub">开启后自动处置改为隔离而非删除</string>
-    <string name="va_autq_toggled">自动隔离模式: </string>
     <string name="va_phase_parallel">并行查杀中…</string>
     <string name="va_phase_resultdiff">对比扫描中…</string>
     <string name="va_phase_family">家族分类扫描中…</string>
@@ -174,36 +127,16 @@
     <!-- 分节标题(流体设计:小号大写/加宽字距的分节标签) -->
 
     <!-- 三大板块及其二级分段 -->
-    <string name="keypad_0" translatable="false">0</string>
-    <string name="keypad_1" translatable="false">1</string>
-    <string name="keypad_2" translatable="false">2</string>
-    <string name="keypad_3" translatable="false">3</string>
-    <string name="keypad_4" translatable="false">4</string>
-    <string name="keypad_5" translatable="false">5</string>
-    <string name="keypad_6" translatable="false">6</string>
-    <string name="keypad_7" translatable="false">7</string>
-    <string name="keypad_8" translatable="false">8</string>
-    <string name="keypad_9" translatable="false">9</string>
     <!-- ===== 新界面文案(v1.8.0,结构取自上传稿) ===== -->
-    <string name="settings_update">检查更新</string>
 
     <!-- ===== 上传稿功能补齐(全部接上,对应 deepseek_html_20261003_008012.html) ===== -->
     <!-- 防护开关 · 开机自启防护 -->
 
     <!-- 工具 · 隐私检测 / 漏洞扫描 -->
-    <string name="tool_privacy">隐私检测</string>
-    <string name="tool_privacy_sub">扫描应用敏感权限调用</string>
-    <string name="tool_vuln">漏洞扫描</string>
-    <string name="tool_vuln_sub">检测系统补丁与组件风险</string>
 
     <!-- 安全设置 · 检查更新(特征库在线更新,https + SHA-256 强制校验) -->
-    <string name="update_status_fmt">内置特征 %1$d 条 · ClamAV 哈希 %2$d / 字节 %3$d</string>
-    <string name="update_checking">正在检查并下载特征库…</string>
-    <string name="update_need_url">请输入特征文件 URL(https://, 指向 .hsb / .ndb)</string>
 
     <!-- 安全设置 · 关于 -->
-    <string name="about_title">关于 SecureDroid</string>
-    <string name="about_version_fmt">版本 %1$s(构建 %2$d)</string>
     <string name="about_desc">移动安全中心:病毒查杀 · 木马检测 · 应用锁 · 权限审计 · 网络防护</string>
     <string name="about_license">仅用于安全研究;请勿用于非法用途</string>
 
@@ -250,9 +183,4 @@
     <string name="threat_critical">极高</string>
 
     <!-- ===== 原生工具页玻璃拟态界面(v1.9.6) ===== -->
-    <string name="nav_back">返回</string>
-    <string name="status_loading">正在分析设备数据…</string>
-    <string name="status_done_fmt">共 %1$d 项结果</string>
-    <string name="deep_subtitle">三阶段深度查杀 · Root 模式效果完整</string>
-    <string name="vc_subtitle">多引擎查杀 · 根因分析 · 隔离处置</string>
 </resources>

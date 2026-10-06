@@ -39,9 +39,6 @@
     <style name="TextAppearance.SecureDroid.Caption" parent="TextAppearance.Material3.BodySmall">
         <item name="android:textSize">13sp</item>
     </style>
-    <style name="TextAppearance.SecureDroid.Keypad" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="android:textSize">24sp</item>
-    </style>
 
     <!-- 卡片:白底 + 24dp 圆角 + 极淡阴影(设计图卡片没有描边) -->
     <style name="Widget.SecureDroid.Card" parent="Widget.Material3.CardView.Elevated">
@@ -73,60 +70,10 @@
         <item name="android:elevation">2dp</item>
     </style>
     <style name="Widget.SecureDroid.Button" parent="Widget.SecureDroid.Button.Base" />
-    <style name="Widget.SecureDroid.Button.Accent" parent="Widget.SecureDroid.Button">
-        <item name="backgroundTint">@color/c_accent</item>
-        <item name="android:textColor">@color/c_on_accent</item>
-        <item name="iconTint">@color/c_on_accent</item>
-    </style>
-    <style name="Widget.SecureDroid.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:minHeight">@dimen/sd_touch_min</item>
-        <item name="cornerRadius">@dimen/sd_radius_pill</item>
-        <item name="strokeColor">@color/c_border</item>
-        <item name="android:textColor">@color/c_foreground</item>
-        <item name="iconTint">@color/c_foreground</item>
-        <item name="android:textAllCaps">false</item>
-    </style>
     <!-- 列表行:整行可点,左侧对齐,右侧留给箭头 -->
     <!-- 分段控件 -->
     <!-- 分段轨道:浅底胶囊 + 3dp 内边距,内层按钮自带选中白胶囊 -->
 
-    <!-- ===== 新界面字阶(v1.8.0,字号/字距取自上传稿) ===== -->
-    <style name="TextAppearance.SecureDroid.PageTitle" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="android:textSize">25sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">-0.018</item>
-    </style>
-    <style name="TextAppearance.SecureDroid.RowTitle" parent="TextAppearance.Material3.BodyMedium">
-        <item name="android:textSize">16sp</item>
-        <item name="android:letterSpacing">0.005</item>
-    </style>
-    <style name="TextAppearance.SecureDroid.RowSub" parent="TextAppearance.Material3.BodySmall">
-        <item name="android:textSize">13sp</item>
-        <item name="android:letterSpacing">0.005</item>
-    </style>
-
     <!-- ===== 新界面组件 ===== -->
-
-    <!-- ===== 玻璃弹窗组件(v1.9.7,对齐 2026-10-04 设计令牌) ===== -->
-    <style name="Widget.SecureDroid.Dialog.Button" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/c_primary</item>
-        <item name="android:textAppearance">@style/TextAppearance.SecureDroid.Label</item>
-        <item name="android:minHeight">@dimen/sd_touch_min</item>
-        <item name="android:minWidth">88dp</item>
-        <item name="android:letterSpacing">0.005</item>
-    </style>
-
-    <!-- ===== 应用锁键盘玻璃键(v1.9.8,界面统一修复) ===== -->
-    <style name="Widget.SecureDroid.Button.Keypad" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="cornerRadius">@dimen/sd_radius_inner</item>
-        <item name="backgroundTint">@color/c_glass</item>
-        <item name="strokeColor">@color/c_glass_border</item>
-        <item name="strokeWidth">1dp</item>
-        <item name="rippleColor">@color/c_muted</item>
-        <item name="android:textColor">@color/c_foreground</item>
-        <item name="android:textAppearance">@style/TextAppearance.SecureDroid.Keypad</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
-    </style>
 
 </resources>

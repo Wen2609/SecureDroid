@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 列表错峰入场:每项延迟 8%,形成自上而下的流体波,而不是整屏同时闪现 -->
-<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:animation="@anim/sd_item_in"
-    android:animationOrder="normal"
-    android:delay="8%" />
