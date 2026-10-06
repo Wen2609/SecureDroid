@@ -2,6 +2,26 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.9.16] - 2026-10-06
+
+### Added
+
+- **初始化强制选择运行模式**:首次启动必须先选择模式 —— **标准模式 / 无线调试模式 / 超级用户模式**(产品定义名称,不可修改)。新增 `AppMode` 枚举 + `AppModeStore` 持久化 + `ModeHandler`,桥接注册 `getMode` / `setMode`;HTML 端全屏模式选择层(`modeOverlay`)在未选择前不进入主界面。
+- **各模式只可用有权限功能**:病毒中心 30+ 工具按模式过滤 —— Root 级工具(`netkill / priv / integrity / lockfiles / unlockfiles / quarantine / residue`)仅超级用户模式开放;Shell 级工具(`newproc / learn`)需无线调试或超级用户模式;`Root 模式`开关仅超级用户模式可见,后端在非超级用户模式下直接拒绝调用。
+
+### Changed
+
+- **4 大分区重排**:隐私检测 / 漏洞扫描从扩展功能移入**应用防护 → 权限审计**页(「应用与系统检测」区);扩展功能分区聚焦防护开关 / 网络审计 / 安全设置,页标题带当前模式徽标。
+- **系统栏适配**:导航栏图标明暗按日/夜显式设置(`android:windowLightNavigationBar`,API 27+ 属性放 `values-v27` / `values-night-v27`);主题重构为 `Theme.SecureDroid.Base` + 薄包装,状态栏透明与 safe-area 布局保持不变。
+
+### Performance
+
+- 病毒中心菜单按模式缓存,切换模式才重建(避免每次构建 30 项 JSON,高频打开子页面零重复分配)。
+
+### Test
+
+- 新增 `ModeGuardTest` 4 项:模式枚举三档名称、桥接注册 getMode/setMode、HTML 强制选择层、JS 选择流程 —— 共 158 项 JVM 测试。
+
 ## [1.9.15] - 2026-10-06
 
 ### Changed(UI 底层架构重构:异步桥 + 路由 + 微内核)

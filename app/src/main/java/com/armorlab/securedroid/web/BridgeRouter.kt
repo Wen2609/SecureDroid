@@ -5,6 +5,7 @@ import android.os.Looper
 import com.armorlab.securedroid.MainActivity
 import com.armorlab.securedroid.web.handlers.DashboardHandler
 import com.armorlab.securedroid.web.handlers.LockHandler
+import com.armorlab.securedroid.web.handlers.ModeHandler
 import com.armorlab.securedroid.web.handlers.ScanHandler
 import com.armorlab.securedroid.web.handlers.SettingsHandler
 import com.armorlab.securedroid.web.handlers.ToolsHandler
@@ -35,6 +36,11 @@ class BridgeRouter(
         val lock = LockHandler(activity.applicationContext, activity, sink)
         val settings = SettingsHandler(activity.applicationContext, activity, sink)
         val tools = ToolsHandler(activity.applicationContext, activity, sink)
+        val mode = ModeHandler(activity.applicationContext)
+
+        // 初始化模式选择(强制)
+        put("getMode", Action(false) { mode.getMode() })
+        put("setMode", Action(false) { json -> mode.setMode(json) })
 
         // 数据读取(request→reply)
         put("getDashboard", Action(false) { dashboard.getDashboard() })

@@ -42,6 +42,8 @@ import com.armorlab.securedroid.vscan.ThreatReport
 import com.armorlab.securedroid.vscan.Timeline
 import com.armorlab.securedroid.vscan.TrustStore
 import com.armorlab.securedroid.vscan.VerdictArbiter
+import com.armorlab.securedroid.web.AppMode
+import com.armorlab.securedroid.web.AppModeStore
 import com.armorlab.securedroid.web.BridgeScope
 import com.armorlab.securedroid.web.WebEventSink
 import kotlinx.coroutines.Dispatchers
@@ -235,40 +237,74 @@ class ToolsHandler(
 
     /* ---------- 病毒中心菜单 ---------- */
 
-    suspend fun getVirusCenterMenu(): String = withContext(Dispatchers.Default) {
-        val menu = JSONArray().apply {
-            put(menuItem("recent", app.getString(R.string.vc_recent), app.getString(R.string.vc_recent_sub)))
-            put(menuItem("parallel", app.getString(R.string.va_parallel), app.getString(R.string.va_parallel_sub)))
-            put(menuItem("diff", app.getString(R.string.vc_diff), app.getString(R.string.vc_diff_sub)))
-            put(menuItem("embedded", app.getString(R.string.vc_embedded), app.getString(R.string.vc_embedded_sub)))
-            put(menuItem("resultdiff", app.getString(R.string.va_resultdiff), app.getString(R.string.va_resultdiff_sub)))
-            put(menuItem("family", app.getString(R.string.va_family), app.getString(R.string.va_family_sub)))
-            put(menuItem("timeline", app.getString(R.string.va_timeline), app.getString(R.string.va_timeline_sub)))
-            put(menuItem("newproc", app.getString(R.string.vc_newproc), app.getString(R.string.vc_newproc_sub)))
-            put(menuItem("learn", app.getString(R.string.vc_learn), app.getString(R.string.vc_learn_sub)))
-            put(menuItem("netblock", app.getString(R.string.va_netblock), app.getString(R.string.va_netblock_sub)))
-            put(menuItem("netblockmgr", app.getString(R.string.va_netblockmgr), app.getString(R.string.va_netblockmgr_sub)))
-            put(menuItem("netkill", app.getString(R.string.va_netkill), app.getString(R.string.va_netkill_sub)))
-            put(menuItem("vpnapps", app.getString(R.string.va_vpn), app.getString(R.string.va_vpn_sub)))
-            put(menuItem("attack", app.getString(R.string.va_attack), app.getString(R.string.va_attack_sub)))
-            put(menuItem("origin", app.getString(R.string.va_origin), app.getString(R.string.va_origin_sub)))
-            put(menuItem("certaudit", app.getString(R.string.va_cert), app.getString(R.string.va_cert_sub)))
-            put(menuItem("certmark", app.getString(R.string.va_certmark), app.getString(R.string.va_certmark_sub)))
-            put(menuItem("residue", app.getString(R.string.vc_residue), app.getString(R.string.vc_residue_sub)))
-            put(menuItem("quarantine", app.getString(R.string.vc_quarantine), app.getString(R.string.vc_quarantine_sub)))
-            put(menuItem("stats", app.getString(R.string.vc_stats), app.getString(R.string.vc_stats_sub)))
-            put(menuItem("sig", app.getString(R.string.vc_sig), app.getString(R.string.vc_sig_sub)))
-            put(menuItem("policy", app.getString(R.string.va_policy), app.getString(R.string.va_policy_sub)))
-            put(menuItem("autq", app.getString(R.string.va_autq), app.getString(R.string.va_autq_sub)))
-            put(menuItem("update", app.getString(R.string.vc_update), app.getString(R.string.vc_update_sub)))
-            put(menuItem("priv", app.getString(R.string.va_priv), app.getString(R.string.va_priv_sub)))
-            put(menuItem("integrity", app.getString(R.string.va_integrity), app.getString(R.string.va_integrity_sub)))
-            put(menuItem("lockfiles", app.getString(R.string.va_lockfiles), app.getString(R.string.va_lockfiles_sub)))
-            put(menuItem("unlockfiles", app.getString(R.string.va_unlockfiles), app.getString(R.string.va_unlockfiles_sub)))
-            put(menuItem("trust", app.getString(R.string.vc_trust), app.getString(R.string.vc_trust_sub)))
-            put(menuItem("report", app.getString(R.string.vc_report), app.getString(R.string.vc_report_sub)))
+    /* ---------- 模式门控(需求:各模式只可用有权限功能) ---------- */
+
+    /** 必须 Root 权限的工具:仅超级用户模式开放 */
+    private val rootOnlyTools = setOf(
+        "netkill", "priv", "integrity", "lockfiles", "unlockfiles", "quarantine", "residue"
+    )
+
+    /** 需要 Shell / 无线调试能力的工具:无线调试与超级用户模式开放 */
+    private val shellTools = setOf("newproc", "learn")
+
+    private fun currentMode(): AppMode = AppModeStore.current(app)
+
+    private fun toolAllowed(actionId: String): Boolean {
+        val mode = currentMode()
+        return when {
+            actionId in rootOnlyTools -> mode == AppMode.SUPERUSER
+            actionId in shellTools -> mode == AppMode.WIRELESS_DEBUG || mode == AppMode.SUPERUSER
+            else -> true
         }
-        JSONObject().put("menu", menu).toString()
+    }
+
+    /* 病毒中心菜单按模式过滤并缓存(模式不变则复用,避免每次构建 30 项 JSON) */
+    private var menuCacheMode: AppMode? = null
+    private var menuCacheJson: String? = null
+
+    suspend fun getVirusCenterMenu(): String = withContext(Dispatchers.Default) {
+        val mode = currentMode()
+        val cached = menuCacheJson
+        if (menuCacheMode == mode && cached != null) return@withContext cached
+        val menu = JSONArray().apply {
+            fun add(id: String, title: Int, sub: Int) {
+                if (toolAllowed(id)) put(menuItem(id, app.getString(title), app.getString(sub)))
+            }
+            add("recent", R.string.vc_recent, R.string.vc_recent_sub)
+            add("parallel", R.string.va_parallel, R.string.va_parallel_sub)
+            add("diff", R.string.vc_diff, R.string.vc_diff_sub)
+            add("embedded", R.string.vc_embedded, R.string.vc_embedded_sub)
+            add("resultdiff", R.string.va_resultdiff, R.string.va_resultdiff_sub)
+            add("family", R.string.va_family, R.string.va_family_sub)
+            add("timeline", R.string.va_timeline, R.string.va_timeline_sub)
+            add("newproc", R.string.vc_newproc, R.string.vc_newproc_sub)
+            add("learn", R.string.vc_learn, R.string.vc_learn_sub)
+            add("netblock", R.string.va_netblock, R.string.va_netblock_sub)
+            add("netblockmgr", R.string.va_netblockmgr, R.string.va_netblockmgr_sub)
+            add("netkill", R.string.va_netkill, R.string.va_netkill_sub)
+            add("vpnapps", R.string.va_vpn, R.string.va_vpn_sub)
+            add("attack", R.string.va_attack, R.string.va_attack_sub)
+            add("origin", R.string.va_origin, R.string.va_origin_sub)
+            add("certaudit", R.string.va_cert, R.string.va_cert_sub)
+            add("certmark", R.string.va_certmark, R.string.va_certmark_sub)
+            add("residue", R.string.vc_residue, R.string.vc_residue_sub)
+            add("quarantine", R.string.vc_quarantine, R.string.vc_quarantine_sub)
+            add("stats", R.string.vc_stats, R.string.vc_stats_sub)
+            add("sig", R.string.vc_sig, R.string.vc_sig_sub)
+            add("policy", R.string.va_policy, R.string.va_policy_sub)
+            add("autq", R.string.va_autq, R.string.va_autq_sub)
+            add("update", R.string.vc_update, R.string.vc_update_sub)
+            add("priv", R.string.va_priv, R.string.va_priv_sub)
+            add("integrity", R.string.va_integrity, R.string.va_integrity_sub)
+            add("lockfiles", R.string.va_lockfiles, R.string.va_lockfiles_sub)
+            add("unlockfiles", R.string.va_unlockfiles, R.string.va_unlockfiles_sub)
+            add("trust", R.string.vc_trust, R.string.vc_trust_sub)
+            add("report", R.string.vc_report, R.string.vc_report_sub)
+        }
+        val json = JSONObject().put("menu", menu).toString()
+        menuCacheMode = mode
+        menuCacheJson = json
+        json
     }
 
     /* ---------- 病毒中心:运行指定工具 ---------- */
@@ -279,6 +315,16 @@ class ToolsHandler(
 
     fun runVirusTool(actionId: String) {
         if (virusToolRunning) return
+        if (!toolAllowed(actionId)) {
+            sink.sendEvent("virustool.result", JSONObject()
+                .put("items", JSONArray().put(
+                    uiItem("Mode.Required", app.getString(R.string.mode_need_higher), level = "medium")))
+                .put("count", 1)
+                .put("running", false)
+                .put("action", actionId)
+                .toString())
+            return
+        }
         virusToolRunning = true
         BridgeScope.default.launch {
             ScanControl.reset()

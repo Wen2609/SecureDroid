@@ -539,6 +539,75 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 }
 
 /* ============================================================
+   初始化模式选择(强制)
+   ============================================================ */
+.mode-overlay{
+  position:fixed;inset:0;z-index:400;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+  background:rgba(0,0,0,.46);
+  -webkit-backdrop-filter:var(--blur-overlay);
+  backdrop-filter:var(--blur-overlay);
+}
+.mode-overlay[hidden]{display:none}
+.mode-sheet{
+  width:100%;max-width:360px;
+  padding:24px 20px 20px;
+  background:var(--color-surface-solid);
+  border:1px solid var(--color-border-glass);
+  border-radius:24px;
+  box-shadow:var(--shadow-dialog);
+}
+.mode-title{
+  margin:0 0 6px;
+  font-size:20px;font-weight:800;
+  letter-spacing:.01em;
+  text-align:center;
+}
+.mode-subtitle{
+  margin:0 0 16px;
+  font-size:13px;line-height:1.55;
+  color:var(--color-text-secondary);
+  text-align:center;
+}
+.mode-options{display:flex;flex-direction:column;gap:10px}
+.mode-card{
+  width:100%;text-align:left;
+  display:flex;flex-direction:column;gap:4px;
+  padding:14px 16px;
+  border:1px solid var(--c-border);
+  border-radius:16px;
+  background:var(--color-surface);
+  color:var(--c-fg);
+  transition:border-color .18s, background .18s, transform .12s;
+}
+.mode-card:active{transform:scale(.985)}
+.mode-card.is-selected{
+  border-color:var(--c-primary);
+  background:color-mix(in srgb, var(--c-primary) 8%, transparent);
+}
+.mode-name{font-size:16px;font-weight:700}
+.mode-desc{font-size:12px;line-height:1.5;color:var(--c-fg2)}
+.mode-confirm{
+  width:100%;height:48px;margin-top:16px;
+  border-radius:24px;
+  background:var(--c-primary);
+  color:var(--c-on-primary);
+  font-size:15px;font-weight:700;
+  letter-spacing:.04em;
+  transition:opacity .2s, transform .12s;
+}
+.mode-confirm:disabled{opacity:.45}
+.mode-confirm:not(:disabled):active{transform:scale(.985)}
+.mode-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:999px;
+  font-size:12px;font-weight:600;
+  background:color-mix(in srgb, var(--c-primary) 12%, transparent);
+  color:var(--c-primary);
+}
+
+/* ============================================================
    Toast 提示条(替代原生 Toast)
    ============================================================ */
 .toast-bar{
@@ -1639,6 +1708,26 @@ button.row:active{background:var(--c-muted)}
       <div class="card card-list result-card" id="auditList">
         <div class="empty-hint">加载中…</div>
       </div>
+
+      <h3 class="card-head section-head">应用与系统检测</h3>
+      <div class="card card-list">
+        <button class="row" id="btnPrivacy">
+          <span class="row-body">
+            <span class="row-title">隐私检测</span>
+            <span class="row-sub">扫描敏感权限调用</span>
+          </span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnVuln">
+          <span class="row-body">
+            <span class="row-title">漏洞扫描</span>
+            <span class="row-sub">检测系统补丁与组件风险</span>
+          </span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+      </div>
     </div>
   </main>
 
@@ -1647,7 +1736,7 @@ button.row:active{background:var(--c-muted)}
        ========================================================== -->
   <main class="panel" data-panel="ext">
 
-    <h1 class="page-title standalone">扩展功能</h1>
+    <h1 class="page-title standalone">扩展功能 <span class="mode-badge" id="modeBadge">标准模式</span></h1>
 
     <!-- 工具箱(常驻,无分段) -->
     <div class="seg-body is-active" data-body="tools">
@@ -1720,22 +1809,6 @@ button.row:active{background:var(--c-muted)}
           <span class="row-body">
             <span class="row-title">网络审计</span>
             <span class="row-sub">查看当前网络连接与端口</span>
-          </span>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </button>
-        <button class="row" id="btnPrivacy">
-          <span class="row-body">
-            <span class="row-title">隐私检测</span>
-            <span class="row-sub">扫描敏感权限调用</span>
-          </span>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </button>
-        <button class="row" id="btnVuln">
-          <span class="row-body">
-            <span class="row-title">漏洞扫描</span>
-            <span class="row-sub">检测系统补丁与组件风险</span>
           </span>
           <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
@@ -1888,6 +1961,31 @@ button.row:active{background:var(--c-muted)}
     <h3 class="modal-title" id="modalTitle"></h3>
     <div class="modal-body" id="modalBody"></div>
     <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     初始化模式选择(强制,首次启动必须选择)
+     ============================================================ -->
+<div class="mode-overlay" id="modeOverlay" hidden>
+  <div class="mode-sheet" role="dialog" aria-modal="true" aria-labelledby="modeTitle">
+    <h2 class="mode-title" id="modeTitle">选择运行模式</h2>
+    <p class="mode-subtitle">请选择本机的运行模式，各模式仅开放对应权限的功能</p>
+    <div class="mode-options" id="modeOptions">
+      <button class="mode-card" data-mode="standard" type="button">
+        <span class="mode-name">标准模式</span>
+        <span class="mode-desc">常规安全功能：病毒扫描、木马查杀、应用锁、权限审计等</span>
+      </button>
+      <button class="mode-card" data-mode="wireless" type="button">
+        <span class="mode-name">无线调试模式</span>
+        <span class="mode-desc">额外启用无线调试 / Shell 级检测：进程基线、新增进程检测等</span>
+      </button>
+      <button class="mode-card" data-mode="superuser" type="button">
+        <span class="mode-name">超级用户模式</span>
+        <span class="mode-desc">启用全部 Root 级工具：自动杀毒、关键文件锁定、断网应急等</span>
+      </button>
+    </div>
+    <button class="mode-confirm" id="btnModeConfirm" type="button" disabled>进入该模式</button>
   </div>
 </div>
 

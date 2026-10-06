@@ -36,8 +36,8 @@ android {
         applicationId = "com.armorlab.securedroid"
         minSdk = 26
         targetSdk = 34
-        versionCode = 30
-        versionName = "1.9.15"
+        versionCode = 31
+        versionName = "1.9.16"
         // 仅保留中文资源,release 剥离 androidx/material 的多语言表
         resourceConfigurations.addAll(listOf("zh", "zh-rCN"))
     }

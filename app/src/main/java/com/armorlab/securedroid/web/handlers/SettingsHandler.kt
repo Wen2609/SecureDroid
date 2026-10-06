@@ -11,6 +11,8 @@ import com.armorlab.securedroid.R
 import com.armorlab.securedroid.realtime.BootReceiver
 import com.armorlab.securedroid.realtime.RealtimeProtectionService
 import com.armorlab.securedroid.root.RootGuard
+import com.armorlab.securedroid.web.AppMode
+import com.armorlab.securedroid.web.AppModeStore
 import com.armorlab.securedroid.web.WebEventSink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,12 +35,13 @@ class SettingsHandler(
             .put("realtime", prefs.getBoolean(BridgeKeys.REALTIME, false))
             .put("boot", prefs.getBoolean(BridgeKeys.BOOT, true))
             .put("rootMode", rootMode)
+            .put("mode", AppModeStore.current(app).id)
             .put("rootSub", if (rootMode) app.getString(R.string.root_mode_on)
                 else app.getString(R.string.root_mode_off))
             .toString()
     } catch (t: Throwable) {
         JSONObject().put("realtime", false).put("boot", true)
-            .put("rootMode", false).put("rootSub", "").toString()
+            .put("rootMode", false).put("mode", AppModeStore.current(app).id).put("rootSub", "").toString()
     }
 
     fun toggleRealtime(on: Boolean) {
@@ -61,8 +64,13 @@ class SettingsHandler(
         }
     }
 
-    /** Root 模式:开启前先探测 su(可能阻塞数十秒等待授权),失败把开关状态回推给页面 */
+    /** Root 模式:仅超级用户模式可用;开启前先探测 su(可能阻塞等待授权),失败把开关状态回推给页面 */
     suspend fun toggleRoot(on: Boolean) {
+        if (AppModeStore.current(app) != AppMode.SUPERUSER) {
+            postToast(R.string.toast_mode_superuser_only)
+            postRootState()
+            return
+        }
         try {
             withContext(Dispatchers.Default) {
                 if (on) {

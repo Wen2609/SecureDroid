@@ -30,6 +30,8 @@
     <string name="root_mode_off">Root 模式:未启用(开启下方开关将请求 su 授权)</string>
     <string name="toast_root_enabled">Root 模式已启用,自动杀毒生效中</string>
     <string name="toast_need_root">未取得 root 授权,无法开启</string>
+    <string name="toast_mode_superuser_only">仅超级用户模式可用此功能</string>
+    <string name="mode_need_higher">当前模式无权使用该工具,请切换到更高模式</string>
     <string name="auto_disinfect_title">自动杀毒</string>
     <string name="locker_done">锁机检测完成:发现 %1$d 项风险</string>
     <string name="locker_clean">未发现锁机软件与可疑设备管理员</string>

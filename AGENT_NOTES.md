@@ -72,6 +72,8 @@
 ## 信息架构(改导航前必读)
 - 顶层导航在 assets/ui/index.html 的悬浮胶囊 dock(主页/安全防护/应用防护/扩展功能),二级功能用板内分段控件;原生侧无 bottom_nav.xml(v1.9.9 起旧原生导航已删)
 - 深层工具页(VirusCenter/DeepScan/NetworkAudit/Privacy/Vulnerability)是 index.html 内嵌的 **HTML 子页面**,经 BridgeRouter 的 openSubPage 事件切换;数据由 `web/handlers/ToolsHandler.kt` 桥接。新增工具页 = index.html 加子页面 DOM + app.js 渲染/路由 + BridgeRouter 注册 action + ToolsHandler 提供数据
+- **运行模式(v1.9.16)**:首次启动必须经 `modeOverlay` 强制选择 **标准模式 / 无线调试模式 / 超级用户模式**(名称不可改)。`web/AppMode.kt` 定义三档,`AppModeStore` 持久化,`ModeHandler` 提供 getMode/setMode。**各模式只可用有权限功能**:Root 级工具仅超级用户,Shell 级工具需无线调试/超级用户,ToolsHandler 的 `toolAllowed()` 统一门控,`getVirusCenterMenu` 按模式过滤并缓存;Root 开关仅超级用户模式可见(SettingsHandler.toggleRoot 后端拒绝非超级用户)。
+- **分区布局**:隐私检测/漏洞扫描入口在应用防护→权限审计页(应用与系统检测区);扩展功能只放防护开关/网络审计/安全设置,页标题 `#modeBadge` 显示当前模式。
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
 ## 界面约定(2026-10-03 起 · 基线是用户上传稿)
@@ -88,6 +90,7 @@
 - 配色/尺寸的当前实际取值见 README「界面外观(现状)」;新增颜色令牌必须同时在 `values/colors.xml` 与 `values-night/colors.xml` 定义
 - `陷阱`:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
   构建/Lint/测试全绿但深色模式失效;NightThemeTokenTest 已盯住这一点
+- **主题结构(v1.9.16)**:`Theme.SecureDroid` 已拆为 `Theme.SecureDroid.Base`(全部令牌)+ 薄包装 `Theme.SecureDroid`;`windowLightNavigationBar` 是 API 27+ 属性,必须放 `values-v27/themes.xml` / `values-night-v27/themes.xml`,放默认 values 会被 lint NewApi 拦(minSdk 26)。新增 API 级属性遵循同样做法。
 - 布局里 View ID 经 `ActivityMainBinding` 引用(webView / swipeRefresh / splashOverlay / integrityBanner),重排 activity_main.xml 时这些 ID 不能改
 - 装饰性图标必须 importantForAccessibility="no";列表分隔线已随原生列表删除(HTML 列表用 CSS 分隔线)
 

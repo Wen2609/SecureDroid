@@ -77,8 +77,14 @@
   }
 
   /* demo 数据源:与桥同接口,纯 HTML 预览(无 AndroidBridge)时界面依然可用 */
+  var demoMode = 'standard';
   function demoRequest(action, payload) {
     switch (action) {
+      case 'getMode':
+        return { selected: false, mode: 'standard', rootMode: false };
+      case 'setMode':
+        demoMode = (payload && payload.mode) || 'standard';
+        return { ok: true, mode: demoMode };
       case 'getDashboard': return demoDashboard();
       case 'getLockState': return demoLock();
       case 'getAudit': return demoAudit();
@@ -653,6 +659,7 @@
   }
 
   function renderToggles(d) {
+    if (d.mode) applyMode(d.mode);
     setSwitch('swRealtime', d.realtime);
     setSwitch('swBoot', d.boot);
     setSwitch('swRoot', d.rootMode);
@@ -766,6 +773,60 @@
     }
   });
 
+  /* ---------------- 初始化模式选择(强制) ---------------- */
+
+  var currentMode = 'standard';
+  var selectedMode = null;
+
+  function modeTitle(id) {
+    var t = {
+      standard: '标准模式',
+      wireless: '无线调试模式',
+      superuser: '超级用户模式'
+    };
+    return t[id] || '标准模式';
+  }
+
+  function applyMode(mode) {
+    currentMode = mode || 'standard';
+    var badge = qs('#modeBadge');
+    if (badge) badge.textContent = modeTitle(currentMode);
+    // Root 开关仅超级用户模式可见(标准/无线调试模式不开放 Root 功能)
+    var rootSw = qs('#swRoot');
+    if (rootSw) {
+      var row = rootSw.closest('.protection-item');
+      if (row) row.style.display = (currentMode === 'superuser') ? '' : 'none';
+    }
+  }
+
+  function bindModeOverlay() {
+    var cards = document.querySelectorAll('.mode-card');
+    var confirmBtn = qs('#btnModeConfirm');
+    if (!cards.length) return;
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        cards.forEach(function (c) { c.classList.remove('is-selected'); });
+        card.classList.add('is-selected');
+        selectedMode = card.dataset.mode;
+        if (confirmBtn) confirmBtn.disabled = false;
+        hapticTap();
+      });
+    });
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function () {
+        if (!selectedMode) return;
+        api.request('setMode', { mode: selectedMode }).then(function (r) {
+          if (r.ok) {
+            var ov = qs('#modeOverlay');
+            if (ov) ov.hidden = true;
+            applyMode(selectedMode);
+            refreshVisible();
+          }
+        });
+      });
+    }
+  }
+
   /* ---------------- 初始化 ---------------- */
 
   function init() {
@@ -778,6 +839,20 @@
     }
     setGreeting();
     hookNavRefresh();
+    bindModeOverlay();
+    // 强制初始化模式选择:未选择前不进入主界面
+    api.request('getMode').then(function (r) {
+      if (r.ok && r.data) {
+        if (!r.data.selected) {
+          var ov = qs('#modeOverlay');
+          if (ov) ov.hidden = false;
+        } else {
+          applyMode(r.data.mode);
+        }
+      } else {
+        applyMode('standard');
+      }
+    });
     // 渲染订阅:数据到 → 对应面板重绘(渲染与取数解耦)
     store.subscribe('dashboard', renderDashboard);
     store.subscribe('lock', renderLock);

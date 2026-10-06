@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 应用主题:把设计令牌接到 Material 3 主题属性,窗口背景用设计图的垂直渐变 -->
 <resources>
-    <style name="Theme.SecureDroid" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.SecureDroid.Base" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/c_primary</item>
         <item name="colorOnPrimary">@color/c_on_primary</item>
         <item name="colorPrimaryContainer">@color/c_primary_container</item>
@@ -35,4 +35,6 @@
         <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.SecureDroid.Card</item>
         <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.SecureDroid.Inner</item>
     </style>
+
+    <style name="Theme.SecureDroid" parent="Theme.SecureDroid.Base" />
 </resources>

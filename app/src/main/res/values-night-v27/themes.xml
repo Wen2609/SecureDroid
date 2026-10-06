@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 27+ 夜间导航栏图标明暗:深色背景 → 浅色图标 -->
+<resources>
+    <style name="Theme.SecureDroid" parent="Theme.SecureDroid.Base">
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>
