@@ -82,4 +82,13 @@
     <dimen name="sd_badge_pad_v">3dp</dimen>
     <dimen name="sd_stat_divider">24dp</dimen>
     <dimen name="sd_card_list_pad">4dp</dimen>
+
+    <!-- 其他界面固定几何(v1.9.11 令牌化) -->
+    <dimen name="sd_widget_height">124dp</dimen>
+    <dimen name="sd_widget_icon">40dp</dimen>
+    <dimen name="sd_widget_max_width">96dp</dimen>
+    <dimen name="sd_lock_icon_wrap">56dp</dimen>
+    <dimen name="sd_lock_icon">28dp</dimen>
+    <dimen name="sd_keypad_height">64dp</dimen>
+    <dimen name="sd_chevron_size">20dp</dimen>
 </resources>

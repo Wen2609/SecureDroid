@@ -10,7 +10,7 @@ import java.io.File
 /**
  * 查杀历史落库回归测试(v1.7.2)。
  *
- * 背景:定时查杀(DailyScanRunner)与手动查杀(ScanViewModel)曾把 sha256 写死为空串、
+ * 背景:定时查杀(DailyScanRunner)与手动查杀(NativeBridge)曾把 sha256 写死为空串、
  * riskScore 写死为 0,于是历史列表 / 威胁报告导出里指纹与风险分全为空 —— 数据看着有,
  * 实际没有内容。本测试锁定两件事:报告对象必须携带真实值,两个写入方不得再落空值。
  */
@@ -32,7 +32,7 @@ class ScanHistoryTest {
     fun scanHistoryWritersPersistRealValues() {
         for (rel in listOf(
             "com/armorlab/securedroid/feature/DailyScanRunner.kt",
-            "com/armorlab/securedroid/ui/ScanViewModel.kt"
+            "com/armorlab/securedroid/web/NativeBridge.kt"
         )) {
             val text = src(rel)
             assertTrue("$rel 未写入真实指纹", text.contains("sha256 = r.sha256"))

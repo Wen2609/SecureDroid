@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.armorlab.securedroid.R
 import com.armorlab.securedroid.databinding.ActivityLockBinding
 import com.google.android.material.button.MaterialButton
@@ -25,8 +29,20 @@ class LockActivity : AppCompatActivity() {
             finish()
             return
         }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityLockBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val res = v.resources
+            v.updatePadding(
+                left = bars.left + res.getDimensionPixelSize(R.dimen.sd_space_4),
+                right = bars.right + res.getDimensionPixelSize(R.dimen.sd_space_4),
+                top = bars.top + res.getDimensionPixelSize(R.dimen.sd_space_4),
+                bottom = bars.bottom + res.getDimensionPixelSize(R.dimen.sd_space_4)
+            )
+            insets
+        }
 
         val listener = { v: android.view.View ->
             when (v.id) {

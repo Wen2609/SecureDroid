@@ -1,14 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 界面布局:可直接手改;颜色与尺寸引用 res/values 令牌(DesignRuleTest 校验触摸目标与令牌化) -->
+<!-- 设置解锁 PIN 的玻璃弹窗内容(v1.9.7):标题行 + 双输入框 + 胶囊按钮行。
+     颜色与尺寸全部引用 res/values 令牌(DesignRuleTest 校验触摸目标与令牌化)。 -->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/sd_space_5">
-    <com.google.android.material.textfield.TextInputLayout
+
+    <!-- 标题行:品牌绿瓦片 + 标题 + 副标题 -->
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+        <FrameLayout
+                android:layout_width="@dimen/sd_protection_icon"
+                android:layout_height="@dimen/sd_protection_icon"
+                android:background="@drawable/bg_tint_green">
+            <ImageView
+                    android:layout_width="@dimen/sd_protection_icon_inner"
+                    android:layout_height="@dimen/sd_protection_icon_inner"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_sd_lock"
+                    app:tint="@color/c_tint_green_fg" />
+        </FrameLayout>
+        <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sd_space_3"
+                android:layout_weight="1"
+                android:orientation="vertical">
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lock_pin_title"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
+                    android:textColor="@color/c_foreground" />
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sd_space_1"
+                    android:text="@string/lock_pin_sub"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Caption"
+                    android:textColor="@color/c_muted_foreground" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_4"
             android:hint="@string/lock_pin_hint">
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPin"
@@ -16,8 +61,10 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:minHeight="@dimen/sd_touch_min" />
-        </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sd_space_3"
@@ -28,5 +75,34 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:minHeight="@dimen/sd_touch_min" />
-        </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 胶囊按钮行 -->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sd_space_5"
+            android:orientation="horizontal">
+        <Button
+                android:id="@+id/btnPinCancel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/sd_btn_height"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_outlined_capsule"
+                android:text="@android:string/cancel"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+                android:textColor="@color/c_muted_foreground" />
+        <Button
+                android:id="@+id/btnPinSave"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/sd_btn_height"
+                android:layout_marginStart="@dimen/sd_space_3"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_primary_capsule"
+                android:text="@string/lock_save"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.SecureDroid.Label"
+                android:textColor="@color/c_on_primary" />
     </LinearLayout>
+</LinearLayout>

@@ -51,6 +51,14 @@ class TrojanAdapter : ListAdapter<TrojanAdapter.UiItem, TrojanAdapter.VH>(DIFF) 
         }
         holder.binding.tvTitle.setTextColor(ContextCompat.getColor(ctx, colorRes))
 
+        holder.binding.vRiskBar.setBackgroundResource(
+            when (item.level) {
+                ThreatLevel.CRITICAL, ThreatLevel.HIGH -> R.drawable.bg_risk_bar_danger
+                ThreatLevel.MEDIUM -> R.drawable.bg_risk_bar_risky
+                else -> R.drawable.bg_risk_bar_safe
+            }
+        )
+
         if (item.suggestion.isNullOrEmpty()) {
             holder.binding.tvSuggestion.visibility = View.GONE
         } else {
@@ -67,7 +75,7 @@ class TrojanAdapter : ListAdapter<TrojanAdapter.UiItem, TrojanAdapter.VH>(DIFF) 
             holder.binding.btnFix.text = item.fixLabel ?: ctx.getString(R.string.fix_run)
             holder.binding.btnFix.setOnClickListener {
                 val cmd = item.fixCommand
-                AlertDialog.Builder(ctx)
+                AlertDialog.Builder(ctx, R.style.Theme_SecureDroid_Dialog_Alert)
                     .setTitle(R.string.fix_confirm_title)
                     .setMessage(ctx.getString(R.string.fix_confirm_msg) + "\n\n" + cmd)
                     .setPositiveButton(R.string.fix_run) { _, _ ->

@@ -127,7 +127,9 @@ class PerfGuardTest {
 
     @Test
     fun allListAdaptersDeclareFixedSize() {
+        // v1.9.9 删除旧 Fragment 死代码后,真实列表界面剩 4 个 RecyclerView:
+        // DeepScanActivity / BaseListToolActivity / VirusCenterActivity(rvActions+rvList)
         val n = ktFiles().sumOf { Regex("setHasFixedSize\\(true\\)").findAll(it.readText()).count() }
-        assertTrue("9 个 RecyclerView 都应声明 setHasFixedSize(true),当前 " + n, n >= 9)
+        assertTrue("4 个 RecyclerView 列表都应声明 setHasFixedSize(true),当前 " + n, n >= 4)
     }
 }

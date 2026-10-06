@@ -35,4 +35,13 @@
         <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.SecureDroid.Card</item>
         <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.SecureDroid.Inner</item>
     </style>
+
+    <!-- 玻璃弹窗主题(v1.9.7):24dp 圆角半透明面 + 高光边框 + 品牌绿按钮 -->
+    <style name="Theme.SecureDroid.Dialog.Alert" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+        <item name="android:backgroundDimAmount">0.32</item>
+        <item name="android:colorAccent">@color/c_primary</item>
+        <item name="android:windowElevation">24dp</item>
+        <item name="android:buttonBarButtonStyle">@style/Widget.SecureDroid.Dialog.Button</item>
+    </style>
 </resources>

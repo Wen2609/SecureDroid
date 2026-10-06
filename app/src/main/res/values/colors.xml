@@ -83,4 +83,18 @@
     <color name="c_badge_risky_bg">#24A16207</color>
     <color name="c_badge_danger_bg">#21D03B37</color>
     <color name="ic_stroke">#FF1A1A1A</color>
+
+    <!-- ===== 弹窗玻璃化(v1.9.7,对齐 2026-10-04 设计令牌浅色值) ===== -->
+    <color name="c_primary_hover">#FF03A516</color>
+    <color name="c_text_secondary">@color/c_muted_foreground</color>
+    <color name="c_text_tertiary">@color/c_fg3</color>
+    <color name="c_text_section">@color/c_section</color>
+    <color name="c_surface_solid">@color/c_card</color>
+    <color name="c_border_glass">@color/c_glass_border</color>
+    <color name="c_info">@color/c_tint_blue_fg</color>
+    <color name="c_purple">@color/c_tint_purple_fg</color>
+
+    <!-- ===== 界面统一修复(v1.9.8):玻璃警示条 / 键盘玻璃键 ===== -->
+    <color name="c_destructive_glass">#1AD03B37</color>
+    <color name="c_destructive_border">#59D03B37</color>
 </resources>

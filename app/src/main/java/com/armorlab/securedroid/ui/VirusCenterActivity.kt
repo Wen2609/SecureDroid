@@ -10,6 +10,10 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.armorlab.securedroid.R
@@ -56,9 +60,22 @@ class VirusCenterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityVirusCenterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val res = v.resources
+            v.updatePadding(
+                left = bars.left + res.getDimensionPixelSize(R.dimen.sd_gutter),
+                right = bars.right + res.getDimensionPixelSize(R.dimen.sd_gutter),
+                top = bars.top + res.getDimensionPixelSize(R.dimen.sd_space_2),
+                bottom = bars.bottom
+            )
+            insets
+        }
         binding.tvTitle.setText(R.string.vc_title)
+        binding.btnTopBack.setOnClickListener { finish() }
         binding.rvActions.layoutManager = LinearLayoutManager(this)
         binding.rvActions.setHasFixedSize(true)
         binding.rvActions.adapter = actionsAdapter
@@ -405,7 +422,7 @@ class VirusCenterActivity : AppCompatActivity() {
         val etSha = EditText(this).apply { hint = getString(R.string.vc_update_sha) }
         container.addView(etUrl)
         container.addView(etSha)
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.Theme_SecureDroid_Dialog_Alert)
             .setTitle(R.string.vc_update)
             .setView(container)
             .setPositiveButton(R.string.vc_update_btn) { _, _ ->
@@ -436,7 +453,7 @@ class VirusCenterActivity : AppCompatActivity() {
             return
         }
         val arr = trusted.toTypedArray()
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.Theme_SecureDroid_Dialog_Alert)
             .setTitle(R.string.vc_trust_title)
             .setItems(arr) { _, which ->
                 TrustStore.setTrusted(this, arr[which], false)
@@ -464,7 +481,7 @@ class VirusCenterActivity : AppCompatActivity() {
                     toast(getString(R.string.vc_trust_none))
                     return@runOnUiThread
                 }
-                AlertDialog.Builder(this)
+                AlertDialog.Builder(this, R.style.Theme_SecureDroid_Dialog_Alert)
                     .setTitle(R.string.va_certmark)
                     .setItems(labels) { _, which ->
                         val pkg = thirdParty[which].packageName
@@ -495,7 +512,7 @@ class VirusCenterActivity : AppCompatActivity() {
         val et = EditText(this).apply { hint = getString(R.string.va_blocklist_hint) }
         container.addView(et)
         val current = BlocklistEngine.patterns(this)
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.Theme_SecureDroid_Dialog_Alert)
             .setTitle(R.string.va_netblockmgr)
             .setMessage(getString(R.string.va_blocklist_current) + " " +
                 (current.joinToString(", ").ifEmpty { "(仅预置模式)" }))
@@ -524,7 +541,7 @@ class VirusCenterActivity : AppCompatActivity() {
         val levels = listOf(ThreatLevel.CRITICAL, ThreatLevel.HIGH, ThreatLevel.MEDIUM)
         val current = ActionPolicy.level(this)
         val checked = levels.indexOf(current).coerceAtLeast(0)
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.Theme_SecureDroid_Dialog_Alert)
             .setTitle(R.string.va_policy)
             .setSingleChoiceItems(options, checked) { dialog, which ->
                 ActionPolicy.setLevel(this, levels[which])

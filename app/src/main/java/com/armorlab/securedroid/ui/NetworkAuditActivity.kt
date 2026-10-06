@@ -11,6 +11,8 @@ class NetworkAuditActivity : BaseListToolActivity() {
 
     override fun titleRes() = R.string.tool_network
 
+    override fun subtitleRes(): Int? = R.string.tool_network_sub
+
     override fun load(): List<TrojanAdapter.UiItem> {
         val items = mutableListOf<TrojanAdapter.UiItem>()
 

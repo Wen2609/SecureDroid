@@ -9,6 +9,8 @@ class CleanerActivity : BaseListToolActivity() {
 
     override fun titleRes() = R.string.tool_cleaner
 
+    override fun subtitleRes(): Int? = R.string.tool_cleaner_sub
+
     override fun load(): List<TrojanAdapter.UiItem> {
         val entries = CleanerTool.stat(this)
         if (entries.isEmpty()) {

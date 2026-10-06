@@ -10,6 +10,7 @@
 
 | 模块 | 说明 |
 | --- | --- |
+| 界面(WebView UI) | 主界面直接用上传稿 `deepseek_html_20261003_008012.html` 渲染:首页 / 检测 / 防护三板块、悬浮胶囊导航、分段控件、全部按钮 / 开关 / 列表经 JS 桥(`web/NativeBridge`)接到真实原生功能;深层工具保留原生页面 |
 | 病毒扫描 | 计算已安装 APK 的 SHA-256,与本地特征库精确比对;结合敏感权限权重输出风险评分;扫描结果落库(Room) |
 | 权限审计 | 枚举全部应用,按敏感权限(短信、通讯录、定位、麦克风、安装包等)权重累加评分,分级展示 |
 | 实时防护 | 前台服务监听应用安装 / 更新广播,新应用自动扫描,命中特征时发送高优先级告警通知;开机自启 |
@@ -54,7 +55,8 @@
     SecureDroid/
     ├─ app/src/main/java/com/armorlab/securedroid/
     │  ├─ SecureGuardApp.kt          # Application:通知渠道初始化
-    │  ├─ MainActivity.kt            # 底部导航宿主
+    │  ├─ MainActivity.kt            # 主界面宿主(WebView 加载上传稿 HTML + 返回键逻辑)
+    │  ├─ web/                       # WebView→原生 JS 桥(NativeBridge:首页/扫描/应用锁/审计/工具箱)
     │  ├─ data/                      # Room 实体 / DAO / 数据库
     │  ├─ scan/                      # 扫描引擎、特征库、扫描结果适配器
     │  ├─ permissions/               # 权限风险审计
@@ -145,43 +147,31 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
 
 ## 界面外观(现状)
 
-**基线是 2026-10-03 用户上传稿** `deepseek_html_20261003_008012.html`(毛玻璃 / 柔和流动光晕 / 悬浮胶囊导航),
-布局与令牌按它逐项实现。`design/` 目录(设计文档、布局生成器、HTML/PNG 视觉稿)已于 2026-10-02 删除,
-布局现在是普通 XML、可直接手改;下面写的是当前成品的实际取值。
+**主界面 = 上传稿直接渲染**:`deepseek_html_20261003_008012.html` 本身就是 UI —— `MainActivity` 用 WebView
+加载 `assets/ui/index.html`(上传稿副本 + `assets/ui/app.js` 桥接脚本),首页 / 检测 / 防护三个板块、
+悬浮胶囊导航、分段控件、进度条、开关与列表全部由该 HTML 承载,经 `web/NativeBridge`(window.AndroidBridge)
+JS 桥接到真实原生功能;每个入口都是真实实现,不造空壳。纯 HTML 打开(无桥)时回退到演示数据。
 
-- 底色:纵向渐变(`bg_page`,顶 `#F3F8EE` → 底 `#EFF0F0`)+ 4 团缓慢漂移的彩色光晕(绿/蓝,26-32 秒往复);
-- 卡片:半透明"毛玻璃"(浅色 rgba(255,255,255,.62) / 深色 rgba(23,27,24,.62))+ 1dp 高光描边 + 24dp 圆角 + 极淡阴影;
-- 品牌与语义色:主色 `#04BD19`、弧线绿 `#31D027`、深绿强调 `#15803D`、风险红 `#D03B37`、警告金 `#A16207`,深色下整体提亮;
-- 几何:页标题 25sp、主状态标题 22sp、概览数值 16sp、宫格标题 15sp、副标题 12.5sp、徽标 12sp;
-  悬浮导航 60dp 高(左右 12dp、贴底 20dp)、主按钮 48dp、分段按钮 48dp、宫格卡 132dp、主状态图标 88dp;
-- 毛玻璃是**近似**:Android 没有跨视图的 `backdrop-filter`,用半透明底 + 高光描边 + 阴影表达,不做实时模糊;
-- 20 个布局全部在 `app/src/main/res/layout/` 下手工维护,不再有生成器(原先"改脚本重跑"的流程作废);
-- 仍可自动验收的规则:`DesignRuleTest`(触摸目标 ≥48dp / 颜色与字号必须令牌化 / 样式名显式 parent)
-  与 `ColorContrastTest`(WCAG 对比度,含一处已记录的例外)。
-- 令牌仍在 `res/values`(浅色)与 `res/values-night`(深色),同一份布局适配两套主题。
-
-**顶层只有三个板块**:首页只看结论,会改变设备行为的开关一律下沉:
+- 三个板块与二级功能(与上传稿一一对应):
 
 | 板块 | 二级功能 |
 | --- | --- |
 | **首页** | 问候 + 主状态卡(设备安全 / 上次扫描 / 立即扫描)+ 状态概览条(病毒库 · 已扫描 · 防护中)+ 2×2 功能宫格(病毒扫描 · 木马查杀 · 网络检测 · 应用锁)+ 最近活动 |
-| **检测** | 病毒扫描 · 木马查杀 |
-| **防护** | 应用锁 · 权限审计 · 工具箱(实时防护 / 每日查杀 / SIM 卡防护 / 自动杀毒 / 自动卸载 / Root 模式) |
+| **检测** | 病毒扫描(全盘)· 木马查杀(Rootkit / 恶意模块 / 锁机 / 深度查杀 / 病毒查杀中心) |
+| **防护** | 应用锁(PIN · 锁定开关 · 假崩溃 · 无障碍)· 权限审计 · 工具箱(实时防护 / 开机自启 / Root 模式;安全设置:检查更新 · 关于;工具:网络审计 · 隐私检测 · 漏洞扫描) |
 
-- 首页概览条与"最近活动"的数字全部来自**真实数据**:扫描记录数、最近扫描时间(Room)、待处理威胁、
-  高风险权限应用数(`PermissionAuditor.riskyAppCount`)、生效防护项数(与工具箱同一份偏好);
-- 工具开关(实时防护 / 每日查杀 / SIM 卡防护 / 自动杀毒 / 自动卸载)全部下沉在"防护 → 工具箱",避免首屏误触;
-  偏好键与旧版完全一致(`settings` / `realtime_enabled` 等),覆盖安装不丢配置;
-- 底部导航是**自定义悬浮胶囊**(不再是 TabLayout):高 60dp、左右 12dp、贴底 20dp、内部 5dp 内边距,
-  三个等分入口(22dp 图标 + 12sp 粗体),选中项为品牌绿渐变胶囊且两侧分隔线淡出;
-- 令牌集中在 `res/values`(浅色)与 `res/values-night`(深色,全量覆盖同一套令牌),同一份布局适配两套主题;
-- 列表用 inset grouped:圆角分组卡 + 内缩分隔线(`InsetDividerDecoration`),行高 56dp、触摸下限 48dp;
-- **保留的对比度偏差**:主按钮为品牌绿 `#04BD19` + 白字 = **2.53:1**,低于 WCAG AA 的 4.5:1。
-  这是既有外观(改色即改界面),该配对在 `ColorContrastTest` 中显式记为 2.4:1 下限,并由
-  `brandCtaContrastDeviationIsDocumented` 守住 —— **偏差一旦被修好,测试就会失败**,提醒撤销这个例外。
-  其余全部文字配对仍要求 ≥4.5:1(实测:正文/卡片 17.40、副文/卡片 5.33、副文/页面 4.81);
-- 另一处上传稿既定取值:顶部问候小字 `c_fg3`(浅色 `#8A9088`)在卡片上约 3.3:1,低于 AA 的小字要求,
-  属设计稿原样保留(未改动观感);`c_section`(#5F7A63)在卡片上约 4.7:1,达标。
+- 首页概览条与"最近活动"的数字全部来自**真实数据**(`getDashboard`):扫描记录数、最近扫描时间(Room)、
+  待处理威胁、高风险权限应用数、生效防护项数(与偏好同一份);扫描进度与结果以事件推回 HTML 渲染
+  (全盘病毒扫描 / 木马查杀 / Rootkit / 恶意模块 / 锁机检测都在后台线程跑真实引擎);
+- 防护开关(实时防护 / 开机自启 / Root / 假崩溃)直接在 HTML 里切换并写同一份偏好
+  (`settings` / `realtime_enabled` 等),覆盖安装不丢配置;`boot_enabled` 默认开启,关闭时同步禁用
+  `BootReceiver` 组件,开机不再拉起核心组件;Root 开关开启前先探测 su,失败会把开关回弹;
+- 深层原生页面保留,由 HTML 检测页与工具箱行拉起:病毒查杀中心 / 深度查杀 / 网络审计 / 隐私检测 /
+  漏洞扫描 / 全量体检 / 清理;原生 Fragment 界面层保留在源码中(不再作为主界面);
+- 返回键:非首页板块先回首页,首页再按退出(与上传稿底部导航一致);
+- HTML 自带上传稿的内联样式(毛玻璃 / 柔和流动光晕 / `prefers-color-scheme` 深色模式),颜色与几何和
+  原生令牌同源(主色 `#04BD19`、深色提亮等);`res/values` 与 `res/values-night` 令牌继续服务原生深层页、
+  对话框与告警条;原生布局仍由 `DesignRuleTest` / `ColorContrastTest` 自动验收(触摸目标 / 令牌化 / 对比度)。
 
 ## 安全加固
 
@@ -239,12 +229,22 @@ CI:.github/workflows/android.yml 在每次 push / PR 上自动跑单元测试、
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.8.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.9.11-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 BCD010F357914407F828A991D5479E628EBBAD30E02CF3A90227F09E86CC1083
-    大小    2,000,970 字节    versionCode 14 / versionName 1.8.0(界面按上传稿重做:毛玻璃 / 光晕 / 悬浮胶囊导航)
+    SHA-256 FCA410B78694FE4F4B981ACD78B852CFC0957275C439E9CF61996B44C216390B
+    大小    1,974,158 字节    versionCode 26 / versionName 1.9.11(UI 全面检查修复:Web 端交互/摘要卡/工具图标 + 原生页面沉浸式 + 尺寸令牌化)
 
-  更早版本 apks/SecureDroid-v1.0.0 / v1.0.1 / v1.1.0 / v1.2.0 / v1.3.0 / v1.4.0 / v1.5.0 / v1.6.0 / v1.7.0 / v1.7.1 / v1.7.2 / v1.7.3 保留用于回退。
+  更早版本 apks/SecureDroid-v1.9.10-release-signed.apk(versionCode 25,基础体验优化:启动品牌 Splash 过渡 + 首屏骨架加载态 + 双击退出提示)、
+  apks/SecureDroid-v1.9.9-release-signed.apk(versionCode 24,删除全部旧 Fragment 死代码 + 全界面文字溢出修复)、
+  apks/SecureDroid-v1.9.8-release-signed.apk(versionCode 23,应用锁解锁页/完整性警示条/桌面小部件玻璃化)、
+  apks/SecureDroid-v1.9.6-release-signed.apk(versionCode 21,原生工具页全面玻璃拟态化:顶部返回栏 + 副标题 + 状态卡 + 风险色条)、
+  apks/SecureDroid-v1.9.5-release-signed.apk(versionCode 20,真实应用图标 + 扫描动画 + 触感反馈 + 结果计数)、
+  apks/SecureDroid-v1.9.4-release-signed.apk(versionCode 19,字体排版优化:整级字号阶梯 25/22/16/15/14/13/12px、字距统一 0.01em、行高补齐 1.4–1.5、字体栈追加 HarmonyOS Sans SC/MiSans/OPPO Sans/Noto Sans SC)、
+  apks/SecureDroid-v1.9.3-release-signed.apk(versionCode 18,UI 修复与打磨:安全区兜底、分段切换回顶、扫描按钮防连点、页签吸顶、隐藏滚动条/光晕、禁止文本选中、无障碍状态真实显示)、
+  apks/SecureDroid-v1.9.2-release-signed.apk(versionCode 17,上传稿 UI 全部补完:头像=关于,最近活动可点直达,扫描/审计结果行可点开应用详情)、
+  apks/SecureDroid-v1.9.1-release-signed.apk(versionCode 16,四大板块导航 + 系统栏沉浸)、
+  apks/SecureDroid-v1.9.0-release-signed.apk(versionCode 15,HTML WebView UI 初版)以及
+  v1.8.0 / v1.7.3 / v1.7.2 / v1.7.1 / v1.7.0 / v1.6.0 / v1.5.0 / v1.4.0 / v1.3.0 / v1.2.0 / v1.1.0 / v1.0.1 / v1.0.0 保留用于回退。
 
 ## 注意事项
 

@@ -9,9 +9,21 @@
         android:minHeight="@dimen/sd_row_height"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/sd_space_4">
+    <FrameLayout
+            android:id="@+id/ivIconBg"
+            android:layout_width="@dimen/sd_protection_icon"
+            android:layout_height="@dimen/sd_protection_icon">
+        <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="@dimen/sd_protection_icon_inner"
+                android:layout_height="@dimen/sd_protection_icon_inner"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no" />
+    </FrameLayout>
     <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sd_space_3"
             android:layout_weight="1"
             android:orientation="vertical">
         <TextView
@@ -26,15 +38,15 @@
                 android:id="@+id/tvSub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="@dimen/sd_space_1"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.SecureDroid.RowSub"
                 android:textColor="@color/c_muted_foreground" />
         </LinearLayout>
     <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/sd_chevron_size"
+            android:layout_height="@dimen/sd_chevron_size"
             android:layout_marginStart="@dimen/sd_space_3"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_sd_chevron"

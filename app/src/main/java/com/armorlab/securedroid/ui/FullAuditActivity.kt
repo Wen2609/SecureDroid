@@ -10,6 +10,8 @@ class FullAuditActivity : BaseListToolActivity() {
 
     override fun titleRes() = R.string.tool_full_audit
 
+    override fun subtitleRes(): Int? = R.string.tool_full_audit_sub
+
     override fun load(): List<TrojanAdapter.UiItem> {
         val items = mutableListOf<TrojanAdapter.UiItem>()
         for (c in SystemBaseline.checks(this)) {

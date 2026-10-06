@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">安卫安全助手</string>
+    <string name="splash_subtitle">全方位守护您的移动安全</string>
+    <string name="press_again_to_exit">再按一次退出应用</string>
 
     <string name="home_title">安全中心</string>
     <string name="dashboard_score_unit">分</string>
@@ -9,7 +11,7 @@
     <string name="dashboard_state_bad">发现恶意应用,请立即处理!</string>
     <string name="btn_optimize">一键优化</string>
 
-    <!-- 首页四宫格:标题是固定文案,副标题由 DashboardFragment 用真实数据替换 -->
+    <!-- 首页四宫格:标题是固定文案(原原生首页遗留,保留备用) -->
     <string name="tile_clean_title">清理存储</string>
     <string name="tile_clean_sub">查看可释放空间</string>
     <string name="tile_clean_free">可用 %1$s</string>
@@ -42,6 +44,7 @@
     <string name="lock_accessibility_go">开启无障碍权限(用于应用锁)</string>
     <string name="lock_accessibility_on">无障碍权限已开启</string>
     <string name="lock_pin_title">设置 4 位 PIN 码</string>
+    <string name="lock_pin_sub">设置后每次进入应用锁需验证,用于保护锁定应用</string>
     <string name="lock_pin_hint">请输入 4 位数字</string>
     <string name="lock_pin_confirm_hint">请再次输入</string>
     <string name="lock_save">保存</string>
@@ -299,6 +302,79 @@
     <string name="settings_about">关于 SecureDroid</string>
     <string name="audit_empty">未发现存在风险权限的应用</string>
     <string name="avatar_letter" translatable="false">A</string>
+
+    <!-- ===== 上传稿功能补齐(全部接上,对应 deepseek_html_20261003_008012.html) ===== -->
+    <!-- 防护开关 · 开机自启防护 -->
+    <string name="sw_boot">开机自启防护</string>
+    <string name="sw_boot_sub">开机时自动启动核心组件</string>
+    <string name="boot_on">开机自启防护已开启</string>
+    <string name="boot_off">开机自启防护已关闭</string>
+
+    <!-- 工具 · 隐私检测 / 漏洞扫描 -->
+    <string name="tool_privacy">隐私检测</string>
+    <string name="tool_privacy_sub">扫描应用敏感权限调用</string>
+    <string name="tool_vuln">漏洞扫描</string>
+    <string name="tool_vuln_sub">检测系统补丁与组件风险</string>
+
+    <!-- 安全设置 · 检查更新(特征库在线更新,https + SHA-256 强制校验) -->
+    <string name="update_status_fmt">内置特征 %1$d 条 · ClamAV 哈希 %2$d / 字节 %3$d</string>
+    <string name="update_checking">正在检查并下载特征库…</string>
+    <string name="update_need_url">请输入特征文件 URL(https://, 指向 .hsb / .ndb)</string>
+
+    <!-- 安全设置 · 关于 -->
+    <string name="about_title">关于 SecureDroid</string>
+    <string name="about_version_fmt">版本 %1$s(构建 %2$d)</string>
+    <string name="about_desc">移动安全中心:病毒查杀 · 木马检测 · 应用锁 · 权限审计 · 网络防护</string>
+    <string name="about_license">仅用于安全研究;请勿用于非法用途</string>
+
+    <!-- 隐私检测结果 -->
+    <string name="privacy_summary_fmt">共 %1$d 个应用持有敏感权限,最高风险 %2$s</string>
+    <string name="privacy_clean">未发现持有敏感权限的应用</string>
+
+    <!-- 漏洞扫描结果 -->
+    <string name="vuln_summary_fmt">系统检查 %1$d 项,通过 %2$d 项</string>
+    <string name="vuln_surface_head">组件暴露面</string>
+
+    <!-- 敏感权限中文名(隐私检测用,与 PermissionAuditor 的权重表对应) -->
+    <string name="perm_read_sms">读取短信</string>
+    <string name="perm_send_sms">发送短信</string>
+    <string name="perm_receive_sms">接收短信</string>
+    <string name="perm_receive_mms">接收彩信</string>
+    <string name="perm_read_contacts">读取通讯录</string>
+    <string name="perm_write_contacts">写入通讯录</string>
+    <string name="perm_read_call_log">读取通话记录</string>
+    <string name="perm_write_call_log">写入通话记录</string>
+    <string name="perm_call_phone">拨打电话</string>
+    <string name="perm_record_audio">录音</string>
+    <string name="perm_camera">相机</string>
+    <string name="perm_fine_location">精确定位</string>
+    <string name="perm_coarse_location">粗略定位</string>
+    <string name="perm_bg_location">后台定位</string>
+    <string name="perm_read_storage">读取存储</string>
+    <string name="perm_write_storage">写入存储</string>
+    <string name="perm_read_media_images">读取图片</string>
+    <string name="perm_read_media_video">读取视频</string>
+    <string name="perm_read_phone_state">读取设备信息</string>
+    <string name="perm_read_phone_numbers">读取手机号</string>
+    <string name="perm_body_sensors">身体传感器</string>
+    <string name="perm_system_alert">悬浮窗</string>
+    <string name="perm_get_accounts">读取账户</string>
+    <string name="perm_request_install">安装应用</string>
+    <string name="perm_query_all">查询全部应用</string>
+    <string name="perm_usage_stats">使用情况统计</string>
+
+    <!-- 威胁等级中文名 -->
+    <string name="threat_low">低</string>
+    <string name="threat_medium">中</string>
+    <string name="threat_high">高</string>
+    <string name="threat_critical">极高</string>
     <string name="dashboard_time_today">今天 %1$s</string>
     <string name="dashboard_time_yesterday">昨天 %1$s</string>
+
+    <!-- ===== 原生工具页玻璃拟态界面(v1.9.6) ===== -->
+    <string name="nav_back">返回</string>
+    <string name="status_loading">正在分析设备数据…</string>
+    <string name="status_done_fmt">共 %1$d 项结果</string>
+    <string name="deep_subtitle">三阶段深度查杀 · Root 模式效果完整</string>
+    <string name="vc_subtitle">多引擎查杀 · 根因分析 · 隔离处置</string>
 </resources>

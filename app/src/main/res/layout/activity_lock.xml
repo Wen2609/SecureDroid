@@ -1,157 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 界面布局:可直接手改;颜色与尺寸引用 res/values 令牌(DesignRuleTest 校验触摸目标与令牌化) -->
+<!-- 应用锁解锁页(v1.9.8 玻璃化):页面渐变背景 + 居中玻璃卡:锁状态区 + 玻璃数字键盘 -->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-    <LinearLayout
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/sd_space_4">
+
+    <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.SecureDroid.Card"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="@dimen/sd_space_5">
-        <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:contentDescription="@string/lock_unlock_title"
-                android:src="@drawable/ic_lock"
-                app:tint="@color/c_accent" />
-        <TextView
-                android:id="@+id/tvDots"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sd_space_4"
-                android:layout_marginBottom="@dimen/sd_space_5"
-                android:letterSpacing="0.4"
-                android:minHeight="@dimen/sd_touch_min"
-                android:text="@string/lock_unlock_hint"
-                android:textColor="@color/c_muted_foreground"
-                android:textAppearance="@style/TextAppearance.SecureDroid.Body" />
+            android:layout_height="wrap_content">
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn1"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_1"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn2"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_2"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn3"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_3"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
+                android:orientation="vertical"
+                android:padding="@dimen/sd_space_5">
+
+            <!-- 锁状态区:绿色瓦片 + 标题 + 副标题 + PIN 圆点 -->
+            <FrameLayout
+                    android:layout_width="@dimen/sd_lock_icon_wrap"
+                    android:layout_height="@dimen/sd_lock_icon_wrap"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_tint_green">
+                <ImageView
+                        android:layout_width="@dimen/sd_lock_icon"
+                        android:layout_height="@dimen/sd_lock_icon"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/lock_unlock_title"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_sd_lock"
+                        app:tint="@color/c_tint_green_fg" />
+            </FrameLayout>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/sd_space_3"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/lock_unlock_title"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Headline"
+                    android:textColor="@color/c_foreground" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/sd_space_1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/lock_unlock_hint"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Caption"
+                    android:textColor="@color/c_muted_foreground" />
+            <TextView
+                    android:id="@+id/tvDots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/sd_space_3"
+                    android:layout_marginBottom="@dimen/sd_space_4"
+                    android:letterSpacing="0.4"
+                    android:minHeight="@dimen/sd_touch_min"
+                    android:text="@string/lock_unlock_hint"
+                    android:textAppearance="@style/TextAppearance.SecureDroid.Body"
+                    android:textColor="@color/c_foreground" />
+
+            <!-- 键盘第 1 行 -->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn1"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_1" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn2"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_2" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn3"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_3" />
             </LinearLayout>
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn4"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_4"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn5"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_5"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn6"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_6"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
+
+            <!-- 键盘第 2 行 -->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn4"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_4" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn5"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_5" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn6"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_6" />
             </LinearLayout>
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn7"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_7"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn8"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_8"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn9"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_9"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
+
+            <!-- 键盘第 3 行 -->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn7"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_7" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn8"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_8" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn9"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_9" />
             </LinearLayout>
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <Space
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn0"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:text="@string/keypad_0"
-                    android:textAppearance="@style/TextAppearance.SecureDroid.Keypad" />
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnDel"
-                    style="@style/Widget.SecureDroid.Button.Outlined"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="@dimen/sd_space_1"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/lock_unlock_hint"
-                    app:icon="@drawable/ic_backspace"
-                    app:iconGravity="textStart" />
+
+            <!-- 键盘第 4 行:0 居中,右侧删除键 -->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <View
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn0"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:text="@string/keypad_0" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDel"
+                        style="@style/Widget.SecureDroid.Button.Keypad"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/sd_keypad_height"
+                        android:layout_margin="@dimen/sd_space_1"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/lock_unlock_hint"
+                        app:icon="@drawable/ic_backspace"
+                        app:iconGravity="textStart" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SecureDroid · 安全中心</title>
+<style>
+/* ============================================================
+   SecureDroid UI — 毛玻璃 / 柔和流动光晕 / 悬浮胶囊导航
+   仿主流杀毒软件排版：主状态卡 + 功能网格 + 活动流
+   ============================================================ */
+
+:root{
+  /* 规范令牌(2026-10-04 设计稿):--color-* 为语义主名 */
+  --color-primary:#04BD19;
+  --color-primary-hover:#03A516;
+  --color-accent:#15803D;
+  --color-on-primary:#FFFFFF;
+  --color-success:#15803D;
+  --color-warning:#A16207;
+  --color-danger:#D03B37;
+  --color-info:#3B82F6;
+  --color-purple:#7C6CFF;
+  --color-bg-top:#F3F8EE;
+  --color-bg-bottom:#EFF0F0;
+  --color-surface:rgba(255,255,255,.62);
+  --color-surface-solid:#FFFFFF;
+  --color-nav:rgba(253,253,253,.68);
+  --color-muted:#E6EDE4;
+  --color-border:#DFE4DD;
+  --color-border-glass:rgba(255,255,255,.72);
+  --color-ring-disc:#EAF4E8;
+  --color-ring-track:#E4EDE2;
+  --color-text:#1A1A1A;
+  --color-text-secondary:#6B6B6B;
+  --color-text-tertiary:#8A9088;
+  --color-text-section:#5F7A63;
+  --blur-overlay:blur(40px) saturate(180%);
+  --z-overlay:100;
+  --z-dialog:200;
+
+  /* 兼容别名(历史 --c-* 与主名同值) */
+  --c-primary:var(--color-primary);
+  --c-ring:#31D027;
+  --c-accent:var(--color-accent);
+  --c-on-primary:var(--color-on-primary);
+
+  --c-bg-top:var(--color-bg-top);
+  --c-bg-bottom:var(--color-bg-bottom);
+  --c-card:var(--color-surface);
+  --c-nav:var(--color-nav);
+  --c-muted:var(--color-muted);
+  --c-border:var(--color-border);
+
+  --c-fg:var(--color-text);
+  --c-fg2:var(--color-text-secondary);
+  --c-fg3:var(--color-text-tertiary);
+  --c-danger:var(--color-danger);
+  --c-gold:var(--color-warning);
+  --c-section:var(--color-text-section);
+
+  --r-card:24px;
+  --r-pill:999px;
+
+  --shadow-card:0 2px 10px rgba(31,60,35,.07), 0 1px 2px rgba(31,60,35,.04);
+  --shadow-dialog:0 24px 48px rgba(31,60,35,.18), 0 4px 12px rgba(31,60,35,.08);
+  --glass-blur:blur(22px) saturate(180%);
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --color-primary:#31D027;
+    --color-primary-hover:#28B820;
+    --color-accent:#4ADE80;
+    --color-on-primary:#06210A;
+    --color-success:#4ADE80;
+    --color-warning:#FBBF24;
+    --color-danger:#FF6B6B;
+    --color-info:#60A5FA;
+    --color-purple:#A78BFA;
+    --color-bg-top:#101711;
+    --color-bg-bottom:#0B0E0C;
+    --color-surface:rgba(23,27,24,.62);
+    --color-surface-solid:#171B18;
+    --color-nav:rgba(25,30,26,.70);
+    --color-muted:#232823;
+    --color-border:#2C332D;
+    --color-border-glass:rgba(255,255,255,.07);
+    --color-ring-disc:#16241A;
+    --color-ring-track:#22301F;
+    --color-text:#EDF2EC;
+    --color-text-secondary:#A9B3A7;
+    --color-text-tertiary:#7A857A;
+    --color-text-section:#7FA383;
+
+    --c-primary:var(--color-primary);
+    --c-ring:#31D027;
+    --c-accent:var(--color-accent);
+    --c-on-primary:var(--color-on-primary);
+
+    --c-bg-top:var(--color-bg-top);
+    --c-bg-bottom:var(--color-bg-bottom);
+    --c-card:var(--color-surface);
+    --c-nav:var(--color-nav);
+    --c-muted:var(--color-muted);
+    --c-border:var(--color-border);
+
+    --c-fg:var(--color-text);
+    --c-fg2:var(--color-text-secondary);
+    --c-fg3:var(--color-text-tertiary);
+    --c-danger:var(--color-danger);
+    --c-gold:var(--color-warning);
+    --c-section:var(--color-text-section);
+
+    --shadow-card:0 2px 12px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+    --shadow-dialog:0 24px 48px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.35);
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.5;
+  color:var(--c-fg);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",
+              "Hiragino Sans GB","HarmonyOS Sans SC","MiSans","OPPO Sans",
+              "Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  background:linear-gradient(180deg,var(--c-bg-top) 0%,var(--c-bg-bottom) 100%);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  touch-action:manipulation;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+
+button{font-family:inherit;border:0;background:none;padding:0;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border-radius:20px}
+
+/* ============================================================
+   柔和流动光晕
+   ============================================================ */
+.aurora{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.blob{
+  position:absolute;border-radius:50%;
+  filter:blur(64px);
+  will-change:transform;
+}
+.b1{width:300px;height:300px;top:-90px;left:-80px;background:#B7EFA9;opacity:.55;animation:drift1 26s ease-in-out infinite}
+.b2{width:250px;height:250px;top:100px;right:-100px;background:#B6E5FF;opacity:.48;animation:drift2 30s ease-in-out infinite}
+.b3{width:280px;height:280px;bottom:-70px;left:-60px;background:#D9F5C4;opacity:.50;animation:drift3 28s ease-in-out infinite}
+.b4{width:220px;height:220px;bottom:120px;right:-70px;background:#C9E9FF;opacity:.42;animation:drift4 32s ease-in-out infinite}
+
+@media (prefers-color-scheme: dark){
+  .b1{background:#1E5A2A;opacity:.45}
+  .b2{background:#12405C;opacity:.42}
+  .b3{background:#20501E;opacity:.40}
+  .b4{background:#123A55;opacity:.36}
+}
+
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(46px,34px) scale(1.16)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1.1)}50%{transform:translate(-50px,40px) scale(.9)}}
+@keyframes drift3{0%,100%{transform:translate(0,0) scale(.95)}50%{transform:translate(38px,-44px) scale(1.2)}}
+@keyframes drift4{0%,100%{transform:translate(0,0) scale(1.06)}50%{transform:translate(-34px,-30px) scale(.88)}}
+
+/* ============================================================
+   应用容器
+   ============================================================ */
+.app{
+  position:relative;z-index:1;
+  max-width:400px;
+  margin:0 auto;
+  padding-bottom:120px;
+  padding-bottom:calc(120px + env(safe-area-inset-bottom,0px));
+}
+
+.panel{display:none;padding:0 16px}
+.panel.is-active{display:block;animation:panelIn .38s cubic-bezier(.2,.8,.3,1) both}
+
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
+}
+
+/* 顶部问候区 */
+.top-header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;
+  padding-top:14px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px));
+  margin-bottom:20px;
+}
+.greeting{
+  margin:0 0 5px;
+  font-size:13px;font-weight:500;
+  line-height:1.4;
+  color:var(--c-fg3);
+  letter-spacing:.01em;
+}
+.page-title{
+  margin:0;
+  font-size:25px;font-weight:700;
+  letter-spacing:.01em;
+  line-height:1.25;
+}
+.page-title.standalone{margin-top:10px;margin-top:calc(10px + env(safe-area-inset-top,0px))}
+
+.avatar{
+  flex:none;width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;
+  font-size:15px;font-weight:700;color:#fff;
+  background:linear-gradient(140deg,#04BD19,#31D027);
+  border:2px solid rgba(255,255,255,.75);
+  box-shadow:0 12px 24px -10px rgba(4,189,25,.75),
+             inset 0 1px 0 rgba(255,255,255,.5);
+  transition:transform .3s cubic-bezier(.2,.8,.3,1);
+}
+.avatar:hover{transform:scale(1.06)}
+
+/* 通用卡片 */
+.card{
+  position:relative;
+  background:var(--c-card);
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:var(--r-card);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.6);
+  overflow:hidden;
+}
+@media (prefers-color-scheme: dark){
+  .card{border-color:rgba(255,255,255,.07);box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.05)}
+}
+
+/* 区块标题 */
+.section-head{
+  margin:22px 0 10px 2px;
+  font-size:13px;font-weight:700;
+  letter-spacing:.02em;
+  color:var(--c-section);
+}
+
+/* 按钮 */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:8px;
+  height:48px;padding:0 24px;
+  border-radius:24px;
+  font-size:16px;font-weight:600;
+  letter-spacing:.01em;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1), box-shadow .25s, filter .2s;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{
+  background:var(--c-primary);color:var(--c-on-primary);
+  box-shadow:0 8px 20px -6px rgba(4,189,25,.5);
+}
+.btn-accent{
+  background:var(--c-accent);color:#fff;
+  box-shadow:0 8px 20px -6px rgba(21,128,61,.45);
+}
+.btn-block{display:flex;width:100%}
+.btn:disabled{opacity:.55;cursor:default;pointer-events:none}
+
+/* ============================================================
+   玻璃弹窗(2026-10-04 令牌:blur-overlay / z-overlay / z-dialog)
+   用法:.dialog-overlay.is-open 显示,内部 .dialog-card 为内容卡
+   ============================================================ */
+.dialog-overlay{
+  position:fixed;inset:0;z-index:var(--z-overlay);
+  display:flex;align-items:center;justify-content:center;
+  padding:0 16px;
+  background:rgba(0,0,0,.32);
+  -webkit-backdrop-filter:var(--blur-overlay);
+  backdrop-filter:var(--blur-overlay);
+  opacity:0;pointer-events:none;
+  transition:opacity .2s cubic-bezier(.2,.8,.3,1);
+}
+.dialog-overlay.is-open{opacity:1;pointer-events:auto}
+.dialog-card{
+  z-index:var(--z-dialog);
+  width:100%;max-width:352px;
+  padding:20px;
+  background:var(--color-surface);
+  border:1px solid var(--color-border-glass);
+  border-radius:var(--r-card);
+  box-shadow:var(--shadow-dialog);
+  transform:translateY(12px) scale(.96);
+  transition:transform .28s cubic-bezier(.2,.8,.3,1);
+}
+.dialog-overlay.is-open .dialog-card{transform:translateY(0) scale(1)}
+.dialog-title{
+  margin:0;
+  font-size:18px;font-weight:700;letter-spacing:-.01em;
+  color:var(--color-text);
+}
+.dialog-body{
+  margin:8px 0 0;
+  font-size:14px;line-height:1.5;
+  color:var(--color-text-secondary);
+}
+.dialog-actions{
+  display:flex;gap:8px;margin-top:20px;
+}
+.dialog-actions .btn{height:48px;flex:1;justify-content:center}
+
+/* ============================================================
+   骨架加载态(首屏数据加载前显示 shimmer 扫光)
+   用法:给面板加 .is-loading,需占位的文本加 .skeleton-text
+   ============================================================ */
+@keyframes shimmer{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+.panel.is-loading .skeleton-text{
+  color:transparent !important;
+  background:linear-gradient(90deg,var(--c-muted) 25%,var(--c-border) 50%,var(--c-muted) 75%);
+  background-size:200% 100%;
+  border-radius:6px;
+  animation:shimmer 1.4s ease-in-out infinite;
+  -webkit-user-select:none;
+  user-select:none;
+  pointer-events:none;
+}
+.panel.is-loading .skeleton-text:empty::before{content:'\00a0'}
+
+/* ============================================================
+   首页 — 主状态卡片
+   ============================================================ */
+.hero-card{
+  padding:26px 20px 22px;
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(4,189,25,.10), transparent 65%),
+    var(--c-card);
+}
+
+.hero-icon-wrap{
+  width:88px;height:88px;
+  margin:0 auto 16px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg, rgba(4,189,25,.16), rgba(49,208,39,.06));
+  color:var(--c-primary);
+  box-shadow:inset 0 0 0 1px rgba(4,189,25,.16),
+             0 8px 24px -10px rgba(4,189,25,.4);
+}
+.hero-icon{width:44px;height:44px}
+
+.hero-title{
+  margin:0;
+  font-size:22px;font-weight:700;
+  letter-spacing:.01em;
+  line-height:1.3;
+}
+.hero-meta{
+  margin:6px 0 0;
+  font-size:13px;
+  line-height:1.4;
+  color:var(--c-fg2);
+  letter-spacing:.01em;
+}
+.hero-btn{margin-top:20px}
+
+/* 状态概览条 */
+.stat-strip{
+  display:flex;
+  padding:14px 0;
+  margin-top:14px;
+}
+.stat-cell{
+  flex:1;
+  display:flex;flex-direction:column;
+  align-items:center;gap:3px;
+  position:relative;
+}
+.stat-cell + .stat-cell::before{
+  content:"";
+  position:absolute;
+  left:0;top:50%;
+  transform:translateY(-50%);
+  width:1px;height:24px;
+  background:var(--c-border);
+}
+.stat-value{
+  font-size:16px;font-weight:700;
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+}
+.stat-label{
+  font-size:12px;
+  color:var(--c-fg2);
+  letter-spacing:.01em;
+}
+
+/* ============================================================
+   功能网格（2×2）
+   ============================================================ */
+.feature-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.feature-tile{
+  padding:16px;
+  display:flex;flex-direction:column;align-items:flex-start;
+  text-align:left;
+  min-height:132px;
+  transition:transform .22s cubic-bezier(.2,.8,.3,1), box-shadow .25s;
+}
+.feature-tile:hover{transform:translateY(-3px);box-shadow:0 10px 24px -12px rgba(31,60,35,.3)}
+.feature-tile:active{transform:scale(.975)}
+
+.feature-icon{
+  width:44px;height:44px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  margin-bottom:14px;
+  flex:none;
+}
+.feature-icon svg{width:22px;height:22px}
+
+/* 圆形图标底色 */
+.tint-green{background:rgba(4,189,25,.13);color:#04BD19}
+.tint-blue{background:rgba(59,130,246,.13);color:#3B82F6}
+.tint-amber{background:rgba(161,98,7,.13);color:#A16207}
+.tint-purple{background:rgba(124,108,255,.15);color:#7C6CFF}
+
+@media (prefers-color-scheme: dark){
+  .tint-green{background:rgba(49,208,39,.18);color:#4ADE80}
+  .tint-blue{background:rgba(96,165,250,.18);color:#60A5FA}
+  .tint-amber{background:rgba(251,191,36,.18);color:#FBBF24}
+  .tint-purple{background:rgba(167,139,250,.20);color:#A78BFA}
+}
+
+.feature-title{
+  font-size:15px;font-weight:700;
+  letter-spacing:.01em;
+  color:var(--c-fg);
+  margin-bottom:4px;
+}
+.feature-sub{
+  font-size:13px;
+  line-height:1.45;
+  color:var(--c-fg2);
+  letter-spacing:.01em;
+}
+
+/* ============================================================
+   最近活动
+   ============================================================ */
+.activity-card{padding:4px 0}
+
+.activity-item{
+  display:flex;align-items:center;
+  gap:12px;
+  padding:12px 16px;
+  position:relative;
+  cursor:pointer;
+  transition:background .2s;
+}
+.activity-item:active{background:rgba(4,189,25,.06)}
+.activity-item + .activity-item::before{
+  content:"";
+  position:absolute;
+  top:0;left:60px;right:16px;
+  height:1px;
+  background:var(--c-border);
+}
+
+.activity-icon{
+  width:32px;height:32px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  flex-shrink:0;
+}
+.activity-icon svg{width:16px;height:16px}
+
+.activity-body{flex:1;min-width:0}
+.activity-title{
+  display:block;
+  font-size:14px;font-weight:600;
+  color:var(--c-fg);
+  margin-bottom:2px;
+  letter-spacing:.01em;
+}
+.activity-time{
+  display:block;
+  font-size:12px;
+  line-height:1.4;
+  color:var(--c-fg2);
+  letter-spacing:.01em;
+}
+
+/* ============================================================
+   分段控件 — 药丸式
+   ============================================================ */
+.seg-track{
+  position:sticky;
+  top:8px;
+  top:calc(8px + env(safe-area-inset-top,0px));
+  z-index:5;
+  display:flex;
+  gap:2px;
+  margin:16px 2px 0;
+  padding:3px;
+  background:var(--c-muted);
+  border-radius:var(--r-pill);
+}
+.seg{
+  flex:1;
+  height:42px;
+  border-radius:var(--r-pill);
+  font-size:14px;font-weight:600;
+  letter-spacing:.01em;
+  color:var(--c-fg2);
+  transition:background .28s, color .28s, box-shadow .28s, transform .2s;
+}
+.seg:active{transform:scale(.97)}
+.seg.is-active{
+  background:rgba(255,255,255,.95);
+  color:var(--c-fg);
+  box-shadow:0 2px 10px rgba(31,60,35,.14),
+             0 1px 2px rgba(31,60,35,.08);
+}
+@media (prefers-color-scheme: dark){
+  .seg.is-active{background:rgba(255,255,255,.14)}
+}
+
+.seg-body{display:none}
+.seg-body.is-active{display:block;animation:panelIn .32s cubic-bezier(.2,.8,.3,1) both}
+
+/* ============================================================
+   扫描主面板（检测页）
+   ============================================================ */
+.scan-card{
+  padding:26px 20px 22px;
+  margin-top:16px;
+  text-align:center;
+}
+
+.scan-circle{
+  width:100px;height:100px;
+  margin:0 auto 18px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg, rgba(4,189,25,.13), rgba(49,208,39,.05));
+  color:var(--c-primary);
+  box-shadow:inset 0 0 0 1px rgba(4,189,25,.16),
+             0 10px 26px -12px rgba(4,189,25,.45);
+}
+.scan-circle svg{width:42px;height:42px}
+.scan-circle.is-scanning svg{animation:spin 2.4s linear infinite}
+.scan-circle.is-scanning{animation:scanPulse 1.6s ease-in-out infinite}
+
+@keyframes scanPulse{
+  0%,100%{
+    transform:scale(1);
+    box-shadow:inset 0 0 0 1px rgba(4,189,25,.16),
+               0 10px 26px -12px rgba(4,189,25,.45);
+  }
+  50%{
+    transform:scale(1.05);
+    box-shadow:inset 0 0 0 2px rgba(4,189,25,.3),
+               0 14px 34px -12px rgba(4,189,25,.65);
+  }
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.scan-hint{
+  margin:0 0 18px;
+  font-size:14px;
+  color:var(--c-fg2);
+  line-height:1.5;
+}
+.progress{
+  height:4px;border-radius:2px;
+  background:var(--c-muted);
+  overflow:hidden;
+}
+.progress > i{
+  display:block;height:100%;border-radius:2px;
+  background:linear-gradient(90deg,var(--c-primary),var(--c-ring));
+  box-shadow:0 0 10px rgba(4,189,25,.5);
+  transition:width .6s cubic-bezier(.2,.8,.3,1);
+}
+
+.result-card{margin-top:16px}
+.scan-card .btn-primary{margin-top:18px}
+.card-head{
+  margin:0;
+  padding:14px 16px 12px;
+  font-size:13px;font-weight:700;
+  letter-spacing:.02em;
+  color:var(--c-section);
+  border-bottom:1px solid var(--c-border);
+}
+
+/* 摘要提示框(权限审计等摘要内容) */
+.summary-box{
+  display:flex;
+  gap:12px;
+  padding:14px 16px;
+  align-items:flex-start;
+}
+.summary-icon{
+  flex:none;
+  width:32px;height:32px;
+  border-radius:50%;
+  display:grid;place-items:center;
+}
+.summary-icon svg{width:18px;height:18px}
+.summary-text{
+  flex:1;
+  font-size:14px;line-height:1.5;
+  color:var(--c-fg);
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+/* 空态 */
+.empty-hint{
+  padding:32px 16px;
+  text-align:center;
+  font-size:14px;
+  color:var(--c-fg2);
+  line-height:1.5;
+}
+
+/* ============================================================
+   防护条目（防护页）
+   ============================================================ */
+.protection-card{padding:4px 0;margin-top:16px}
+
+.protection-item{
+  display:flex;align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  position:relative;
+}
+button.protection-item{width:100%;text-align:left}
+.protection-item + .protection-item::before{
+  content:"";
+  position:absolute;
+  top:0;left:62px;right:16px;
+  height:1px;
+  background:var(--c-border);
+}
+
+.protection-icon{
+  width:34px;height:34px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  flex-shrink:0;
+}
+.protection-icon svg{width:18px;height:18px}
+
+.protection-body{flex:1;min-width:0}
+.protection-title{
+  display:block;
+  font-size:15px;font-weight:600;
+  line-height:1.4;
+  color:var(--c-fg);
+  margin-bottom:2px;
+  letter-spacing:.01em;
+}
+.protection-sub{
+  display:block;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--c-fg2);
+  letter-spacing:.01em;
+}
+
+/* 列表行（通用） */
+.row{
+  position:relative;
+  display:flex;align-items:center;
+  gap:12px;
+  width:100%;
+  min-height:56px;
+  padding:0 16px;
+  text-align:left;
+  transition:background .2s;
+}
+button.row:active{background:var(--c-muted)}
+.row + .row::before{
+  content:"";
+  position:absolute;top:0;left:56px;right:0;
+  height:1px;
+  background:var(--c-border);
+}
+.row-body{flex:1;min-width:0}
+.row-title{
+  font-size:16px;line-height:1.4;
+  letter-spacing:.01em;
+  color:var(--c-fg);
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.row-sub{
+  margin-top:3px;
+  font-size:13px;
+  line-height:1.4;
+  color:var(--c-fg2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* 文字防溢出(通用):长应用名/长路径/长描述一律断词 + 最多两行 */
+.activity-title,.protection-title,.feature-title,.card-head{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.activity-title{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.protection-title,.feature-title{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.hero-title,.dialog-title,.scan-hint,.empty-hint{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.dialog-title{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.scan-hint,.empty-hint{white-space:normal}
+.row-chevron{flex:none;width:20px;height:20px;color:var(--c-fg2);opacity:.7}
+.row-accent{color:var(--c-accent);font-weight:600}
+
+/* 列表行工具图标(木马查杀工具入口等) */
+.row-tool-icon{
+  flex:none;
+  width:32px;height:32px;
+  border-radius:50%;
+  display:grid;place-items:center;
+}
+.row-tool-icon svg{width:18px;height:18px}
+
+/* 应用图标 (列表行) */
+.row-icon{
+  flex:none;
+  width:40px;height:40px;
+  border-radius:12px;
+  overflow:hidden;
+  background:var(--c-muted);
+  display:grid;place-items:center;
+  color:#fff;font-size:17px;font-weight:700;
+  line-height:1;
+}
+.row-icon img{width:100%;height:100%;object-fit:cover;display:block}
+.row-icon.tint-letter-0{background:linear-gradient(135deg,#04BD19,#31D027)}
+.row-icon.tint-letter-1{background:linear-gradient(135deg,#3B82F6,#0EA5E9)}
+.row-icon.tint-letter-2{background:linear-gradient(135deg,#A16207,#F59E0B)}
+.row-icon.tint-letter-3{background:linear-gradient(135deg,#7C6CFF,#A78BFA)}
+
+.card-list .row:first-child{border-top-left-radius:var(--r-card);border-top-right-radius:var(--r-card)}
+.card-list .row:last-child{border-bottom-left-radius:var(--r-card);border-bottom-right-radius:var(--r-card)}
+
+/* 结果行 */
+.result-item{
+  display:flex;align-items:center;gap:12px;
+  min-height:64px;padding:12px 16px;
+}
+.result-item.tappable{cursor:pointer;transition:background .2s}
+.result-item.tappable:active{background:rgba(4,189,25,.06)}
+.result-item .row-title{font-size:16px}
+.badge{
+  flex:none;
+  padding:3px 10px;
+  border-radius:var(--r-pill);
+  font-size:12px;font-weight:700;
+  letter-spacing:.01em;
+  background:var(--c-muted);color:var(--c-fg2);
+}
+.badge.safe{background:rgba(21,128,61,.14);color:var(--c-accent)}
+.badge.risky{background:rgba(161,98,7,.14);color:var(--c-gold)}
+.badge.danger{background:rgba(208,59,55,.13);color:var(--c-danger)}
+
+/* 开关 */
+.switch{
+  flex:none;
+  position:relative;
+  width:46px;height:28px;
+  border-radius:14px;
+  background:var(--c-muted);
+  transition:background .3s cubic-bezier(.2,.8,.3,1);
+}
+.switch::after{
+  content:"";
+  position:absolute;top:3px;left:3px;
+  width:22px;height:22px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.22);
+  transition:transform .3s cubic-bezier(.2,.8,.3,1);
+}
+.switch.is-on{background:var(--c-primary)}
+.switch.is-on::after{transform:translateX(18px)}
+
+/* ============================================================
+   底部悬浮胶囊导航
+   ============================================================ */
+.dock{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);
+  z-index:50;
+
+  width:calc(100% - 24px);
+  max-width:376px;
+  height:60px;
+
+  display:flex;
+  align-items:center;
+  padding:5px;
+  border-radius:var(--r-pill);
+
+  background:var(--c-nav);
+  border:1px solid rgba(255,255,255,.72);
+  backdrop-filter:blur(26px) saturate(200%);
+  -webkit-backdrop-filter:blur(26px) saturate(200%);
+  box-shadow:0 16px 40px -14px rgba(31,60,35,.38),
+             0 2px 10px rgba(31,60,35,.08),
+             inset 0 1px 0 rgba(255,255,255,.85);
+  animation:dockIn .7s cubic-bezier(.2,.8,.3,1) both .15s;
+}
+@media (prefers-color-scheme: dark){
+  .dock{border-color:rgba(255,255,255,.08);box-shadow:0 16px 40px -14px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.05)}
+}
+
+@keyframes dockIn{
+  from{opacity:0;transform:translateX(-50%) translateY(20px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+
+.dock-item{
+  position:relative;
+  flex:1;
+  align-self:stretch;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:3px;
+  border-radius:var(--r-pill);
+  color:var(--c-fg2);
+  font-size:12px;font-weight:700;
+  letter-spacing:.01em;
+  transition:color .3s cubic-bezier(.2,.8,.3,1),
+             background .35s cubic-bezier(.2,.8,.3,1),
+             box-shadow .35s cubic-bezier(.2,.8,.3,1),
+             transform .2s;
+}
+.dock-item + .dock-item::before{
+  content:"";
+  position:absolute;
+  left:0;top:50%;
+  transform:translateY(-50%);
+  width:1px;height:22px;
+  background:var(--c-border);
+  border-radius:1px;
+  transition:opacity .3s;
+}
+.dock-item.is-active::before,
+.dock-item.is-active + .dock-item::before{
+  opacity:0;
+}
+.dock-item:active{transform:scale(.95)}
+.dock-item svg{
+  width:22px;height:22px;
+  transition:transform .35s cubic-bezier(.2,.8,.3,1);
+}
+.dock-item.is-active{
+  color:var(--c-accent);
+  background:linear-gradient(145deg, rgba(4,189,25,.16), rgba(49,208,39,.06));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),
+             0 4px 14px -4px rgba(4,189,25,.32);
+}
+.dock-item.is-active svg{
+  transform:translateY(-1px);
+  filter:drop-shadow(0 0 8px rgba(4,189,25,.45));
+}
+@media (prefers-color-scheme: dark){
+  .dock-item.is-active{
+    background:linear-gradient(145deg, rgba(49,208,39,.20), rgba(49,208,39,.07));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),
+               0 4px 14px -4px rgba(49,208,39,.35);
+  }
+}
+
+/* ============================================================
+   减少动效
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- 柔和流动光晕 -->
+<div class="aurora" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+  <span class="blob b4"></span>
+</div>
+
+<div class="app">
+
+  <!-- ==========================================================
+       首页
+       ========================================================== -->
+  <main class="panel is-active" data-panel="home">
+
+    <!-- 顶部问候 -->
+    <header class="top-header">
+      <div>
+        <p class="greeting">周五 · 10月2日</p>
+        <h1 class="page-title">安全中心</h1>
+      </div>
+      <button class="avatar" id="btnAvatar" aria-label="关于 SecureDroid">A</button>
+    </header>
+
+    <!-- 主状态卡片 -->
+    <section class="card hero-card">
+      <div class="hero-icon-wrap">
+        <svg class="hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>
+          <path d="m9 12 2.2 2.2L15.4 10"/>
+        </svg>
+      </div>
+      <h2 class="hero-title">设备安全</h2>
+      <p class="hero-meta skeleton-text" id="heroMeta">上次扫描 · 今天 09:30</p>
+      <button class="btn btn-primary btn-block hero-btn" id="btnHeroScan">立即扫描</button>
+    </section>
+
+    <!-- 状态概览条 -->
+    <div class="card stat-strip">
+      <div class="stat-cell">
+        <span class="stat-value skeleton-text" id="statLib">已更新</span>
+        <span class="stat-label">病毒库</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-value skeleton-text" id="statScanned">1,234</span>
+        <span class="stat-label">已扫描</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-value skeleton-text" id="statProtected">3 项</span>
+        <span class="stat-label">防护中</span>
+      </div>
+    </div>
+
+    <!-- 常用功能 -->
+    <h2 class="section-head">常用功能</h2>
+    <div class="feature-grid">
+
+      <button class="card feature-tile" data-goto="security" data-seg="scan">
+        <span class="feature-icon tint-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/>
+          </svg>
+        </span>
+        <span class="feature-title">病毒扫描</span>
+        <span class="feature-sub">全盘检测恶意软件</span>
+      </button>
+
+      <button class="card feature-tile" data-goto="security" data-seg="trojan">
+        <span class="feature-icon tint-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="7.5" y="8.5" width="9" height="11" rx="4.5"/>
+            <path d="M12 8.5V6.2M9.3 6.6 7.6 4.9M14.7 6.6l1.7-1.7M7.5 12H4.2M7.5 16H4.6M16.5 12h3.3M16.5 16h2.9"/>
+          </svg>
+        </span>
+        <span class="feature-title">木马查杀</span>
+        <span class="feature-sub">多引擎深度检测</span>
+      </button>
+
+      <button class="card feature-tile" data-goto="ext">
+        <span class="feature-icon tint-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8.6"/>
+            <path d="M3.4 12h17.2M12 3.4c2.2 2.4 3.3 5.4 3.3 8.6S14.2 18.2 12 20.6c-2.2-2.4-3.3-5.4-3.3-8.6S9.8 5.8 12 3.4Z"/>
+          </svg>
+        </span>
+        <span class="feature-title">网络检测</span>
+        <span class="feature-sub">查看网络连接</span>
+      </button>
+
+      <button class="card feature-tile" data-goto="app" data-seg="lock">
+        <span class="feature-icon tint-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/>
+            <path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>
+          </svg>
+        </span>
+        <span class="feature-title">应用锁</span>
+        <span class="feature-sub">保护敏感应用</span>
+      </button>
+
+    </div>
+
+    <!-- 最近活动 -->
+    <h2 class="section-head">最近活动</h2>
+    <div class="card activity-card">
+
+      <div class="activity-item" id="actScan" data-goto="security" data-seg="scan" role="button" tabindex="0">
+        <span class="activity-icon tint-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 4.5 4.5L19 7"/>
+          </svg>
+        </span>
+        <div class="activity-body">
+          <span class="activity-title skeleton-text">病毒扫描完成</span>
+          <span class="activity-time skeleton-text">今天 09:30 · 未发现威胁</span>
+        </div>
+      </div>
+
+      <div class="activity-item" id="actClean" data-goto="app" data-seg="audit" role="button" tabindex="0">
+        <span class="activity-icon tint-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7.5h16M9.5 4h5M6.5 7.5l1 12.2a1.5 1.5 0 0 0 1.5 1.3h6a1.5 1.5 0 0 0 1.5-1.3l1-12.2"/>
+          </svg>
+        </span>
+        <div class="activity-body">
+          <span class="activity-title skeleton-text">隐私权限审计</span>
+          <span class="activity-time skeleton-text">今天 08:15 · 未发现高风险应用</span>
+        </div>
+      </div>
+
+      <div class="activity-item" id="actRisk" data-goto="app" data-seg="lock" role="button" tabindex="0">
+        <span class="activity-icon tint-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 8v5M12 16.5v.01"/>
+            <path d="M10.3 3.9 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+          </svg>
+        </span>
+        <div class="activity-body">
+          <span class="activity-title skeleton-text">发现风险权限</span>
+          <span class="activity-time skeleton-text">昨天 22:40 · 3 个应用</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================
+       安全防护
+       ========================================================== -->
+  <main class="panel" data-panel="security">
+
+    <h1 class="page-title standalone">安全防护</h1>
+
+    <div class="seg-track">
+      <button class="seg is-active" data-seg="scan">病毒扫描</button>
+      <button class="seg" data-seg="trojan">木马查杀</button>
+    </div>
+
+    <!-- 病毒扫描 -->
+    <div class="seg-body is-active" data-body="scan">
+      <div class="card scan-card">
+        <div class="scan-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/>
+          </svg>
+        </div>
+        <p class="scan-hint">点击下方按钮开始全盘扫描</p>
+        <div class="progress"><i style="width:0%"></i></div>
+        <button class="btn btn-primary btn-block" id="btnVirusScan">开始全盘扫描</button>
+      </div>
+
+      <div class="card result-card" id="virusCard">
+        <h3 class="card-head" id="virusHead">扫描结果</h3>
+        <div class="empty-hint" id="virusResults">暂无扫描结果</div>
+      </div>
+    </div>
+
+    <!-- 木马查杀 -->
+    <div class="seg-body" data-body="trojan">
+      <div class="card scan-card">
+        <div class="scan-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="7.5" y="8.5" width="9" height="11" rx="4.5"/>
+            <path d="M12 8.5V6.2M9.3 6.6 7.6 4.9M14.7 6.6l1.7-1.7M7.5 12H4.2M7.5 16H4.6M16.5 12h3.3M16.5 16h2.9"/>
+          </svg>
+        </div>
+        <p class="scan-hint">点击开始，多引擎检测木马与后门</p>
+        <div class="progress"><i style="width:0%"></i></div>
+        <button class="btn btn-primary btn-block" id="btnTrojanScan">开始木马查杀</button>
+      </div>
+
+      <div class="card card-list result-card">
+        <button class="row" id="btnRootkit">
+          <span class="row-tool-icon tint-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>
+              <path d="M12 8v5M12 16.5v.01"/>
+            </svg>
+          </span>
+          <span class="row-body"><span class="row-title">Rootkit / 提权后门检测</span></span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnModules">
+          <span class="row-tool-icon tint-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3.6" y="3.6" width="7" height="7" rx="2.2"/>
+              <rect x="13.4" y="3.6" width="7" height="7" rx="2.2"/>
+              <rect x="3.6" y="13.4" width="7" height="7" rx="2.2"/>
+              <rect x="13.4" y="13.4" width="7" height="7" rx="2.2"/>
+            </svg>
+          </span>
+          <span class="row-body"><span class="row-title">恶意模块 / SU 脚本检测</span></span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnLocker">
+          <span class="row-tool-icon tint-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/>
+              <path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>
+            </svg>
+          </span>
+          <span class="row-body"><span class="row-title">锁机软件检测</span></span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnDeepScan">
+          <span class="row-tool-icon tint-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/>
+              <path d="M11 7.6v6.8M7.6 11h6.8"/>
+            </svg>
+          </span>
+          <span class="row-body"><span class="row-title">深度查杀（内存 · 全盘 · 分区）</span></span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnVirusCenter">
+          <span class="row-tool-icon tint-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>
+              <path d="m9 12 2.2 2.2L15.4 10"/>
+            </svg>
+          </span>
+          <span class="row-body"><span class="row-title">病毒查杀中心</span><span class="row-sub">综合深扫 · 签名库 · 隔离区</span></span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="card result-card">
+        <h3 class="card-head" id="trojanHead">木马检测结果</h3>
+        <div class="empty-hint" id="trojanResults">暂无木马检测结果</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================================
+       应用防护
+       ========================================================== -->
+  <main class="panel" data-panel="app">
+
+    <h1 class="page-title standalone">应用防护</h1>
+
+    <div class="seg-track">
+      <button class="seg is-active" data-seg="lock">应用锁</button>
+      <button class="seg" data-seg="audit">权限审计</button>
+    </div>
+
+    <!-- 应用锁 -->
+    <div class="seg-body is-active" data-body="lock">
+      <div class="card protection-card">
+
+        <button class="protection-item" id="pinRow">
+          <span class="protection-icon tint-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/>
+              <path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>
+            </svg>
+          </span>
+          <div class="protection-body">
+            <span class="protection-title">PIN 码</span>
+            <span class="protection-sub" id="pinState">未设置，点击下方设置</span>
+          </div>
+          <span class="switch" id="swPin"></span>
+        </button>
+
+        <button class="protection-item" id="btnSetPin">
+          <span class="protection-icon tint-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>
+            </svg>
+          </span>
+          <div class="protection-body">
+            <span class="protection-title row-accent">设置 / 修改 PIN 码</span>
+            <span class="protection-sub">保护被锁应用</span>
+          </div>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+
+        <div class="protection-item">
+          <span class="protection-icon tint-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8v5M12 16.5v.01"/>
+              <path d="M10.3 3.9 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+            </svg>
+          </span>
+          <div class="protection-body">
+            <span class="protection-title">假崩溃诱骗模式</span>
+            <span class="protection-sub">进入应用时伪装崩溃</span>
+          </div>
+          <span class="switch" id="swDecoy" data-toggle data-native></span>
+        </div>
+
+        <button class="protection-item" id="btnAccessibility">
+          <span class="protection-icon tint-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3.2"/>
+              <path d="M12 2.8v3M12 18.2v3M21.2 12h-3M5.8 12h-3M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1M18.4 18.4l-2.1-2.1M7.7 7.7 5.6 5.6"/>
+            </svg>
+          </span>
+          <div class="protection-body">
+            <span class="protection-title row-accent">开启无障碍权限</span>
+            <span class="protection-sub" id="accessibilitySub">用于应用锁的自动解锁</span>
+          </div>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+
+      </div>
+
+      <div class="card card-list result-card" id="lockAppsCard">
+        <div class="empty-hint" id="lockAppsEmpty">加载应用列表…</div>
+      </div>
+    </div>
+
+    <!-- 权限审计 -->
+    <div class="seg-body" data-body="audit">
+      <div class="card result-card">
+        <h3 class="card-head">权限审计</h3>
+        <div class="summary-box">
+          <span class="summary-icon tint-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8v5M12 16.5v.01"/>
+              <path d="M10.3 3.9 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+            </svg>
+          </span>
+          <span class="summary-text" id="auditSummary">发现 3 个应用存在高风险权限组合，建议逐项审查。</span>
+        </div>
+      </div>
+
+      <div class="card card-list result-card" id="auditList">
+        <div class="empty-hint">加载中…</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================================
+       扩展功能
+       ========================================================== -->
+  <main class="panel" data-panel="ext">
+
+    <h1 class="page-title standalone">扩展功能</h1>
+
+    <!-- 工具箱(常驻,无分段) -->
+    <div class="seg-body is-active" data-body="tools">
+
+      <h2 class="section-head">防护开关</h2>
+      <div class="card protection-card">
+
+        <div class="protection-item">
+          <span class="protection-icon tint-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>
+            </svg>
+          </span>
+          <div class="protection-body">
+            <span class="protection-title">实时防护</span>
+            <span class="protection-sub">实时监控文件与进程</span>
+          </div>
+          <span class="switch is-on" data-toggle data-native id="swRealtime"></span>
+        </div>
+
+        <div class="protection-item">
+          <span class="protection-icon tint-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2.5 5.5 13H12l-1 8.5L18.5 11H12z"/>
+            </svg>
+          </span>
+          <div class="protection-body">
+            <span class="protection-title">开机自启防护</span>
+            <span class="protection-sub">开机时自动启动核心组件</span>
+          </div>
+          <span class="switch" data-toggle data-native id="swBoot"></span>
+        </div>
+
+        <div class="protection-item">
+          <span class="protection-icon tint-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="8.6"/>
+              <path d="M12 8v4.5M12 16v.01"/>
+            </svg>
+          </span>
+          <div class="protection-body">
+            <span class="protection-title">Root 模式</span>
+            <span class="protection-sub" id="rootSub">未启用，开启将请求 su 授权</span>
+          </div>
+          <span class="switch" data-toggle data-native id="swRoot"></span>
+        </div>
+
+      </div>
+
+      <h2 class="section-head">安全设置</h2>
+      <div class="card card-list">
+        <button class="row" id="btnUpdate">
+          <span class="row-body"><span class="row-title">检查更新</span></span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnAbout">
+          <span class="row-body"><span class="row-title">关于 SecureDroid</span></span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <h2 class="section-head">工具</h2>
+      <div class="card card-list">
+        <button class="row" id="btnNetwork">
+          <span class="row-body">
+            <span class="row-title">网络审计</span>
+            <span class="row-sub">查看当前网络连接与端口</span>
+          </span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnPrivacy">
+          <span class="row-body">
+            <span class="row-title">隐私检测</span>
+            <span class="row-sub">扫描敏感权限调用</span>
+          </span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+        <button class="row" id="btnVuln">
+          <span class="row-body">
+            <span class="row-title">漏洞扫描</span>
+            <span class="row-sub">检测系统补丁与组件风险</span>
+          </span>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ==========================================================
+     底部悬浮胶囊导航
+     ========================================================== -->
+<nav class="dock" aria-label="主导航">
+  <button class="dock-item is-active" data-tab="home" aria-label="主页">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3.6 10.6 12 3.7l8.4 6.9V20a1 1 0 0 1-1 1h-4.9v-6.1H9.5V21H4.6a1 1 0 0 1-1-1z"/>
+    </svg>
+    <span>主页</span>
+  </button>
+
+  <button class="dock-item" data-tab="security" aria-label="安全防护">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="6.6"/>
+      <path d="M15.9 15.9 20.6 20.6"/>
+    </svg>
+    <span>安全防护</span>
+  </button>
+
+  <button class="dock-item" data-tab="app" aria-label="应用防护">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/>
+      <path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>
+    </svg>
+    <span>应用防护</span>
+  </button>
+
+  <button class="dock-item" data-tab="ext" aria-label="扩展功能">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.6" y="3.6" width="7" height="7" rx="2.2"/>
+      <rect x="13.4" y="3.6" width="7" height="7" rx="2.2"/>
+      <rect x="3.6" y="13.4" width="7" height="7" rx="2.2"/>
+      <rect x="13.4" y="13.4" width="7" height="7" rx="2.2"/>
+    </svg>
+    <span>扩展功能</span>
+  </button>
+</nav>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- 底部导航切换板块 ---------- */
+  var tabs = document.querySelectorAll('.dock-item');
+  var panels = document.querySelectorAll('.panel');
+
+  function showPanel(name) {
+    tabs.forEach(function (t) {
+      t.classList.toggle('is-active', t.dataset.tab === name);
+    });
+    panels.forEach(function (p) {
+      p.classList.toggle('is-active', p.dataset.panel === name);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { showPanel(tab.dataset.tab); });
+  });
+
+  /* ---------- 分段控件切换子页 ---------- */
+  document.querySelectorAll('.seg-track').forEach(function (track) {
+    var segs = track.querySelectorAll('.seg');
+    var panel = track.closest('.panel');
+
+    segs.forEach(function (seg) {
+      seg.addEventListener('click', function () {
+        segs.forEach(function (s) { s.classList.remove('is-active'); });
+        seg.classList.add('is-active');
+
+        panel.querySelectorAll('.seg-body').forEach(function (body) {
+          body.classList.toggle('is-active', body.dataset.body === seg.dataset.seg);
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  });
+
+  /* ---------- 首页功能网格跨板块直达 ---------- */
+  document.querySelectorAll('[data-goto]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var panelName = el.dataset.goto;
+      var segName = el.dataset.seg;
+      showPanel(panelName);
+
+      if (!segName) return;
+      var panel = document.querySelector('.panel[data-panel="' + panelName + '"]');
+      var track = panel.querySelector('.seg-track');
+      if (!track) return;
+
+      track.querySelectorAll('.seg').forEach(function (s) {
+        s.classList.toggle('is-active', s.dataset.seg === segName);
+      });
+      panel.querySelectorAll('.seg-body').forEach(function (b) {
+        b.classList.toggle('is-active', b.dataset.body === segName);
+      });
+    });
+  });
+
+  /* ---------- 开关 ---------- */
+  document.querySelectorAll('[data-toggle]').forEach(function (sw) {
+    sw.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (sw.hasAttribute('data-native')) return; // 原生桥接开关由 app.js 接管
+      sw.classList.toggle('is-on');
+    });
+  });
+
+})();
+</script>
+
+<script src="app.js"></script>
+
+</body>
+</html>

@@ -267,4 +267,26 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <!-- ===== 玻璃弹窗组件(v1.9.7,对齐 2026-10-04 设计令牌) ===== -->
+    <style name="Widget.SecureDroid.Dialog.Button" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/c_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.SecureDroid.Label</item>
+        <item name="android:minHeight">@dimen/sd_touch_min</item>
+        <item name="android:minWidth">88dp</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+
+    <!-- ===== 应用锁键盘玻璃键(v1.9.8,界面统一修复) ===== -->
+    <style name="Widget.SecureDroid.Button.Keypad" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/sd_radius_inner</item>
+        <item name="backgroundTint">@color/c_glass</item>
+        <item name="strokeColor">@color/c_glass_border</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@color/c_muted</item>
+        <item name="android:textColor">@color/c_foreground</item>
+        <item name="android:textAppearance">@style/TextAppearance.SecureDroid.Keypad</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
 </resources>
