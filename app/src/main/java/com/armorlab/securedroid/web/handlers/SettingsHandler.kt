@@ -13,8 +13,10 @@ import com.armorlab.securedroid.realtime.RealtimeProtectionService
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.web.AppMode
 import com.armorlab.securedroid.web.AppModeStore
+import com.armorlab.securedroid.web.BridgeScope
 import com.armorlab.securedroid.web.WebEventSink
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
@@ -158,6 +160,48 @@ class SettingsHandler(
                 vibrator.vibrate(18)
             }
         } catch (_: Exception) {
+        }
+    }
+
+    /* ---------------- 模式权限引导(强制授权,不充足无法工作) ---------------- */
+
+    /** 跳转对应权限设置页;root 键触发 su 授权探测并把结果回推页面 */
+    fun openPermissionSettings(key: String) {
+        when (key) {
+            "notification" -> {
+                try {
+                    activity.startActivity(
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                            .putExtra(Settings.EXTRA_APP_PACKAGE, app.packageName)
+                    )
+                } catch (_: Exception) {
+                    try {
+                        activity.startActivity(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                android.net.Uri.parse("package:${app.packageName}")
+                            )
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+            "usage_stats" -> {
+                try {
+                    activity.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                } catch (_: Exception) {
+                }
+            }
+            "root" -> {
+                BridgeScope.default.launch {
+                    val ok = RootGuard.probeRoot(app)
+                    if (ok) RootGuard.setRootMode(app, true)
+                    sink.sendEvent(
+                        "modePermissions",
+                        JSONObject().put("root", ok).toString()
+                    )
+                }
+            }
         }
     }
 }

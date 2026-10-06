@@ -84,7 +84,8 @@
         return { selected: false, mode: 'standard', rootMode: false };
       case 'setMode':
         demoMode = (payload && payload.mode) || 'standard';
-        return { ok: true, mode: demoMode };
+        // 演示模式视为权限已全部授予,便于纯 HTML 预览完整流程
+        return { ok: true, mode: demoMode, permissions: [{ key: 'notification', label: '通知权限', granted: true }] };
       case 'getDashboard': return demoDashboard();
       case 'getLockState': return demoLock();
       case 'getAudit': return demoAudit();
@@ -799,10 +800,68 @@
     }
   }
 
+  /* 权限引导:渲染当前模式所需权限,全部已授予返回 true */
+  function renderModePerms(perms) {
+    var list = qs('#modePermList');
+    if (!list) return true;
+    list.innerHTML = '';
+    var allOk = true;
+    (perms || []).forEach(function (p) {
+      allOk = allOk && !!p.granted;
+      var item = document.createElement('div');
+      item.className = 'mode-perm-item';
+
+      var label = document.createElement('span');
+      label.className = 'mode-perm-label';
+      label.textContent = p.label || p.key;
+
+      var status = document.createElement('span');
+      status.className = 'mode-perm-status ' + (p.granted ? 'ok' : 'missing');
+      status.textContent = p.granted ? '已授予' : '未授予';
+
+      item.appendChild(label);
+      item.appendChild(status);
+      if (!p.granted) {
+        var btn = document.createElement('button');
+        btn.className = 'mode-perm-btn';
+        btn.textContent = '去授权';
+        btn.addEventListener('click', function () {
+          hapticTap();
+          api.send('openPermissionSettings', { key: p.key });
+        });
+        item.appendChild(btn);
+      }
+      list.appendChild(item);
+    });
+
+    var permsWrap = qs('#modePerms');
+    if (permsWrap) permsWrap.hidden = allOk;
+    if (!allOk) {
+      var opts = qs('#modeOptions');
+      if (opts) opts.hidden = true;
+      var confirmBtn = qs('#btnModeConfirm');
+      if (confirmBtn) confirmBtn.hidden = true;
+      var title = qs('#modeTitle');
+      if (title) title.textContent = '授予所需权限';
+      var sub = qs('.mode-subtitle');
+      if (sub) sub.textContent = '当前模式需要以下权限才能正常工作';
+    }
+    return allOk;
+  }
+
+  function finishModeSetup(mode) {
+    var ov = qs('#modeOverlay');
+    if (ov) ov.hidden = true;
+    applyMode(mode);
+    refreshVisible();
+  }
+
   function bindModeOverlay() {
     var cards = document.querySelectorAll('.mode-card');
     var confirmBtn = qs('#btnModeConfirm');
+    var recheckBtn = qs('#btnModeRecheck');
     if (!cards.length) return;
+
     cards.forEach(function (card) {
       card.addEventListener('click', function () {
         cards.forEach(function (c) { c.classList.remove('is-selected'); });
@@ -812,20 +871,40 @@
         hapticTap();
       });
     });
+
     if (confirmBtn) {
       confirmBtn.addEventListener('click', function () {
         if (!selectedMode) return;
         api.request('setMode', { mode: selectedMode }).then(function (r) {
           if (r.ok) {
-            var ov = qs('#modeOverlay');
-            if (ov) ov.hidden = true;
-            applyMode(selectedMode);
-            refreshVisible();
+            var perms = r.data && r.data.permissions;
+            if (perms && !renderModePerms(perms)) return; // 权限不足,留在引导页
+            finishModeSetup(selectedMode);
+          }
+        });
+      });
+    }
+
+    if (recheckBtn) {
+      recheckBtn.addEventListener('click', function () {
+        api.request('getMode').then(function (r) {
+          if (r.ok && r.data) {
+            var perms = r.data.permissions;
+            if (perms && !renderModePerms(perms)) return;
+            finishModeSetup(r.data.mode || 'standard');
           }
         });
       });
     }
   }
+
+  /* Root 授权结果回推后自动重新检查权限 */
+  on('modePermissions', function () {
+    api.request('getMode').then(function (r) {
+      if (r.ok && r.data && r.data.permissions && !renderModePerms(r.data.permissions)) return;
+      if (r.ok && r.data) finishModeSetup(r.data.mode || 'standard');
+    });
+  });
 
   /* ---------------- 初始化 ---------------- */
 

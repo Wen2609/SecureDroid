@@ -117,6 +117,24 @@
   }
 }
 
+/* ============================================================
+   内置字体:Noto Sans SC(应用内嵌,不再依赖系统字体)
+   ============================================================ */
+@font-face{
+  font-family:'Noto Sans SC';
+  src:url('fonts/NotoSansSC-Regular.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Noto Sans SC';
+  src:url('fonts/NotoSansSC-Bold.otf') format('opentype');
+  font-weight:700;
+  font-style:normal;
+  font-display:swap;
+}
+
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
@@ -125,9 +143,9 @@ body{
   font-size:14px;
   line-height:1.5;
   color:var(--c-fg);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",
+  font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",
               "Hiragino Sans GB","HarmonyOS Sans SC","MiSans","OPPO Sans",
-              "Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+              "Microsoft YaHei",system-ui,sans-serif;
   background:linear-gradient(180deg,var(--c-bg-top) 0%,var(--c-bg-bottom) 100%);
   background-attachment:fixed;
   -webkit-font-smoothing:antialiased;
@@ -605,6 +623,45 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   font-size:12px;font-weight:600;
   background:color-mix(in srgb, var(--c-primary) 12%, transparent);
   color:var(--c-primary);
+}
+
+/* ============================================================
+   模式权限引导(强制授权)
+   ============================================================ */
+.mode-perms{display:flex;flex-direction:column;gap:10px}
+.mode-perm-list{display:flex;flex-direction:column;gap:8px}
+.mode-perm-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;
+  border:1px solid var(--c-border);
+  border-radius:12px;
+  background:var(--color-surface);
+}
+.mode-perm-label{
+  flex:1;min-width:0;
+  font-size:14px;font-weight:600;
+  color:var(--c-fg);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.mode-perm-status{
+  flex-shrink:0;
+  padding:2px 8px;border-radius:999px;
+  font-size:11px;font-weight:700;
+}
+.mode-perm-status.ok{
+  background:color-mix(in srgb, var(--c-primary) 14%, transparent);
+  color:var(--c-primary);
+}
+.mode-perm-status.missing{
+  background:color-mix(in srgb, var(--c-gold) 14%, transparent);
+  color:var(--c-gold);
+}
+.mode-perm-btn{
+  flex-shrink:0;
+  height:32px;padding:0 14px;border-radius:16px;
+  background:var(--c-primary);
+  color:var(--c-on-primary);
+  font-size:12px;font-weight:700;
 }
 
 /* ============================================================
@@ -1221,17 +1278,47 @@ button.row:active{background:var(--c-muted)}
   padding:5px;
   border-radius:var(--r-pill);
 
-  background:var(--c-nav);
-  border:1px solid rgba(255,255,255,.72);
-  backdrop-filter:blur(26px) saturate(200%);
-  -webkit-backdrop-filter:blur(26px) saturate(200%);
-  box-shadow:0 16px 40px -14px rgba(31,60,35,.38),
-             0 2px 10px rgba(31,60,35,.08),
-             inset 0 1px 0 rgba(255,255,255,.85);
+  /* 增强毛玻璃:更高模糊 + 饱和度 + 亮度,半透明渐变底模拟真实玻璃 */
+  background:linear-gradient(160deg, rgba(255,255,255,.70), rgba(255,255,255,.44));
+  border:1px solid rgba(255,255,255,.78);
+  backdrop-filter:blur(34px) saturate(230%) brightness(1.06);
+  -webkit-backdrop-filter:blur(34px) saturate(230%) brightness(1.06);
+  box-shadow:0 20px 50px -16px rgba(31,60,35,.45),
+             0 2px 12px rgba(31,60,35,.10),
+             inset 0 1px 0 rgba(255,255,255,.95),
+             inset 0 -1px 0 rgba(255,255,255,.30);
   animation:dockIn .7s cubic-bezier(.2,.8,.3,1) both .15s;
 }
-@media (prefers-color-scheme: dark){
-  .dock{border-color:rgba(255,255,255,.08);box-shadow:0 16px 40px -14px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.05)}
+/* 可拖动选择丸:跟随手指自由移动,松手吸附到最近 tab */
+.dock-thumb{
+  position:absolute;
+  top:5px;bottom:5px;left:5px;
+  width:calc((100% - 10px) / 4);
+  border-radius:var(--r-pill);
+  background:linear-gradient(145deg, rgba(4,189,25,.20), rgba(49,208,39,.06));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),
+             0 8px 22px -8px rgba(4,189,25,.40);
+  z-index:0;
+  pointer-events:none;
+  transition:transform .42s cubic-bezier(.2,.8,.3,1);
+  will-change:transform;
+}
+.dock-item{
+  position:relative;
+  z-index:1;
+  flex:1;
+  align-self:stretch;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:3px;
+  border-radius:var(--r-pill);
+  color:var(--c-fg2);
+  font-size:12px;font-weight:700;
+  letter-spacing:.01em;
+  transition:color .3s cubic-bezier(.2,.8,.3,1),
+             background .35s cubic-bezier(.2,.8,.3,1),
+             box-shadow .35s cubic-bezier(.2,.8,.3,1),
+             transform .25s cubic-bezier(.2,.8,.3,1);
 }
 
 @keyframes dockIn{
@@ -1255,40 +1342,37 @@ button.row:active{background:var(--c-muted)}
              box-shadow .35s cubic-bezier(.2,.8,.3,1),
              transform .2s;
 }
-.dock-item + .dock-item::before{
-  content:"";
-  position:absolute;
-  left:0;top:50%;
-  transform:translateY(-50%);
-  width:1px;height:22px;
-  background:var(--c-border);
-  border-radius:1px;
-  transition:opacity .3s;
+/* 选择丸作为唯一高亮指示器,取消 item 自身的背景与分隔线 */
+.dock-item:active{
+  transform:scale(.92) translateY(1px);
 }
-.dock-item.is-active::before,
-.dock-item.is-active + .dock-item::before{
-  opacity:0;
+.dock-item:active svg{
+  transform:scale(.9);
 }
-.dock-item:active{transform:scale(.95)}
 .dock-item svg{
   width:22px;height:22px;
   transition:transform .35s cubic-bezier(.2,.8,.3,1);
 }
 .dock-item.is-active{
   color:var(--c-accent);
-  background:linear-gradient(145deg, rgba(4,189,25,.16), rgba(49,208,39,.06));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),
-             0 4px 14px -4px rgba(4,189,25,.32);
 }
 .dock-item.is-active svg{
   transform:translateY(-1px);
   filter:drop-shadow(0 0 8px rgba(4,189,25,.45));
 }
 @media (prefers-color-scheme: dark){
-  .dock-item.is-active{
-    background:linear-gradient(145deg, rgba(49,208,39,.20), rgba(49,208,39,.07));
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),
-               0 4px 14px -4px rgba(49,208,39,.35);
+  .dock{
+    border-color:rgba(255,255,255,.10);
+    background:linear-gradient(160deg, rgba(23,27,24,.72), rgba(23,27,24,.46));
+    box-shadow:0 20px 50px -16px rgba(0,0,0,.70),
+               0 2px 12px rgba(0,0,0,.5),
+               inset 0 1px 0 rgba(255,255,255,.12),
+               inset 0 -1px 0 rgba(255,255,255,.03);
+  }
+  .dock-thumb{
+    background:linear-gradient(145deg, rgba(49,208,39,.26), rgba(49,208,39,.08));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.10),
+               0 8px 22px -8px rgba(49,208,39,.45);
   }
 }
 
@@ -1316,6 +1400,23 @@ button.row:active{background:var(--c-muted)}
 .page-hidden .skeleton-text,
 .page-hidden .dock{
   animation-play-state:paused !important;
+}
+
+/* ============================================================
+   Pad / 大屏适配(≥600dp 快捷入口改 4 列,内容区放宽)
+   ============================================================ */
+@media (min-width:600px){
+  .app{max-width:720px}
+  .panel{padding:0 24px}
+  .feature-grid{grid-template-columns:repeat(4,1fr)}
+  .subpage{max-width:720px}
+  .mode-sheet{max-width:400px}
+}
+@media (min-width:960px){
+  .app{max-width:880px}
+  .panel{padding:0 32px}
+  .feature-grid{grid-template-columns:repeat(4,1fr)}
+  .card{max-width:880px}
 }
 </style>
 </head>
@@ -1986,6 +2087,14 @@ button.row:active{background:var(--c-muted)}
       </button>
     </div>
     <button class="mode-confirm" id="btnModeConfirm" type="button" disabled>进入该模式</button>
+
+    <!-- 权限引导:确认模式后强制检查/授予,不充足无法进入主界面 -->
+    <div class="mode-perms" id="modePerms" hidden>
+      <h2 class="mode-title">授予所需权限</h2>
+      <p class="mode-subtitle">当前模式需要以下权限才能正常工作</p>
+      <div class="mode-perm-list" id="modePermList"></div>
+      <button class="mode-confirm" id="btnModeRecheck" type="button">我已授权，重新检查</button>
+    </div>
   </div>
 </div>
 
@@ -1998,6 +2107,7 @@ button.row:active{background:var(--c-muted)}
      底部悬浮胶囊导航
      ========================================================== -->
 <nav class="dock" aria-label="主导航">
+  <div class="dock-thumb" id="dockThumb" aria-hidden="true"></div>
   <button class="dock-item is-active" data-tab="home" aria-label="主页">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
@@ -2043,6 +2153,22 @@ button.row:active{background:var(--c-muted)}
   /* ---------- 底部导航切换板块 ---------- */
   var tabs = document.querySelectorAll('.dock-item');
   var panels = document.querySelectorAll('.panel');
+  var dock = document.querySelector('.dock');
+  var thumb = document.getElementById('dockThumb');
+
+  function moveThumb(index) {
+    if (!thumb || !dock) return;
+    var itemW = (dock.clientWidth - 10) / tabs.length;
+    thumb.style.transform = 'translateX(' + (index * itemW) + 'px)';
+  }
+
+  function moveThumbRaw(x) {
+    if (!thumb || !dock) return;
+    var itemW = (dock.clientWidth - 10) / tabs.length;
+    var max = dock.clientWidth - 10 - itemW;
+    var xc = Math.max(0, Math.min(max, x - itemW / 2 - 5));
+    thumb.style.transform = 'translateX(' + xc + 'px)';
+  }
 
   function showPanel(name) {
     tabs.forEach(function (t) {
@@ -2051,12 +2177,43 @@ button.row:active{background:var(--c-muted)}
     panels.forEach(function (p) {
       p.classList.toggle('is-active', p.dataset.panel === name);
     });
+    var idx = Array.prototype.findIndex.call(tabs, function (t) { return t.dataset.tab === name; });
+    moveThumb(idx < 0 ? 0 : idx);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () { showPanel(tab.dataset.tab); });
   });
+
+  /* 选择丸自由拖动:按住任意位置拖动,松手吸附到最近 tab */
+  var dragging = false;
+  if (dock && thumb) {
+    dock.addEventListener('touchstart', function (e) {
+      dragging = true;
+      var rect = dock.getBoundingClientRect();
+      moveThumbRaw(e.touches[0].clientX - rect.left);
+      e.preventDefault();
+    }, { passive: false });
+
+    dock.addEventListener('touchmove', function (e) {
+      if (!dragging) return;
+      var rect = dock.getBoundingClientRect();
+      moveThumbRaw(e.touches[0].clientX - rect.left);
+      e.preventDefault();
+    }, { passive: false });
+
+    dock.addEventListener('touchend', function (e) {
+      if (!dragging) return;
+      dragging = false;
+      var rect = dock.getBoundingClientRect();
+      var x = e.changedTouches[0].clientX - rect.left;
+      var itemW = rect.width / tabs.length;
+      var idx = Math.max(0, Math.min(tabs.length - 1, Math.round(x / itemW)));
+      var tab = tabs[idx];
+      if (tab) showPanel(tab.dataset.tab);
+    });
+  }
 
   /* ---------- 分段控件切换子页 ---------- */
   document.querySelectorAll('.seg-track').forEach(function (track) {

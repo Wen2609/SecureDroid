@@ -41,6 +41,9 @@ class BridgeRouter(
         // 初始化模式选择(强制)
         put("getMode", Action(false) { mode.getMode() })
         put("setMode", Action(false) { json -> mode.setMode(json) })
+        put("openPermissionSettings", Action(true) { json ->
+            settings.openPermissionSettings(json.optString("key")); null
+        })
 
         // 数据读取(request→reply)
         put("getDashboard", Action(false) { dashboard.getDashboard() })

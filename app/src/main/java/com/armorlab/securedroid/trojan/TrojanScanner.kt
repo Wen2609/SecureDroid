@@ -55,7 +55,7 @@ object TrojanScanner {
         // 性能:单包信息 / 应用标签走快照层,避免同一应用在一次扫描中被反复查询
         val info = PackageSnapshot.packageInfo(context, pkg, PackageManager.GET_PERMISSIONS)
             ?: return Report(pkg, pkg, emptyList())
-        val appInfo = info.applicationInfo
+        val appInfo = info.applicationInfo ?: return Report(pkg, pkg, emptyList())
         val appName = PackageSnapshot.label(context, appInfo)
         val detections = mutableListOf<Detection>()
         val apkPath = appInfo.sourceDir

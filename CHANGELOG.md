@@ -2,6 +2,29 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.9.17] - 2026-10-06
+
+### Added
+
+- **Pad / 大屏适配**:≥600dp 时快捷功能网格升级为 4 列,内容区放宽至 720px;≥960dp 进一步放宽至 880px,平板不再是一条窄竖条。
+- **模式权限强制授予**:选择运行模式后,必须授予该模式所需权限才能进入主界面 —— 标准模式=通知权限;无线调试模式=通知+使用情况访问;超级用户模式=通知+Root 授权。新增 `openPermissionSettings` 桥接跳转系统设置,Roooot 授权结果实时回推,未授予前停留在权限引导页。
+- **内置 Noto Sans SC 字体**:应用内嵌 Regular + Bold 字体文件,`index.html` 与 `lock.html` 均通过 `@font-face` 使用内置字体,界面不再依赖系统字体。
+- **内置病毒库扩充**:新增 `android_family.ndb`(24 个家族标记)与 `android_family.hsb`(4 条哈希),病毒库统计规模与家族展示大幅提升。
+
+### Changed
+
+- **API 等级上调至 35(Android 15)**:compileSdk / targetSdk 34→35,适配安卓小白条 —— 导航栏改为透明,内容真正延伸至手势条后方,配合 API 27+ 导航栏图标明暗设置。
+- **毛玻璃增强**:底部导航提高模糊/饱和度/亮度,半透明渐变玻璃底 + 多层高光描边,夜间自动适配。
+- **底部导航交互升级**:按住有缩放回弹动画;新增可拖动「选择丸」,触摸可在四个 tab 间自由拖动,松手自动吸附最近 tab。
+
+### Fixed
+
+- `TrojanScanner` 适配 SDK 35:`PackageInfo.applicationInfo` 变可空后补空安全返回,避免扫描空指针。
+
+### Test
+
+- `ModeGuardTest` 扩展权限引导断言(`openPermissionSettings` / `modePerms` / `renderModePerms`),共 158 项 JVM 测试。
+
 ## [1.9.16] - 2026-10-06
 
 ### Added

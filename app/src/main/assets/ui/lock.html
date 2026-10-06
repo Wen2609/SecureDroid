@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SecureDroid · 解锁</title>
 <style>
+@font-face{
+  font-family:'Noto Sans SC';
+  src:url('fonts/NotoSansSC-Regular.otf') format('opentype');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Noto Sans SC';
+  src:url('fonts/NotoSansSC-Bold.otf') format('opentype');
+  font-weight:700;font-style:normal;font-display:swap;
+}
 :root{
   --color-primary:#04BD19;
   --color-accent:#15803D;
@@ -39,9 +49,9 @@ body{
   display:grid;place-items:center;
   font-size:14px;
   color:var(--color-text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",
+  font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",
               "Hiragino Sans GB","HarmonyOS Sans SC","MiSans","OPPO Sans",
-              "Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+              "Microsoft YaHei",system-ui,sans-serif;
   background:linear-gradient(180deg,var(--color-bg-top) 0%,var(--color-bg-bottom) 100%);
   background-attachment:fixed;
   -webkit-font-smoothing:antialiased;

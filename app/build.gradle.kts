@@ -16,7 +16,7 @@ val keystoreProps = Properties().apply {
 
 android {
     namespace = "com.armorlab.securedroid"
-    compileSdk = 34
+    compileSdk = 35
 
     signingConfigs {
         if (hasReleaseSigning) {
@@ -35,9 +35,9 @@ android {
     defaultConfig {
         applicationId = "com.armorlab.securedroid"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 31
-        versionName = "1.9.16"
+        targetSdk = 35
+        versionCode = 32
+        versionName = "1.9.17"
         // 仅保留中文资源,release 剥离 androidx/material 的多语言表
         resourceConfigurations.addAll(listOf("zh", "zh-rCN"))
     }

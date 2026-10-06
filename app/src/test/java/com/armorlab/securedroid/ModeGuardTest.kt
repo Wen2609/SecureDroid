@@ -48,17 +48,19 @@ class ModeGuardTest {
         }
     }
 
-    /** 桥接层必须注册 getMode / setMode,供 HTML 初始化时强制选择 */
+    /** 桥接层必须注册 getMode / setMode / openPermissionSettings,供 HTML 初始化时强制选择与授权 */
     @Test
     fun bridgeRegistersModeActions() {
         val router = code("web/BridgeRouter.kt")
         assertTrue("BridgeRouter 必须注册 getMode", router.contains("\"getMode\""))
         assertTrue("BridgeRouter 必须注册 setMode", router.contains("\"setMode\""))
+        assertTrue("BridgeRouter 必须注册 openPermissionSettings(模式权限引导)", router.contains("\"openPermissionSettings\""))
         val handler = code("web/handlers/ModeHandler.kt")
         assertTrue("缺少 ModeHandler.kt(模式选择后端)", handler.isNotBlank())
+        assertTrue("ModeHandler 必须返回权限清单 permissions", handler.contains("permissions"))
     }
 
-    /** index.html 必须提供强制选择覆盖层与三个模式卡片 */
+    /** index.html 必须提供强制选择覆盖层、三个模式卡片与权限引导区 */
     @Test
     fun htmlProvidesForcedModeSelection() {
         val html = asset("ui/index.html")
@@ -68,9 +70,11 @@ class ModeGuardTest {
         for (mode in listOf("standard", "wireless", "superuser")) {
             assertTrue("modeOverlay 必须包含 data-mode=\"$mode\" 卡片", html.contains("data-mode=\"$mode\""))
         }
+        assertTrue("必须提供权限引导区 modePerms", html.contains("id=\"modePerms\""))
+        assertTrue("必须提供重新检查按钮 btnModeRecheck", html.contains("id=\"btnModeRecheck\""))
     }
 
-    /** app.js 必须实现初始化拉取模式、未选择则强制显示、选择后应用门控 */
+    /** app.js 必须实现初始化拉取模式、未选择则强制显示、选择后门控与权限引导 */
     @Test
     fun jsWiresModeSelectionFlow() {
         val js = asset("ui/app.js")
@@ -78,5 +82,7 @@ class ModeGuardTest {
         assertTrue("app.js 必须发送 setMode", js.contains("setMode'"))
         assertTrue("app.js 必须实现 applyMode 门控", js.contains("applyMode"))
         assertTrue("app.js 必须绑定模式卡片选择", js.contains("mode-card"))
+        assertTrue("app.js 必须实现权限引导渲染 renderModePerms", js.contains("renderModePerms"))
+        assertTrue("app.js 必须调用 openPermissionSettings", js.contains("openPermissionSettings"))
     }
 }

@@ -73,7 +73,9 @@
 - 顶层导航在 assets/ui/index.html 的悬浮胶囊 dock(主页/安全防护/应用防护/扩展功能),二级功能用板内分段控件;原生侧无 bottom_nav.xml(v1.9.9 起旧原生导航已删)
 - 深层工具页(VirusCenter/DeepScan/NetworkAudit/Privacy/Vulnerability)是 index.html 内嵌的 **HTML 子页面**,经 BridgeRouter 的 openSubPage 事件切换;数据由 `web/handlers/ToolsHandler.kt` 桥接。新增工具页 = index.html 加子页面 DOM + app.js 渲染/路由 + BridgeRouter 注册 action + ToolsHandler 提供数据
 - **运行模式(v1.9.16)**:首次启动必须经 `modeOverlay` 强制选择 **标准模式 / 无线调试模式 / 超级用户模式**(名称不可改)。`web/AppMode.kt` 定义三档,`AppModeStore` 持久化,`ModeHandler` 提供 getMode/setMode。**各模式只可用有权限功能**:Root 级工具仅超级用户,Shell 级工具需无线调试/超级用户,ToolsHandler 的 `toolAllowed()` 统一门控,`getVirusCenterMenu` 按模式过滤并缓存;Root 开关仅超级用户模式可见(SettingsHandler.toggleRoot 后端拒绝非超级用户)。
+- **模式权限强制(v1.9.17)**:选择模式后必须授予该模式所需权限才能进入主界面 —— 标准=通知;无线调试=通知+使用情况访问(`PACKAGE_USAGE_STATS`);超级用户=通知+Root。`ModeHandler` 返回 `permissions` 数组,前端 `renderModePerms` 引导;`openPermissionSettings` 桥接跳转系统设置,root 键触发 su 授权并把结果经 `modePermissions` 事件回推。
 - **分区布局**:隐私检测/漏洞扫描入口在应用防护→权限审计页(应用与系统检测区);扩展功能只放防护开关/网络审计/安全设置,页标题 `#modeBadge` 显示当前模式。
+- **Pad 适配(v1.9.17)**:index.html CSS 有 `@media (min-width:600px/960px)` 把 `.app` 放宽到 720/880px、快捷网格改 4 列。改大屏布局时同步维护媒体查询,勿把手机单列布局写死。
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
 ## 界面约定(2026-10-03 起 · 基线是用户上传稿)
@@ -93,6 +95,12 @@
 - **主题结构(v1.9.16)**:`Theme.SecureDroid` 已拆为 `Theme.SecureDroid.Base`(全部令牌)+ 薄包装 `Theme.SecureDroid`;`windowLightNavigationBar` 是 API 27+ 属性,必须放 `values-v27/themes.xml` / `values-night-v27/themes.xml`,放默认 values 会被 lint NewApi 拦(minSdk 26)。新增 API 级属性遵循同样做法。
 - 布局里 View ID 经 `ActivityMainBinding` 引用(webView / swipeRefresh / splashOverlay / integrityBanner),重排 activity_main.xml 时这些 ID 不能改
 - 装饰性图标必须 importantForAccessibility="no";列表分隔线已随原生列表删除(HTML 列表用 CSS 分隔线)
+
+## v1.9.17 工程注意事项
+- **内置字体**:Noto Sans SC 在 `assets/ui/fonts/`(Regular+Bold),`index.html` 与 `lock.html` 顶部各有 @font-face。改 HTML 时保持 `font-family:'Noto Sans SC',...` 首位;新增独立 HTML 页也要带 @font-face。
+- **SDK 35**:compileSdk/targetSdk=35。SDK 35 起 `PackageInfo.applicationInfo` 标注可空,所有 `info.applicationInfo` 直接赋值处必须 `?: return/continue`(TrojanScanner 已踩)。导航栏已改透明(Android 15 强制 edge-to-edge),内容靠 `env(safe-area-inset-*)` 留白,勿改回不透明 `navigationBarColor`。
+- **底部导航**:dock 有 `.dock-thumb` 选择丸(可拖动吸附),`showPanel` 会同步移动 thumb;`dock-item` 不再有自己的背景高亮,改样式时保持 thumb 是唯一选中指示器。按住动画在 `.dock-item:active`。
+- **内置签名库**:`assets/signatures/` 下 `trojan_demo.*`(测试锚点,勿删)+ `android_family.ndb/.hsb`(v1.9.17 扩充的家族演示库)。ClamAvSignatures 自动遍历加载,新增 `.ndb/.hsb` 即被统计;行格式必须严格 ClamAV 规范,否则 ClamAvSignatureEngineTest 会拦。
 
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)

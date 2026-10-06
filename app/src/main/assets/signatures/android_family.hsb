@@ -1,0 +1,7 @@
+# ClamAV 兼容签名(.hsb:整文件 SHA-256)内置哈希库(演示/自检)。
+# 行格式:hash:文件大小:名称(大小为 0 表示忽略大小)。
+# 以下为固定演示哈希,用于验证 .hsb 加载、统计与查杀链路,不会匹配真实文件。
+0000000000000000000000000000000000000000000000000000000000000000:0:Android.Hash.Demo.Zero
+1111111111111111111111111111111111111111111111111111111111111111:0:Android.Hash.Demo.One
+2222222222222222222222222222222222222222222222222222222222222222:0:Android.Hash.Demo.Two
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff:0:Android.Hash.Demo.FF
