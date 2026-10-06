@@ -97,10 +97,11 @@
 - 装饰性图标必须 importantForAccessibility="no";列表分隔线已随原生列表删除(HTML 列表用 CSS 分隔线)
 
 ## v1.9.17 工程注意事项
-- **内置字体**:Noto Sans SC 在 `assets/ui/fonts/`(Regular+Bold),`index.html` 与 `lock.html` 顶部各有 @font-face。改 HTML 时保持 `font-family:'Noto Sans SC',...` 首位;新增独立 HTML 页也要带 @font-face。
+- **内置字体(v1.9.18 子集化)**:Noto Sans SC 在 `assets/ui/fonts/`(Regular/Bold 均为 **WOFF2 子集**,合计 ~476KB)。子集字符来自全项目 HTML/JS/XML/Kotlin 文案提取(1160 字符)。**新增文案若含未收录字符会回退系统字体** —— 需要重新子集化时:cd /tmp/fontsubset(需先 `npm i subset-font`),用 `extract.js` 重新提取字符集、`subset.js` 重生成 woff2(注意 subset-font 签名是 `subsetFont(font, text, options)`)。
 - **SDK 35**:compileSdk/targetSdk=35。SDK 35 起 `PackageInfo.applicationInfo` 标注可空,所有 `info.applicationInfo` 直接赋值处必须 `?: return/continue`(TrojanScanner 已踩)。导航栏已改透明(Android 15 强制 edge-to-edge),内容靠 `env(safe-area-inset-*)` 留白,勿改回不透明 `navigationBarColor`。
 - **底部导航**:dock 有 `.dock-thumb` 选择丸(可拖动吸附),`showPanel` 会同步移动 thumb;`dock-item` 不再有自己的背景高亮,改样式时保持 thumb 是唯一选中指示器。按住动画在 `.dock-item:active`。
 - **内置签名库**:`assets/signatures/` 下 `trojan_demo.*`(测试锚点,勿删)+ `android_family.ndb/.hsb`(v1.9.17 扩充的家族演示库)。ClamAvSignatures 自动遍历加载,新增 `.ndb/.hsb` 即被统计;行格式必须严格 ClamAV 规范,否则 ClamAvSignatureEngineTest 会拦。
+- **权限引导文案**:权限名/用途在 `strings.xml` 的 `perm_*` 字符串,`ModeHandler.permissionsArray` 按模式返回 `{key,label,desc,granted}`。改权限文案只动 strings.xml,不要硬编码在 Kotlin。
 
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)

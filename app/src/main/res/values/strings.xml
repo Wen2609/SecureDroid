@@ -32,6 +32,12 @@
     <string name="toast_need_root">未取得 root 授权,无法开启</string>
     <string name="toast_mode_superuser_only">仅超级用户模式可用此功能</string>
     <string name="mode_need_higher">当前模式无权使用该工具,请切换到更高模式</string>
+    <string name="perm_notification_label">通知权限</string>
+    <string name="perm_notification_desc">用于实时防护告警、扫描完成与威胁发现提醒</string>
+    <string name="perm_usage_stats_label">使用情况访问</string>
+    <string name="perm_usage_stats_desc">用于无线调试模式下的进程与应用活动检测</string>
+    <string name="perm_root_label">Root 授权</string>
+    <string name="perm_root_desc">用于自动杀毒、关键文件锁定、断网应急等超级用户功能</string>
     <string name="auto_disinfect_title">自动杀毒</string>
     <string name="locker_done">锁机检测完成:发现 %1$d 项风险</string>
     <string name="locker_clean">未发现锁机软件与可疑设备管理员</string>

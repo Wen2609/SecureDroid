@@ -811,16 +811,29 @@
       var item = document.createElement('div');
       item.className = 'mode-perm-item';
 
+      var info = document.createElement('div');
+      info.className = 'mode-perm-info';
+
       var label = document.createElement('span');
       label.className = 'mode-perm-label';
       label.textContent = p.label || p.key;
 
+      var desc = document.createElement('span');
+      desc.className = 'mode-perm-desc';
+      desc.textContent = p.desc || '';
+
+      info.appendChild(label);
+      info.appendChild(desc);
+      item.appendChild(info);
+
+      var side = document.createElement('div');
+      side.className = 'mode-perm-side';
+
       var status = document.createElement('span');
       status.className = 'mode-perm-status ' + (p.granted ? 'ok' : 'missing');
       status.textContent = p.granted ? '已授予' : '未授予';
+      side.appendChild(status);
 
-      item.appendChild(label);
-      item.appendChild(status);
       if (!p.granted) {
         var btn = document.createElement('button');
         btn.className = 'mode-perm-btn';
@@ -829,8 +842,9 @@
           hapticTap();
           api.send('openPermissionSettings', { key: p.key });
         });
-        item.appendChild(btn);
+        side.appendChild(btn);
       }
+      item.appendChild(side);
       list.appendChild(item);
     });
 

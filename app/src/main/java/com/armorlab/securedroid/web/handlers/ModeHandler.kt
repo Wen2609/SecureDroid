@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Process
 import androidx.core.app.NotificationManagerCompat
+import com.armorlab.securedroid.R
 import com.armorlab.securedroid.root.PrivilegeManager
 import com.armorlab.securedroid.root.RootGuard
 import com.armorlab.securedroid.web.AppMode
@@ -50,17 +51,36 @@ class ModeHandler(private val app: Context) {
             .toString()
     }
 
-    /** 当前模式所需权限清单:每项 {key,label,granted} */
+    /** 当前模式所需权限清单:每项 {key,label,desc,granted} */
     private fun permissionsArray(mode: AppMode): JSONArray {
         val arr = JSONArray()
-        fun add(key: String, label: String, granted: Boolean) {
-            arr.put(JSONObject().put("key", key).put("label", label).put("granted", granted))
+        fun add(key: String, label: String, desc: String, granted: Boolean) {
+            arr.put(JSONObject()
+                .put("key", key)
+                .put("label", label)
+                .put("desc", desc)
+                .put("granted", granted))
         }
         // 所有模式都必须有通知权限(威胁告警 / 实时防护提示)
-        add("notification", "通知权限(威胁告警)", isNotificationGranted())
+        add(
+            "notification",
+            app.getString(R.string.perm_notification_label),
+            app.getString(R.string.perm_notification_desc),
+            isNotificationGranted()
+        )
         when (mode) {
-            AppMode.WIRELESS_DEBUG -> add("usage_stats", "使用情况访问(无线调试检测)", isUsageStatsGranted())
-            AppMode.SUPERUSER -> add("root", "Root 授权(超级用户)", PrivilegeManager.isRoot(app))
+            AppMode.WIRELESS_DEBUG -> add(
+                "usage_stats",
+                app.getString(R.string.perm_usage_stats_label),
+                app.getString(R.string.perm_usage_stats_desc),
+                isUsageStatsGranted()
+            )
+            AppMode.SUPERUSER -> add(
+                "root",
+                app.getString(R.string.perm_root_label),
+                app.getString(R.string.perm_root_desc),
+                PrivilegeManager.isRoot(app)
+            )
             AppMode.STANDARD -> {}
         }
         return arr
