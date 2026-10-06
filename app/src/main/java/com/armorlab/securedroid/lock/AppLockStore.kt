@@ -32,22 +32,48 @@ object AppLockStore {
     private const val KEY_ATTEMPTS = "pin_attempts"
     private const val KEY_LOCKOUT_UNTIL = "pin_lockout_until"
     private const val KEY_DECOY = "decoy_enabled"
+    private const val FAILED_RETRY_MS = 5_000L
 
-    /** 打开加密存储;AndroidKeyStore 不可用时返回 null,由调用方安全降级 */
-    private fun prefs(context: Context): SharedPreferences? = try {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-        EncryptedSharedPreferences.create(
-            context,
-            FILE,
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-    } catch (t: Throwable) {
-        Log.w(TAG, "安全存储不可用,应用锁降级为未启用状态(不崩溃、不落明文)", t)
-        null
+    /**
+     * 打开加密存储(进程内单例缓存);AndroidKeyStore 不可用时返回 null,由调用方安全降级。
+     *
+     * 单例缓存是硬性能要求:EncryptedSharedPreferences.create() 每次 build MasterKey +
+     * 派生密钥集,单次可达数十毫秒。而 isLocked() 处在两个高频热路径上 ——
+     * 无障碍服务每个窗口事件、WebUI 应用锁列表的每一行 —— 逐次重建会让
+     * 应用切换与列表加载付出成百上千次密钥派生的代价。
+     * 创建失败保留 5 秒冷却:KeyStore 故障短期不会自愈,期间快速返回 null,
+     * 冷却过后允许重试(故障可能是暂时的,例如密钥库尚未就绪)。
+     */
+    @Volatile
+    private var cachedPrefs: SharedPreferences? = null
+
+    @Volatile
+    private var failedAt = 0L
+
+    private val createLock = Any()
+
+    private fun prefs(context: Context): SharedPreferences? {
+        cachedPrefs?.let { return it }
+        synchronized(createLock) {
+            cachedPrefs?.let { return it }
+            if (System.currentTimeMillis() - failedAt < FAILED_RETRY_MS) return null
+            return try {
+                val masterKey = MasterKey.Builder(context.applicationContext)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build()
+                EncryptedSharedPreferences.create(
+                    context.applicationContext,
+                    FILE,
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                ).also { cachedPrefs = it }
+            } catch (t: Throwable) {
+                failedAt = System.currentTimeMillis()
+                Log.w(TAG, "安全存储不可用,应用锁降级为未启用状态(不崩溃、不落明文)", t)
+                null
+            }
+        }
     }
 
     /** 防暴力破解:记录失败次数,每 3 次错误递增锁定(attempts x 10 秒) */

@@ -43,6 +43,14 @@ interface ScanRecordDao {
     @Query("SELECT * FROM scan_records ORDER BY scannedAt DESC")
     suspend fun getAll(): List<ScanRecordEntity>
 
+    /** 首页概览只要总数:聚合查询,不再把最多 2000 行实体整表读进内存 */
+    @Query("SELECT COUNT(*) FROM scan_records")
+    suspend fun countAll(): Int
+
+    /** 首页概览只要最近一次扫描时间:MAX 聚合,空表返回 null */
+    @Query("SELECT MAX(scannedAt) FROM scan_records")
+    suspend fun lastScannedAt(): Long?
+
     @Query("DELETE FROM scan_records WHERE id NOT IN " +
         "(SELECT id FROM scan_records ORDER BY scannedAt DESC LIMIT 2000)")
     suspend fun trim()

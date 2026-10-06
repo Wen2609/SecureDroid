@@ -132,4 +132,49 @@ class PerfGuardTest {
         val n = ktFiles().sumOf { Regex("setHasFixedSize\\(true\\)").findAll(it.readText()).count() }
         assertTrue("4 个 RecyclerView 列表都应声明 setHasFixedSize(true),当前 " + n, n >= 4)
     }
+
+    @Test
+    fun appLockEncryptedPrefsMustBeSingletonCached() {
+        val src = codeOnly("com/armorlab/securedroid/lock/AppLockStore.kt")
+        val creates = Regex("EncryptedSharedPreferences\\.create").findAll(src).count()
+        assertEquals(
+            "EncryptedSharedPreferences 只能创建一次(单例缓存):每次 create 都要做 " +
+                "KeyStore 密钥派生,逐事件/逐行重建会让无障碍服务与应用锁列表付出成百上千次派生",
+            1, creates
+        )
+        assertTrue("必须用双检锁缓存加密存储实例", src.contains("synchronized(createLock)"))
+        assertTrue("创建失败必须有冷却期,避免故障环境下高频重试", src.contains("FAILED_RETRY_MS"))
+    }
+
+    @Test
+    fun dashboardMustUseAggregateQueries() {
+        val dao = codeOnly("com/armorlab/securedroid/data/AppDatabase.kt")
+        assertTrue("ScanRecordDao 必须提供 countAll 聚合查询", dao.contains("countAll"))
+        assertTrue("ScanRecordDao 必须提供 lastScannedAt 聚合查询", dao.contains("lastScannedAt"))
+        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        assertTrue(
+            "getDashboard 不得整表拉取扫描记录(getAll 最多 2000 行实体,只为取 size 与最大时间戳)",
+            !bridge.contains("dao.getAll()")
+        )
+    }
+
+    @Test
+    fun lockStateMustReadLockSetOnce() {
+        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        assertTrue(
+            "getLockState 必须一次读出锁定集合并内存判锁,不得逐应用调 AppLockStore.isLocked" +
+                "(每次都是一次加密存储读取)",
+            !bridge.contains("AppLockStore.isLocked(")
+        )
+    }
+
+    @Test
+    fun trojanProgressEventsMustBeThrottled() {
+        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        assertTrue(
+            "木马查杀进度必须按 PROGRESS_INTERVAL_MS 节流:逐包 evaluateJavascript " +
+                "会让 UI 线程执行上百次 JS 注入",
+            bridge.contains("PROGRESS_INTERVAL_MS") && bridge.contains("SystemClock.elapsedRealtime")
+        )
+    }
 }

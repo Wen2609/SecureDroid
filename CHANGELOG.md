@@ -2,6 +2,52 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.9.12] - 2026-10-05
+
+### Performance
+
+- **应用锁存储单例缓存(AppLockStore)**:`prefs()` 每次调用都重新创建
+  `EncryptedSharedPreferences`(KeyStore 密钥派生,单次数十毫秒),而 `isLocked()`
+  处在两条高频热路径上 —— 无障碍服务每个窗口事件、WebUI 应用锁列表每一行 ——
+  应用切换与列表加载付出成百上千次密钥派生的代价。现改为双检锁单例,
+  并对创建失败加 5 秒冷却(故障环境下不再高频重试)。
+- **首页概览改聚合查询**:`getDashboard` 以前把最多 2000 行扫描记录全量拉到内存,
+  只为取 `size` 与最大时间戳;现改用 Room 新增的 `countAll()` /
+  `lastScannedAt()` 聚合查询,IO 与内存开销各降一个数量级。
+- **木马查杀进度事件节流**:`NativeBridge` 逐包推送 `trojanProgress`,
+  UI 线程因此执行上百次 `evaluateJavascript`;现 300ms 一帧、末包必推,
+  进度条 CSS transition 本身已提供视觉平滑,UI 线程负载显著下降。
+- **WebUI 刷新收敛**:`__sdReady` / `__sdGoto` / 导航点击 / 分段切换
+  常在同一次交互里多路触发 `refreshVisible`,导致 `getDashboard` 等同步桥调用
+  连续重复执行。现统一走 `scheduleRefresh` 尾沿节流 + `refreshVisible` 时间窗
+  去重,启动时 `init` 与 `onPageFinished` 的双加载也因此消除。
+- **应用锁列表一次读锁 + 纯数据排序**:`getLockState` 以前对每个应用各读一次
+  加密存储、再逐个反查 `JSONObject` 字符串排序;现先把锁定集合一次读出,
+  内存判锁,在 `Triple(name, pkg, locked)` 纯数据上做排序。
+- **列表渲染 DocumentFragment 批量插入**:病毒扫描 / 木马 / 权限审计 / 应用锁
+  四个列表都改用 `createDocumentFragment` 一次性 append;数百行逐行插入时
+  每行一次 layout 重排的开销归零。
+- **应用图标 IntersectionObserver 懒加载**:视口外的列表行不再立即请求图标,
+  首屏同时发起的原生位图解码/压缩请求从几百个降到 ~10 个;
+  图标尺寸从 96px 升到 128px(覆盖 3x 屏 40dp 清晰度需求),
+  格式从 PNG 改为 WEBP 无损(纯色图标体积约减半、解码更快)。
+- **检查更新对话框磁盘 IO 移后台**:`ClamAvSignatures.ensureLoaded` 以前
+  在主线程 `checkUpdate()` 弹窗构建里执行,签名库首次加载需读盘,
+  低端机上可达数十毫秒级 ANR 风险;现先在后台线程加载完成再上主线程建弹窗。
+
+### Added
+
+- **页面不可见自动暂停装饰动画**:`index.html` 新增 `.page-hidden` CSS 规则
+  (暂停光晕漂移 / 扫描脉冲 / 骨架扫光 / 底部胶囊入场等持续动画);
+  `MainActivity.onPause/onResume` 与 `document.visibilitychange` 双路切换。
+  转后台时 WebView 不可见,继续合成 4 个 `blur(64px)` 图层纯属耗电。
+- **键盘可达性**:`role="button"` 的活动行支持 Enter / Space 触发。
+- **WebUiGuardTest**(4 项 + PerfGuardTest 4 项 + DatabaseAndManagersTest 2 项):
+  守住上述性能优化不被后续改动悄悄回退 —— AppLockStore 单例、聚合查询、
+  进度节流、图标懒加载、DocumentFragment 批量插入、刷新节流、page-hidden 暂停、
+  应用锁列表一次读锁,全部用源码级静态断言钉住。
+  测试套件总数从 132 增至 142。
+
 ## [1.9.11] - 2026-10-05
 
 ### Fixed

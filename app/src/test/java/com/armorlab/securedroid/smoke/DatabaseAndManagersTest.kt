@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.ScanRecordEntity
+import com.armorlab.securedroid.lock.AppLockStore
 import com.armorlab.securedroid.realtime.BootReceiver
 import com.armorlab.securedroid.root.PrivLevel
 import com.armorlab.securedroid.root.PrivilegeManager
@@ -89,5 +90,42 @@ class DatabaseAndManagersTest {
     fun bootReceiverIsSafeWhenRealtimeDisabled() {
         // 实时防护默认关闭:开机广播必须安全无操作(否则每次开机都崩)
         BootReceiver().onReceive(ctx, Intent(Intent.ACTION_BOOT_COMPLETED))
+    }
+
+    @Test
+    fun dashboardAggregateQueriesMatchTableContent() = runBlocking {
+        val dao = AppDatabase.get(ctx).scanRecordDao()
+        dao.clear()
+        // 空表:计数为 0、最近扫描时间为 null(桥层转成 0)
+        assertEquals(0, dao.countAll())
+        assertEquals(null, dao.lastScannedAt())
+
+        val now = System.currentTimeMillis()
+        dao.insertAll(
+            listOf(
+                ScanRecordEntity(
+                    packageName = "com.a", appName = "A", sha256 = "aa",
+                    threatName = null, riskScore = 0, scannedAt = now - 1000
+                ),
+                ScanRecordEntity(
+                    packageName = "com.b", appName = "B", sha256 = "bb",
+                    threatName = "X", riskScore = 50, scannedAt = now
+                )
+            )
+        )
+        assertEquals(2, dao.countAll())
+        assertEquals("lastScannedAt 必须等于最大 scannedAt", now, dao.lastScannedAt())
+        dao.clear()
+    }
+
+    @Test
+    fun appLockStoreDegradesSafelyAndRepeatedly() {
+        // 测试环境 AndroidKeyStore 通常不可用:必须安全降级(不崩溃、不落明文),
+        // 且连续调用走失败冷却路径依旧安全 —— 这同时覆盖了单例缓存的降级分支
+        repeat(3) {
+            assertFalse(AppLockStore.hasPin(ctx))
+            assertFalse(AppLockStore.isLocked(ctx, "com.example.any"))
+            assertEquals(emptySet<String>(), AppLockStore.lockedApps(ctx))
+        }
     }
 }

@@ -33,7 +33,23 @@
   }
   function fmtNum(n) { return Number(n || 0).toLocaleString('zh-CN'); }
 
-  /* 应用图标:优先加载 https://appicon.local/... 渲染的真实应用图标,失败回退首字字母瓦片 */
+  /* 应用图标:优先加载 https://appicon.local/... 渲染的真实应用图标,失败回退首字字母瓦片。
+     图标请求走 IntersectionObserver 懒加载:应用锁列表可达数百行,视口外的行
+     不发请求,避免首屏一次性触发几百次原生图标渲染(每次都要解码/缩放位图) */
+  var iconObserver = (typeof IntersectionObserver !== 'undefined')
+    ? new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        iconObserver.unobserve(en.target);
+        var img = en.target;
+        if (img.dataset && img.dataset.src) {
+          img.src = img.dataset.src;
+          delete img.dataset.src;
+        }
+      });
+    }, { rootMargin: '240px' })
+    : null;
+
   function firstLetter(name) {
     var s = String(name || '?').trim();
     if (!s) return '?';
@@ -56,12 +72,17 @@
     }
     var img = document.createElement('img');
     img.alt = '';
-    img.src = 'https://appicon.local/' + encodeURIComponent(pkg);
+    img.dataset.src = 'https://appicon.local/' + encodeURIComponent(pkg);
     img.onerror = function () {
       this.remove();
       wrap.classList.add(letterTint(name));
       wrap.textContent = firstLetter(name);
     };
+    if (iconObserver) {
+      iconObserver.observe(img);
+    } else {
+      img.src = img.dataset.src;
+    }
     wrap.appendChild(img);
     return wrap;
   }
@@ -111,7 +132,7 @@
   };
 
   /* 页面就绪(原生 onPageFinished / onResume 时调用,刷新当前面板数据) */
-  window.__sdReady = function () { refreshVisible(); };
+  window.__sdReady = function () { scheduleRefresh(); };
 
   /* 原生直达导航(小部件 / 快捷磁贴): 切板块 + 二级分段 */
   window.__sdGoto = function (panel, seg) {
@@ -121,7 +142,7 @@
       var b = qs('.panel[data-panel="' + panel + '"] .seg[data-seg="' + seg + '"]');
       if (b) b.click();
     }
-    refreshVisible();
+    scheduleRefresh();
   };
 
   /* ---------------- 面板 / 分段感知 ---------------- */
@@ -135,6 +156,9 @@
     return p ? p.dataset.body : null;
   }
   function refreshVisible() {
+    var now = Date.now();
+    if (now - lastRefreshAt < 300) return;
+    lastRefreshAt = now;
     var panel = activePanel();
     if (panel === 'home' || panel === 'security') { loadDashboard(); return; }
     if (panel === 'app') {
@@ -146,16 +170,29 @@
     if (panel === 'ext') { loadToggles(); loadDashboard(); }
   }
 
+  /* 刷新收敛:一次交互常会触发多条监听(内联切换 + 桥接刷新 + __sdGoto),
+     尾沿节流把同一交互内合并成一次;时间窗去重挡住紧邻的重复刷新
+     (如启动时 init 与 onPageFinished __sdReady 相隔不到几百毫秒)。 */
+  var refreshTimer = 0;
+  var lastRefreshAt = 0;
+  function scheduleRefresh() {
+    if (refreshTimer) return;
+    refreshTimer = setTimeout(function () {
+      refreshTimer = 0;
+      refreshVisible();
+    }, 120);
+  }
+
   /* 原生导航(内联脚本先执行,这里在其后刷新数据) */
   function hookNavRefresh() {
     qsa('.dock-item').forEach(function (t) {
-      t.addEventListener('click', function () { hapticTap(); setTimeout(refreshVisible, 30); });
+      t.addEventListener('click', function () { hapticTap(); scheduleRefresh(); });
     });
     qsa('.seg').forEach(function (s) {
-      s.addEventListener('click', function () { hapticTap(); setTimeout(refreshVisible, 30); });
+      s.addEventListener('click', function () { hapticTap(); scheduleRefresh(); });
     });
     qsa('[data-goto]').forEach(function (g) {
-      g.addEventListener('click', function () { hapticTap(); setTimeout(refreshVisible, 30); });
+      g.addEventListener('click', function () { hapticTap(); scheduleRefresh(); });
     });
   }
 
@@ -267,11 +304,13 @@
     var rows = d.results || [];
     setCardHeadCount('#virusHead', '扫描结果', rows.length);
     if (!rows.length) { box.textContent = d.summary || '未发现威胁，设备安全。'; loadDashboard(); return; }
+    var frag = document.createDocumentFragment();
     rows.forEach(function (r) {
       var detail = (r.detections || []).map(function (x) { return '[' + x.engine + '] ' + x.name; }).join('；');
-      box.appendChild(resultRow(r.name || r.pkg, r.pkg + (detail ? ' · ' + detail : ''), levelText(r.worst), levelCls(r.worst),
+      frag.appendChild(resultRow(r.name || r.pkg, r.pkg + (detail ? ' · ' + detail : ''), levelText(r.worst), levelCls(r.worst),
         function () { openApp(r.pkg); }, r.pkg, r.name));
     });
+    box.appendChild(frag);
     loadDashboard();
   });
 
@@ -305,10 +344,12 @@
     var items = d.items || [];
     setCardHeadCount('#trojanHead', '木马检测结果', items.length);
     if (!items.length) { box.textContent = d.summary || '未发现木马。'; loadDashboard(); return; }
+    var frag = document.createDocumentFragment();
     items.forEach(function (it) {
-      box.appendChild(resultRow(it.title, it.sub + (it.detail ? ' · ' + it.detail : ''), levelText(it.level), levelCls(it.level),
+      frag.appendChild(resultRow(it.title, it.sub + (it.detail ? ' · ' + it.detail : ''), levelText(it.level), levelCls(it.level),
         function () { openApp(it.pkg); }, it.pkg, it.title));
     });
+    box.appendChild(frag);
     loadDashboard();
   }
 
@@ -345,6 +386,8 @@
       card.appendChild(el('div', 'empty-hint', '未找到可锁定的应用'));
       return;
     }
+    // DocumentFragment 批量插入:数百行逐行 appendChild 每行都触发一次重排
+    var frag = document.createDocumentFragment();
     apps.forEach(function (a) {
       var row = el('div', 'row');
       row.appendChild(iconFor(a.pkg, a.name));
@@ -361,8 +404,9 @@
       });
       row.appendChild(body);
       row.appendChild(sw);
-      card.appendChild(row);
+      frag.appendChild(row);
     });
+    card.appendChild(frag);
   }
 
   /* ---------------- 权限审计 ---------------- */
@@ -383,15 +427,17 @@
       list.appendChild(el('div', 'empty-hint', '未发现高风险权限应用'));
       return;
     }
+    var frag = document.createDocumentFragment();
     items.forEach(function (it) {
       var perms = (it.perms || []).join('、');
-      list.appendChild(resultRow(
+      frag.appendChild(resultRow(
         it.name, it.pkg + (perms ? ' · ' + perms : ''),
         String(it.score), (it.level === 'HIGH' || it.level === 'CRITICAL') ? 'danger' : 'risky',
         function () { openApp(it.pkg); },
         it.pkg, it.name
       ));
     });
+    list.appendChild(frag);
   }
 
   /* ---------------- 工具箱开关 ---------------- */
@@ -479,6 +525,24 @@
     g.textContent = week + ' · ' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
   }
 
+  /* ---------------- 页面可见性 / 键盘可达性 ---------------- */
+
+  /* 转后台时暂停装饰动画(光晕漂移等),由 index.html 的 .page-hidden CSS 生效;
+     原生侧 onPause/onResume 也会直接切换该类,这里兜底 WebView 内部的可见性变化 */
+  document.addEventListener('visibilitychange', function () {
+    document.documentElement.classList.toggle('page-hidden', document.hidden);
+  });
+
+  /* 键盘可达性:role="button" 的活动行支持 Enter / 空格触发 */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var t = e.target;
+    if (t && t.getAttribute && t.getAttribute('role') === 'button') {
+      e.preventDefault();
+      t.click();
+    }
+  });
+
   /* ---------------- 初始化 ---------------- */
 
   function init() {
@@ -491,7 +555,7 @@
     }
     setGreeting();
     hookNavRefresh();
-    loadDashboard();
+    // 默认面板就是首页,refreshVisible 即完成首屏加载(不再额外 loadDashboard 重复取数)
     refreshVisible();
   }
 

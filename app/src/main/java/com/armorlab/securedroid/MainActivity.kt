@@ -91,14 +91,14 @@ class MainActivity : AppCompatActivity() {
                 request: android.webkit.WebResourceRequest?
             ): WebResourceResponse? {
                 // 应用图标服务:页面用 <img src="https://appicon.local/<包名>"> 拉取真实应用图标,
-                // 由原生渲染成 PNG 流式返回(带内存 LRU 缓存),比 JS 桥传 base64 高效得多
+                // 由原生渲染成 WEBP 流式返回(带内存 LRU 缓存),比 JS 桥传 base64 高效得多
                 val url = request?.url ?: return null
                 if (url.host != "appicon.local") return null
                 val pkg = url.path?.removePrefix("/").orEmpty()
                 val png = appIconPng(pkg)
                 return if (png != null) {
                     WebResourceResponse(
-                        "image/png", "binary", 200, "OK",
+                        "image/webp", "binary", 200, "OK",
                         mapOf("Cache-Control" to "public, max-age=86400"),
                         ByteArrayInputStream(png)
                     )
@@ -172,11 +172,26 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // 从深层原生页面返回后刷新 WebUI 面板数据
+        // 从深层原生页面返回后:恢复页面动画并刷新 WebUI 面板数据
         try {
+            binding.webView.evaluateJavascript(
+                "document.documentElement.classList.remove('page-hidden');", null
+            )
             binding.webView.evaluateJavascript("window.__sdReady && window.__sdReady();", null)
         } catch (_: Exception) {
         }
+    }
+
+    override fun onPause() {
+        // 转后台即暂停页面动画(光晕漂移 / 扫描脉冲):WebView 不可见时继续
+        // 合成 4 个 blur(64px) 图层纯属耗电,恢复可见时 onResume 会移除标记
+        try {
+            binding.webView.evaluateJavascript(
+                "document.documentElement.classList.add('page-hidden');", null
+            )
+        } catch (_: Exception) {
+        }
+        super.onPause()
     }
 
     override fun onDestroy() {
@@ -227,13 +242,14 @@ class MainActivity : AppCompatActivity() {
         override fun sizeOf(key: String, value: ByteArray): Int = value.size
     }
 
-    /** 渲染指定应用的图标为 96×96 PNG;失败(包不存在)返回 null,由页面回退到字母占位 */
+    /** 渲染指定应用的图标为 128×128 WEBP;失败(包不存在)返回 null,由页面回退到字母占位 */
     private fun appIconPng(pkg: String): ByteArray? {
         if (pkg.isBlank() || !pkg.contains('.')) return null
         iconCache.get(pkg)?.let { return it }
         return try {
-            val drawable = packageManager.getApplicationIcon(pkg) ?: return null
-            val size = 96
+            val drawable = packageManager.getApplicationIcon(pkg)
+            // 128px 覆盖 3x+ 密度下 40dp 图标的清晰度需求(96px 在 3x 屏上轻微发虚)
+            val size = 128
             val bmp = if (drawable is BitmapDrawable && drawable.bitmap != null) {
                 Bitmap.createScaledBitmap(drawable.bitmap, size, size, true)
             } else {
@@ -242,8 +258,15 @@ class MainActivity : AppCompatActivity() {
                     drawable.draw(Canvas(out))
                 }
             }
+            // WEBP 无损(API 30+)或高质量有损:纯色图标下体积比 PNG 小一半以上,解码更快
+            val format = if (Build.VERSION.SDK_INT >= 30) {
+                Bitmap.CompressFormat.WEBP_LOSSLESS
+            } else {
+                @Suppress("DEPRECATION")
+                Bitmap.CompressFormat.WEBP
+            }
             val bytes = ByteArrayOutputStream().use { out ->
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+                bmp.compress(format, 92, out)
                 out.toByteArray()
             }
             iconCache.put(pkg, bytes)

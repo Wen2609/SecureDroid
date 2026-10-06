@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -101,8 +102,11 @@ class NativeBridge(
     @JavascriptInterface
     fun getDashboard(): String = try {
         val dao = AppDatabase.get(app).scanRecordDao()
-        val records = runBlocking { dao.getAll() }
-        val threats = runBlocking { dao.threatCount() }
+        // 三个标量一次协程取回:countAll/lastScannedAt 是聚合查询,
+        // 不再把最多 2000 行记录整表读进内存只为取 size 与最大时间戳
+        val (scanned, threats, lastScan) = runBlocking {
+            Triple(dao.countAll(), dao.threatCount(), dao.lastScannedAt() ?: 0L)
+        }
         val prefs = settings()
         ClamAvSignatures.ensureLoaded(app)
         var protected = 0
@@ -113,12 +117,12 @@ class NativeBridge(
         if (RootGuard.isRootMode(app)) protected++
         JSONObject()
             .put("libOk", ClamAvSignatures.hashCount() > 0)
-            .put("scanned", records.size)
+            .put("scanned", scanned)
             .put("threats", threats)
             .put("protected", protected)
             .put("locked", AppLockStore.lockedApps(app).size)
             .put("risky", PermissionAuditor.riskyAppCount(app))
-            .put("lastScanAt", records.maxOfOrNull { it.scannedAt } ?: 0L)
+            .put("lastScanAt", lastScan)
             .toString()
     } catch (t: Throwable) {
         JSONObject().put("libOk", false).put("scanned", 0).put("threats", 0).put("protected", 0)
@@ -199,14 +203,21 @@ class NativeBridge(
                 val pkgs = PackageSnapshot.installedPackages(app, 0)
                 val items = JSONArray()
                 var infected = 0
+                // 进度事件节流:逐包推送会让 UI 线程执行上百次 evaluateJavascript,
+                // 进度条平滑度只取决于 CSS transition,300ms 一帧绰绰有余;末包必推
+                var lastPost = 0L
                 pkgs.forEachIndexed { index, info ->
                     val report = TrojanScanner.scanPackage(app, info.packageName)
                     if (report.isInfected) {
                         infected++
                         items.put(reportToJson(report))
                     }
-                    postEvent("trojanProgress",
-                        JSONObject().put("done", index + 1).put("total", pkgs.size))
+                    val now = SystemClock.elapsedRealtime()
+                    if (now - lastPost >= PROGRESS_INTERVAL_MS || index == pkgs.size - 1) {
+                        lastPost = now
+                        postEvent("trojanProgress",
+                            JSONObject().put("done", index + 1).put("total", pkgs.size))
+                    }
                 }
                 val summary = app.getString(R.string.trojan_done, pkgs.size, infected)
                 postEvent("trojanDone", JSONObject().put("items", items)
@@ -309,16 +320,19 @@ class NativeBridge(
 
     @JavascriptInterface
     fun getLockState(): String = try {
-        val apps = JSONArray()
-        PackageSnapshot.installedApplications(app, 0)
+        // 锁定集合只读一次,逐行内存判锁;排序在纯数据上做,
+        // 不再对每个应用各读一次加密存储、再逐个反查 JSONObject 字符串排序
+        val locked = AppLockStore.lockedApps(app)
+        val entries = PackageSnapshot.installedApplications(app, 0)
+            .asSequence()
             .filter { it.packageName != app.packageName }
-            .map {
-                JSONObject().put("name", PackageSnapshot.label(app, it))
-                    .put("pkg", it.packageName)
-                    .put("locked", AppLockStore.isLocked(app, it.packageName))
-            }
-            .sortedBy { it.getString("name").lowercase() }
-            .forEach { apps.put(it) }
+            .map { Triple(PackageSnapshot.label(app, it), it.packageName, it.packageName in locked) }
+            .sortedWith(compareBy({ it.first.lowercase() }, { it.second }))
+            .toList()
+        val apps = JSONArray()
+        entries.forEach { (name, pkg, isLocked) ->
+            apps.put(JSONObject().put("name", name).put("pkg", pkg).put("locked", isLocked))
+        }
         JSONObject()
             .put("hasPin", AppLockStore.hasPin(app))
             .put("decoy", AppLockStore.isDecoyEnabled(app))
@@ -492,68 +506,74 @@ class NativeBridge(
 
     @JavascriptInterface
     fun checkUpdate() {
-        main.post {
+        // 签名库首次加载要读盘,先在后台线程加载完再上主线程建弹窗,避免主线程做磁盘 IO 引发 ANR
+        Thread {
             try {
-                val ctx = activity
-                val prefs = settings()
-                val container = LinearLayout(ctx).apply {
-                    orientation = LinearLayout.VERTICAL
-                    setPadding(48, 8, 48, 0)
-                }
-                ClamAvSignatures.ensureLoaded(ctx)
-                val status = ctx.getString(
-                    R.string.update_status_fmt,
-                    SignatureDatabase.size(),
-                    ClamAvSignatures.hashCount(),
-                    ClamAvSignatures.byteCount()
-                )
-                val tvStatus = TextView(ctx).apply {
-                    text = status
-                    setTextColor(ContextCompat.getColor(ctx, R.color.c_muted_foreground))
-                    setTextAppearance(R.style.TextAppearance_SecureDroid_Caption)
-                    setPadding(0, 0, 0, 16)
-                }
-                val etUrl = EditText(ctx).apply { hint = ctx.getString(R.string.vc_update_url) }
-                val etSha = EditText(ctx).apply { hint = ctx.getString(R.string.vc_update_sha) }
-                etUrl.setText(prefs.getString("update_url", ""))
-                etSha.setText(prefs.getString("update_sha", ""))
-                container.addView(tvStatus)
-                container.addView(etUrl)
-                container.addView(etSha)
-                AlertDialog.Builder(ctx, R.style.Theme_SecureDroid_Dialog_Alert)
-                    .setTitle(R.string.settings_update)
-                    .setView(container)
-                    .setPositiveButton(R.string.vc_update_btn) { _, _ ->
-                        val url = etUrl.text.toString().trim()
-                        val sha = etSha.text.toString().trim()
-                        if (url.isEmpty()) {
-                            toast(R.string.update_need_url)
-                            return@setPositiveButton
-                        }
-                        prefs.edit()
-                            .putString("update_url", url)
-                            .putString("update_sha", sha)
-                            .apply()
-                        toast(R.string.update_checking)
-                        Thread {
-                            val r = FeatureUpdater.update(ctx, url, sha.ifEmpty { null })
-                            Handler(Looper.getMainLooper()).post {
-                                try {
-                                    AlertDialog.Builder(ctx, R.style.Theme_SecureDroid_Dialog_Alert)
-                                        .setTitle(R.string.settings_update)
-                                        .setMessage(r.message)
-                                        .setPositiveButton(android.R.string.ok, null)
-                                        .show()
-                                } catch (_: Exception) {
-                                }
-                            }
-                        }.start()
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
+                ClamAvSignatures.ensureLoaded(app)
             } catch (_: Exception) {
             }
-        }
+            main.post {
+                try {
+                    val ctx = activity
+                    val prefs = settings()
+                    val container = LinearLayout(ctx).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(48, 8, 48, 0)
+                    }
+                    val status = ctx.getString(
+                        R.string.update_status_fmt,
+                        SignatureDatabase.size(),
+                        ClamAvSignatures.hashCount(),
+                        ClamAvSignatures.byteCount()
+                    )
+                    val tvStatus = TextView(ctx).apply {
+                        text = status
+                        setTextColor(ContextCompat.getColor(ctx, R.color.c_muted_foreground))
+                        setTextAppearance(R.style.TextAppearance_SecureDroid_Caption)
+                        setPadding(0, 0, 0, 16)
+                    }
+                    val etUrl = EditText(ctx).apply { hint = ctx.getString(R.string.vc_update_url) }
+                    val etSha = EditText(ctx).apply { hint = ctx.getString(R.string.vc_update_sha) }
+                    etUrl.setText(prefs.getString("update_url", ""))
+                    etSha.setText(prefs.getString("update_sha", ""))
+                    container.addView(tvStatus)
+                    container.addView(etUrl)
+                    container.addView(etSha)
+                    AlertDialog.Builder(ctx, R.style.Theme_SecureDroid_Dialog_Alert)
+                        .setTitle(R.string.settings_update)
+                        .setView(container)
+                        .setPositiveButton(R.string.vc_update_btn) { _, _ ->
+                            val url = etUrl.text.toString().trim()
+                            val sha = etSha.text.toString().trim()
+                            if (url.isEmpty()) {
+                                toast(R.string.update_need_url)
+                                return@setPositiveButton
+                            }
+                            prefs.edit()
+                                .putString("update_url", url)
+                                .putString("update_sha", sha)
+                                .apply()
+                            toast(R.string.update_checking)
+                            Thread {
+                                val r = FeatureUpdater.update(ctx, url, sha.ifEmpty { null })
+                                main.post {
+                                    try {
+                                        AlertDialog.Builder(ctx, R.style.Theme_SecureDroid_Dialog_Alert)
+                                            .setTitle(R.string.settings_update)
+                                            .setMessage(r.message)
+                                            .setPositiveButton(android.R.string.ok, null)
+                                            .show()
+                                    } catch (_: Exception) {
+                                    }
+                                }
+                            }.start()
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
+                } catch (_: Exception) {
+                }
+            }
+        }.start()
     }
 
     @JavascriptInterface
@@ -657,5 +677,8 @@ class NativeBridge(
         const val SCAN_ROOTKIT = "rootkit"
         const val SCAN_MODULES = "modules"
         const val SCAN_LOCKER = "locker"
+
+        /** 木马查杀进度事件最小间隔(毫秒) */
+        const val PROGRESS_INTERVAL_MS = 300L
     }
 }

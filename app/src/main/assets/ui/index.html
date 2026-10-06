@@ -917,6 +917,21 @@ button.row:active{background:var(--c-muted)}
     transition-duration:.01ms !important;
   }
 }
+
+/* ============================================================
+   页面不可见:暂停装饰动画
+   WebView 转后台(onPause / visibilitychange)时给 <html> 加 .page-hidden,
+   光晕漂移等持续动画全部冻结 —— 不可见时继续合成 4 个 blur 图层纯属耗电,
+   恢复可见时移除该类即刻续播。
+   ============================================================ */
+.page-hidden .blob,
+.page-hidden .panel,
+.page-hidden .seg-body,
+.page-hidden .scan-circle,
+.page-hidden .skeleton-text,
+.page-hidden .dock{
+  animation-play-state:paused !important;
+}
 </style>
 </head>
 <body>
