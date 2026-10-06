@@ -2,6 +2,117 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.9.15] - 2026-10-06
+
+### Changed(UI 底层架构重构:异步桥 + 路由 + 微内核)
+
+- **数据读取全面异步化(体感最大)**:`getDashboard / getLockState / getAudit /
+  getToggles` 四个同步桥调用会阻塞 JS 线程(权限审计冷调用可达数百毫秒,
+  期间页面完全卡死);现改为 **request→reply 异步应答** —— JS 发请求即返回,
+  原生在应用级协程取数后按 id 回推统一信封,页面动画/点击全程不冻结。
+- **NativeBridge 上帝对象拆分**:26 个 `@JavascriptInterface` 方法收敛为
+  **唯一入口** `post(action, payload)` + `BridgeRouter` 路由,按职责分派到
+  `DashboardHandler / ScanHandler / LockHandler / SettingsHandler` 四个
+  可独立构造的 handler;统一应答信封 `{ok, data?, error?}`;
+  线程约定明确 —— 调用线程只解析永不阻塞,数据/扫描挂 `BridgeScope`,
+  对话框/跳转挂主线程。新增能力 = 路由注册一项,不再堆桥方法。
+- **出站通道规范化**:扫描进度/结果等回推统一经 `WebEventSink`
+  (`{kind:"event", type, data}` 信封,org.json 负责全部转义),
+  消灭散落的 `evaluateJavascript("window.__sdEvent('$type', $json)")`
+  字符串拼接注入;接口化设计,未来可平替 WebMessageCompat 实现。
+- **app.js 微内核**:通道(`__sdChannel`)+ `api` 数据源适配器
+  (bridge 实现与 demo 实现同接口,demo 从散布 8 处的 `if (demo)` 变成
+  一个适配器)+ `store`(面板状态单一来源,渲染函数订阅数据,
+  渲染与取数解耦);无参数请求按 action 合并在途调用。
+- **扫描会话迁移到应用级协程**:8 个裸 `Thread{}`(持 Activity 引用,
+  旋转即丢)迁入 `BridgeScope`(SupervisorJob + Default);
+  会话状态提到进程级 `ScanSessions` —— Activity 重建后新页面经
+  `getScanState` **重放进行中的扫描**(按钮禁用 + 进度条 + 取消按钮无缝续显)。
+
+### Changed(全界面 HTML 化:消除全部安卓原生界面)
+
+- **深层工具页全部改为 HTML 子页面**:深度查杀 / 病毒中心 / 网络审计 / 隐私检测 /
+  漏洞扫描从独立原生 Activity 改为 index.html 内嵌子页面,由 `subStack`
+  路由在单个 WebView 内管理多级页面;返回键优先回退子页面。
+- **新增 `ToolsHandler` 桥接层**(约 700 行):统一承载全部深层工具逻辑 ——
+  列表型工具(网络审计/隐私检测/漏洞扫描)、深度查杀进度与结果(事件推送)、
+  病毒中心 30+ 工具菜单/运行/取消、信任列表、黑名单、处置策略等级、
+  自动隔离、证书可信标记、更新检查与执行、关于、报告导出、修复命令执行。
+- **所有对话框改为 HTML 模态框**:关于 / 检查更新 / PIN 设置 / 信任列表 /
+  黑名单管理 / 证书标记 / 修复确认 / 策略选择,统一走 `uiAlert / uiConfirm /
+  uiPrompt / uiListDialog` 模态框 API。
+- **Toast 改为 HTML toast 条**,与设计语言一致(顶部滑入、自动消失)。
+- **PIN 解锁页 HTML 化**:`LockActivity` 改为 WebView 加载 `assets/ui/lock.html`
+  + `lock.js`(数字键盘、PIN 圆点、防抖动画),保留 FLAG_SECURE 防截屏、
+  防暴力破解与假崩溃诱骗逻辑。
+- **统一列表数据模型**:`TrojanAdapter` 收敛为纯数据 `UiItem`(不再含
+  RecyclerView/ViewHolder),由桥接层序列化为 JSON 供 HTML 列表渲染。
+
+### Removed
+
+- **5 个原生工具 Activity**(DeepScanActivity / VirusCenterActivity /
+  NetworkAuditActivity / PrivacyActivity / VulnerabilityActivity)、
+  `BaseListToolActivity`、`VirusActionAdapter`、`ui/glass/` 玻璃背景自定义 View。
+- **6 个原生布局**(activity_deep_scan / activity_virus_center /
+  activity_result_list / activity_lock / item_trojan / item_tool / dialog_set_pin)。
+- **旧同步桥方法与 `runBlocking` 桥内阻塞调用**(异步化后不再需要);
+  `ScanHistoryTest` / `PerfGuardTest` 的源码断言同步指向新 handler 文件。
+
+### Test
+
+- WebUiGuardTest 新增 3 项架构守卫:桥入口唯一性(post 路由信封)、
+  JS 数据流经 api 通道(禁止再出现同步 `bridge.getXxx`)、
+  扫描状态重放接线 —— 共 154 项 JVM 测试。
+- 随 HTML 化同步更新守卫测试:PerfGuardTest 改为 `allListPagesAreBridged`
+  (断言 BridgeRouter 注册全部列表型工具 action)、ScanHistoryTest /
+  ShellHardeningTest 的源码断言指向 `web/handlers/ToolsHandler.kt`。
+
+## [1.9.14] - 2026-10-06
+
+### Added
+
+- **主状态卡威胁感知三态**:首页主卡此前无论实际状态恒显绿色"设备安全";
+  现按威胁数据切换 —— 有历史威胁=红色"发现 N 项威胁",有高风险权限应用或
+  病毒库待更新=琥珀"注意",否则绿色"设备安全"。图标底色/标题颜色随态联动
+  (暗色令牌自动适配)。
+- **统计条可点直达**:概览条三格从纯展示升级为可点按钮 —— 病毒库→木马查杀、
+  已扫描→病毒查杀中心(原生页)、防护中→扩展功能开关区,触感 + 刷新联动。
+- **应用锁搜索过滤**:锁定列表(可达数百行)上方新增搜索框,按应用名/包名
+  即时过滤;过滤基于缓存数据不重新拉桥,面板刷新后关键字保持。
+- **下拉刷新**:主布局以 `SwipeRefreshLayout` 包裹 WebView,下拉触发当前面板
+  数据重新拉取(`__sdReady`);依赖 `androidx.swiperefreshlayout:1.1.0`,
+  指示器配色走 `c_primary` 令牌;与页面内部滚动不冲突
+  (依据 WebView `canScrollVertically` 判定)。
+- **空态图标化**:扫描结果 / 木马结果 / 权限审计 / 应用锁列表的动态空态从
+  纯文本升级为"圆形色调图标 + 文案"(盾形勾图标,色随语境)。
+
+### Test
+
+- WebUiGuardTest 新增 4 项守卫:hero 三态接线、应用锁搜索、统计格可点、
+  下拉刷新接线;`resultListsMustBatchAppend` 增加 emptyHint 断言 ——
+  共 151 项 JVM 测试。
+
+### Removed(死代码清理)
+
+- **不可达 Activity 链**:`FullAuditActivity`(一键全面体检)与
+  `CleanerActivity`(应用缓存清理)自 v1.9.0 WebView 化后失去全部入口 ——
+  WebUI 工具箱不再提供入口,仅存的 `NativeBridge.openFullAudit()/openCleaner()`
+  桥方法也无任何调用方。连同其唯一依赖 `feature/CleanerTool.kt`、
+  清单声明与 4 条标题字符串一并删除;`SystemBaseline` 仍被
+  漏洞扫描页使用,保留。
+- **8 个无调用方函数**:`TimeFmt.clockSecond`、`RootGuard.disableModule`
+  (自动处置已用内联命令实现)、`PrivilegeManager.ensureFresh / existsAll /
+  has(ctx,cap)`(设计期 API,生产从未接入;能力判断走 `capabilities()`)、
+  `NetKill.isBlocked`(复核逻辑内联在 `unblock`)、`MainActivity.navigateTo`
+  (旧原生导航兼容入口,宫格入口已删)、`AppDatabase.observeAll`
+  (未接线的 Flow 查询)。
+- **280 项未用资源**(Lint UnusedResources,收敛至 0):旧原生 UI 时代的
+  44 个 drawable、6 个 color selector、122 条字符串(tab_*/sw_*/tile_* 等)、
+  34+34(昼/夜)颜色令牌、50 个尺寸令牌、28 个样式 —— 多为 v1.9.9 删除
+  旧 Fragment 界面后残留的设计系统资产;`values-night` 与 `values` 保持同名同步删除。
+- 同步修正 `AGENT_NOTES` 中已失效的 API 速查(ensureFresh / has / execBatch /
+  旧导航架构)。
+
 ## [1.9.13] - 2026-10-06
 
 ### Added

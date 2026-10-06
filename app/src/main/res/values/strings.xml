@@ -4,45 +4,13 @@
     <string name="splash_subtitle">全方位守护您的移动安全</string>
     <string name="press_again_to_exit">再按一次退出应用</string>
 
-    <string name="home_title">安全中心</string>
-    <string name="dashboard_score_unit">分</string>
-    <string name="dashboard_state_good">设备状态良好,未发现威胁</string>
-    <string name="dashboard_state_warn">发现风险项,建议立即处理</string>
-    <string name="dashboard_state_bad">发现恶意应用,请立即处理!</string>
-    <string name="btn_optimize">一键优化</string>
 
     <!-- 首页四宫格:标题是固定文案(原原生首页遗留,保留备用) -->
-    <string name="tile_clean_title">清理存储</string>
-    <string name="tile_clean_sub">查看可释放空间</string>
-    <string name="tile_clean_free">可用 %1$s</string>
-    <string name="tile_virus_title">病毒风险</string>
-    <string name="tile_virus_sub">尚未扫描</string>
-    <string name="tile_virus_bad">%1$d 个威胁待处理</string>
-    <string name="tile_network_title">网络审计</string>
-    <string name="tile_network_sub">查看网络连接</string>
-    <string name="tile_network_count">%1$d 个活动连接</string>
-    <string name="tile_applock_title">应用管理</string>
-    <string name="tile_applock_sub">管理应用锁</string>
-    <string name="tile_applock_count">已锁定 %1$d 个应用</string>
 
     <string name="btn_go_scan">病毒扫描</string>
-    <string name="sw_realtime">实时防护</string>
 
-    <string name="scan_idle">点击下方按钮开始扫描</string>
-    <string name="scan_start">开始全盘扫描</string>
-    <string name="scan_scanning">正在扫描,请稍候…</string>
-    <string name="scan_done">扫描完成:%1$d 个应用,发现 %2$d 个威胁</string>
-    <string name="status_safe">安全</string>
-    <string name="status_risky">存在风险权限</string>
-    <string name="status_malicious">发现威胁</string>
 
-    <string name="audit_summary">发现 %1$d 个应用存在敏感权限使用</string>
 
-    <string name="lock_pin_state_set">PIN 码:已设置</string>
-    <string name="lock_pin_state_unset">PIN 码:未设置</string>
-    <string name="lock_set_pin">设置 / 修改 PIN 码</string>
-    <string name="lock_accessibility_go">开启无障碍权限(用于应用锁)</string>
-    <string name="lock_accessibility_on">无障碍权限已开启</string>
     <string name="lock_pin_title">设置 4 位 PIN 码</string>
     <string name="lock_pin_sub">设置后每次进入应用锁需验证,用于保护锁定应用</string>
     <string name="lock_pin_hint">请输入 4 位数字</string>
@@ -62,18 +30,11 @@
     <string name="realtime_text">正在监控应用安装与更新</string>
     <string name="threat_found_title">发现恶意应用!</string>
     <string name="accessibility_desc">安卫应用锁使用无障碍服务检测前台应用,在受保护应用启动时要求输入 PIN 码。</string>
-    <string name="trojan_idle">点击开始,多引擎检测木马与后门</string>
-    <string name="trojan_start">开始木马查杀</string>
-    <string name="trojan_scanning">正在深度扫描,请稍候…</string>
     <string name="trojan_done">查杀完成:%1$d 个应用,发现 %2$d 个感染项</string>
     <string name="trojan_uninstall">立即卸载</string>
     <string name="trojan_suggestion_label">处理建议:</string>
-    <string name="rootkit_btn">Rootkit / 提权后门检测</string>
-    <string name="rootkit_scanning">正在检测 Rootkit 痕迹…</string>
     <string name="rootkit_done">Rootkit 检测完成:发现 %1$d 项可疑痕迹</string>
     <string name="rootkit_clean">未发现 Rootkit 痕迹</string>
-    <string name="modules_btn">恶意模块 / SU 脚本检测</string>
-    <string name="modules_scanning">正在扫描模块与 su 脚本…(读取 /data/adb 需 su 授权)</string>
     <string name="modules_done">模块扫描完成:发现 %1$d 项可疑 / 恶意</string>
     <string name="modules_clean">模块与 su 脚本未发现恶意行为</string>
     <string name="modules_no_access">未检测到可读的模块目录;如已 root,请在 KernelSU / APatch / SukiSU / Magisk 管理器中为本应用授予 su 权限</string>
@@ -84,37 +45,20 @@
     <string name="fix_failed">处置失败(未授权或命令执行出错)</string>
     <string name="root_mode_on">Root 模式:已启用(即时检测 + 自动杀毒可用)</string>
     <string name="root_mode_off">Root 模式:未启用(开启下方开关将请求 su 授权)</string>
-    <string name="sw_auto_disinfect">自动杀毒:自动禁用恶意模块 / 删除恶意 su 脚本</string>
-    <string name="sw_auto_uninstall">自动卸载恶意应用(root pm uninstall)</string>
     <string name="toast_root_enabled">Root 模式已启用,自动杀毒生效中</string>
     <string name="toast_need_root">未取得 root 授权,无法开启</string>
     <string name="auto_disinfect_title">自动杀毒</string>
-    <string name="locker_btn">锁机软件检测</string>
-    <string name="locker_scanning">正在检测设备管理员与锁机行为…</string>
     <string name="locker_done">锁机检测完成:发现 %1$d 项风险</string>
     <string name="locker_clean">未发现锁机软件与可疑设备管理员</string>
-    <string name="sw_daily_scan">每日定时自动查杀</string>
-    <string name="sw_sim_guard">SIM 卡变更防盗告警</string>
-    <string name="daily_scan_on">每日定时查杀已开启</string>
-    <string name="daily_scan_off">每日定时查杀已关闭</string>
-    <string name="sim_guard_on">SIM 防盗告警已开启</string>
-    <string name="sim_guard_off">SIM 防盗告警已关闭</string>
-    <string name="tool_full_audit">一键全面体检</string>
-    <string name="tool_full_audit_sub">安全基线 9 项 + 锁机/管理员风险汇总</string>
     <string name="tool_network">网络安全检测</string>
     <string name="tool_network_sub">DNS 劫持对比 · hosts 篡改 · 连接审计</string>
-    <string name="tool_cleaner">应用缓存清理</string>
-    <string name="tool_cleaner_sub">root 统计排行并一键清理</string>
-    <string name="lock_decoy_sw">应用锁假崩溃诱骗模式</string>
     <string name="lock_too_many_attempts">尝试次数过多,请等待 %1$d 秒后再试</string>
     <string name="lock_alarm_triggered">检测到暴力破解尝试,已鸣响警报!</string>
-    <string name="deep_scan_btn">深度查杀(内存 · 全盘 · 分区)</string>
     <string name="deep_scan_title">深度查杀</string>
     <string name="deep_btn_start">开始深度查杀</string>
     <string name="deep_done_fmt">深度查杀完成:发现 %1$d 项</string>
     <string name="deep_note">三阶段:进程内存 → 全设备目录 → 底层分区。Root 模式下效果完整,耗时较长。</string>
     <string name="vc_title">病毒查杀中心</string>
-    <string name="vc_open_btn">病毒查杀中心</string>
     <string name="vc_recent">综合深扫(最近 7 天安装)</string>
     <string name="vc_embedded">嵌入式载荷检测(全部应用)</string>
     <string name="vc_diff">差异快速扫描(仅变更应用)</string>
@@ -228,21 +172,8 @@
     <string name="integrity_multisigner">⚠ 检测到多个签名者,应用完整性存疑,请从官方渠道重新安装</string>
 
     <!-- 分节标题(流体设计:小号大写/加宽字距的分节标签) -->
-    <string name="sd_section_prefs">安全设置</string>
-    <string name="sd_section_audit">权限审计</string>
-    <string name="sd_section_tools">工具</string>
-    <string name="sd_score_placeholder" translatable="false">100</string>
 
     <!-- 三大板块及其二级分段 -->
-    <string name="tab_status">首页</string>
-    <string name="tab_detect">检测</string>
-    <string name="tab_protect">防护</string>
-    <string name="seg_virus">病毒扫描</string>
-    <string name="seg_trojan">木马查杀</string>
-    <string name="seg_applock">应用锁</string>
-    <string name="seg_audit">权限审计</string>
-    <string name="seg_tools">工具箱</string>
-    <string name="sd_section_guard">防护开关</string>
     <string name="keypad_0" translatable="false">0</string>
     <string name="keypad_1" translatable="false">1</string>
     <string name="keypad_2" translatable="false">2</string>
@@ -254,61 +185,10 @@
     <string name="keypad_8" translatable="false">8</string>
     <string name="keypad_9" translatable="false">9</string>
     <!-- ===== 新界面文案(v1.8.0,结构取自上传稿) ===== -->
-    <string name="dashboard_greeting_fmt" translatable="false">%1$s · %2$s</string>
-    <string name="dashboard_hero_title">设备安全</string>
-    <string name="dashboard_hero_meta_never">尚未扫描,建议立即体检</string>
-    <string name="dashboard_hero_meta_fmt">上次扫描 · %1$s</string>
-    <string name="dashboard_cta_scan">立即扫描</string>
-    <string name="dashboard_stat_lib">病毒库</string>
-    <string name="dashboard_stat_lib_ok">已更新</string>
-    <string name="dashboard_stat_lib_missing">待更新</string>
-    <string name="dashboard_stat_scanned">已扫描</string>
-    <string name="dashboard_stat_protected">防护中</string>
-    <string name="dashboard_stat_count_fmt" translatable="false">%1$d 项</string>
-    <string name="section_features">常用功能</string>
-    <string name="section_recent">最近活动</string>
-    <string name="feature_scan">病毒扫描</string>
-    <string name="feature_scan_sub">全盘检测恶意软件</string>
-    <string name="feature_trojan">木马查杀</string>
-    <string name="feature_trojan_sub">多引擎深度检测</string>
-    <string name="feature_network">网络检测</string>
-    <string name="feature_network_sub">查看网络连接</string>
-    <string name="feature_applock">应用锁</string>
-    <string name="feature_applock_sub">保护敏感应用</string>
-    <string name="activity_scan_done">病毒扫描完成</string>
-    <string name="activity_scan_never">尚未扫描 · 建议立即体检</string>
-    <string name="activity_scan_clean">未发现威胁</string>
-    <string name="activity_scan_bad_fmt">发现 %1$d 个威胁</string>
-    <string name="activity_clean_done">垃圾清理完成</string>
-    <string name="activity_clean_sub">清理缓存与临时文件</string>
-    <string name="activity_risk_perm">发现风险权限</string>
-    <string name="activity_risk_fmt">%1$d 个应用</string>
-    <string name="activity_risk_none">未发现风险权限</string>
-    <string name="scan_results_head">扫描结果</string>
-    <string name="scan_empty">暂无扫描结果</string>
-    <string name="trojan_results_head">木马检测结果</string>
-    <string name="trojan_empty">暂无木马检测结果</string>
-    <string name="lock_pin_row_title">PIN 码</string>
-    <string name="lock_decoy_sub">进入应用时伪装崩溃</string>
-    <string name="lock_set_pin_sub">保护被锁应用</string>
-    <string name="lock_accessibility_sub">用于应用锁的自动解锁</string>
-    <string name="sw_realtime_sub">实时监控文件与进程</string>
-    <string name="sw_daily_scan_sub">每天自动扫描一次</string>
-    <string name="sw_sim_guard_sub">监控 SIM 卡变更</string>
-    <string name="sw_auto_disinfect_sub">自动禁用恶意模块与 su 脚本</string>
-    <string name="sw_auto_uninstall_sub">自动卸载恶意应用(root)</string>
-    <string name="root_mode_switch">Root 模式</string>
     <string name="settings_update">检查更新</string>
-    <string name="settings_about">关于 SecureDroid</string>
-    <string name="audit_empty">未发现存在风险权限的应用</string>
-    <string name="avatar_letter" translatable="false">A</string>
 
     <!-- ===== 上传稿功能补齐(全部接上,对应 deepseek_html_20261003_008012.html) ===== -->
     <!-- 防护开关 · 开机自启防护 -->
-    <string name="sw_boot">开机自启防护</string>
-    <string name="sw_boot_sub">开机时自动启动核心组件</string>
-    <string name="boot_on">开机自启防护已开启</string>
-    <string name="boot_off">开机自启防护已关闭</string>
 
     <!-- 工具 · 隐私检测 / 漏洞扫描 -->
     <string name="tool_privacy">隐私检测</string>
@@ -368,8 +248,6 @@
     <string name="threat_medium">中</string>
     <string name="threat_high">高</string>
     <string name="threat_critical">极高</string>
-    <string name="dashboard_time_today">今天 %1$s</string>
-    <string name="dashboard_time_yesterday">昨天 %1$s</string>
 
     <!-- ===== 原生工具页玻璃拟态界面(v1.9.6) ===== -->
     <string name="nav_back">返回</string>

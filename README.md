@@ -19,7 +19,7 @@
 | 恶意模块防护 | 针对 KernelSU / APatch / SukiSU-Ultra / Magisk:扫描模块启动脚本与 su 开机脚本,加权评分判定恶意行为,支持一键禁用模块、删除恶意 su 脚本 |
 | Root 即时检测 / 自动杀毒 | Root 模式下:Root 守护循环(开机即扫 + 每 5 分钟巡检)即时检测恶意模块与 su 脚本;命中高危 / 严重项自动禁用模块、删除恶意脚本;应用安装即检,恶意应用经 root 自动卸载;全部处置写入审计表(auto_actions)并发通知 |
 | 防锁机软件 | 检测第三方设备管理员 + lockNow / resetPassword / wipeData 组合行为;Root 模式下守护循环即时检测,判定锁机木马即自动执行 dpm remove-active-admin 解除管理员并卸载;普通模式提供一键解除处置按钮 |
-| 安全工具箱(精简版) | 只保留需 root 或需主动触发的高价值工具:一键全面体检 / 系统安全基线 9 项 / DNS 劫持检测(DoH 对比) / hosts 篡改检测 / 网络连接审计(UID 归属) / 应用缓存清理(root);另有 SIM 卡变更防盗告警 / 每日定时自动查杀 / 快捷设置磁贴 / 桌面小部件 / 应用锁防暴力破解 / 应用锁假崩溃诱骗 |
+| 安全工具箱(精简版) | 只保留需 root 或需主动触发的高价值工具:网络审计 / 隐私检测 / 漏洞扫描(系统安全基线 9 项 / DNS 劫持检测 / hosts 篡改检测);另有 SIM 卡变更防盗告警 / 每日定时自动查杀 / 快捷设置磁贴 / 桌面小部件 / 应用锁防暴力破解 / 应用锁假崩溃诱骗 |
 | 深度查杀(内存·全盘·分区) | 三阶段极致扫描:①运行内存进程检测(双视角枚举抓 Rootkit 隐匿进程、已删除可执行文件驻留、临时目录可执行、伪装系统进程、rwxp 匿名内存注入、挖矿级 CPU 双采样);②全设备目录查杀(tmp 载荷 + find 全盘可执行脚本/dex/jar + 脚本评分 + 系统分区全局可写 + root 残留 + ClamAV 字节特征经 base64 通道读取);③底层分区查杀(/dev/block/by-name 枚举 + dd 原始分区特征扫描 + boot 镜像 magisk/tmp 引用痕迹);守护循环自动清除临时目录载荷 |
 | 病毒查杀中心(20 项专项) | 签名库状态统计 / 最近安装应用综合深扫(7 天) / APK 证书与签名完整性 / 嵌入式 APK 与隐藏 DEX 检测(PK 头与 dex magic 计数) / assets 原生库异常 / 旧 targetSdk 风险 / 危险权限组合(安装+短信) / 综合威胁评分引擎(权限+行为+元数据三路合成) / 信任列表白名单(全链路过滤) / 隔离区(移动+销毁) / APK 哈希缓存加速 / 差异快速扫描(仅变更应用) / 进程基线学习与新增进程检测(守护循环联动) / 特征库在线更新(URL+SHA-256 校验) / 特征库热重载 / 威胁情报报告导出 / 查杀统计仪表 / 恶意应用强停清数据处置 / 卸载残留目录检查 |
 | 最高权限防护 | 统一提权层:主动探测 su 授权(ROOT)/ 本地 shell 分级,能力矩阵可视化(12 项能力),灾害级命令安全策略强制拦截,批量命令合并为单次 su 会话,最近 500 条提权命令审计落盘 |
@@ -43,6 +43,8 @@
 - **误报修复(v1.7.3)**:行为规则此前用纯 `contains` 匹配 DEX 字符串碎片,且凑够模式数量就升级为感染 —— 实测一加官方"备份与恢复"被判 10 条(含 CRITICAL 短信扣费/提权/反向 Shell)、Dute 等 4 个正常应用各 7-10 条、本应用扫描自己时 14 条规则全中。现三处修复:①匹配改为**词边界**(新增 `scan/TokenMatch.kt`,`exec` 不再命中 `execute`/`execSQL`);②新增**强特征门槛**(`BehaviorRules.Rule.strong`,纯 API 组合必须叠加真实恶意落点才算);③**分级下调**(11 条规则降为 LOW 提示),且 `Report.isInfected` 只认 MEDIUM 及以上;同时排除扫描自己、收紧锁机判定(必须命中 `resetPassword`)、删除演示特征库里的通用 dex 头魔数、给判定缓存加语义版本号(`DexVerdictCache` VERSION=2,否则老设备沿用旧误报)。真实语料误报 0 条 MEDIUM+,合成恶意样本仍全部命中。新增 `FalsePositiveTest` 10 项(共 132 项 JVM 测试)。
 - **UI 与 WebView 性能优化(v1.9.12)**:`AppLockStore.prefs()` 改为双检锁单例(修复无障碍服务逐事件重复 KeyStore 派生的最大热路径);`getDashboard` 改 Room 聚合查询(不再整表拉 2000 行);木马查杀进度 300ms 节流;WebUI 刷新统一收敛(启动双加载 + 多监听重复触发消除);应用锁列表一次读锁集合 + 纯数据排序;四个结果列表 DocumentFragment 批量插入;应用图标 IntersectionObserver 懒加载 + 128px WEBP;`checkUpdate` 签名库加载移后台;转后台自动暂停光晕等装饰动画;新增 `WebUiGuardTest` 4 项 + `PerfGuardTest` 4 项 + `DatabaseAndManagersTest` 2 项(共 142 项 JVM 测试)。
 - **WebUI 交互升级(v1.9.13)**:病毒扫描 / 木马查杀支持**取消**(新增 `AndroidBridge.cancelScan()`,复用 `ScanControl`,取消后摘要标注"仅含已扫描部分");病毒扫描结果**按威胁折叠**(默认只渲染感染项,干净应用收进展开器,不再一次铺几百行);防护开关**整行可点**(开关本体 46×28px 达不到触摸目标);分段按钮 42px→48px(项目硬规则);进度百分比 + `role="progressbar"` + `aria-live` 读屏支持;修复既有环境依赖断言(`privilegeLayerDegradesSafelyWithoutRoot` 改为断言无 ROOT 不变量)。新增守卫测试 5 项(共 147 项 JVM 测试)。
+- **WebUI 体验升级(v1.9.14)**:首页主状态卡**威胁感知三态**(安全=绿 / 有风险权限或病毒库待更新=琥珀 / 有威胁=红,此前恒显"设备安全");统计条三格**可点直达**(病毒库→木马查杀、已扫描→病毒查杀中心、防护中→防护开关);应用锁列表**搜索过滤**(数百行按名称/包名即时过滤,跨刷新保持);**下拉刷新**(SwipeRefreshLayout + `__sdReady`);空态**图标化**(盾形勾图标 + 语境色调)。守卫测试 +4(共 151 项 JVM 测试)。
+- **全界面 HTML 化(v1.9.15)**:消除全部安卓原生界面 —— 深度查杀 / 病毒中心 / 网络审计 / 隐私检测 / 漏洞扫描 5 个原生 Activity 改为 **HTML 子页面**(单 WebView 内 `subStack` 路由);新增 `ToolsHandler` 桥接层(约 700 行)承载全部深层工具逻辑;**所有对话框改为 HTML 模态框**(关于/更新/PIN/信任列表/黑名单/证书标记/修复确认/策略选择),Toast 改为 HTML toast 条;`LockActivity` 改为 WebView + `lock.html`,保留 FLAG_SECURE / 防暴力破解 / 假崩溃诱骗;删除全部原生工具 Activity、Adapter、玻璃背景自定义 View 与 6 个原生布局。守卫测试同步指向新桥接层(共 154 项 JVM 测试)。
 
 ## 技术栈
 
@@ -98,7 +100,7 @@
 
 ### 测试与验证
 
-    ./gradlew testDebugUnitTest     # 147 项 JVM 单元测试(含 Robolectric 冒烟)
+    ./gradlew testDebugUnitTest     # 154 项 JVM 单元测试(含 Robolectric 冒烟)
     ./gradlew assembleRelease       # R8 混淆 + 签名发布包
 
 ### 运行时冒烟测试(Robolectric)

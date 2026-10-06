@@ -316,6 +316,252 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 .dialog-actions .btn{height:48px;flex:1;justify-content:center}
 
 /* ============================================================
+   子页面(深层工具全HTML化)
+   ============================================================ */
+.subpage{
+  position:fixed;inset:0;z-index:50;
+  background:linear-gradient(180deg,var(--c-bg-top) 0%,var(--c-bg-bottom) 100%);
+  overflow-y:auto;overflow-x:hidden;
+  transform:translateX(100%);
+  transition:transform .32s cubic-bezier(.2,.8,.3,1);
+  pointer-events:none;
+  padding-bottom:80px;
+}
+.subpage.is-open{transform:translateX(0);pointer-events:auto}
+.subpage-body{display:none}
+.subpage-body.is-active{display:block;animation:subpageIn .35s cubic-bezier(.2,.8,.3,1) both}
+@keyframes subpageIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+
+.subpage-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px 10px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px));
+  position:sticky;top:0;z-index:2;
+  background:linear-gradient(180deg,var(--c-bg-top) 70%,transparent);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.subpage-back{
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;
+  color:var(--c-fg);
+  transition:background .2s;
+  flex:none;
+}
+.subpage-back:active{background:rgba(0,0,0,.06)}
+.subpage-back svg{width:22px;height:22px}
+.subpage-title-wrap{flex:1;min-width:0}
+.subpage-title{
+  margin:0;font-size:20px;font-weight:700;
+  letter-spacing:.01em;line-height:1.3;
+}
+.subpage-subtitle{
+  margin:2px 0 0;font-size:12px;color:var(--c-fg2);
+  letter-spacing:.01em;
+}
+.subpage-content{
+  max-width:400px;margin:0 auto;
+  padding:0 16px;
+}
+
+/* 状态卡 */
+.status-card{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;margin-bottom:14px;
+}
+.status-indicator{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--c-primary);
+  box-shadow:0 0 0 4px rgba(4,189,25,.15);
+  animation:pulse 2s ease-in-out infinite;
+  flex:none;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 4px rgba(4,189,25,.15)}
+  50%{box-shadow:0 0 0 8px rgba(4,189,25,.05)}
+}
+.status-text{
+  flex:1;font-size:14px;font-weight:500;
+  letter-spacing:.01em;
+}
+.progress-ring{
+  width:20px;height:20px;position:relative;flex:none;
+}
+.progress-ring.is-hidden{display:none}
+.progress-spinner{
+  width:100%;height:100%;
+  border:2px solid var(--c-border);
+  border-top-color:var(--c-primary);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 结果列表 */
+.result-list{display:flex;flex-direction:column;gap:10px}
+.result-item{
+  padding:14px 16px;
+  position:relative;
+}
+.result-item .risk-bar{
+  position:absolute;left:0;top:0;bottom:0;
+  width:3px;border-radius:0 var(--r-card) var(--r-card) 0;
+}
+.risk-bar.level-critical,.risk-bar.level-high{background:var(--c-danger)}
+.risk-bar.level-medium{background:var(--c-gold)}
+.risk-bar.level-low{background:var(--c-success)}
+.result-title{
+  font-size:14px;font-weight:600;
+  letter-spacing:.01em;line-height:1.4;
+  margin:0 0 4px;
+}
+.result-title.level-critical,.result-title.level-high{color:var(--c-danger)}
+.result-title.level-medium{color:var(--c-gold)}
+.result-title.level-low{color:var(--c-success)}
+.result-sub{
+  font-size:12px;color:var(--c-fg2);
+  line-height:1.45;margin:0 0 6px;
+  word-break:break-all;
+}
+.result-detail{
+  font-size:12px;color:var(--c-fg3);
+  line-height:1.5;margin:0 0 8px;
+  white-space:pre-wrap;
+}
+.result-suggest{
+  font-size:12px;line-height:1.5;
+  padding:8px 10px;border-radius:10px;
+  background:rgba(161,98,7,.08);
+  color:var(--c-gold);
+  margin:0 0 10px;
+}
+.result-suggest::before{content:'⚠ 建议：';font-weight:600}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap}
+.result-btn{
+  height:34px;padding:0 14px;
+  border-radius:17px;font-size:13px;font-weight:600;
+  background:rgba(4,189,25,.12);color:var(--c-accent);
+  transition:background .2s;
+}
+.result-btn:active{background:rgba(4,189,25,.2)}
+.result-btn.danger{background:rgba(208,59,55,.12);color:var(--c-danger)}
+.result-btn.danger:active{background:rgba(208,59,55,.2)}
+
+/* 深度查杀英雄卡 */
+.deep-hero{
+  display:flex;align-items:center;gap:14px;
+  padding:20px;margin-bottom:14px;
+}
+.deep-icon{
+  width:56px;height:56px;border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,rgba(4,189,25,.16),rgba(49,208,39,.06));
+  color:var(--c-primary);flex:none;
+}
+.deep-icon svg{width:28px;height:28px}
+.deep-info{flex:1;min-width:0}
+.deep-phase{font-size:15px;font-weight:700;letter-spacing:.01em}
+.deep-detail{font-size:12px;color:var(--c-fg2);margin-top:2px}
+.deep-hero .btn{flex:none;height:44px;padding:0 20px;border-radius:22px;font-size:14px}
+
+/* 病毒中心菜单 */
+.vc-menu .card-list{padding:4px 0}
+
+/* ============================================================
+   HTML 模态框(替代原生 AlertDialog)
+   ============================================================ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 16px;
+  background:rgba(0,0,0,.38);
+  -webkit-backdrop-filter:var(--blur-overlay);
+  backdrop-filter:var(--blur-overlay);
+  opacity:0;pointer-events:none;
+  transition:opacity .2s cubic-bezier(.2,.8,.3,1);
+}
+.modal-overlay.is-open{opacity:1;pointer-events:auto}
+.modal-card{
+  width:100%;max-width:340px;
+  padding:22px 20px 18px;
+  background:var(--color-surface-solid);
+  border:1px solid var(--color-border-glass);
+  border-radius:20px;
+  box-shadow:var(--shadow-dialog);
+  transform:translateY(16px) scale(.96);
+  transition:transform .28s cubic-bezier(.2,.8,.3,1);
+}
+.modal-overlay.is-open .modal-card{transform:translateY(0) scale(1)}
+.modal-title{
+  margin:0 0 10px;
+  font-size:17px;font-weight:700;
+  letter-spacing:.01em;
+}
+.modal-body{
+  font-size:14px;line-height:1.55;
+  color:var(--color-text-secondary);
+  max-height:50vh;overflow-y:auto;
+}
+.modal-body input[type="text"],.modal-body input[type="password"]{
+  width:100%;height:42px;
+  padding:0 14px;margin-top:10px;
+  border:1px solid var(--c-border);
+  border-radius:12px;
+  background:var(--color-surface);
+  color:var(--c-fg);
+  font-size:14px;font-family:inherit;
+  outline:none;
+  transition:border-color .2s;
+}
+.modal-body input[type="text"]:focus,.modal-body input[type="password"]:focus{
+  border-color:var(--c-primary);
+}
+.modal-body input + input{margin-top:8px}
+.modal-list{
+  margin:8px -8px 0;
+  max-height:50vh;overflow-y:auto;
+}
+.modal-list-item{
+  width:100%;text-align:left;
+  padding:10px 12px;border-radius:10px;
+  font-size:14px;color:var(--c-fg);
+  transition:background .15s;
+}
+.modal-list-item:active{background:rgba(4,189,25,.08)}
+.modal-actions{
+  display:flex;gap:8px;margin-top:16px;
+  justify-content:flex-end;
+}
+.modal-actions .btn{height:40px;padding:0 18px;border-radius:20px;font-size:14px}
+.modal-actions .btn-ghost{
+  background:transparent;color:var(--c-fg2);
+  box-shadow:inset 0 0 0 1px var(--c-border);
+}
+
+/* ============================================================
+   Toast 提示条(替代原生 Toast)
+   ============================================================ */
+.toast-bar{
+  position:fixed;left:50%;bottom:100px;
+  bottom:calc(100px + env(safe-area-inset-bottom,0px));
+  transform:translate(-50%, 20px);
+  padding:10px 20px;
+  background:rgba(0,0,0,.78);
+  color:#fff;font-size:13px;
+  border-radius:999px;
+  z-index:300;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s, transform .25s cubic-bezier(.2,.8,.3,1);
+  white-space:nowrap;max-width:85vw;
+  overflow:hidden;text-overflow:ellipsis;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.toast-bar.is-show{
+  opacity:1;transform:translate(-50%, 0);
+}
+
+/* ============================================================
    骨架加载态(首屏数据加载前显示 shimmer 扫光)
    用法:给面板加 .is-loading,需占位的文本加 .skeleton-text
    ============================================================ */
@@ -364,6 +610,22 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   letter-spacing:.01em;
   line-height:1.3;
 }
+
+/* 主状态卡威胁感知三态(app.js 按 threats/risky/libOk 切换 data-state) */
+.hero-card[data-state="warn"] .hero-icon-wrap{
+  background:linear-gradient(145deg, rgba(161,98,7,.16), rgba(245,158,11,.06));
+  color:var(--c-gold);
+  box-shadow:inset 0 0 0 1px rgba(161,98,7,.16),
+             0 8px 24px -10px rgba(161,98,7,.4);
+}
+.hero-card[data-state="warn"] .hero-title{color:var(--c-gold)}
+.hero-card[data-state="danger"] .hero-icon-wrap{
+  background:linear-gradient(145deg, rgba(208,59,55,.15), rgba(208,59,55,.05));
+  color:var(--c-danger);
+  box-shadow:inset 0 0 0 1px rgba(208,59,55,.18),
+             0 8px 24px -10px rgba(208,59,55,.45);
+}
+.hero-card[data-state="danger"] .hero-title{color:var(--c-danger)}
 .hero-meta{
   margin:6px 0 0;
   font-size:13px;
@@ -384,7 +646,13 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   display:flex;flex-direction:column;
   align-items:center;gap:3px;
   position:relative;
+  /* 统计格可点直达对应功能页 */
+  min-height:48px;
+  padding:2px 0;
+  border-radius:10px;
+  transition:background .2s;
 }
+button.stat-cell:active{background:rgba(4,189,25,.06)}
 .stat-cell + .stat-cell::before{
   content:"";
   position:absolute;
@@ -639,6 +907,35 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   color:var(--c-fg2);
   line-height:1.5;
 }
+.empty-icon{
+  display:grid;place-items:center;
+  width:44px;height:44px;
+  margin:0 auto 12px;
+  border-radius:50%;
+}
+.empty-icon svg{width:22px;height:22px}
+
+/* 应用锁搜索框 */
+.search-card{
+  display:flex;align-items:center;gap:10px;
+  padding:0 14px;
+  margin-top:16px;
+}
+.search-icon{
+  flex:none;width:18px;height:18px;
+  color:var(--c-fg3);
+}
+.search-input{
+  flex:1;min-width:0;
+  height:48px;
+  border:0;outline:0;
+  background:transparent;
+  font:inherit;font-size:14px;
+  color:var(--c-fg);
+  letter-spacing:.01em;
+}
+.search-input::placeholder{color:var(--c-fg3)}
+.search-input::-webkit-search-cancel-button{-webkit-appearance:none}
 
 /* ============================================================
    防护条目（防护页）
@@ -988,25 +1285,25 @@ button.row:active{background:var(--c-muted)}
           <path d="m9 12 2.2 2.2L15.4 10"/>
         </svg>
       </div>
-      <h2 class="hero-title">设备安全</h2>
+      <h2 class="hero-title" id="heroTitle">设备安全</h2>
       <p class="hero-meta skeleton-text" id="heroMeta">上次扫描 · 今天 09:30</p>
       <button class="btn btn-primary btn-block hero-btn" id="btnHeroScan">立即扫描</button>
     </section>
 
-    <!-- 状态概览条 -->
+    <!-- 状态概览条(可点:病毒库→木马查杀,已扫描→病毒查杀中心,防护中→防护开关) -->
     <div class="card stat-strip">
-      <div class="stat-cell">
+      <button class="stat-cell" data-goto="security" data-seg="trojan" aria-label="查看病毒库状态">
         <span class="stat-value skeleton-text" id="statLib">已更新</span>
         <span class="stat-label">病毒库</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-value skeleton-text" id="statScanned">1,234</span>
+      </button>
+      <button class="stat-cell" id="statScanned" aria-label="打开病毒查杀中心">
+        <span class="stat-value skeleton-text" id="statScannedValue">1,234</span>
         <span class="stat-label">已扫描</span>
-      </div>
-      <div class="stat-cell">
+      </button>
+      <button class="stat-cell" data-goto="ext" aria-label="管理防护开关">
         <span class="stat-value skeleton-text" id="statProtected">3 项</span>
         <span class="stat-label">防护中</span>
-      </div>
+      </button>
     </div>
 
     <!-- 常用功能 -->
@@ -1309,6 +1606,15 @@ button.row:active{background:var(--c-muted)}
 
       </div>
 
+      <div class="card search-card is-hidden" id="lockSearchCard">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/>
+        </svg>
+        <input class="search-input" id="lockSearch" type="search"
+               placeholder="搜索应用名称或包名" autocomplete="off">
+      </div>
+
       <div class="card card-list result-card" id="lockAppsCard">
         <div class="empty-hint" id="lockAppsEmpty">加载应用列表…</div>
       </div>
@@ -1439,7 +1745,156 @@ button.row:active{background:var(--c-muted)}
     </div>
   </main>
 
+  <!-- ============================================================
+       子页面容器(深层工具全HTML化)
+       ============================================================ -->
+  <main class="subpage" id="subpage">
+    <!-- 网络审计 -->
+    <section class="subpage-body" data-subpage="netaudit">
+      <header class="subpage-header">
+        <button class="subpage-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
+        <div class="subpage-title-wrap">
+          <h1 class="subpage-title">网络审计</h1>
+          <p class="subpage-subtitle">DNS 劫持检测 · hosts 篡改 · 连接审计</p>
+        </div>
+      </header>
+      <div class="subpage-content">
+        <div class="card status-card">
+          <div class="status-indicator"></div>
+          <span class="status-text skeleton-text" id="netStatus">加载中…</span>
+          <div class="progress-ring"><div class="progress-spinner"></div></div>
+        </div>
+        <div class="result-list" id="netList"></div>
+      </div>
+    </section>
+
+    <!-- 隐私检测 -->
+    <section class="subpage-body" data-subpage="privacy">
+      <header class="subpage-header">
+        <button class="subpage-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
+        <div class="subpage-title-wrap">
+          <h1 class="subpage-title">隐私检测</h1>
+          <p class="subpage-subtitle">扫描应用敏感权限使用</p>
+        </div>
+      </header>
+      <div class="subpage-content">
+        <div class="card status-card">
+          <div class="status-indicator"></div>
+          <span class="status-text skeleton-text" id="privStatus">加载中…</span>
+          <div class="progress-ring"><div class="progress-spinner"></div></div>
+        </div>
+        <div class="result-list" id="privList"></div>
+      </div>
+    </section>
+
+    <!-- 漏洞扫描 -->
+    <section class="subpage-body" data-subpage="vuln">
+      <header class="subpage-header">
+        <button class="subpage-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
+        <div class="subpage-title-wrap">
+          <h1 class="subpage-title">漏洞扫描</h1>
+          <p class="subpage-subtitle">系统基线 · 组件暴露面</p>
+        </div>
+      </header>
+      <div class="subpage-content">
+        <div class="card status-card">
+          <div class="status-indicator"></div>
+          <span class="status-text skeleton-text" id="vulnStatus">加载中…</span>
+          <div class="progress-ring"><div class="progress-spinner"></div></div>
+        </div>
+        <div class="result-list" id="vulnList"></div>
+      </div>
+    </section>
+
+    <!-- 深度查杀 -->
+    <section class="subpage-body" data-subpage="deepscan">
+      <header class="subpage-header">
+        <button class="subpage-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
+        <div class="subpage-title-wrap">
+          <h1 class="subpage-title">深度查杀</h1>
+          <p class="subpage-subtitle">进程 · 全文件 · 底层分区</p>
+        </div>
+      </header>
+      <div class="subpage-content">
+        <div class="card deep-hero">
+          <div class="deep-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 4 5v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V5z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="deep-info">
+            <div class="deep-phase" id="deepPhase">点击开始极致扫描</div>
+            <div class="deep-detail">内存进程 + 全设备目录 + 底层分区</div>
+          </div>
+          <button class="btn btn-primary" id="btnDeepStart">开始</button>
+        </div>
+        <div class="result-list" id="deepList"></div>
+      </div>
+    </section>
+
+    <!-- 病毒中心 -->
+    <section class="subpage-body" data-subpage="viruscenter">
+      <header class="subpage-header">
+        <button class="subpage-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
+        <div class="subpage-title-wrap">
+          <h1 class="subpage-title">病毒风险中心</h1>
+          <p class="subpage-subtitle">30+ 高级分析工具</p>
+        </div>
+      </header>
+      <div class="subpage-content">
+        <!-- 菜单态 -->
+        <div class="vc-menu" id="vcMenu">
+          <div class="card-list card" id="vcMenuList"></div>
+        </div>
+        <!-- 运行态 -->
+        <div class="vc-run is-hidden" id="vcRun">
+          <div class="card status-card">
+            <div class="status-indicator"></div>
+            <span class="status-text" id="vcPhase">准备运行…</span>
+            <div class="progress-ring"><div class="progress-spinner"></div></div>
+          </div>
+          <button class="btn btn-ghost btn-block" id="vcCancel">取消</button>
+          <div class="result-list" id="vcResultList"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
 </div>
+
+<!-- ============================================================
+     HTML 模态框(替代原生 AlertDialog)
+     ============================================================ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <h3 class="modal-title" id="modalTitle"></h3>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Toast 提示条(替代原生 Toast)
+     ============================================================ -->
+<div class="toast-bar" id="toastBar"></div>
 
 <!-- ==========================================================
      底部悬浮胶囊导航

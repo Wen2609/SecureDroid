@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SecureDroid · 解锁</title>
+<style>
+:root{
+  --color-primary:#04BD19;
+  --color-accent:#15803D;
+  --color-bg-top:#F3F8EE;
+  --color-bg-bottom:#EFF0F0;
+  --color-surface:rgba(255,255,255,.62);
+  --color-border:rgba(255,255,255,.72);
+  --color-text:#1A1A1A;
+  --color-text-secondary:#6B6B6B;
+  --color-danger:#D03B37;
+  --glass-blur:blur(22px) saturate(180%);
+  --r-card:24px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --color-primary:#31D027;
+    --color-accent:#4ADE80;
+    --color-bg-top:#101711;
+    --color-bg-bottom:#0B0E0C;
+    --color-surface:rgba(23,27,24,.62);
+    --color-border:rgba(255,255,255,.07);
+    --color-text:#EDF2EC;
+    --color-text-secondary:#A9B3A7;
+    --color-danger:#FF6B6B;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  height:100vh;
+  display:grid;place-items:center;
+  font-size:14px;
+  color:var(--color-text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",
+              "Hiragino Sans GB","HarmonyOS Sans SC","MiSans","OPPO Sans",
+              "Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  background:linear-gradient(180deg,var(--color-bg-top) 0%,var(--color-bg-bottom) 100%);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;
+  overflow:hidden;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.aurora{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(64px);will-change:transform}
+.b1{width:300px;height:300px;top:-90px;left:-80px;background:#B7EFA9;opacity:.55;animation:drift1 26s ease-in-out infinite}
+.b2{width:250px;height:250px;top:100px;right:-100px;background:#B6E5FF;opacity:.48;animation:drift2 30s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(46px,34px) scale(1.16)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1.1)}50%{transform:translate(-50px,40px) scale(.9)}}
+
+.lock-card{
+  position:relative;z-index:1;
+  width:320px;
+  padding:36px 28px 28px;
+  text-align:center;
+  background:var(--color-surface);
+  border:1px solid var(--color-border);
+  border-radius:var(--r-card);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:0 8px 32px rgba(31,60,35,.12), inset 0 1px 0 rgba(255,255,255,.6);
+}
+.lock-icon{
+  width:72px;height:72px;
+  margin:0 auto 18px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,rgba(4,189,25,.16),rgba(49,208,39,.06));
+  color:var(--color-primary);
+}
+.lock-icon svg{width:36px;height:36px}
+.lock-title{
+  margin:0 0 4px;
+  font-size:20px;font-weight:700;
+  letter-spacing:.01em;
+}
+.lock-sub{
+  margin:0 0 24px;
+  font-size:13px;color:var(--color-text-secondary);
+}
+
+/* PIN 圆点 */
+.pin-dots{
+  display:flex;justify-content:center;gap:16px;
+  margin-bottom:28px;
+}
+.pin-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--color-text-secondary);
+  transition:all .2s;
+}
+.pin-dot.is-filled{
+  background:var(--color-primary);
+  border-color:var(--color-primary);
+  box-shadow:0 0 0 3px rgba(4,189,25,.15);
+}
+.pin-dot.is-error{
+  background:var(--color-danger);
+  border-color:var(--color-danger);
+  animation:shake .4s;
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+
+/* 数字键盘 */
+.numpad{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:12px;
+}
+.num-btn{
+  height:56px;
+  border-radius:28px;
+  font-size:22px;font-weight:600;
+  background:rgba(255,255,255,.5);
+  color:var(--color-text);
+  border:1px solid rgba(255,255,255,.6);
+  transition:all .15s;
+  font-family:inherit;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.num-btn:active{
+  transform:scale(.94);
+  background:rgba(4,189,25,.15);
+}
+.num-btn.del{
+  font-size:14px;
+  color:var(--color-text-secondary);
+}
+@media (prefers-color-scheme: dark){
+  .num-btn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
+  .num-btn:active{background:rgba(49,208,39,.15)}
+}
+
+.lock-msg{
+  min-height:18px;
+  margin:0 0 16px;
+  font-size:12px;
+  color:var(--color-danger);
+}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+
+<div class="lock-card">
+  <div class="lock-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/>
+      <path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>
+    </svg>
+  </div>
+  <h1 class="lock-title">应用已锁定</h1>
+  <p class="lock-sub">请输入 PIN 码解锁</p>
+  <p class="lock-msg" id="lockMsg"></p>
+  <div class="pin-dots" id="pinDots">
+    <span class="pin-dot"></span>
+    <span class="pin-dot"></span>
+    <span class="pin-dot"></span>
+    <span class="pin-dot"></span>
+  </div>
+  <div class="numpad">
+    <button class="num-btn" data-num="1">1</button>
+    <button class="num-btn" data-num="2">2</button>
+    <button class="num-btn" data-num="3">3</button>
+    <button class="num-btn" data-num="4">4</button>
+    <button class="num-btn" data-num="5">5</button>
+    <button class="num-btn" data-num="6">6</button>
+    <button class="num-btn" data-num="7">7</button>
+    <button class="num-btn" data-num="8">8</button>
+    <button class="num-btn" data-num="9">9</button>
+    <button class="num-btn del" id="btnDel">删除</button>
+    <button class="num-btn" data-num="0">0</button>
+    <button class="num-btn del" id="btnCancel" style="visibility:hidden">取消</button>
+  </div>
+</div>
+
+<script src="lock.js"></script>
+</body>
+</html>

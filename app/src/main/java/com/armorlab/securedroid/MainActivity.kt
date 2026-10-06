@@ -79,6 +79,20 @@ class MainActivity : AppCompatActivity() {
             displayZoomControls = false
         }
         web.addJavascriptInterface(bridge, "AndroidBridge")
+        // 下拉刷新:重新拉取当前面板数据;转圈固定时长后收起
+        // (数据加载走同步桥调用,时长足够覆盖,无需等待回调)
+        binding.swipeRefresh.setColorSchemeColors(
+            ContextCompat.getColor(this, R.color.c_primary)
+        )
+        binding.swipeRefresh.setOnRefreshListener {
+            try {
+                binding.webView.evaluateJavascript("window.__sdReady && window.__sdReady();", null)
+            } catch (_: Exception) {
+            }
+            binding.swipeRefresh.postDelayed(
+                { binding.swipeRefresh.isRefreshing = false }, 650L
+            )
+        }
         // UI 滚动交给页面自绘,隐藏系统滚动条与边缘光晕,避免与毛玻璃风格冲突
         web.isVerticalScrollBarEnabled = false
         web.isHorizontalScrollBarEnabled = false
@@ -133,32 +147,27 @@ class MainActivity : AppCompatActivity() {
         }
         web.loadUrl("file:///android_asset/ui/index.html")
 
-        // 返回键:非首页板块先回首页;首页时双击退出(2 秒内再按一次才退出),符合安卓基础体验
+        // 返回键:子页面先返回上一级;非首页板块先回首页;首页时双击退出
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 try {
                     binding.webView.evaluateJavascript(
-                        "(function(){var p=document.querySelector('.panel.is-active');" +
-                            "return p?p.dataset.panel:'home';})()",
+                        "(function(){return window.__sdBack && window.__sdBack();})()",
                         object : ValueCallback<String> {
                             override fun onReceiveValue(value: String?) {
-                                val panel = value?.trim()?.trim('"') ?: "home"
-                                if (panel != "home") {
-                                    binding.webView.evaluateJavascript(
-                                        "window.__sdGoto && window.__sdGoto('home', null);", null
-                                    )
+                                val handled = value?.trim()?.trim('"') == "true"
+                                if (handled) return
+                                // JS 返回 false 或未定义:走首页双击退出逻辑
+                                val now = System.currentTimeMillis()
+                                if (now - backPressedAt < 2000L) {
+                                    finish()
                                 } else {
-                                    val now = System.currentTimeMillis()
-                                    if (now - backPressedAt < 2000L) {
-                                        finish()
-                                    } else {
-                                        backPressedAt = now
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            R.string.press_again_to_exit,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                                    backPressedAt = now
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        R.string.press_again_to_exit,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -200,19 +209,6 @@ class MainActivity : AppCompatActivity() {
         } catch (_: Exception) {
         }
         super.onDestroy()
-    }
-
-    /** 供旧入口(宫格 / 小部件)兼容调用:直达 HTML 面板与二级分段 */
-    fun navigateTo(panel: String, segment: String? = null) {
-        val js = if (segment != null) {
-            "window.__sdGoto && window.__sdGoto('$panel','$segment');"
-        } else {
-            "window.__sdGoto && window.__sdGoto('$panel', null);"
-        }
-        try {
-            binding.webView.evaluateJavascript(js, null)
-        } catch (_: Exception) {
-        }
     }
 
     /**

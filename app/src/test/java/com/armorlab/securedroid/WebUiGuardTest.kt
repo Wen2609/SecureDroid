@@ -1,6 +1,7 @@
 package com.armorlab.securedroid
 
 import java.io.File
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -54,6 +55,118 @@ class WebUiGuardTest {
                 count + " 处(至少 4 处)",
             count >= 4
         )
+        assertTrue(
+            "动态空态必须用 emptyHint(图标 + 文案),不得回退纯文本",
+            Regex("emptyHint\\(").findAll(js).count() >= 4
+        )
+    }
+
+    @Test
+    fun heroCardMustBeThreatAware() {
+        val js = asset("ui/app.js")
+        assertTrue(
+            "首页主状态卡必须按 threats/risky/libOk 切换 data-state(安全/注意/危险三态)",
+            js.contains("heroCard.dataset.state") && js.contains("heroTitle")
+        )
+        val html = asset("ui/index.html")
+        assertTrue(
+            "index.html 必须提供 data-state=warn/danger 的三态样式",
+            html.contains("[data-state=\"warn\"]") && html.contains("[data-state=\"danger\"]")
+        )
+    }
+
+    @Test
+    fun lockListMustBeSearchable() {
+        val js = asset("ui/app.js")
+        assertTrue(
+            "应用锁列表(可达数百行)必须提供搜索过滤:输入过滤缓存数据,不重新拉桥",
+            js.contains("lockQuery") && js.contains("renderLockRows")
+        )
+        val html = asset("ui/index.html")
+        assertTrue(
+            "index.html 必须提供应用锁搜索输入框 lockSearch",
+            html.contains("id=\"lockSearch\"")
+        )
+    }
+
+    @Test
+    fun statCellsMustBeActionable() {
+        val html = asset("ui/index.html")
+        assertTrue(
+            "统计条三格必须可点直达:病毒库/防护中走 data-goto,已扫描走 statScanned 桥调用",
+            html.contains("class=\"stat-cell\" data-goto=") && html.contains("id=\"statScanned\"")
+        )
+        val js = asset("ui/app.js")
+        assertTrue(
+            "「已扫描」统计格必须绑定打开病毒查杀中心",
+            js.contains("bind('statScanned'")
+        )
+    }
+
+    @Test
+    fun pullRefreshMustBeWired() {
+        val module = moduleDir()
+        val layout = File(module, "src/main/res/layout/activity_main.xml")
+        assertTrue("缺少 activity_main.xml", layout.isFile)
+        assertTrue(
+            "主布局必须用 SwipeRefreshLayout 包裹 WebView 支持下拉刷新",
+            layout.readText().contains("SwipeRefreshLayout")
+        )
+        val activity = File(module, "src/main/java/com/armorlab/securedroid/MainActivity.kt")
+        assertTrue("缺少 MainActivity.kt", activity.isFile)
+        assertTrue(
+            "MainActivity 必须接 setOnRefreshListener 触发 __sdReady",
+            activity.readText().contains("setOnRefreshListener")
+        )
+    }
+
+    @Test
+    fun bridgeMustBeSinglePostRouter() {
+        val module = moduleDir()
+        val bridge = File(module, "src/main/java/com/armorlab/securedroid/web/NativeBridge.kt")
+        assertTrue("缺少 NativeBridge.kt", bridge.isFile)
+        val text = bridge.readText()
+        val ifaceCount = Regex("@JavascriptInterface").findAll(text).count()
+        assertEquals(
+            "桥入口必须收敛为唯一 post(action, payload),不得再逐方法加 @JavascriptInterface",
+            1, ifaceCount
+        )
+        assertTrue("入口必须委托 BridgeRouter", text.contains("BridgeRouter"))
+        val router = File(module, "src/main/java/com/armorlab/securedroid/web/BridgeRouter.kt")
+        assertTrue("缺少 BridgeRouter.kt", router.isFile)
+        assertTrue(
+            "路由必须带统一应答信封(sendReply ok/error)",
+            router.readText().contains("sendReply")
+        )
+    }
+
+    @Test
+    fun jsDataMustFlowThroughApiChannel() {
+        val js = asset("ui/app.js")
+        assertTrue(
+            "JS 必须经 __sdChannel 信封接收消息(reply + event)",
+            js.contains("__sdChannel")
+        )
+        assertTrue(
+            "JS 数据读取必须走 api.request(异步应答),不得再同步调用 bridge.getXxx 冻结 JS 线程",
+            !Regex("bridge\\.get[A-Z]").containsMatchIn(js)
+        )
+        assertTrue(
+            "扫描启动必须走 api.send(action),不得直接 bridge.startXxx",
+            !Regex("bridge\\.start[A-Z]").containsMatchIn(js)
+        )
+    }
+
+    @Test
+    fun scanStateMustBeReplayedToNewPage() {
+        val js = asset("ui/app.js")
+        assertTrue(
+            "页面就绪必须请求 getScanState 重放进行中的扫描(旋转/重建不丢进度)",
+            js.contains("getScanState") && js.contains("applyScanState")
+        )
+        val module = moduleDir()
+        val sessions = File(module, "src/main/java/com/armorlab/securedroid/web/ScanSessions.kt")
+        assertTrue("缺少 ScanSessions.kt(进程级会话注册表)", sessions.isFile)
     }
 
     @Test

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 方标签:6dp 圆角 + 中性底,语义由文字与颜色共同表达(不靠颜色单独表意) -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <corners android:radius="@dimen/sd_radius_chip" />
-    <solid android:color="@color/c_muted" />
-</shape>

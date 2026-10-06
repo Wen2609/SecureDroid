@@ -32,7 +32,7 @@ class ScanHistoryTest {
     fun scanHistoryWritersPersistRealValues() {
         for (rel in listOf(
             "com/armorlab/securedroid/feature/DailyScanRunner.kt",
-            "com/armorlab/securedroid/web/NativeBridge.kt"
+            "com/armorlab/securedroid/web/handlers/ScanHandler.kt"
         )) {
             val text = src(rel)
             assertTrue("$rel 未写入真实指纹", text.contains("sha256 = r.sha256"))
@@ -56,7 +56,7 @@ class ScanHistoryTest {
     fun packageNamesInFixCommandsAreQuoted() {
         for (rel in listOf(
             "com/armorlab/securedroid/vscan/ParallelScanner.kt",
-            "com/armorlab/securedroid/ui/VirusCenterActivity.kt"
+            "com/armorlab/securedroid/web/handlers/ToolsHandler.kt"
         )) {
             val raw = src(rel)
             assertFalse(

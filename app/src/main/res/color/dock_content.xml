@@ -1,4 +1,0 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/c_accent" android:state_selected="true" />
-    <item android:color="@color/c_muted_foreground" />
-</selector>

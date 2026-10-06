@@ -141,13 +141,6 @@ object PrivilegeManager {
         return level
     }
 
-    /** 缓存过期时自动刷新(静默,不触发新授权框:su 已授权会立即返回) */
-    fun ensureFresh(context: Context): PrivLevel {
-        val ts = prefs(context).getLong(KEY_TS, 0L)
-        if (ts > 0 && System.currentTimeMillis() - ts < TTL_MS) return level(context)
-        return probe(context)
-    }
-
     fun invalidate(context: Context) {
         prefs(context).edit().remove(KEY_TS).apply()
     }
@@ -172,9 +165,6 @@ object PrivilegeManager {
             }
         }.toSet()
     }
-
-    fun has(context: Context, cap: Capability): Boolean =
-        if (!cap.needRoot) level(context) != PrivLevel.NONE else isRoot(context)
 
     /**
      * 提权执行单条命令(经安全策略 + 审计)。
@@ -204,14 +194,6 @@ object PrivilegeManager {
         val ok = result != null && result.exitCode == 0
         record(PrivLevel.ROOT, cmd, ok, false, System.currentTimeMillis() - started)
         return PrivResult(ok, out, false, if (ok) null else "执行失败或未授权", System.currentTimeMillis() - started)
-    }
-
-    /** 一批只读探测:存在性判断合并为单次 su */
-    fun existsAll(paths: List<String>, timeoutMs: Long = 15_000L): Set<String> {
-        if (paths.isEmpty()) return emptySet()
-        val cmd = paths.joinToString(" ") { "[ -e " + ShellBridge.quote(it) + " ] && echo " + ShellBridge.quote(it) + ";" }
-        val out = ShellBridge.runSu(cmd, timeoutMs) ?: return emptySet()
-        return out.lines().map { it.trim() }.filter { it.isNotEmpty() }.toSet()
     }
 
     // ---------- 审计 ----------

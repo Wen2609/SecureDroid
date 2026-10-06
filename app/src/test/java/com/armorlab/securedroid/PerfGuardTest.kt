@@ -75,7 +75,6 @@ class PerfGuardTest {
     fun hotPathsDoNotRecompileRegex() {
         val files = listOf(
             "com/armorlab/securedroid/feature/NetAudit.kt",
-            "com/armorlab/securedroid/feature/CleanerTool.kt",
             "com/armorlab/securedroid/deep/ProcessScanner.kt",
             "com/armorlab/securedroid/deep/PartitionScanner.kt",
             "com/armorlab/securedroid/vscan/ProcessBaseline.kt",
@@ -126,11 +125,20 @@ class PerfGuardTest {
     }
 
     @Test
-    fun allListAdaptersDeclareFixedSize() {
-        // v1.9.9 删除旧 Fragment 死代码后,真实列表界面剩 4 个 RecyclerView:
-        // DeepScanActivity / BaseListToolActivity / VirusCenterActivity(rvActions+rvList)
-        val n = ktFiles().sumOf { Regex("setHasFixedSize\\(true\\)").findAll(it.readText()).count() }
-        assertTrue("4 个 RecyclerView 列表都应声明 setHasFixedSize(true),当前 " + n, n >= 4)
+    fun allListPagesAreBridged() {
+        // v1.9.15 全 HTML 化:所有深层工具列表页由 HTML 子页面渲染,
+        // 不再有原生 RecyclerView;每个列表页必须注册对应桥接 action,否则页面无数据。
+        val bridge = codeOnly("com/armorlab/securedroid/web/BridgeRouter.kt")
+        for (action in listOf(
+            "getNetAudit",
+            "getPrivacyAudit",
+            "getVulnScan",
+            "startDeepScan",
+            "getVirusCenterMenu",
+            "runVirusTool"
+        )) {
+            assertTrue("HTML 列表页缺少桥接动作 $action", bridge.contains("\"$action\""))
+        }
     }
 
     @Test
@@ -151,43 +159,43 @@ class PerfGuardTest {
         val dao = codeOnly("com/armorlab/securedroid/data/AppDatabase.kt")
         assertTrue("ScanRecordDao 必须提供 countAll 聚合查询", dao.contains("countAll"))
         assertTrue("ScanRecordDao 必须提供 lastScannedAt 聚合查询", dao.contains("lastScannedAt"))
-        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        val dashboard = codeOnly("com/armorlab/securedroid/web/handlers/DashboardHandler.kt")
         assertTrue(
             "getDashboard 不得整表拉取扫描记录(getAll 最多 2000 行实体,只为取 size 与最大时间戳)",
-            !bridge.contains("dao.getAll()")
+            !dashboard.contains("dao.getAll()")
         )
     }
 
     @Test
     fun lockStateMustReadLockSetOnce() {
-        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        val lock = codeOnly("com/armorlab/securedroid/web/handlers/LockHandler.kt")
         assertTrue(
             "getLockState 必须一次读出锁定集合并内存判锁,不得逐应用调 AppLockStore.isLocked" +
                 "(每次都是一次加密存储读取)",
-            !bridge.contains("AppLockStore.isLocked(")
+            !lock.contains("AppLockStore.isLocked(")
         )
     }
 
     @Test
     fun trojanProgressEventsMustBeThrottled() {
-        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        val scan = codeOnly("com/armorlab/securedroid/web/handlers/ScanHandler.kt")
         assertTrue(
             "木马查杀进度必须按 PROGRESS_INTERVAL_MS 节流:逐包 evaluateJavascript " +
                 "会让 UI 线程执行上百次 JS 注入",
-            bridge.contains("PROGRESS_INTERVAL_MS") && bridge.contains("SystemClock.elapsedRealtime")
+            scan.contains("PROGRESS_INTERVAL_MS") && scan.contains("SystemClock.elapsedRealtime")
         )
     }
 
     @Test
     fun bridgeMustExposeCancelScan() {
-        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        val scan = codeOnly("com/armorlab/securedroid/web/handlers/ScanHandler.kt")
         assertTrue(
             "桥层必须提供 cancelScan()(WebUI 取消按钮依赖 ScanControl.requestCancel)",
-            bridge.contains("fun cancelScan(") && bridge.contains("ScanControl.requestCancel()")
+            scan.contains("fun cancelScan(") && scan.contains("ScanControl.requestCancel()")
         )
         assertTrue(
             "木马查杀循环必须响应取消(循环内检查 ScanControl.cancelled)",
-            bridge.contains("if (ScanControl.cancelled) break")
+            scan.contains("if (ScanControl.cancelled) break")
         )
     }
 }

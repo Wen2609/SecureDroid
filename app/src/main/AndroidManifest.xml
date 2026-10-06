@@ -83,14 +83,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.FullAuditActivity" android:exported="false" />
-        <activity android:name=".ui.NetworkAuditActivity" android:exported="false" />
-        <activity android:name=".ui.CleanerActivity" android:exported="false" />
-        <activity android:name=".ui.DeepScanActivity" android:exported="false" />
-        <activity android:name=".ui.VirusCenterActivity" android:exported="false" />
-        <activity android:name=".ui.PrivacyActivity" android:exported="false" />
-        <activity android:name=".ui.VulnerabilityActivity" android:exported="false" />
-
         <receiver
             android:name=".feature.SimGuardReceiver"
             android:exported="true">

@@ -231,23 +231,23 @@ class SignatureMatchIndexTest {
         loadEngine(sigs)
         val data = ByteArray(1 shl 20) { if (rnd.nextInt(10) < 3) 0 else rnd.nextInt(256).toByte() }
 
-        legacyScan(sigs, data)
-        ClamAvSignatures.scanBytes(data)
-        val legacyMs = medianMs(3) { legacyScan(sigs, data) }
-        val nowMs = medianMs(3) { ClamAvSignatures.scanBytes(data) }
+        // 预热 + min-of-5:构建机负载抖动只会抬高耗时,最小值逼近真实下限
+        // (median 对偶发毛刺敏感,曾在本机高负载下出现 4% 的假倒挂)
+        repeat(2) { legacyScan(sigs, data); ClamAvSignatures.scanBytes(data) }
+        val legacyMs = minMs(5) { legacyScan(sigs, data) }
+        val nowMs = minMs(5) { ClamAvSignatures.scanBytes(data) }
         println("[perf] 200 特征(同锚点) × 1MB:单字节锚点分桶 " + legacyMs + " ms,2 字节窗口索引 " + nowMs + " ms")
 
         assertTrue("2 字节窗口索引应快于单字节锚点分桶(实测 " + nowMs + "ms vs " + legacyMs + "ms)", nowMs < legacyMs)
     }
 
-    private fun medianMs(times: Int, block: () -> Unit): Double {
-        val samples = DoubleArray(times)
-        for (i in 0 until times) {
+    private fun minMs(times: Int, block: () -> Unit): Double {
+        var best = Double.MAX_VALUE
+        repeat(times) {
             val t0 = System.nanoTime()
             block()
-            samples[i] = (System.nanoTime() - t0) / 1_000_000.0
+            best = minOf(best, (System.nanoTime() - t0) / 1_000_000.0)
         }
-        samples.sort()
-        return samples[times / 2]
+        return best
     }
 }

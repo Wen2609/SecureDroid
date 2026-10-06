@@ -1,13 +1,14 @@
 /* ============================================================
-   SecureDroid WebUI — JS 桥接层
+   SecureDroid WebUI — JS 数据层与渲染
    ------------------------------------------------------------
-   把上传稿界面上的每个按钮 / 开关 / 列表接到原生功能(AndroidBridge):
-     - 首页概览(getDashboard)
-     - 病毒扫描 / 木马查杀 / Rootkit / 恶意模块 / 锁机检测(异步事件推送)
-     - 应用锁(状态 + 锁定开关 + PIN 弹窗 + 无障碍)
-     - 权限审计(getAudit)
-     - 工具箱开关(实时防护 / 开机自启 / Root)与检查更新 / 关于 / 工具入口
-   没有 AndroidBridge(纯 HTML 预览)时回退到演示数据,界面依然可用。
+   架构(v1.9.15 微内核):
+     通道  window.__sdChannel(msg)   — 原生→页面的唯一入口(reply + event 信封)
+     API   api.request(action)/send  — 页面→原生;request 走 promise 应答,
+                                       无 AndroidBridge(纯 HTML 预览)时由
+                                       demoRequest 数据源适配器接住
+     Store store.set/subscribe       — 面板状态单一来源,渲染函数只吃数据
+   覆盖功能:首页概览 / 病毒扫描 / 木马查杀 / Rootkit / 恶意模块 / 锁机检测 /
+   应用锁(搜索过滤 + PIN 弹窗 + 无障碍)/ 权限审计 / 工具箱开关 / 扫描进度重放
    ============================================================ */
 (function () {
   'use strict';
@@ -15,6 +16,107 @@
   var bridge = (typeof AndroidBridge !== 'undefined') ? AndroidBridge : null;
   var demo = !bridge;
   var started = false;
+
+  /* ---------------- 通道:原生 → 页面 ---------------- */
+
+  var handlers = {};
+  window.__sdHandlers = handlers;
+  function on(type, fn) { handlers[type] = fn; }
+
+  /* 所有跨桥消息的信封:
+     {kind:"reply", id, ok, data|error} — api.request 的应答
+     {kind:"event", type, data}         — 推送事件(进度/结果/状态变化) */
+  window.__sdChannel = function (msg) {
+    if (typeof msg === 'string') {
+      try { msg = JSON.parse(msg); } catch (e) { return; }
+    }
+    if (!msg || typeof msg !== 'object') return;
+    if (msg.kind === 'reply') {
+      var p = pendingReplies[msg.id];
+      if (p) { delete pendingReplies[msg.id]; p(msg); }
+      return;
+    }
+    var h = handlers[msg.type];
+    if (h) { try { h(msg.data); } catch (e) { } }
+  };
+  /* 兼容入口:demo 数据源仍以事件形式注入(原生不再注入 __sdEvent) */
+  window.__sdEvent = function (type, payload) {
+    var d = payload;
+    if (typeof payload === 'string') {
+      try { d = JSON.parse(payload); } catch (e) { d = {}; }
+    }
+    window.__sdChannel({ kind: 'event', type: type, data: d });
+  };
+
+  /* ---------------- API:页面 → 原生 ---------------- */
+
+  var pendingReplies = {};
+  var reqSeq = 0;
+  var activeReq = {};
+
+  function nativeRequest(action, payload) {
+    // 无参数的数据请求按 action 合并:同屏多路触发只发一次
+    if (!payload && activeReq[action]) return activeReq[action];
+    var req = new Promise(function (resolve) {
+      var id = ++reqSeq;
+      pendingReplies[id] = resolve;
+      var msg = { id: id, action: action };
+      if (payload) { for (var k in payload) msg[k] = payload[k]; }
+      try {
+        bridge.post(action, JSON.stringify(msg));
+      } catch (e) {
+        delete pendingReplies[id];
+        resolve({ ok: false, error: '桥调用失败' });
+      }
+    });
+    if (!payload) {
+      activeReq[action] = req;
+      req.then(function () { delete activeReq[action]; }, function () { delete activeReq[action]; });
+    }
+    return req;
+  }
+
+  /* demo 数据源:与桥同接口,纯 HTML 预览(无 AndroidBridge)时界面依然可用 */
+  function demoRequest(action, payload) {
+    switch (action) {
+      case 'getDashboard': return demoDashboard();
+      case 'getLockState': return demoLock();
+      case 'getAudit': return demoAudit();
+      case 'getToggles': return demoToggles();
+      case 'startVirusScan': demoVirus(); return {};
+      case 'startTrojanScan': case 'startRootkit':
+      case 'startModuleScan': case 'startLockerScan': demoTrojan(); return {};
+      default: return {};
+    }
+  }
+
+  var api = {
+    /** 请求→应答(promise);demo 模式由本地数据源实现 */
+    request: function (action, payload) {
+      if (demo) {
+        return Promise.resolve({ ok: true, data: demoRequest(action, payload) });
+      }
+      return nativeRequest(action, payload);
+    },
+    /** 即发即忘(开关/跳转/触感等 UI 动作) */
+    send: function (action, payload) {
+      if (demo) { demoRequest(action, payload); return; }
+      try { bridge.post(action, JSON.stringify(payload || {})); } catch (e) { }
+    }
+  };
+
+  /* ---------------- Store:面板状态单一来源 ---------------- */
+
+  var store = {
+    state: {},
+    listeners: {},
+    set: function (key, data) {
+      this.state[key] = data;
+      var ls = this.listeners[key];
+      if (ls) for (var i = 0; i < ls.length; i++) { try { ls[i](data); } catch (e) { } }
+    },
+    subscribe: function (key, fn) { (this.listeners[key] = this.listeners[key] || []).push(fn); }
+  };
 
   /* ---------------- 基础工具 ---------------- */
 
@@ -89,7 +191,7 @@
 
   /* 触感轻反馈 */
   function hapticTap() {
-    if (bridge) { try { bridge.haptic(); } catch (e) { } }
+    api.send('haptic');
   }
 
   /* 更新卡头计数(扫描结果/木马检测结果) */
@@ -114,25 +216,29 @@
     return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + hm;
   }
 
-  /* ---------------- 原生事件通道 ----------------
-     AndroidBridge 以 JS 字面量调用: window.__sdEvent('virusDone', {...})
-     演示模式以 JSON 字符串调用;这里两种都兼容。 */
-
-  var handlers = {};
-  window.__sdHandlers = handlers;
-  function on(type, fn) { handlers[type] = fn; }
-
-  window.__sdEvent = function (type, payload) {
-    var d = payload;
-    if (typeof payload === 'string') {
-      try { d = JSON.parse(payload); } catch (e) { d = {}; }
-    }
-    var h = handlers[type];
-    if (h) { try { h(d); } catch (e) { } }
+  /* 页面就绪(原生 onPageFinished / onResume 时调用,刷新当前面板数据);
+     同时重放进行中的扫描(旋转/重建后页面无缝续显进度) */
+  window.__sdReady = function () {
+    scheduleRefresh();
+    api.request('getScanState').then(function (r) {
+      if (!r.ok || !r.data || !r.data.active) return;
+      r.data.active.forEach(function (s) { applyScanState(s); });
+    });
   };
 
-  /* 页面就绪(原生 onPageFinished / onResume 时调用,刷新当前面板数据) */
-  window.__sdReady = function () { scheduleRefresh(); };
+  /* 扫描状态重放:恢复"正在扫描"UI(按钮禁用 + 进度条 + 取消按钮) */
+  function applyScanState(s) {
+    if (!s || !s.action) return;
+    if (s.action === 'virus') {
+      setScanUi(s.done, s.total, '全盘扫描中 ' + s.done + ' / ' + s.total + '（' + scanPct(s.done, s.total) + '%）');
+      setScanBusy('#btnVirusScan', true);
+      showCancel('#btnVirusCancel', s.total > 0 && s.done < s.total);
+    } else if (s.action === 'trojan') {
+      setScanUi(s.done, s.total, '木马查杀中 ' + s.done + ' / ' + s.total + '（' + scanPct(s.done, s.total) + '%）');
+      setScanBusy('#btnTrojanScan', true);
+      showCancel('#btnTrojanCancel', s.total > 0 && s.done < s.total);
+    }
+  }
 
   /* 原生直达导航(小部件 / 快捷磁贴): 切板块 + 二级分段 */
   window.__sdGoto = function (panel, seg) {
@@ -199,8 +305,7 @@
   /* ---------------- 首页概览 ---------------- */
 
   function loadDashboard() {
-    if (demo) { renderDashboard(demoDashboard()); return; }
-    try { renderDashboard(JSON.parse(bridge.getDashboard())); } catch (e) { }
+    api.request('getDashboard').then(function (r) { if (r.ok) store.set('dashboard', r.data); });
   }
 
   function setAct(id, title, time) {
@@ -218,9 +323,20 @@
     if (home) home.classList.remove('is-loading');
     var hero = qs('#heroMeta');
     if (hero) hero.textContent = '上次扫描 · ' + fmtTime(d.lastScanAt || 0);
+    // 威胁感知三态:有威胁=危险(红),有风险权限或病毒库待更新=注意(琥珀),否则安全(绿)
+    var threats = d.threats || 0, risky = d.risky || 0;
+    var state = threats > 0 ? 'danger' : ((risky > 0 || !d.libOk) ? 'warn' : 'safe');
+    var heroCard = qs('.hero-card');
+    if (heroCard) heroCard.dataset.state = state;
+    var title = qs('#heroTitle');
+    if (title) {
+      title.textContent = threats > 0
+        ? '发现 ' + threats + ' 项威胁'
+        : (risky > 0 ? '注意 · ' + risky + ' 个应用有风险权限' : '设备安全');
+    }
     var lib = qs('#statLib');
     if (lib) lib.textContent = d.libOk ? '已更新' : '待更新';
-    var sc = qs('#statScanned');
+    var sc = qs('#statScannedValue');
     if (sc) sc.textContent = fmtNum(d.scanned);
     var pr = qs('#statProtected');
     if (pr) pr.textContent = (d.protected || 0) + ' 项';
@@ -275,7 +391,7 @@
       b.disabled = true;
       b.textContent = '正在取消…';
     }
-    if (bridge) { try { bridge.cancelScan(); } catch (e) { } }
+    api.send('cancelScan');
   }
 
   function levelCls(level) {
@@ -299,10 +415,24 @@
     return row;
   }
 
+  /* 空态:圆形图标 + 文案(替代纯文本空提示) */
+  function emptyHint(text, tone) {
+    var wrap = el('div', 'empty-hint');
+    var icon = el('span', 'empty-icon tint-' + (tone || 'green'));
+    icon.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"' +
+      ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>' +
+      '<path d="m9 12 2.2 2.2L15.4 10"/></svg>';
+    wrap.appendChild(icon);
+    wrap.appendChild(el('span', null, text));
+    return wrap;
+  }
+
   /* 结果行点击 → 打开该应用的应用详情页(可改权限 / 卸载) */
   function openApp(pkg) {
     if (!pkg) return;
-    if (bridge) { try { bridge.openAppSettings(pkg); } catch (e) { } }
+    api.send('openAppSettings', { pkg: pkg });
   }
 
   /* ---------------- 病毒扫描 ---------------- */
@@ -319,8 +449,7 @@
     setScanBusy('#btnVirusScan', true);
     showCancel('#btnVirusCancel', false);
     hapticTap();
-    if (demo) { demoVirus(); return; }
-    try { bridge.startVirusScan(); } catch (e) { setScanBusy('#btnVirusScan', false); }
+    api.send('startVirusScan');
   }
 
   on('virusProgress', function (d) {
@@ -339,7 +468,7 @@
     setCardHeadCount('#virusHead', '扫描结果', rows.length);
     // 只渲染感染/可疑项;全部干净时不再铺几百行"安全",直接给摘要
     var hits = rows.filter(function (r) { return r.infected; });
-    if (!hits.length) { box.textContent = d.summary || '未发现威胁，设备安全。'; loadDashboard(); return; }
+    if (!hits.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现威胁，设备安全。', 'green')); loadDashboard(); return; }
     var frag = document.createDocumentFragment();
     hits.forEach(function (r) {
       var detail = (r.detections || []).map(function (x) { return '[' + x.engine + '] ' + x.name; }).join('；');
@@ -376,16 +505,14 @@
     setScanBusy('#btnTrojanScan', true);
     showCancel('#btnTrojanCancel', false);
     hapticTap();
-    if (demo) { demoTrojan(); return; }
-    try { bridge.startTrojanScan(); } catch (e) { setScanBusy('#btnTrojanScan', false); }
+    api.send('startTrojanScan');
   }
 
-  function runToolScan(label, nativeCall) {
+  function runToolScan(label, action) {
     setScanUi(0, 0, label);
     var box = qs('#trojanResults');
     if (box) box.textContent = '';
-    if (demo) { demoTrojan(); return; }
-    try { nativeCall(); } catch (e) { }
+    api.send(action);
   }
 
   function renderTrojan(d) {
@@ -398,7 +525,7 @@
     box.textContent = '';
     var items = d.items || [];
     setCardHeadCount('#trojanHead', '木马检测结果', items.length);
-    if (!items.length) { box.textContent = d.summary || '未发现木马。'; loadDashboard(); return; }
+    if (!items.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现木马。', 'green')); loadDashboard(); return; }
     var frag = document.createDocumentFragment();
     items.forEach(function (it) {
       frag.appendChild(resultRow(it.title, it.sub + (it.detail ? ' · ' + it.detail : ''), levelText(it.level), levelCls(it.level),
@@ -420,9 +547,14 @@
   /* ---------------- 应用锁 ---------------- */
 
   function loadLock() {
-    if (demo) { renderLock(demoLock()); return; }
-    try { renderLock(JSON.parse(bridge.getLockState())); } catch (e) { }
+    api.request('getLockState').then(function (r) { if (r.ok) store.set('lock', r.data); });
   }
+
+  /* 应用锁列表:数据缓存 + 搜索过滤。
+     renderLock 存下完整列表,renderLockRows 按当前关键字渲染,
+     输入过滤时不重新拉桥数据,刷新(loadLock)后过滤状态也保持。 */
+  var lockApps = [];
+  var lockQuery = '';
 
   function renderLock(d) {
     var pin = qs('#swPin');
@@ -434,12 +566,26 @@
     var acc = qs('#accessibilitySub');
     if (acc) acc.textContent = d.accessibility ? '已开启，应用锁可自动解锁' : '未开启，用于应用锁的自动解锁';
 
+    lockApps = d.apps || [];
+    var searchCard = qs('#lockSearchCard');
+    if (searchCard) searchCard.classList.toggle('is-hidden', !lockApps.length);
+    renderLockRows();
+  }
+
+  function renderLockRows() {
     var card = qs('#lockAppsCard');
     if (!card) return;
     card.innerHTML = '';
-    var apps = d.apps || [];
+    if (!lockApps.length) {
+      card.appendChild(emptyHint('未找到可锁定的应用', 'purple'));
+      return;
+    }
+    var apps = lockApps.filter(function (a) {
+      if (!lockQuery) return true;
+      return (a.name + ' ' + a.pkg).toLowerCase().indexOf(lockQuery) >= 0;
+    });
     if (!apps.length) {
-      card.appendChild(el('div', 'empty-hint', '未找到可锁定的应用'));
+      card.appendChild(emptyHint('没有匹配「' + lockQuery + '」的应用', 'purple'));
       return;
     }
     // DocumentFragment 批量插入:数百行逐行 appendChild 每行都触发一次重排
@@ -456,7 +602,7 @@
         var target = !a.locked;
         sw.classList.toggle('is-on', target);
         a.locked = target;
-        if (bridge) { try { bridge.setLocked(a.pkg, target); } catch (err) { } }
+        api.send('setLocked', { pkg: a.pkg, locked: target });
       });
       row.appendChild(body);
       row.appendChild(sw);
@@ -468,8 +614,7 @@
   /* ---------------- 权限审计 ---------------- */
 
   function loadAudit() {
-    if (demo) { renderAudit(demoAudit()); return; }
-    try { renderAudit(JSON.parse(bridge.getAudit())); } catch (e) { }
+    api.request('getAudit').then(function (r) { if (r.ok) store.set('audit', r.data); });
   }
 
   function renderAudit(d) {
@@ -480,7 +625,7 @@
     list.innerHTML = '';
     var items = d.items || [];
     if (!items.length) {
-      list.appendChild(el('div', 'empty-hint', '未发现高风险权限应用'));
+      list.appendChild(emptyHint('未发现高风险权限应用', 'green'));
       return;
     }
     var frag = document.createDocumentFragment();
@@ -499,8 +644,7 @@
   /* ---------------- 工具箱开关 ---------------- */
 
   function loadToggles() {
-    if (demo) { renderToggles(demoToggles()); return; }
-    try { renderToggles(JSON.parse(bridge.getToggles())); } catch (e) { }
+    api.request('getToggles').then(function (r) { if (r.ok) store.set('toggles', r.data); });
   }
 
   function setSwitch(id, on) {
@@ -523,9 +667,8 @@
       e.stopPropagation();
       var target = !sw.classList.contains('is-on');
       sw.classList.toggle('is-on', target);
-      if (!bridge) return;
       hapticTap();
-      try { call(target); } catch (err) { sw.classList.toggle('is-on', !target); }
+      call(target); // api.send 内部兜底;Root 开关失败由 rootState 事件回推纠正
     });
     // 整行可点:开关本体只有 46×28px,达不到 48px 触摸目标;
     // 行内点击(非开关本体)转发给开关。开关自己的 stopPropagation 防止双触发。
@@ -536,10 +679,10 @@
     }
   }
 
-  bindNativeSwitch('swRealtime', function (t) { bridge.toggleRealtime(t); });
-  bindNativeSwitch('swBoot', function (t) { bridge.toggleBoot(t); });
-  bindNativeSwitch('swRoot', function (t) { bridge.toggleRoot(t); });
-  bindNativeSwitch('swDecoy', function (t) { bridge.toggleDecoy(t); });
+  bindNativeSwitch('swRealtime', function (t) { api.send('toggleRealtime', { on: t }); });
+  bindNativeSwitch('swBoot', function (t) { api.send('toggleBoot', { on: t }); });
+  bindNativeSwitch('swRoot', function (t) { api.send('toggleRoot', { on: t }); });
+  bindNativeSwitch('swDecoy', function (t) { api.send('toggleDecoy', { on: t }); });
 
   on('rootState', function (d) {
     setSwitch('swRoot', d.rootMode);
@@ -562,23 +705,38 @@
   bind('btnTrojanScan', startTrojanScan);
   bind('btnVirusCancel', function () { requestCancelScan('#btnVirusCancel'); });
   bind('btnTrojanCancel', function () { requestCancelScan('#btnTrojanCancel'); });
-  bind('btnRootkit', function () { runToolScan('正在检测 Rootkit / 提权后门…', function () { bridge.startRootkit(); }); });
-  bind('btnModules', function () { runToolScan('正在检测恶意模块 / SU 脚本…', function () { bridge.startModuleScan(); }); });
-  bind('btnLocker', function () { runToolScan('正在检测锁机软件…', function () { bridge.startLockerScan(); }); });
-  bind('btnDeepScan', function () { if (bridge) { try { bridge.openDeepScan(); } catch (e) { } } });
-  bind('btnVirusCenter', function () { if (bridge) { try { bridge.openVirusCenter(); } catch (e) { } } });
+  bind('btnRootkit', function () { runToolScan('正在检测 Rootkit / 提权后门…', 'startRootkit'); });
+  bind('btnModules', function () { runToolScan('正在检测恶意模块 / SU 脚本…', 'startModuleScan'); });
+  bind('btnLocker', function () { runToolScan('正在检测锁机软件…', 'startLockerScan'); });
+  bind('btnDeepScan', function () { api.send('openDeepScan'); });
+  bind('btnVirusCenter', function () { api.send('openVirusCenter'); });
 
-  bind('btnSetPin', function () { if (bridge) { try { bridge.showPinDialog(); } catch (e) { } } });
-  bind('pinRow', function () { if (bridge) { try { bridge.showPinDialog(); } catch (e) { } } });
-  bind('btnAccessibility', function () { if (bridge) { try { bridge.openAccessibility(); } catch (e) { } } });
+  bind('btnSetPin', function () { api.send('showPinDialog'); });
+  bind('pinRow', function () { api.send('showPinDialog'); });
+  bind('btnAccessibility', function () { api.send('openAccessibility'); });
 
-  bind('btnUpdate', function () { if (bridge) { try { bridge.checkUpdate(); } catch (e) { } } });
-  bind('btnAbout', function () { if (bridge) { try { bridge.showAbout(); } catch (e) { } } });
+  bind('btnUpdate', function () { api.send('checkUpdate'); });
+  bind('btnAbout', function () { api.send('showAbout'); });
   /* 顶部头像 = 关于 */
-  bind('btnAvatar', function () { if (bridge) { try { bridge.showAbout(); } catch (e) { } } });
-  bind('btnNetwork', function () { if (bridge) { try { bridge.openNetworkAudit(); } catch (e) { } } });
-  bind('btnPrivacy', function () { if (bridge) { try { bridge.openPrivacy(); } catch (e) { } } });
-  bind('btnVuln', function () { if (bridge) { try { bridge.openVulnerability(); } catch (e) { } } });
+  bind('btnAvatar', function () { api.send('showAbout'); });
+  bind('btnNetwork', function () { api.send('openNetworkAudit'); });
+  bind('btnPrivacy', function () { api.send('openPrivacy'); });
+  bind('btnVuln', function () { api.send('openVulnerability'); });
+
+  /* 统计格「已扫描」→ 病毒查杀中心(原生页);病毒库 / 防护中两格走 data-goto */
+  bind('statScanned', function () {
+    hapticTap();
+    api.send('openVirusCenter');
+  });
+
+  /* 应用锁搜索过滤:输入即过滤缓存数据,不重新拉桥 */
+  var lockSearch = qs('#lockSearch');
+  if (lockSearch) {
+    lockSearch.addEventListener('input', function () {
+      lockQuery = lockSearch.value.trim().toLowerCase();
+      renderLockRows();
+    });
+  }
 
   /* ---------------- 问候语 ---------------- */
 
@@ -620,6 +778,11 @@
     }
     setGreeting();
     hookNavRefresh();
+    // 渲染订阅:数据到 → 对应面板重绘(渲染与取数解耦)
+    store.subscribe('dashboard', renderDashboard);
+    store.subscribe('lock', renderLock);
+    store.subscribe('audit', renderAudit);
+    store.subscribe('toggles', renderToggles);
     // 默认面板就是首页,refreshVisible 即完成首屏加载(不再额外 loadDashboard 重复取数)
     refreshVisible();
   }
@@ -675,6 +838,658 @@
     window.__sdEvent('trojanDone', JSON.stringify({
       total: 1, items: [], summary: '木马查杀完成，未发现木马。'
     }));
+  }
+
+  /* ============================================================
+     子页面路由(深层工具全HTML化)
+     ============================================================ */
+
+  var subStack = [];
+
+  function openSubPage(name) {
+    var sub = qs('#subpage');
+    if (!sub) return;
+    var body = qs('.subpage-body[data-subpage="' + name + '"]');
+    if (!body) return;
+
+    subStack.push(name);
+    sub.classList.add('is-open');
+    qsa('.subpage-body').forEach(function (b) { b.classList.remove('is-active'); });
+    body.classList.add('is-active');
+    sub.scrollTop = 0;
+    hapticTap();
+
+    // 页面载入时触发对应加载
+    if (name === 'netaudit') loadNetAudit();
+    else if (name === 'privacy') loadPrivacyAudit();
+    else if (name === 'vuln') loadVulnScan();
+    else if (name === 'deepscan') loadDeepScan();
+    else if (name === 'viruscenter') loadVirusCenter();
+  }
+
+  function closeSubPage() {
+    if (subStack.length === 0) return false;
+    subStack.pop();
+    if (subStack.length > 0) {
+      var prev = subStack[subStack.length - 1];
+      var body = qs('.subpage-body[data-subpage="' + prev + '"]');
+      qsa('.subpage-body').forEach(function (b) { b.classList.remove('is-active'); });
+      if (body) body.classList.add('is-active');
+      return true;
+    }
+    var sub = qs('#subpage');
+    if (sub) sub.classList.remove('is-open');
+    hapticTap();
+    return true;
+  }
+
+  /** 全局返回:子页面 → 非首页板块 → 首页 → false(交给原生双击退出) */
+  window.__sdBack = function () {
+    if (subStack.length > 0) return closeSubPage();
+    var p = qs('.panel.is-active');
+    var panel = p ? p.dataset.panel : 'home';
+    if (panel !== 'home') {
+      window.__sdGoto('home', null);
+      return true;
+    }
+    return false;
+  };
+
+  // 子页面返回按钮
+  function hookSubpageBack() {
+    qsa('.subpage-back').forEach(function (btn) {
+      btn.addEventListener('click', function () { closeSubPage(); });
+    });
+  }
+
+  // 原生桥打开子页面
+  on('openSubPage', function (data) {
+    if (data && data.page) openSubPage(data.page);
+  });
+
+  // 原生触发的对话框事件
+  on('showAbout', function () { showAboutDialog(); });
+  on('showUpdateDialog', function () { showUpdateDialog(); });
+
+  /* ============================================================
+     HTML 模态框(替代原生 AlertDialog)
+     ============================================================ */
+
+  var modalStack = [];
+
+  function closeModal() {
+    var overlay = qs('#modalOverlay');
+    if (!overlay) return;
+    if (modalStack.length > 0) {
+      var top = modalStack.pop();
+      if (top.onClose) { try { top.onClose(); } catch (e) { } }
+    }
+    if (modalStack.length === 0) {
+      overlay.classList.remove('is-open');
+    } else {
+      renderModal(modalStack[modalStack.length - 1]);
+    }
+  }
+
+  function renderModal(cfg) {
+    qs('#modalTitle').textContent = cfg.title || '';
+    var body = qs('#modalBody');
+    body.innerHTML = '';
+    if (typeof cfg.body === 'string') {
+      body.innerHTML = cfg.body;
+    } else if (cfg.body instanceof Node) {
+      body.appendChild(cfg.body);
+    }
+    var actions = qs('#modalActions');
+    actions.innerHTML = '';
+    if (cfg.buttons && cfg.buttons.length) {
+      cfg.buttons.forEach(function (btn, i) {
+        var el = document.createElement('button');
+        el.className = 'btn ' + (btn.primary ? 'btn-primary' : 'btn-ghost');
+        el.textContent = btn.label;
+        el.addEventListener('click', function () {
+          if (btn.onClick) {
+            var keep = false;
+            try { keep = btn.onClick() === true; } catch (e) { }
+            if (!keep) closeModal();
+          } else {
+            closeModal();
+          }
+        });
+        actions.appendChild(el);
+      });
+    }
+    var overlay = qs('#modalOverlay');
+    if (overlay) overlay.classList.add('is-open');
+  }
+
+  function showModal(cfg) {
+    modalStack.push(cfg);
+    renderModal(cfg);
+  }
+
+  function uiAlert(title, msg, onOk) {
+    showModal({
+      title: title,
+      body: '<p style="margin:0">' + esc(msg) + '</p>',
+      buttons: [
+        { label: '确定', primary: true, onClick: onOk }
+      ]
+    });
+  }
+
+  function uiConfirm(title, msg, onOk, onCancel) {
+    showModal({
+      title: title,
+      body: '<p style="margin:0">' + esc(msg) + '</p>',
+      buttons: [
+        { label: '取消', onClick: onCancel },
+        { label: '确定', primary: true, onClick: onOk }
+      ]
+    });
+  }
+
+  function uiPrompt(title, fields, onSubmit, submitLabel) {
+    // fields: [{name, label, type, value}]
+    var wrap = document.createElement('div');
+    if (typeof fields === 'string') {
+      var p = document.createElement('p');
+      p.style.margin = '0';
+      p.textContent = fields;
+      wrap.appendChild(p);
+      fields = [{ name: 'input', label: '', type: 'text', value: '' }];
+    }
+    var inputs = [];
+    fields.forEach(function (f) {
+      var inp = document.createElement('input');
+      inp.type = f.type || 'text';
+      inp.placeholder = f.label || '';
+      inp.value = f.value || '';
+      inp.dataset.name = f.name || 'value';
+      wrap.appendChild(inp);
+      inputs.push(inp);
+    });
+    showModal({
+      title: title,
+      body: wrap,
+      buttons: [
+        { label: '取消' },
+        {
+          label: submitLabel || '确定', primary: true,
+          onClick: function () {
+            var result = {};
+            inputs.forEach(function (inp) { result[inp.dataset.name] = inp.value; });
+            if (onSubmit) { var keep = onSubmit(result); return keep === true; }
+          }
+        }
+      ]
+    });
+  }
+
+  function uiListDialog(title, items, onSelect) {
+    // items: [{label, value}]
+    var list = document.createElement('div');
+    list.className = 'modal-list';
+    items.forEach(function (it) {
+      var btn = document.createElement('button');
+      btn.className = 'modal-list-item';
+      btn.textContent = it.label;
+      btn.addEventListener('click', function () {
+        if (onSelect) onSelect(it.value, it);
+        closeModal();
+      });
+      list.appendChild(btn);
+    });
+    showModal({
+      title: title,
+      body: list,
+      buttons: [{ label: '取消' }]
+    });
+  }
+
+  /* 点击遮罩关闭最上层模态框 */
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.id === 'modalOverlay') closeModal();
+  });
+
+  /* ============================================================
+     Toast 提示条(替代原生 Toast)
+     ============================================================ */
+
+  var toastTimer = 0;
+  function toast(msg, duration) {
+    var bar = qs('#toastBar');
+    if (!bar) return;
+    bar.textContent = msg;
+    bar.classList.add('is-show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      bar.classList.remove('is-show');
+      toastTimer = 0;
+    }, duration || 1800);
+  }
+
+  /* ============================================================
+     统一列表渲染(与原生 TrojanAdapter.UiItem 数据模型一致)
+     ============================================================ */
+
+  function renderResultList(containerId, items) {
+    var wrap = qs('#' + containerId);
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    if (!items || items.length === 0) return;
+    for (var i = 0; i < items.length; i++) {
+      wrap.appendChild(resultItemEl(items[i]));
+    }
+  }
+
+  function resultItemEl(item) {
+    var level = item.level || 'low';
+    var card = el('div', 'card result-item');
+    var bar = el('div', 'risk-bar level-' + level);
+    card.appendChild(bar);
+
+    var title = el('p', 'result-title level-' + level, item.title || '');
+    card.appendChild(title);
+
+    if (item.sub) {
+      var sub = el('p', 'result-sub', item.sub);
+      card.appendChild(sub);
+    }
+    if (item.detail) {
+      var detail = el('p', 'result-detail', item.detail);
+      card.appendChild(detail);
+    }
+    if (item.suggestion) {
+      var sug = el('p', 'result-suggest', item.suggestion);
+      card.appendChild(sug);
+    }
+
+    var hasAction = item.uninstallPkg || item.fixCommand;
+    if (hasAction) {
+      var actions = el('div', 'result-actions');
+      if (item.fixCommand) {
+        var fixBtn = el('button', 'result-btn', item.fixLabel || '修复');
+        (function (cmd) {
+          fixBtn.addEventListener('click', function () {
+            uiConfirm('确认执行', '是否执行以下命令?\n\n' + cmd, function () {
+              api.request('runFixCommand', { cmd: cmd }).then(function (r) {
+                toast(r && r.ok ? '执行成功' : '执行失败');
+              });
+            });
+          });
+        })(item.fixCommand);
+        actions.appendChild(fixBtn);
+      }
+      if (item.uninstallPkg) {
+        var uninstBtn = el('button', 'result-btn danger', '卸载');
+        (function (pkg) {
+          uninstBtn.addEventListener('click', function () {
+            api.send('openAppSettings', { pkg: pkg });
+          });
+        })(item.uninstallPkg);
+        actions.appendChild(uninstBtn);
+      }
+      card.appendChild(actions);
+    }
+
+    return card;
+  }
+
+  /* ============================================================
+     列表型工具页(网络审计 / 隐私检测 / 漏洞扫描)
+     ============================================================ */
+
+  function setListStatus(pageId, text, loading) {
+    var statusEl = qs('#' + pageId + 'Status');
+    var spin = qs('#' + pageId + ' .progress-ring');
+    if (statusEl) statusEl.textContent = text;
+    if (spin) spin.classList.toggle('is-hidden', !loading);
+  }
+
+  function loadNetAudit() {
+    setListStatus('net', '正在检测网络安全…', true);
+    api.request('getNetAudit').then(function (r) {
+      if (r && r.ok && r.data) {
+        setListStatus('net', '检测完成 · 共 ' + r.data.count + ' 项', false);
+        renderResultList('netList', r.data.items);
+      } else {
+        setListStatus('net', '检测失败', false);
+      }
+    });
+  }
+
+  function loadPrivacyAudit() {
+    setListStatus('priv', '正在扫描隐私权限…', true);
+    api.request('getPrivacyAudit').then(function (r) {
+      if (r && r.ok && r.data) {
+        setListStatus('priv', '扫描完成 · 共 ' + r.data.count + ' 项', false);
+        renderResultList('privList', r.data.items);
+      } else {
+        setListStatus('priv', '扫描失败', false);
+      }
+    });
+  }
+
+  function loadVulnScan() {
+    setListStatus('vuln', '正在检测系统漏洞…', true);
+    api.request('getVulnScan').then(function (r) {
+      if (r && r.ok && r.data) {
+        setListStatus('vuln', '检测完成 · 共 ' + r.data.count + ' 项', false);
+        renderResultList('vulnList', r.data.items);
+      } else {
+        setListStatus('vuln', '检测失败', false);
+      }
+    });
+  }
+
+  /* ============================================================
+     深度查杀页
+     ============================================================ */
+
+  var deepRunning = false;
+
+  function loadDeepScan() {
+    var btn = qs('#btnDeepStart');
+    if (!btn) return;
+    btn.disabled = deepRunning;
+    btn.textContent = deepRunning ? '扫描中…' : '开始';
+    qs('#deepPhase').textContent = deepRunning ? '深度扫描进行中…' : '点击开始极致扫描';
+    if (!btn.dataset.hooked) {
+      btn.dataset.hooked = '1';
+      btn.addEventListener('click', function () {
+        if (deepRunning) return;
+        startDeepScan();
+      });
+    }
+  }
+
+  function startDeepScan() {
+    deepRunning = true;
+    var btn = qs('#btnDeepStart');
+    if (btn) { btn.disabled = true; btn.textContent = '扫描中…'; }
+    qs('#deepPhase').textContent = '深度扫描启动中…';
+    qs('#deepList').innerHTML = '';
+    api.send('startDeepScan');
+  }
+
+  on('deepscan.progress', function (data) {
+    if (data && data.phase) {
+      var el_ = qs('#deepPhase');
+      if (el_) el_.textContent = data.phase;
+    }
+  });
+
+  on('deepscan.result', function (data) {
+    deepRunning = false;
+    var btn = qs('#btnDeepStart');
+    if (btn) { btn.disabled = false; btn.textContent = '重新扫描'; }
+    var phase = qs('#deepPhase');
+    if (phase && data) phase.textContent = '扫描完成 · 共 ' + (data.count || 0) + ' 项';
+    if (data && data.items) renderResultList('deepList', data.items);
+  });
+
+  /* ============================================================
+     病毒中心页
+     ============================================================ */
+
+  var vcMenuLoaded = false;
+  var vcRunning = false;
+
+  function loadVirusCenter() {
+    if (vcMenuLoaded) return;
+    api.request('getVirusCenterMenu').then(function (r) {
+      if (r && r.ok && r.data && r.data.menu) {
+        renderVCMenu(r.data.menu);
+        vcMenuLoaded = true;
+      }
+    });
+  }
+
+  function renderVCMenu(menu) {
+    var list = qs('#vcMenuList');
+    if (!list) return;
+    list.innerHTML = '';
+    for (var i = 0; i < menu.length; i++) {
+      var item = menu[i];
+      var row = document.createElement('button');
+      row.className = 'row';
+      row.innerHTML =
+        '<span class="row-body">' +
+          '<span class="row-title">' + esc(item.title) + '</span>' +
+          '<span class="row-sub">' + esc(item.sub) + '</span>' +
+        '</span>' +
+        '<svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>';
+      (function (actionId, title) {
+        row.addEventListener('click', function () {
+          if (vcRunning) { toast('正在运行，请稍候'); return; }
+          runVirusTool(actionId, title);
+        });
+      })(item.id, item.title);
+      list.appendChild(row);
+    }
+  }
+
+  function runVirusTool(actionId, title) {
+    vcRunning = true;
+    qs('#vcMenu').classList.add('is-hidden');
+    var run = qs('#vcRun');
+    run.classList.remove('is-hidden');
+    qs('#vcPhase').textContent = title + '…';
+    qs('#vcResultList').innerHTML = '';
+    qs('#vcCancel').onclick = function () {
+      api.send('cancelVirusTool');
+      toast('已请求取消');
+    };
+    api.send('runVirusTool', { action: actionId });
+  }
+
+  function showVCMenu() {
+    vcRunning = false;
+    qs('#vcRun').classList.add('is-hidden');
+    qs('#vcMenu').classList.remove('is-hidden');
+  }
+
+  on('virustool.progress', function (data) {
+    if (data && data.phase) {
+      var el_ = qs('#vcPhase');
+      if (el_) el_.textContent = data.phase;
+    }
+  });
+
+  on('virustool.result', function (data) {
+    vcRunning = false;
+    if (data && data.items) {
+      renderResultList('vcResultList', data.items);
+      var ph = qs('#vcPhase');
+      if (ph) ph.textContent = '完成 · 共 ' + (data.count || 0) + ' 项';
+    }
+    // 添加返回菜单按钮
+    var backBtn = document.createElement('button');
+    backBtn.className = 'btn btn-ghost btn-block';
+    backBtn.textContent = '返回工具列表';
+    backBtn.style.marginTop = '10px';
+    backBtn.addEventListener('click', showVCMenu);
+    var list = qs('#vcResultList');
+    if (list && list.parentNode) {
+      var existing = list.parentNode.querySelector('.vc-back-btn');
+      if (existing) existing.remove();
+      backBtn.classList.add('vc-back-btn');
+      list.parentNode.insertBefore(backBtn, list.nextSibling);
+    }
+  });
+
+  /* ============================================================
+     关于 / 更新对话框(HTML化,替代原生 AlertDialog)
+     ============================================================ */
+
+  function showAboutDialog() {
+    api.request('getAbout').then(function (r) {
+      var d = r && r.data ? r.data : {};
+      uiAlert('关于 SecureDroid',
+        '版本 ' + (d.version || '?') + ' (' + (d.versionCode || 0) + ')\n\n' +
+        (d.desc || '') + '\n' + (d.license || ''));
+    });
+  }
+
+  function showUpdateDialog() {
+    api.request('getUpdateInfo').then(function (r) {
+      var d = r && r.data ? r.data : {};
+      uiPrompt(
+        '检查更新',
+        [
+          { name: 'status', label: '', type: 'text', value: '签名库 ' + (d.signatureCount || 0) + ' · hash ' + (d.hashCount || 0) },
+          { name: 'url', label: '更新地址 URL', type: 'text', value: d.url || '' },
+          { name: 'sha', label: 'SHA-256 校验(可选)', type: 'text', value: d.sha || '' }
+        ],
+        function (vals) {
+          if (!vals.url) { toast('请输入更新地址'); return true; }
+          api.request('runUpdate', { url: vals.url, sha: vals.sha }).then(function (res) {
+            uiAlert('更新结果', (res && res.data && res.data.message) || '更新失败');
+          });
+        },
+        '更新'
+      );
+      // 第一个字段是只读状态显示
+      var first = qs('#modalBody input');
+      if (first) { first.readOnly = true; first.style.opacity = '.6'; }
+    });
+  }
+
+  /* ============================================================
+     PIN 对话框(HTML化)
+     ============================================================ */
+
+  on('showPinDialog', function () {
+    showPinDialog();
+  });
+
+  function showPinDialog() {
+    var wrap = document.createElement('div');
+    wrap.innerHTML = '<p style="margin:0 0 8px">设置 4 位 PIN 码</p>';
+    var p1 = document.createElement('input');
+    p1.type = 'password'; p1.placeholder = '新 PIN (4 位)'; p1.maxLength = 4;
+    p1.style.webkitTextSecurity = 'disc';
+    var p2 = document.createElement('input');
+    p2.type = 'password'; p2.placeholder = '确认 PIN'; p2.maxLength = 4;
+    p2.style.webkitTextSecurity = 'disc';
+    wrap.appendChild(p1); wrap.appendChild(p2);
+
+    showModal({
+      title: '设置应用锁 PIN',
+      body: wrap,
+      buttons: [
+        { label: '取消' },
+        {
+          label: '保存', primary: true,
+          onClick: function () {
+            var pin = p1.value, confirm = p2.value;
+            if (pin.length !== 4) { toast('PIN 必须为 4 位'); return true; }
+            if (pin !== confirm) { toast('两次输入不一致'); return true; }
+            api.request('savePin', { pin: pin }).then(function (r) {
+              if (r && r.ok && r.data && r.data.ok) {
+                toast('PIN 已保存');
+                store.set('lock', null);
+                api.request('getLockState').then(function (res) {
+                  if (res.ok) store.set('lock', res.data);
+                });
+              } else {
+                toast('保存失败');
+              }
+            });
+          }
+        }
+      ]
+    });
+  }
+
+  /* ============================================================
+     Demo 数据扩展(子页面预览)
+     ============================================================ */
+
+  function demoResultItems() {
+    return [
+      { title: 'Demo.Item · 示例检测项 1', sub: 'com.example.app1', detail: '这是 demo 模式下的示例结果项，用于纯 HTML 预览', level: 'high', suggestion: '建议卸载此应用', uninstallPkg: 'com.example.app1' },
+      { title: 'Demo.Item · 示例检测项 2', sub: '系统组件', detail: '低风险项，无需处理', level: 'low' },
+      { title: 'Demo.Item · 示例检测项 3', sub: 'com.example.app2', detail: '中等风险，请关注', level: 'medium', fixCommand: 'pm disable com.example.app2', fixLabel: '禁用' }
+    ];
+  }
+
+  var _origDemoRequest = demoRequest;
+  demoRequest = function (action, payload) {
+    switch (action) {
+      case 'getNetAudit':
+      case 'getPrivacyAudit':
+      case 'getVulnScan':
+        return { items: demoResultItems(), count: 3 };
+      case 'getVirusCenterMenu':
+        return { menu: [
+          { id: 'parallel', title: '并行多引擎扫描', sub: '4 引擎并行查杀' },
+          { id: 'diff', title: '差异扫描', sub: '仅检测变更应用' },
+          { id: 'recent', title: '最近安装检测', sub: '近 7 天新安装应用' },
+          { id: 'quarantine', title: '隔离区管理', sub: '查看和管理隔离文件' }
+        ]};
+      case 'getAbout':
+        return { version: '1.9.15', versionCode: 19150, desc: 'SecureDroid 全方位移动安全防护', license: '基于开源安全引擎构建' };
+      case 'getUpdateInfo':
+        return { signatureCount: 256, hashCount: 1024000, byteCount: 45000000, url: '', sha: '' };
+      case 'savePin':
+        return { ok: true };
+      case 'runUpdate':
+        return { ok: true, message: '更新完成，已加载 256 条新签名' };
+      case 'runFixCommand':
+        return { ok: true };
+      case 'runVirusTool':
+        // 模拟异步运行
+        setTimeout(function () {
+          for (var i = 0; i < 3; i++) {
+            (function (i) {
+              setTimeout(function () {
+                window.__sdEvent('virustool.progress', JSON.stringify({ phase: '扫描中… ' + (i + 1) + '/3', running: true, action: payload && payload.action }));
+              }, i * 400);
+            })(i);
+          }
+          setTimeout(function () {
+            window.__sdEvent('virustool.result', JSON.stringify({
+              items: demoResultItems(), count: 3, running: false, action: payload && payload.action
+            }));
+          }, 1500);
+        }, 50);
+        return {};
+      case 'startDeepScan':
+        setTimeout(function () {
+          var phases = ['正在扫描运行进程…', '正在扫描系统分区…', '正在扫描用户目录…', '正在分析结果…'];
+          for (var i = 0; i < phases.length; i++) {
+            (function (p, d) {
+              setTimeout(function () {
+                window.__sdEvent('deepscan.progress', JSON.stringify({ phase: p, running: true }));
+              }, d);
+            })(phases[i], i * 500);
+          }
+          setTimeout(function () {
+            window.__sdEvent('deepscan.result', JSON.stringify({
+              items: demoResultItems(), count: 3, running: false
+            }));
+          }, phases.length * 500 + 200);
+        }, 50);
+        return {};
+      default:
+        return _origDemoRequest(action, payload);
+    }
+  };
+
+  /* ============================================================
+     初始化扩展
+     ============================================================ */
+
+  var _origInit = init;
+  init = function () {
+    _origInit();
+    hookSubpageBack();
+  };
+  // 重新触发一次(如果 _origInit 已被调用)
+  if (started) {
+    hookSubpageBack();
   }
 
 })();

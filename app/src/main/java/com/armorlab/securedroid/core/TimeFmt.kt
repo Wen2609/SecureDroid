@@ -17,15 +17,12 @@ object TimeFmt {
     private val minute = Holder("yyyy-MM-dd HH:mm")
     private val second = Holder("yyyy-MM-dd HH:mm:ss")
     private val day = Holder("yyyy-MM-dd")
-    private val clock = Holder("HH:mm:ss")
 
     fun dateMinute(ms: Long): String = minute.format(ms)
 
     fun dateSecond(ms: Long): String = second.format(ms)
 
     fun dateDay(ms: Long): String = day.format(ms)
-
-    fun clockSecond(ms: Long): String = clock.format(ms)
 
     /** 自定义模式:同一 pattern 复用同一实例 */
     fun of(pattern: String): Holder = Holder(pattern)

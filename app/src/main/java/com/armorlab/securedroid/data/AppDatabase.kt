@@ -38,9 +38,6 @@ interface ScanRecordDao {
     suspend fun latestFor(pkg: String): ScanRecordEntity?
 
     @Query("SELECT * FROM scan_records ORDER BY scannedAt DESC")
-    fun observeAll(): Flow<List<ScanRecordEntity>>
-
-    @Query("SELECT * FROM scan_records ORDER BY scannedAt DESC")
     suspend fun getAll(): List<ScanRecordEntity>
 
     /** 首页概览只要总数:聚合查询,不再把最多 2000 行实体整表读进内存 */

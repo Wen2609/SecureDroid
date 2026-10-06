@@ -20,73 +20,23 @@
     <dimen name="sd_radius_inner">16dp</dimen>
     <dimen name="sd_radius_chip">12dp</dimen>
     <dimen name="sd_radius_pill">24dp</dimen>
-    <dimen name="sd_hairline_width">1dp</dimen>
 
     <!-- 首页 -->
-    <dimen name="sd_home_margin">6dp</dimen>
-    <dimen name="sd_home_title_top">8dp</dimen>
-    <dimen name="sd_ring_size">190dp</dimen>
-    <dimen name="sd_ring_stroke">25dp</dimen>
-    <dimen name="sd_ring_disc">140dp</dimen>
-    <dimen name="sd_ring_top">24dp</dimen>
-    <dimen name="sd_status_top">20dp</dimen>
     <dimen name="sd_cta_height">48dp</dimen>
-    <dimen name="sd_cta_inset">48dp</dimen>
-    <dimen name="sd_cta_top">16dp</dimen>
-    <dimen name="sd_grid_top">24dp</dimen>
-    <dimen name="sd_grid_gap">10dp</dimen>
-    <dimen name="sd_tile_height">128dp</dimen>
-    <dimen name="sd_tile_icon">26dp</dimen>
-    <dimen name="sd_tile_padding">16dp</dimen>
 
     <!-- 悬浮底部导航 -->
-    <dimen name="sd_tabbar_height">60dp</dimen>
-    <dimen name="sd_nav_margin_h">6dp</dimen>
-    <dimen name="sd_nav_margin_bottom">4dp</dimen>
-    <dimen name="sd_nav_radius">24dp</dimen>
-    <dimen name="sd_nav_clearance">72dp</dimen>
 
     <!-- 其它 -->
     <dimen name="sd_btn_height">48dp</dimen>
-    <dimen name="sd_segment_hit">48dp</dimen>
-    <dimen name="sd_divider_inset">56dp</dimen>
 
     <!-- ===== 新界面几何(取自上传稿:360dp 基准) ===== -->
-    <dimen name="sd_page_pad">16dp</dimen>
-    <dimen name="sd_dock_height">60dp</dimen>
-    <dimen name="sd_dock_margin_h">12dp</dimen>
-    <dimen name="sd_dock_margin_bottom">20dp</dimen>
-    <dimen name="sd_dock_pad">5dp</dimen>
-    <dimen name="sd_dock_icon">22dp</dimen>
-    <dimen name="sd_seg_track_pad">3dp</dimen>
-    <dimen name="sd_seg_height">48dp</dimen>
-    <dimen name="sd_hero_pad_h">20dp</dimen>
-    <dimen name="sd_hero_pad_top">26dp</dimen>
-    <dimen name="sd_hero_pad_bottom">22dp</dimen>
     <dimen name="sd_hero_icon_wrap">88dp</dimen>
-    <dimen name="sd_hero_icon">44dp</dimen>
-    <dimen name="sd_avatar">46dp</dimen>
-    <dimen name="sd_scan_circle">100dp</dimen>
     <dimen name="sd_scan_icon">42dp</dimen>
-    <dimen name="sd_feature_icon">44dp</dimen>
-    <dimen name="sd_feature_icon_inner">22dp</dimen>
-    <dimen name="sd_feature_min_height">132dp</dimen>
-    <dimen name="sd_activity_icon">32dp</dimen>
-    <dimen name="sd_activity_icon_inner">16dp</dimen>
-    <dimen name="sd_activity_divider_inset">60dp</dimen>
     <dimen name="sd_protection_icon">34dp</dimen>
     <dimen name="sd_protection_icon_inner">18dp</dimen>
-    <dimen name="sd_protection_divider_inset">62dp</dimen>
     <dimen name="sd_progress_height">4dp</dimen>
-    <dimen name="sd_badge_pad_h">10dp</dimen>
-    <dimen name="sd_badge_pad_v">3dp</dimen>
-    <dimen name="sd_stat_divider">24dp</dimen>
-    <dimen name="sd_card_list_pad">4dp</dimen>
 
     <!-- 其他界面固定几何(v1.9.11 令牌化) -->
-    <dimen name="sd_widget_height">124dp</dimen>
-    <dimen name="sd_widget_icon">40dp</dimen>
-    <dimen name="sd_widget_max_width">96dp</dimen>
     <dimen name="sd_lock_icon_wrap">56dp</dimen>
     <dimen name="sd_lock_icon">28dp</dimen>
     <dimen name="sd_keypad_height">64dp</dimen>

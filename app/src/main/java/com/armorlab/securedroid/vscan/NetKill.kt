@@ -24,11 +24,6 @@ object NetKill {
             .toSet()
     }
 
-    fun isBlocked(context: Context, pkg: String): Boolean {
-        val uid = uidOf(context, pkg) ?: return false
-        return blockedUids()?.contains(uid) == true
-    }
-
     fun block(context: Context, pkg: String): Boolean {
         val uid = uidOf(context, pkg) ?: return false
         val cmd = "iptables -I OUTPUT 1 -m owner --uid-owner " + uid + " -j DROP"

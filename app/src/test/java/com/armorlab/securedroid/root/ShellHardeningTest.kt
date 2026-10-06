@@ -133,9 +133,8 @@ class ShellHardeningTest {
             "com/armorlab/securedroid/vscan/Quarantine.kt",
             "com/armorlab/securedroid/vscan/NetKill.kt",
             "com/armorlab/securedroid/root/RootGuard.kt",
-            "com/armorlab/securedroid/feature/CleanerTool.kt",
             "com/armorlab/securedroid/realtime/RealtimeProtectionService.kt",
-            "com/armorlab/securedroid/ui/TrojanAdapter.kt",
+            "com/armorlab/securedroid/web/handlers/ToolsHandler.kt",
             "com/armorlab/securedroid/root/PrivilegeManager.kt"
         )
         for (rel in files) {

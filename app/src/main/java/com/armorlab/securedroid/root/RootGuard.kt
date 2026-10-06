@@ -53,10 +53,6 @@ object RootGuard {
     fun probeRoot(context: Context): Boolean =
         PrivilegeManager.probe(context) == PrivLevel.ROOT
 
-    /** 禁用模块:各 Root 框架通用的 disable 文件机制 */
-    fun disableModule(dir: String): Boolean =
-        ShellBridge.runSuChecked("touch " + ShellBridge.quote(dir + "/disable"))
-
     /** 删除恶意 su 脚本 */
     fun removeScript(path: String): Boolean =
         ShellBridge.runSuChecked("rm -f " + ShellBridge.quote(path))

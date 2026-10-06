@@ -23,9 +23,9 @@
 - KeyguardManager 在 android.app 不是 android.os;FileOutputStream 才有 .fd
 
 ## 最高权限层(新增,改动前先读)
-- PrivilegeManager: PrivLevel(NONE/LOCAL_SHELL/ROOT) 分级;probe(ctx) 主动提权(触发 su 授权框),level(ctx) 读缓存,ensureFresh 过期自动刷新
-- 所有防护命令必须走 PrivilegeManager.exec(ctx,cmd) / execBatch(cmds) —— 内置 PrivilegedPolicy 拦截灾害级命令(整根删除/格式化/写分区/恢复出厂),并自动审计
-- Capability 枚举 = 能力矩阵(12 项),has(ctx,cap) 判断某防护功能当前是否可用
+- PrivilegeManager: PrivLevel(NONE/LOCAL_SHELL/ROOT) 分级;probe(ctx) 主动提权(触发 su 授权框),level(ctx) 读缓存
+- 所有防护命令必须走 PrivilegeManager.exec(ctx,cmd) —— 内置 PrivilegedPolicy 拦截灾害级命令(整根删除/格式化/写分区/恢复出厂),并自动审计
+- Capability 枚举 = 能力矩阵(12 项),capabilities(ctx) 返回当前层级可用集合
 - SystemIntegrity: captureBaseline/diff/scan(UI)/lockCriticalFiles/unlockCriticalFiles,守护循环用 quickGuardSummary
 - 法规约束:不要实现任何漏洞利用或静默提权;提权只能经用户授权 su(符合 Magisk/KernelSU 规范)
 
@@ -53,10 +53,10 @@
 
 ## 运行时验证(Robolectric,改 UI/启动逻辑后必须跑)
 - 命令:build.cmd testDebugUnitTest(全套含冒烟),或 gradle testDebugUnitTest --tests "com.armorlab.securedroid.smoke.*"
-- 覆盖:Application 启动、21 个布局膨胀、13 个 Activity 拉起、Room 读写、权限层降级
+- 覆盖:Application 启动、res/layout 下**全部布局**逐个膨胀(反射枚举,现仅 activity_main + widget_security)、清单内全部 Activity 拉起(仅 MainActivity + LockActivity)、Room 读写、权限层降级
 - android-all 运行库:本机已预置在 robolectric-deps/(150MB,已 gitignore);缺失时自动走镜像下载
-- 已由该套件抓出的两个致命缺陷:WorkManager 未初始化崩溃、BottomNavigationView 6 项超限崩溃 —— 改动导航或启动逻辑后务必重跑
-- 导航约定:底部入口用可滚动 TabLayout(BottomNavigationView 上限 5 项);入口定义源仍是 res/menu/bottom_nav.xml
+- 已由该套件抓出的两个致命缺陷:WorkManager 未初始化崩溃、旧 BottomNavigationView 6 项超限崩溃 —— 改动导航或启动逻辑后务必重跑
+- 导航约定:无原生底部导航(旧 res/menu/bottom_nav.xml 已删),入口是 index.html 的悬浮胶囊 dock;ActivityLaunchTest 反射枚举清单,新增 Activity 自动纳入
 
 ## 签名引擎与安全约定
 - ClamAV 兼容以官方文档为准:https://docs.clamav.net/manual/Signatures/ExtendedSignatures.html
@@ -70,14 +70,14 @@
   网络请求必须 https;特征库/规则类更新必须校验 SHA-256(FeatureUpdater 已强制)
 
 ## 信息架构(改导航前必读)
-- 顶层只有 3 个板块:状态 / 检测 / 防护(res/menu/bottom_nav.xml);二级功能用板内分段控件
-- 新板块页面实现 ui/SectionHost,MainActivity.navigateTo(板块 id, 分段下标) 可跨板块直达
+- 顶层导航在 assets/ui/index.html 的悬浮胶囊 dock(主页/安全防护/应用防护/扩展功能),二级功能用板内分段控件;原生侧无 bottom_nav.xml(v1.9.9 起旧原生导航已删)
+- 深层工具页(VirusCenter/DeepScan/NetworkAudit/Privacy/Vulnerability)是 index.html 内嵌的 **HTML 子页面**,经 BridgeRouter 的 openSubPage 事件切换;数据由 `web/handlers/ToolsHandler.kt` 桥接。新增工具页 = index.html 加子页面 DOM + app.js 渲染/路由 + BridgeRouter 注册 action + ToolsHandler 提供数据
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
 ## 界面约定(2026-10-03 起 · 基线是用户上传稿)
 - **基线**:用户上传的 `deepseek_html_20261003_008012.html`(毛玻璃 / 柔和流动光晕 / 悬浮胶囊导航)。
   布局与令牌按它逐项实现;改界面前先看这份稿子,不要自行发明风格或配色
-- 映射关系:背景光晕 = `activity_main.xml` 的 auroraBg(4 个 `aurora_blob_*`,MainActivity.startAurora 按 drift1-4 关键帧平移+缩放);
+- 映射关系:背景光晕 = `index.html` 的 `.aurora` CSS(4 个 blur 图层,`page-hidden` 时冻结);`activity_main.xml` 仅剩 WebView + 启动遮罩 `splashOverlay`;
   卡片 = `Widget.SecureDroid.Card`(半透明 `c_glass` + 1dp `c_glass_border` 高光);导航 = 自定义 3 等分胶囊(已不是 TabLayout);
   分段 = `Widget.SecureDroid.SegmentTrack` + `Widget.SecureDroid.Segment`;徽标 = `Widget.SecureDroid.Badge`;
   图标统一 `ic_sd_*` 前缀(描边型,路径取自上传稿的内联 SVG)
@@ -88,8 +88,8 @@
 - 配色/尺寸的当前实际取值见 README「界面外观(现状)」;新增颜色令牌必须同时在 `values/colors.xml` 与 `values-night/colors.xml` 定义
 - `陷阱`:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
   构建/Lint/测试全绿但深色模式失效;NightThemeTokenTest 已盯住这一点
-- 布局里 60+ 个 View ID 被 Kotlin 引用(见 ui/ 下 binding.xxx),重排布局时 ID 一个都不能改
-- 装饰性图标必须 importantForAccessibility="no";列表分隔线由 ui/InsetDividerDecoration 绘制(只画行间)
+- 布局里 View ID 经 `ActivityMainBinding` 引用(webView / swipeRefresh / splashOverlay / integrityBanner),重排 activity_main.xml 时这些 ID 不能改
+- 装饰性图标必须 importantForAccessibility="no";列表分隔线已随原生列表删除(HTML 列表用 CSS 分隔线)
 
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
