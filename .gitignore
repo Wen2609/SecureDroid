@@ -34,3 +34,5 @@ rel.err.log
 # Local scratch (probe scripts, headless screenshots)
 .tmp-audit/
 .tmp-shot/
+# Debug APK is a build artifact (rebuild via build.cmd), not a release artifact
+apks/SecureDroid-debug.apk
