@@ -2,6 +2,19 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.9.19] - 2026-10-06
+
+### Added
+
+- **接入真实病毒库**:
+  - 内置真实恶意软件哈希种子 `assets/signatures/real_malware.hsb`(来自趋势科技公开的银行木马样本 SHA-256,命中即报毒)。
+  - 新增 **ClamAV 官方 CVD 转换工具** `tools/cvd2clamav.js`:从官方 `daily.cvd`(database.clamav.net)解包提取全部 `.ndb` / `.hsb` 签名,合并去重生成 `clamav.ndb` / `clamav.hsb` —— 即百万级真实病毒库。生成的签名文件可通过应用内「特征库在线更新」(URL + SHA-256)加载到 `files/clamav/`,或放入私有目录重启生效。
+  - 病毒中心「检查更新」对话框增加官方病毒库接入引导,说明 CVD → 项目格式的完整路径。
+
+### Test
+
+- 全量 158 项 JVM 测试通过(真实哈希库自动纳入 `ClamAvSignatures` 统计)。
+
 ## [1.9.18] - 2026-10-06
 
 ### Changed

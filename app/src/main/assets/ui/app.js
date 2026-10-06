@@ -1518,9 +1518,13 @@
         },
         '更新'
       );
-      // 第一个字段是只读状态显示
+      // 第一个字段是只读状态显示,追加官方病毒库接入引导
       var first = qs('#modalBody input');
-      if (first) { first.readOnly = true; first.style.opacity = '.6'; }
+      if (first) {
+        first.readOnly = true;
+        first.style.opacity = '.6';
+        first.value += ' — 官方库接入:用 tools/cvd2clamav.js 从 ClamAV daily.cvd 生成 clamav.ndb/.hsb,填 URL+SHA-256 加载';
+      }
     });
   }
 
