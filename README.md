@@ -233,12 +233,13 @@ JS 桥接到真实原生功能;每个入口都是真实实现,不造空壳。纯
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.9.13-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.9.15-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 B8C70541292BC29230651BC832EEC25D5BB7DFDA89424C0EABE1A3D59DCBE4BB
-    大小    1,978,523 字节    versionCode 28 / versionName 1.9.13(WebUI 交互升级:扫描可取消 + 结果按威胁折叠 + 开关整行可点 + 触摸目标达标)
+    SHA-256 057EDAC941FA0F7FE4B795EF75CEB1D7337ED8B79F408E4979CDDCE8D14BF7DD
+    大小    1,945,178 字节    versionCode 30 / versionName 1.9.15(全界面 HTML 化:消除全部原生 Activity/对话框,深层工具页改 HTML 子页面 + 异步桥路由微内核)
 
-  更早版本 apks/SecureDroid-v1.9.12-release-signed.apk(versionCode 27,UI 与 WebView 性能优化:加密存储单例 / 聚合查询 / 进度节流 / 图标懒加载)、
+  更早版本 apks/SecureDroid-v1.9.13-release-signed.apk(versionCode 28,WebUI 交互升级:扫描可取消 + 结果按威胁折叠 + 开关整行可点 + 触摸目标达标)、
+  apks/SecureDroid-v1.9.12-release-signed.apk(versionCode 27,UI 与 WebView 性能优化:加密存储单例 / 聚合查询 / 进度节流 / 图标懒加载)、
   apks/SecureDroid-v1.9.11-release-signed.apk(versionCode 26,UI 全面检查修复:Web 端交互/摘要卡/工具图标 + 原生页面沉浸式 + 尺寸令牌化)、
   apks/SecureDroid-v1.9.10-release-signed.apk(versionCode 25,基础体验优化:启动品牌 Splash 过渡 + 首屏骨架加载态 + 双击退出提示)、
   apks/SecureDroid-v1.9.9-release-signed.apk(versionCode 24,删除全部旧 Fragment 死代码 + 全界面文字溢出修复)、
