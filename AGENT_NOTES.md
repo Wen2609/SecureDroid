@@ -104,6 +104,11 @@
 - **真实病毒库接入(v1.9.19)**:官方 ClamAV `daily.cvd` 用 `tools/cvd2clamav.js`(Node,`node tools/cvd2clamav.js daily.cvd <outdir>`)解包成 `clamav.ndb`/`clamav.hsb`;经应用内「特征库在线更新」URL+SHA-256 加载到 `files/clamav/` 生效。`FeatureUpdater` 强制 https + SHA-256 必填。
 - **权限引导文案**:权限名/用途在 `strings.xml` 的 `perm_*` 字符串,`ModeHandler.permissionsArray` 按模式返回 `{key,label,desc,granted}`。改权限文案只动 strings.xml,不要硬编码在 Kotlin。
 
+## v1.9.20 UI 约定
+- **底部导航**:dock `z-index:60` 恒高于子页面(50),子页面打开时导航仍可点;app.js 在 dock 上注册 capture 阶段 click,点击时先 `closeSubPage()`。改导航/子页面层级时保持这一点。
+- **主页无头像/日期**:`.top-header` 只含 `page-title`,`.greeting`/`.avatar` 已删除。新增首页头部元素时勿恢复日期问候。
+- **字重只用 400/700**:内置 Noto Sans SC 子集只有这两个字重。新增 CSS 一律用 `font-weight:400|700`,禁止 500/600/800(会造成 faux bold)。
+
 ## 省钱须知(给 AI)
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
 - 编译错误集中修完再编译,别一轮一修

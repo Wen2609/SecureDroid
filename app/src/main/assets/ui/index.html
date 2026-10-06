@@ -207,18 +207,9 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 
 /* 顶部问候区 */
 .top-header{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;
-  padding-top:14px;
-  padding-top:calc(14px + env(safe-area-inset-top,0px));
-  margin-bottom:20px;
-}
-.greeting{
-  margin:0 0 5px;
-  font-size:13px;font-weight:500;
-  line-height:1.4;
-  color:var(--c-fg3);
-  letter-spacing:.01em;
+  padding-top:16px;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));
+  margin-bottom:16px;
 }
 .page-title{
   margin:0;
@@ -227,18 +218,6 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   line-height:1.25;
 }
 .page-title.standalone{margin-top:10px;margin-top:calc(10px + env(safe-area-inset-top,0px))}
-
-.avatar{
-  flex:none;width:46px;height:46px;border-radius:50%;
-  display:grid;place-items:center;
-  font-size:15px;font-weight:700;color:#fff;
-  background:linear-gradient(140deg,#04BD19,#31D027);
-  border:2px solid rgba(255,255,255,.75);
-  box-shadow:0 12px 24px -10px rgba(4,189,25,.75),
-             inset 0 1px 0 rgba(255,255,255,.5);
-  transition:transform .3s cubic-bezier(.2,.8,.3,1);
-}
-.avatar:hover{transform:scale(1.06)}
 
 /* 通用卡片 */
 .card{
@@ -269,7 +248,7 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   gap:8px;
   height:48px;padding:0 24px;
   border-radius:24px;
-  font-size:16px;font-weight:600;
+  font-size:16px;font-weight:700;
   letter-spacing:.01em;
   transition:transform .18s cubic-bezier(.2,.8,.3,1), box-shadow .25s, filter .2s;
 }
@@ -399,7 +378,7 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   50%{box-shadow:0 0 0 8px rgba(4,189,25,.05)}
 }
 .status-text{
-  flex:1;font-size:14px;font-weight:500;
+  flex:1;font-size:14px;font-weight:400;
   letter-spacing:.01em;
 }
 .progress-ring{
@@ -429,7 +408,7 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 .risk-bar.level-medium{background:var(--c-gold)}
 .risk-bar.level-low{background:var(--c-success)}
 .result-title{
-  font-size:14px;font-weight:600;
+  font-size:14px;font-weight:700;
   letter-spacing:.01em;line-height:1.4;
   margin:0 0 4px;
 }
@@ -453,11 +432,11 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   color:var(--c-gold);
   margin:0 0 10px;
 }
-.result-suggest::before{content:'⚠ 建议：';font-weight:600}
+.result-suggest::before{content:'⚠ 建议：';font-weight:700}
 .result-actions{display:flex;gap:8px;flex-wrap:wrap}
 .result-btn{
   height:34px;padding:0 14px;
-  border-radius:17px;font-size:13px;font-weight:600;
+  border-radius:17px;font-size:13px;font-weight:700;
   background:rgba(4,189,25,.12);color:var(--c-accent);
   transition:background .2s;
 }
@@ -578,7 +557,7 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 }
 .mode-title{
   margin:0 0 6px;
-  font-size:20px;font-weight:800;
+  font-size:20px;font-weight:700;
   letter-spacing:.01em;
   text-align:center;
 }
@@ -620,7 +599,7 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 .mode-badge{
   display:inline-flex;align-items:center;gap:4px;
   padding:3px 10px;border-radius:999px;
-  font-size:12px;font-weight:600;
+  font-size:12px;font-weight:700;
   background:color-mix(in srgb, var(--c-primary) 12%, transparent);
   color:var(--c-primary);
 }
@@ -851,7 +830,7 @@ button.stat-cell:active{background:rgba(4,189,25,.06)}
 
 .feature-title{
   font-size:15px;font-weight:700;
-  letter-spacing:.01em;
+  letter-spacing:.005em;
   color:var(--c-fg);
   margin-bottom:4px;
 }
@@ -895,7 +874,7 @@ button.stat-cell:active{background:rgba(4,189,25,.06)}
 .activity-body{flex:1;min-width:0}
 .activity-title{
   display:block;
-  font-size:14px;font-weight:600;
+  font-size:14px;font-weight:700;
   color:var(--c-fg);
   margin-bottom:2px;
   letter-spacing:.01em;
@@ -928,7 +907,7 @@ button.stat-cell:active{background:rgba(4,189,25,.06)}
   /* 触摸目标 ≥48px(项目硬规则;上传稿的 42px 在 Android 侧不达标) */
   height:48px;
   border-radius:var(--r-pill);
-  font-size:14px;font-weight:600;
+  font-size:14px;font-weight:700;
   letter-spacing:.01em;
   color:var(--c-fg2);
   transition:background .28s, color .28s, box-shadow .28s, transform .2s;
@@ -1104,18 +1083,18 @@ button.protection-item{width:100%;text-align:left}
 .protection-body{flex:1;min-width:0}
 .protection-title{
   display:block;
-  font-size:15px;font-weight:600;
-  line-height:1.4;
+  font-size:15px;font-weight:700;
+  line-height:1.45;
   color:var(--c-fg);
-  margin-bottom:2px;
-  letter-spacing:.01em;
+  margin-bottom:3px;
+  letter-spacing:.005em;
 }
 .protection-sub{
   display:block;
   font-size:13px;
-  line-height:1.45;
+  line-height:1.5;
   color:var(--c-fg2);
-  letter-spacing:.01em;
+  letter-spacing:.005em;
 }
 
 /* 列表行（通用） */
@@ -1138,8 +1117,8 @@ button.row:active{background:var(--c-muted)}
 }
 .row-body{flex:1;min-width:0}
 .row-title{
-  font-size:16px;line-height:1.4;
-  letter-spacing:.01em;
+  font-size:16px;line-height:1.45;
+  letter-spacing:.005em;
   color:var(--c-fg);
   display:-webkit-box;
   -webkit-line-clamp:2;
@@ -1151,7 +1130,7 @@ button.row:active{background:var(--c-muted)}
 .row-sub{
   margin-top:3px;
   font-size:13px;
-  line-height:1.4;
+  line-height:1.5;
   color:var(--c-fg2);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
@@ -1185,7 +1164,7 @@ button.row:active{background:var(--c-muted)}
 }
 .scan-hint,.empty-hint{white-space:normal}
 .row-chevron{flex:none;width:20px;height:20px;color:var(--c-fg2);opacity:.7}
-.row-accent{color:var(--c-accent);font-weight:600}
+.row-accent{color:var(--c-accent);font-weight:700}
 
 /* 列表行工具图标(木马查杀工具入口等) */
 .row-tool-icon{
@@ -1227,7 +1206,7 @@ button.row:active{background:var(--c-muted)}
   min-height:48px;
   padding:12px 16px;
   text-align:center;
-  font-size:13px;font-weight:600;
+  font-size:13px;font-weight:700;
   letter-spacing:.01em;
   color:var(--c-accent);
   transition:background .2s;
@@ -1277,7 +1256,7 @@ button.row:active{background:var(--c-muted)}
   bottom:20px;
   bottom:calc(20px + env(safe-area-inset-bottom,0px));
   transform:translateX(-50%);
-  z-index:50;
+  z-index:60;
 
   width:calc(100% - 24px);
   max-width:376px;
@@ -1447,13 +1426,9 @@ button.row:active{background:var(--c-muted)}
        ========================================================== -->
   <main class="panel is-active" data-panel="home">
 
-    <!-- 顶部问候 -->
+    <!-- 顶部标题 -->
     <header class="top-header">
-      <div>
-        <p class="greeting">周五 · 10月2日</p>
-        <h1 class="page-title">安全中心</h1>
-      </div>
-      <button class="avatar" id="btnAvatar" aria-label="关于 SecureDroid">A</button>
+      <h1 class="page-title">安全中心</h1>
     </header>
 
     <!-- 主状态卡片 -->

@@ -725,8 +725,6 @@
 
   bind('btnUpdate', function () { api.send('checkUpdate'); });
   bind('btnAbout', function () { api.send('showAbout'); });
-  /* 顶部头像 = 关于 */
-  bind('btnAvatar', function () { api.send('showAbout'); });
   bind('btnNetwork', function () { api.send('openNetworkAudit'); });
   bind('btnPrivacy', function () { api.send('openPrivacy'); });
   bind('btnVuln', function () { api.send('openVulnerability'); });
@@ -744,16 +742,6 @@
       lockQuery = lockSearch.value.trim().toLowerCase();
       renderLockRows();
     });
-  }
-
-  /* ---------------- 问候语 ---------------- */
-
-  function setGreeting() {
-    var g = qs('.greeting');
-    if (!g) return;
-    var now = new Date();
-    var week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()];
-    g.textContent = week + ' · ' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
   }
 
   /* ---------------- 页面可见性 / 键盘可达性 ---------------- */
@@ -930,7 +918,6 @@
       var home = qs('.panel[data-panel="home"]');
       if (home) home.classList.add('is-loading');
     }
-    setGreeting();
     hookNavRefresh();
     bindModeOverlay();
     // 强制初始化模式选择:未选择前不进入主界面
@@ -1074,6 +1061,14 @@
   on('openSubPage', function (data) {
     if (data && data.page) openSubPage(data.page);
   });
+
+  /* 底部导航在所有页面可用:子页面打开时点击 dock 先返回根页面,再切换面板 */
+  var dockNav = qs('.dock');
+  if (dockNav) {
+    dockNav.addEventListener('click', function () {
+      if (subStack.length > 0) closeSubPage();
+    }, true);
+  }
 
   // 原生触发的对话框事件
   on('showAbout', function () { showAboutDialog(); });
