@@ -177,4 +177,17 @@ class PerfGuardTest {
             bridge.contains("PROGRESS_INTERVAL_MS") && bridge.contains("SystemClock.elapsedRealtime")
         )
     }
+
+    @Test
+    fun bridgeMustExposeCancelScan() {
+        val bridge = codeOnly("com/armorlab/securedroid/web/NativeBridge.kt")
+        assertTrue(
+            "桥层必须提供 cancelScan()(WebUI 取消按钮依赖 ScanControl.requestCancel)",
+            bridge.contains("fun cancelScan(") && bridge.contains("ScanControl.requestCancel()")
+        )
+        assertTrue(
+            "木马查杀循环必须响应取消(循环内检查 ScanControl.cancelled)",
+            bridge.contains("if (ScanControl.cancelled) break")
+        )
+    }
 }

@@ -266,6 +266,12 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 }
 .btn-block{display:flex;width:100%}
 .btn:disabled{opacity:.55;cursor:default;pointer-events:none}
+.btn-ghost{
+  background:transparent;color:var(--c-accent);
+  box-shadow:inset 0 0 0 1px var(--c-border);
+}
+.btn-ghost + .btn-ghost,.btn-block + .btn-ghost{margin-top:10px}
+.is-hidden{display:none !important}
 
 /* ============================================================
    玻璃弹窗(2026-10-04 令牌:blur-overlay / z-overlay / z-dialog)
@@ -515,7 +521,8 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 }
 .seg{
   flex:1;
-  height:42px;
+  /* 触摸目标 ≥48px(项目硬规则;上传稿的 42px 在 Android 侧不达标) */
+  height:48px;
   border-radius:var(--r-pill);
   font-size:14px;font-weight:600;
   letter-spacing:.01em;
@@ -781,6 +788,18 @@ button.row:active{background:var(--c-muted)}
   display:flex;align-items:center;gap:12px;
   min-height:64px;padding:12px 16px;
 }
+/* 展开剩余安全应用的切换按钮(病毒扫描默认只列威胁项) */
+.more-toggle{
+  width:100%;
+  min-height:48px;
+  padding:12px 16px;
+  text-align:center;
+  font-size:13px;font-weight:600;
+  letter-spacing:.01em;
+  color:var(--c-accent);
+  transition:background .2s;
+}
+.more-toggle:active{background:var(--c-muted)}
 .result-item.tappable{cursor:pointer;transition:background .2s}
 .result-item.tappable:active{background:rgba(4,189,25,.06)}
 .result-item .row-title{font-size:16px}
@@ -1111,9 +1130,10 @@ button.row:active{background:var(--c-muted)}
             <circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/>
           </svg>
         </div>
-        <p class="scan-hint">点击下方按钮开始全盘扫描</p>
-        <div class="progress"><i style="width:0%"></i></div>
+        <p class="scan-hint" aria-live="polite">点击下方按钮开始全盘扫描</p>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i style="width:0%"></i></div>
         <button class="btn btn-primary btn-block" id="btnVirusScan">开始全盘扫描</button>
+        <button class="btn btn-ghost btn-block is-hidden" id="btnVirusCancel" data-label="取消扫描">取消扫描</button>
       </div>
 
       <div class="card result-card" id="virusCard">
@@ -1132,9 +1152,10 @@ button.row:active{background:var(--c-muted)}
             <path d="M12 8.5V6.2M9.3 6.6 7.6 4.9M14.7 6.6l1.7-1.7M7.5 12H4.2M7.5 16H4.6M16.5 12h3.3M16.5 16h2.9"/>
           </svg>
         </div>
-        <p class="scan-hint">点击开始，多引擎检测木马与后门</p>
-        <div class="progress"><i style="width:0%"></i></div>
+        <p class="scan-hint" aria-live="polite">点击开始，多引擎检测木马与后门</p>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i style="width:0%"></i></div>
         <button class="btn btn-primary btn-block" id="btnTrojanScan">开始木马查杀</button>
+        <button class="btn btn-ghost btn-block is-hidden" id="btnTrojanCancel" data-label="取消查杀">取消查杀</button>
       </div>
 
       <div class="card card-list result-card">

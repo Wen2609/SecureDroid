@@ -239,12 +239,43 @@
     var body = qs('.panel.is-active .seg-body.is-active');
     if (!body) return;
     var bar = body.querySelector('.progress > i');
+    var prog = body.querySelector('.progress');
     var pct = total > 0 ? Math.min(100, Math.round(done / total * 100)) : (done > 0 ? 100 : 0);
     if (bar) bar.style.width = pct + '%';
+    if (prog) prog.setAttribute('aria-valuenow', String(pct));
     var h = body.querySelector('.scan-hint');
     if (h) h.textContent = hint;
     var circ = body.querySelector('.scan-circle');
     if (circ) circ.classList.toggle('is-scanning', total > 0 && done < total);
+  }
+
+  function scanPct(done, total) {
+    return total > 0 ? Math.min(100, Math.round(done / total * 100)) : 0;
+  }
+
+  /* 取消按钮显隐;恢复时还原文案与可点状态 */
+  function showCancel(id, visible) {
+    var b = qs(id);
+    if (!b) return;
+    if (visible) {
+      b.disabled = false;
+      b.textContent = b.dataset.label || b.textContent;
+      b.classList.remove('is-hidden');
+    } else {
+      b.classList.add('is-hidden');
+      b.disabled = false;
+      b.textContent = b.dataset.label || b.textContent;
+    }
+  }
+
+  function requestCancelScan(cancelBtnId) {
+    hapticTap();
+    var b = qs(cancelBtnId);
+    if (b) {
+      b.disabled = true;
+      b.textContent = '正在取消…';
+    }
+    if (bridge) { try { bridge.cancelScan(); } catch (e) { } }
   }
 
   function levelCls(level) {
@@ -286,30 +317,52 @@
     var box = qs('#virusResults');
     if (box) box.textContent = '';
     setScanBusy('#btnVirusScan', true);
+    showCancel('#btnVirusCancel', false);
     hapticTap();
     if (demo) { demoVirus(); return; }
     try { bridge.startVirusScan(); } catch (e) { setScanBusy('#btnVirusScan', false); }
   }
 
   on('virusProgress', function (d) {
-    setScanUi(d.done, d.total, '全盘扫描中 ' + d.done + ' / ' + d.total);
+    setScanUi(d.done, d.total, '全盘扫描中 ' + d.done + ' / ' + d.total + '（' + scanPct(d.done, d.total) + '%）');
+    showCancel('#btnVirusCancel', true);
   });
 
   on('virusDone', function (d) {
     setScanBusy('#btnVirusScan', false);
+    showCancel('#btnVirusCancel', false);
     setScanUi(d.total || 0, d.total || 0, d.summary || '扫描完成');
     var box = qs('#virusResults');
     if (!box) return;
     box.textContent = '';
     var rows = d.results || [];
     setCardHeadCount('#virusHead', '扫描结果', rows.length);
-    if (!rows.length) { box.textContent = d.summary || '未发现威胁，设备安全。'; loadDashboard(); return; }
+    // 只渲染感染/可疑项;全部干净时不再铺几百行"安全",直接给摘要
+    var hits = rows.filter(function (r) { return r.infected; });
+    if (!hits.length) { box.textContent = d.summary || '未发现威胁，设备安全。'; loadDashboard(); return; }
     var frag = document.createDocumentFragment();
-    rows.forEach(function (r) {
+    hits.forEach(function (r) {
       var detail = (r.detections || []).map(function (x) { return '[' + x.engine + '] ' + x.name; }).join('；');
       frag.appendChild(resultRow(r.name || r.pkg, r.pkg + (detail ? ' · ' + detail : ''), levelText(r.worst), levelCls(r.worst),
         function () { openApp(r.pkg); }, r.pkg, r.name));
     });
+    // 干净应用默认折叠,点击展开(避免一次插入数百行 DOM)
+    var rest = rows.length - hits.length;
+    if (rest > 0) {
+      var cleanRows = rows.filter(function (r) { return !r.infected; });
+      var more = el('button', 'row more-toggle', '展开其余 ' + rest + ' 个安全应用');
+      more.type = 'button';
+      more.addEventListener('click', function () {
+        var f2 = document.createDocumentFragment();
+        cleanRows.forEach(function (r) {
+          f2.appendChild(resultRow(r.name || r.pkg, r.pkg, levelText(r.worst), levelCls(r.worst),
+            function () { openApp(r.pkg); }, r.pkg, r.name));
+        });
+        more.remove();
+        box.appendChild(f2);
+      });
+      frag.appendChild(more);
+    }
     box.appendChild(frag);
     loadDashboard();
   });
@@ -321,6 +374,7 @@
     var box = qs('#trojanResults');
     if (box) box.textContent = '';
     setScanBusy('#btnTrojanScan', true);
+    showCancel('#btnTrojanCancel', false);
     hapticTap();
     if (demo) { demoTrojan(); return; }
     try { bridge.startTrojanScan(); } catch (e) { setScanBusy('#btnTrojanScan', false); }
@@ -336,6 +390,7 @@
 
   function renderTrojan(d) {
     setScanBusy('#btnTrojanScan', false);
+    showCancel('#btnTrojanCancel', false);
     var total = d.total || (d.items || []).length;
     setScanUi(total, total, d.summary || '检测完成');
     var box = qs('#trojanResults');
@@ -354,7 +409,8 @@
   }
 
   on('trojanProgress', function (d) {
-    setScanUi(d.done, d.total, '木马查杀中 ' + d.done + ' / ' + d.total);
+    setScanUi(d.done, d.total, '木马查杀中 ' + d.done + ' / ' + d.total + '（' + scanPct(d.done, d.total) + '%）');
+    showCancel('#btnTrojanCancel', true);
   });
   on('trojanDone', renderTrojan);
   on('rootkitDone', renderTrojan);
@@ -471,6 +527,13 @@
       hapticTap();
       try { call(target); } catch (err) { sw.classList.toggle('is-on', !target); }
     });
+    // 整行可点:开关本体只有 46×28px,达不到 48px 触摸目标;
+    // 行内点击(非开关本体)转发给开关。开关自己的 stopPropagation 防止双触发。
+    var row = sw.closest('.protection-item');
+    if (row) {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', function () { sw.click(); });
+    }
   }
 
   bindNativeSwitch('swRealtime', function (t) { bridge.toggleRealtime(t); });
@@ -497,6 +560,8 @@
   bind('btnHeroScan', function () { hapticTap(); window.__sdGoto('security', 'scan'); });
   bind('btnVirusScan', startVirusScan);
   bind('btnTrojanScan', startTrojanScan);
+  bind('btnVirusCancel', function () { requestCancelScan('#btnVirusCancel'); });
+  bind('btnTrojanCancel', function () { requestCancelScan('#btnTrojanCancel'); });
   bind('btnRootkit', function () { runToolScan('正在检测 Rootkit / 提权后门…', function () { bridge.startRootkit(); }); });
   bind('btnModules', function () { runToolScan('正在检测恶意模块 / SU 脚本…', function () { bridge.startModuleScan(); }); });
   bind('btnLocker', function () { runToolScan('正在检测锁机软件…', function () { bridge.startLockerScan(); }); });

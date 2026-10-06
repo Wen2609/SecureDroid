@@ -67,12 +67,17 @@ class DatabaseAndManagersTest {
 
     @Test
     fun privilegeLayerDegradesSafelyWithoutRoot() {
-        // 测试环境无 su:层级必须落在 NONE,而不是崩溃或谎报 ROOT
-        assertEquals(PrivLevel.NONE, PrivilegeManager.probe(ctx))
-        assertFalse(PrivilegeManager.isRoot(ctx))
+        // 测试环境无 su:绝不能判为 ROOT。LOCAL_SHELL 是合法结果 —— 探测的是
+        // 本地 sh 管道,在装有 Git Bash / WSL 的宿主上真实可用;断言环境无关的不变量。
+        val probed = PrivilegeManager.probe(ctx)
+        assertTrue(
+            "无 su 环境不得探测为 ROOT,实际 " + probed,
+            probed != PrivLevel.ROOT
+        )
+        assertEquals("probe 结果必须落库缓存", probed, PrivilegeManager.level(ctx))
 
         val denied = PrivilegeManager.exec(ctx, "id", requireRoot = true)
-        assertFalse("无 root 时提权执行必须失败", denied.ok)
+        assertFalse("非 ROOT 层级提权执行必须失败", denied.ok)
         assertTrue("必须给出权限不足原因", denied.denied)
     }
 

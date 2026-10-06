@@ -82,4 +82,40 @@ class WebUiGuardTest {
             js.contains("visibilitychange")
         )
     }
+
+    @Test
+    fun scanMustBeCancellableFromWebUi() {
+        val js = asset("ui/app.js")
+        assertTrue(
+            "病毒/木马扫描必须提供取消按钮与取消流程(btnVirusCancel / btnTrojanCancel / requestCancelScan)",
+            js.contains("btnVirusCancel") && js.contains("btnTrojanCancel") && js.contains("requestCancelScan")
+        )
+    }
+
+    @Test
+    fun segTouchTargetMustBeAtLeast48px() {
+        val html = asset("ui/index.html")
+        assertTrue(
+            "分段按钮触摸目标必须 ≥48px(项目硬规则;上传稿的 42px 不达标)",
+            Regex("\\.seg\\{[^}]*height:48px", RegexOption.DOT_MATCHES_ALL).containsMatchIn(html)
+        )
+    }
+
+    @Test
+    fun virusResultsMustCollapseCleanApps() {
+        val js = asset("ui/app.js")
+        assertTrue(
+            "病毒扫描结果默认只渲染感染项,干净应用折叠进展开器(more-toggle),不得一次铺几百行",
+            js.contains("more-toggle") && js.contains("展开其余")
+        )
+    }
+
+    @Test
+    fun switchRowsMustBeFullyTappable() {
+        val js = asset("ui/app.js")
+        assertTrue(
+            "开关行必须整行可点(开关本体 46×28px 达不到 48px 触摸目标)",
+            js.contains("closest('.protection-item')")
+        )
+    }
 }

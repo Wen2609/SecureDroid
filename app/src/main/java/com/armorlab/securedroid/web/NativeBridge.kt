@@ -47,6 +47,7 @@ import com.armorlab.securedroid.ui.VirusCenterActivity
 import com.armorlab.securedroid.ui.VulnerabilityActivity
 import com.armorlab.securedroid.vscan.FeatureUpdater
 import com.armorlab.securedroid.vscan.ParallelScanner
+import com.armorlab.securedroid.vscan.ScanControl
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
@@ -177,7 +178,8 @@ class NativeBridge(
                 }
                 val infected = results.count { it.isInfected }
                 val summary = "扫描完成，共 ${results.size} 项" +
-                    (if (infected > 0) "，发现 $infected 个威胁" else "，未发现威胁")
+                    (if (infected > 0) "，发现 $infected 个威胁" else "，未发现威胁") +
+                    (if (outcome.cancelled) "(已取消，仅含已扫描部分)" else "")
                 postEvent("virusDone", JSONObject().put("results", arr)
                     .put("total", results.size).put("infected", infected).put("summary", summary))
             } catch (t: Throwable) {
@@ -194,32 +196,49 @@ class NativeBridge(
        木马查杀(逐包多引擎)
        ================================================================ */
 
+    /** 取消进行中的查杀:病毒扫描与木马查杀循环都轮询 ScanControl */
+    @JavascriptInterface
+    fun cancelScan() {
+        ScanControl.requestCancel()
+    }
+
     @JavascriptInterface
     fun startTrojanScan() {
         if (!running.add(SCAN_TROJAN)) return
+        ScanControl.reset()
         Thread {
             try {
                 ClamAvSignatures.ensureLoaded(app)
                 val pkgs = PackageSnapshot.installedPackages(app, 0)
                 val items = JSONArray()
                 var infected = 0
+                var scanned = 0
                 // 进度事件节流:逐包推送会让 UI 线程执行上百次 evaluateJavascript,
                 // 进度条平滑度只取决于 CSS transition,300ms 一帧绰绰有余;末包必推
                 var lastPost = 0L
-                pkgs.forEachIndexed { index, info ->
+                for (info in pkgs) {
+                    if (ScanControl.cancelled) break
                     val report = TrojanScanner.scanPackage(app, info.packageName)
+                    scanned++
                     if (report.isInfected) {
                         infected++
                         items.put(reportToJson(report))
                     }
                     val now = SystemClock.elapsedRealtime()
-                    if (now - lastPost >= PROGRESS_INTERVAL_MS || index == pkgs.size - 1) {
+                    if (now - lastPost >= PROGRESS_INTERVAL_MS) {
                         lastPost = now
                         postEvent("trojanProgress",
-                            JSONObject().put("done", index + 1).put("total", pkgs.size))
+                            JSONObject().put("done", scanned).put("total", pkgs.size))
                     }
                 }
-                val summary = app.getString(R.string.trojan_done, pkgs.size, infected)
+                val cancelled = ScanControl.cancelled && scanned < pkgs.size
+                val summary = when {
+                    cancelled -> app.getString(R.string.trojan_done, scanned, infected) +
+                        "(已取消，仅含已扫描部分)"
+                    else -> app.getString(R.string.trojan_done, pkgs.size, infected)
+                }
+                postEvent("trojanProgress",
+                    JSONObject().put("done", scanned).put("total", pkgs.size))
                 postEvent("trojanDone", JSONObject().put("items", items)
                     .put("total", pkgs.size).put("summary", summary))
             } catch (t: Throwable) {

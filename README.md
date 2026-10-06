@@ -42,6 +42,7 @@
 
 - **误报修复(v1.7.3)**:行为规则此前用纯 `contains` 匹配 DEX 字符串碎片,且凑够模式数量就升级为感染 —— 实测一加官方"备份与恢复"被判 10 条(含 CRITICAL 短信扣费/提权/反向 Shell)、Dute 等 4 个正常应用各 7-10 条、本应用扫描自己时 14 条规则全中。现三处修复:①匹配改为**词边界**(新增 `scan/TokenMatch.kt`,`exec` 不再命中 `execute`/`execSQL`);②新增**强特征门槛**(`BehaviorRules.Rule.strong`,纯 API 组合必须叠加真实恶意落点才算);③**分级下调**(11 条规则降为 LOW 提示),且 `Report.isInfected` 只认 MEDIUM 及以上;同时排除扫描自己、收紧锁机判定(必须命中 `resetPassword`)、删除演示特征库里的通用 dex 头魔数、给判定缓存加语义版本号(`DexVerdictCache` VERSION=2,否则老设备沿用旧误报)。真实语料误报 0 条 MEDIUM+,合成恶意样本仍全部命中。新增 `FalsePositiveTest` 10 项(共 132 项 JVM 测试)。
 - **UI 与 WebView 性能优化(v1.9.12)**:`AppLockStore.prefs()` 改为双检锁单例(修复无障碍服务逐事件重复 KeyStore 派生的最大热路径);`getDashboard` 改 Room 聚合查询(不再整表拉 2000 行);木马查杀进度 300ms 节流;WebUI 刷新统一收敛(启动双加载 + 多监听重复触发消除);应用锁列表一次读锁集合 + 纯数据排序;四个结果列表 DocumentFragment 批量插入;应用图标 IntersectionObserver 懒加载 + 128px WEBP;`checkUpdate` 签名库加载移后台;转后台自动暂停光晕等装饰动画;新增 `WebUiGuardTest` 4 项 + `PerfGuardTest` 4 项 + `DatabaseAndManagersTest` 2 项(共 142 项 JVM 测试)。
+- **WebUI 交互升级(v1.9.13)**:病毒扫描 / 木马查杀支持**取消**(新增 `AndroidBridge.cancelScan()`,复用 `ScanControl`,取消后摘要标注"仅含已扫描部分");病毒扫描结果**按威胁折叠**(默认只渲染感染项,干净应用收进展开器,不再一次铺几百行);防护开关**整行可点**(开关本体 46×28px 达不到触摸目标);分段按钮 42px→48px(项目硬规则);进度百分比 + `role="progressbar"` + `aria-live` 读屏支持;修复既有环境依赖断言(`privilegeLayerDegradesSafelyWithoutRoot` 改为断言无 ROOT 不变量)。新增守卫测试 5 项(共 147 项 JVM 测试)。
 
 ## 技术栈
 
@@ -97,7 +98,7 @@
 
 ### 测试与验证
 
-    ./gradlew testDebugUnitTest     # 142 项 JVM 单元测试(含 Robolectric 冒烟)
+    ./gradlew testDebugUnitTest     # 147 项 JVM 单元测试(含 Robolectric 冒烟)
     ./gradlew assembleRelease       # R8 混淆 + 签名发布包
 
 ### 运行时冒烟测试(Robolectric)
@@ -109,7 +110,7 @@
 | ApplicationSmokeTest | 2 | **应用能启动**:走完 Application.onCreate、通知渠道创建、定时任务同步 |
 | LayoutInflationTest | 2 | **20 个布局全部可膨胀**(布局/主题/自定义属性问题当场暴露) |
 | ActivityLaunchTest | 2 | **清单里全部 Activity 全部可拉起**(create → start → resume),含锁屏页无 PIN 自动结束 |
-| DatabaseAndManagersTest | 4 | Room 建表读写往返、提权层无 root 安全降级、完整性模块给出明确提示、开机广播安全无操作 |
+| DatabaseAndManagersTest | 6 | Room 建表读写往返 + 聚合查询(countAll / lastScannedAt)、提权层无 root 安全降级(环境无关不变量)、应用锁加密存储降级、完整性模块给出明确提示、开机广播安全无操作 |
 
 ### 静态与逻辑测试
 
@@ -230,12 +231,13 @@ JS 桥接到真实原生功能;每个入口都是真实实现,不造空壳。纯
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.9.12-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.9.13-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 BF58EE8EA79BB1AA5718F351EF0460BCB83F0FCD2AE824A832C399A299177B6C
-    大小    1,976,947 字节    versionCode 27 / versionName 1.9.12(UI 与 WebView 性能优化:加密存储单例 / 聚合查询 / 进度节流 / 图标懒加载)
+    SHA-256 B8C70541292BC29230651BC832EEC25D5BB7DFDA89424C0EABE1A3D59DCBE4BB
+    大小    1,978,523 字节    versionCode 28 / versionName 1.9.13(WebUI 交互升级:扫描可取消 + 结果按威胁折叠 + 开关整行可点 + 触摸目标达标)
 
-  更早版本 apks/SecureDroid-v1.9.11-release-signed.apk(versionCode 26,UI 全面检查修复:Web 端交互/摘要卡/工具图标 + 原生页面沉浸式 + 尺寸令牌化)、
+  更早版本 apks/SecureDroid-v1.9.12-release-signed.apk(versionCode 27,UI 与 WebView 性能优化:加密存储单例 / 聚合查询 / 进度节流 / 图标懒加载)、
+  apks/SecureDroid-v1.9.11-release-signed.apk(versionCode 26,UI 全面检查修复:Web 端交互/摘要卡/工具图标 + 原生页面沉浸式 + 尺寸令牌化)、
   apks/SecureDroid-v1.9.10-release-signed.apk(versionCode 25,基础体验优化:启动品牌 Splash 过渡 + 首屏骨架加载态 + 双击退出提示)、
   apks/SecureDroid-v1.9.9-release-signed.apk(versionCode 24,删除全部旧 Fragment 死代码 + 全界面文字溢出修复)、
   apks/SecureDroid-v1.9.8-release-signed.apk(versionCode 23,应用锁解锁页/完整性警示条/桌面小部件玻璃化)、
