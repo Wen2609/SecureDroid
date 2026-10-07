@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.work.Configuration
 import com.armorlab.securedroid.feature.ScanScheduler
+import com.armorlab.securedroid.feature.UpdateScheduler
 import com.armorlab.securedroid.realtime.SecureGuardAppRefs
 
 /**
@@ -45,5 +46,6 @@ class SecureGuardApp : Application(), Configuration.Provider {
             )
         )
         ScanScheduler.sync(this)
+        UpdateScheduler.sync(this)
     }
 }

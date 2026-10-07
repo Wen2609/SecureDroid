@@ -784,6 +784,7 @@
     if (d.mode) applyMode(d.mode);
     setSwitch('swRealtime', d.realtime);
     setSwitch('swBoot', d.boot);
+    setSwitch('swAutoUpdate', d.autoUpdate);
     setSwitch('swRoot', d.rootMode);
     var sub = qs('#rootSub');
     if (sub) sub.textContent = d.rootSub || (d.rootMode ? '已启用' : '未启用，开启将请求 su 授权');
@@ -810,6 +811,7 @@
 
   bindNativeSwitch('swRealtime', function (t) { api.send('toggleRealtime', { on: t }); });
   bindNativeSwitch('swBoot', function (t) { api.send('toggleBoot', { on: t }); });
+  bindNativeSwitch('swAutoUpdate', function (t) { api.send('toggleAutoUpdate', { on: t }); });
   bindNativeSwitch('swRoot', function (t) { api.send('toggleRoot', { on: t }); });
   bindNativeSwitch('swDecoy', function (t) { api.send('toggleDecoy', { on: t }); });
 
@@ -1095,7 +1097,7 @@
     };
   }
   function demoToggles() {
-    return { realtime: true, boot: false, rootMode: false, rootSub: '未启用，开启将请求 su 授权' };
+    return { realtime: true, boot: false, autoUpdate: true, rootMode: false, rootSub: '未启用，开启将请求 su 授权' };
   }
 
   function demoVirus() {
@@ -1671,7 +1673,8 @@
       if (first) {
         first.readOnly = true;
         first.style.opacity = '.6';
-        first.value += ' — 官方库接入:用 tools/cvd2clamav.js 从 ClamAV daily.cvd 生成 clamav.ndb/.hsb,填 URL+SHA-256 加载';
+        first.value += ' · ' + (d.lastUpdateAt ? '上次更新 ' + fmtTime(d.lastUpdateAt) : '暂无更新历史') +
+          ' · 官方库接入:tools/cvd2clamav.js 解包 daily.cvd 后填 URL+SHA-256';
       }
     });
   }

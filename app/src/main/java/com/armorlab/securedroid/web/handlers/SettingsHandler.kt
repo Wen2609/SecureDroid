@@ -36,6 +36,7 @@ class SettingsHandler(
         JSONObject()
             .put("realtime", prefs.getBoolean(BridgeKeys.REALTIME, false))
             .put("boot", prefs.getBoolean(BridgeKeys.BOOT, true))
+            .put("autoUpdate", prefs.getBoolean("auto_update_enabled", false))
             .put("rootMode", rootMode)
             .put("mode", AppModeStore.current(app).id)
             .put("rootSub", if (rootMode) app.getString(R.string.root_mode_on)
@@ -78,6 +79,15 @@ class SettingsHandler(
             app.packageManager.setComponentEnabledSetting(
                 ComponentName(app, BootReceiver::class.java), state, PackageManager.DONT_KILL_APP
             )
+        } catch (_: Exception) {
+        }
+    }
+
+    /** 病毒库自动更新开关:每日联网检查一次(需已配置更新源 URL + SHA-256) */
+    fun toggleAutoUpdate(on: Boolean) {
+        try {
+            BridgeKeys.settings(app).edit().putBoolean("auto_update_enabled", on).apply()
+            com.armorlab.securedroid.feature.UpdateScheduler.sync(app)
         } catch (_: Exception) {
         }
     }

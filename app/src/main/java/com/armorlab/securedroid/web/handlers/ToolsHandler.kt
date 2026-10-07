@@ -296,6 +296,7 @@ class ToolsHandler(
             add("policy", R.string.va_policy, R.string.va_policy_sub)
             add("autq", R.string.va_autq, R.string.va_autq_sub)
             add("update", R.string.vc_update, R.string.vc_update_sub)
+            add("rollback", R.string.vc_rollback, R.string.vc_rollback_sub)
             add("priv", R.string.va_priv, R.string.va_priv_sub)
             add("integrity", R.string.va_integrity, R.string.va_integrity_sub)
             add("lockfiles", R.string.va_lockfiles, R.string.va_lockfiles_sub)
@@ -359,6 +360,7 @@ class ToolsHandler(
         "learn" -> app.getString(R.string.vc_phase_learn)
         "stats" -> app.getString(R.string.vc_phase_stats)
         "sig" -> app.getString(R.string.vc_phase_sig)
+        "rollback" -> app.getString(R.string.vc_phase_rollback)
         "recent" -> app.getString(R.string.vc_phase_recent)
         "parallel" -> app.getString(R.string.va_phase_parallel)
         "diff" -> app.getString(R.string.vc_phase_diff)
@@ -406,7 +408,33 @@ class ToolsHandler(
         "unlockfiles" -> lockPanel(false)
         "stats" -> threatStats()
         "sig" -> signatureItems()
+        "rollback" -> rollbackItems()
         else -> listOf(uiItem("Unsupported", "未实现的工具: $actionId", level = "medium"))
+    }
+
+    /** 特征库回滚:还原上一版特征文件并热重载,附带展示最近更新历史 */
+    private suspend fun rollbackItems(): List<JSONObject> = withContext(Dispatchers.Default) {
+        val items = mutableListOf(
+            uiItem(
+                title = FeatureUpdater.rollbackUpdate(app),
+                level = "low"
+            )
+        )
+        val history = try { JSONArray(FeatureUpdater.historyJson(app)) } catch (_: Exception) { JSONArray() }
+        for (i in 0 until history.length()) {
+            val h = history.optJSONObject(i) ?: continue
+            if (h.optBoolean("rollback")) continue
+            items.add(
+                uiItem(
+                    "Rollback.History." + i,
+                    "更新历史: " + h.optString("file") +
+                        " · " + TimeFmt.dateMinute(h.optLong("time")),
+                    level = "low"
+                )
+            )
+            if (items.size >= 8) break
+        }
+        items
     }
 
     private fun recentDeepScan(): List<JSONObject> {
@@ -744,10 +772,20 @@ class ToolsHandler(
     suspend fun getUpdateInfo(): String = withContext(Dispatchers.Default) {
         try { ClamAvSignatures.ensureLoaded(app) } catch (_: Exception) {}
         val prefs = BridgeKeys.settings(app)
+        val lastUpdateAt = try {
+            val history = JSONArray(FeatureUpdater.historyJson(app))
+            (0 until history.length()).asSequence()
+                .mapNotNull { history.optJSONObject(it) }
+                .firstOrNull { it.optBoolean("ok") && !it.optBoolean("rollback") }
+                ?.optLong("time") ?: 0L
+        } catch (_: Exception) {
+            0L
+        }
         JSONObject()
             .put("signatureCount", SignatureDatabase.size())
             .put("hashCount", ClamAvSignatures.hashCount())
             .put("byteCount", ClamAvSignatures.byteCount())
+            .put("lastUpdateAt", lastUpdateAt)
             .put("url", prefs.getString("update_url", "") ?: "")
             .put("sha", prefs.getString("update_sha", "") ?: "")
             .toString()

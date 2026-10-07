@@ -132,6 +132,10 @@
 
 ## v1.9.25 新增约定
 - **恶意链接检测**:`vscan/PhishingDetector.check(ctx, url)` 纯本地启发式(绝不访问目标 URL),评分制 ≥70 danger / ≥40 warn;桥接 `checkUrl`,前端病毒中心菜单 id=`phishing` 走输入对话框(app.js runVirusTool 特判)。调特征/阈值必须同步改 `PhishingDetectorTest`(分数边界与判级是产品语义)。
+
+## v1.9.26 新增约定
+- **自动更新**:`UpdateScheduler.sync()` 在 Application.onCreate 调用;开关 pref 键 `auto_update_enabled`,更新源键 `update_url`/`update_sha`。新增后台 Worker 一律走 ScanScheduler 同款模式(WorkManager 周期 + UPDATE 策略 + 调度异常吞掉)。
+- **更新器**:落盘统一走 `FeatureUpdater.applyUpdate`(备份到 `files/clamav/backup/`、写正式文件、热重载、记历史);`files/clamav/` 下**任何新子目录**都会被 ensureLoaded 跳过(只读 isFile,否则异常中止整个加载循环——已踩过)。改 update/applyUpdate 后必须跑 `FeatureUpdaterHistoryTest`。
 ## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
 - 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
 - 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()

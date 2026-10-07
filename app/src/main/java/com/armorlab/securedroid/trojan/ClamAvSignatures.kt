@@ -232,7 +232,8 @@ object ClamAvSignatures {
             try {
                 val dir = File(context.filesDir, "clamav")
                 if (dir.isDirectory) {
-                    dir.listFiles()?.forEach { f ->
+                    // 只加载普通文件:.part/(断点续传)与 backup/(回滚备份)是子目录,误读会抛异常中止整个循环
+                    dir.listFiles()?.filter { it.isFile }?.forEach { f ->
                         f.bufferedReader().use { parseFileLines(it, f.name) }
                     }
                 }

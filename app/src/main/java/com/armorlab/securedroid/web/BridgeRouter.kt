@@ -85,6 +85,9 @@ class BridgeRouter(
         put("toggleBoot", Action(false) { json ->
             settings.toggleBoot(json.optBoolean("on")); null
         })
+        put("toggleAutoUpdate", Action(false) { json ->
+            settings.toggleAutoUpdate(json.optBoolean("on")); null
+        })
         put("toggleRoot", Action(false) { json ->
             settings.toggleRoot(json.optBoolean("on")); null
         })
