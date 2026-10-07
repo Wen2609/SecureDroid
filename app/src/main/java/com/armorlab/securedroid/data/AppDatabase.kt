@@ -4,14 +4,22 @@ import android.content.Context
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
-@Entity(tableName = "scan_records")
+// packageName/scannedAt 索引:latestFor(pkg) 与 trim/lastScannedAt 的排序过滤走索引,
+// 2000 行历史下查询由全表扫描降为索引定位
+@Entity(
+    tableName = "scan_records",
+    indices = [Index("packageName"), Index("scannedAt")]
+)
 data class ScanRecordEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val packageName: String,
@@ -56,7 +64,10 @@ interface ScanRecordDao {
     suspend fun threatCount(): Int
 }
 
-@Entity(tableName = "auto_actions")
+@Entity(
+    tableName = "auto_actions",
+    indices = [Index("actedAt")]
+)
 data class AutoActionEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val actionType: String,
@@ -79,7 +90,7 @@ interface AutoActionDao {
     suspend fun successCount(): Int
 }
 
-@Database(entities = [ScanRecordEntity::class, AutoActionEntity::class], version = 2, exportSchema = false)
+@Database(entities = [ScanRecordEntity::class, AutoActionEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun scanRecordDao(): ScanRecordDao
@@ -89,6 +100,15 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var instance: AppDatabase? = null
+
+        /** v2→v3:补建索引。显式迁移避免老库升级时被破坏性重建清掉查杀历史 */
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_scan_records_packageName` ON `scan_records` (`packageName`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_scan_records_scannedAt` ON `scan_records` (`scannedAt`)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_auto_actions_actedAt` ON `auto_actions` (`actedAt`)")
+            }
+        }
 
         fun get(context: Context): AppDatabase {
             // 缓存实例可能已经被关闭(进程内重建 Application、外部显式 close):
@@ -104,7 +124,11 @@ abstract class AppDatabase : RoomDatabase() {
                         context.applicationContext,
                         AppDatabase::class.java,
                         "securedroid.db"
-                    ).fallbackToDestructiveMigration().build().also { instance = it }
+                    )
+                        // WAL:写不阻塞读(扫描落库与首页聚合查询并发),提交由 SQLite 后台合并
+                        .setJournalMode(androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
+                        .addMigrations(MIGRATION_2_3)
+                        .fallbackToDestructiveMigration().build().also { instance = it }
                 }
             }
         }

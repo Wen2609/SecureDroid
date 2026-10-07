@@ -94,7 +94,8 @@ object FeatureUpdater {
                 true,
                 "更新成功:" + name + " (" + bytes.size / 1024 + "KB),当前 ClamAV 签名 " +
                     (ClamAvSignatures.hashCount() + ClamAvSignatures.md5Count()) + " 哈希 / " +
-                    ClamAvSignatures.byteCount() + " 字节" + truncatedNote
+                    ClamAvSignatures.byteCount() + " 字节 / " +
+                    ClamAvSignatures.logicalCount() + " 逻辑" + truncatedNote
             )
         } catch (e: Exception) {
             return UpdateResult(false, "写入失败: " + e.message)

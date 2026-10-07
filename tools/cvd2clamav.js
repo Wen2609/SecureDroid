@@ -52,6 +52,8 @@ try {
 // 解析 tar(512 字节块,ustar 或 GNU 格式)
 const ndbLines = [];
 const hsbLines = [];
+const hdbLines = [];
+const ldbLines = [];
 let off = 0;
 while (off + 512 <= payload.length) {
   const name = payload.subarray(off, off + 100).toString('utf8').replace(/\0.*$/, '');
@@ -65,17 +67,16 @@ while (off + 512 <= payload.length) {
   if (dataEnd > payload.length) break;
   const content = payload.subarray(dataStart, dataEnd).toString('utf8');
   const lower = name.toLowerCase();
-  if (lower.endsWith('.ndb') || lower.endsWith('.ndu')) {
+  const collect = (arr) => {
     for (const line of content.split(/\r?\n/)) {
       const t = line.trim();
-      if (t && !t.startsWith('#')) ndbLines.push(t);
+      if (t && !t.startsWith('#')) arr.push(t);
     }
-  } else if (lower.endsWith('.hsb') || lower.endsWith('.hsu')) {
-    for (const line of content.split(/\r?\n/)) {
-      const t = line.trim();
-      if (t && !t.startsWith('#')) hsbLines.push(t);
-    }
-  }
+  };
+  if (lower.endsWith('.ndb') || lower.endsWith('.ndu')) collect(ndbLines);
+  else if (lower.endsWith('.hsb') || lower.endsWith('.hsu')) collect(hsbLines);
+  else if (lower.endsWith('.hdb') || lower.endsWith('.hdu')) collect(hdbLines);
+  else if (lower.endsWith('.ldb') || lower.endsWith('.ldu')) collect(ldbLines);
   // 前进到下一文件头(数据按 512 对齐)
   off = dataEnd + ((512 - (dataEnd % 512)) % 512);
 }
@@ -83,16 +84,25 @@ while (off + 512 <= payload.length) {
 const uniq = (arr) => Array.from(new Set(arr));
 const ndb = uniq(ndbLines);
 const hsb = uniq(hsbLines);
-const ndbOut = path.join(outDir, 'clamav.ndb');
-const hsbOut = path.join(outDir, 'clamav.hsb');
-
-fs.writeFileSync(ndbOut, ndb.join('\n') + '\n');
-fs.writeFileSync(hsbOut, hsb.join('\n') + '\n');
+const hdb = uniq(hdbLines);
+const ldb = uniq(ldbLines);
+const writeIfAny = (lines, file) => {
+  if (!lines.length) return null;
+  const out = path.join(outDir, file);
+  fs.writeFileSync(out, lines.join('\n') + '\n');
+  return out;
+};
+const ndbOut = writeIfAny(ndb, 'clamav.ndb');
+const hsbOut = writeIfAny(hsb, 'clamav.hsb');
+const hdbOut = writeIfAny(hdb, 'clamav.hdb');
+const ldbOut = writeIfAny(ldb, 'clamav.ldb');
 
 console.log('CVD 解包完成:');
-console.log('  .ndb 字节特征: ' + ndb.length + ' 条 -> ' + ndbOut);
-console.log('  .hsb 哈希特征: ' + hsb.length + ' 条 -> ' + hsbOut);
+if (ndbOut) console.log('  .ndb 字节特征: ' + ndb.length + ' 条 -> ' + ndbOut);
+if (hsbOut) console.log('  .hsb 哈希特征: ' + hsb.length + ' 条 -> ' + hsbOut);
+if (hdbOut) console.log('  .hdb MD5 特征: ' + hdb.length + ' 条 -> ' + hdbOut);
+if (ldbOut) console.log('  .ldb 逻辑签名: ' + ldb.length + ' 条 -> ' + ldbOut);
 console.log('');
 console.log('接入应用(二选一):');
-console.log('  1. 把 clamav.ndb / clamav.hsb 放入应用私有目录 files/clamav/ 后重启;');
+console.log('  1. 把生成的 clamav.* 放入应用私有目录 files/clamav/ 后重启;');
 console.log('  2. 用应用内「特征库在线更新」分别填写文件 URL 与 SHA-256 校验值。');

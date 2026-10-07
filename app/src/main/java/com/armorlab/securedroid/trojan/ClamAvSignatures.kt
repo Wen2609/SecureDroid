@@ -20,7 +20,9 @@ import java.util.zip.ZipFile
  * - .ndb / .ndu : 扩展字节特征签名,行格式
  *     名称:目标类型:偏移:HEX特征[:min_flevel[:max_flevel]]
  *   其中偏移支持 * (任意位置)、绝对偏移 n、(EOF-n)(文件尾往前 n 字节)
- *   以及浮动偏移 n,MaxShift(表示 n..n+MaxShift 区间内匹配)。
+ *   以及浮动偏移 n,MaxShift(表示 n..n+MaxShift 区间内匹配);
+ * - .ldb / .ldu : 逻辑签名(Name;TargetDesc;逻辑表达式;子签名0;…),
+ *   支持 & / | / 括号 / 索引=0 否定;计数语义与 PCRE 等高级特性解析期整行拒绝。
  *
  * 特征来源:
  * 1. assets/signatures/ 内置演示签名;
@@ -43,7 +45,9 @@ object ClamAvSignatures {
         /** 浮动偏移上限:匹配 offset..offset+maxShift 区间(ClamAV 的 MaxShift) */
         val maxShift: Int = 0,
         /** ClamAV TargetType(0 = 任意;1 = PE;6 = ELF;…),仅用于展示与判读 */
-        val targetType: Int = 0
+        val targetType: Int = 0,
+        /** 逻辑签名(.ldb)的隐藏子签名:进索引参与匹配,但不作为独立命中上报 */
+        val isHidden: Boolean = false
     ) {
         /** 位置是否固定(绝对偏移或文件尾偏移),固定位置无需全量扫描 */
         val isPositional: Boolean get() = offsetKind != OffsetKind.ANY
@@ -51,6 +55,25 @@ object ClamAvSignatures {
 
     /** 2 字节窗口条目:签名 + 窗口在签名内的起始偏移 */
     private class Window(val sig: ByteSig, val offsetInSig: Int)
+
+    /** 逻辑表达式节点(仅索引引用:& / | / 括号 / 索引=0 否定;计数语义不支持,解析期拒绝) */
+    internal sealed interface LogicalNode
+    internal data class LAnd(val l: LogicalNode, val r: LogicalNode) : LogicalNode
+    internal data class LOr(val l: LogicalNode, val r: LogicalNode) : LogicalNode
+    internal data class LRef(val idx: Int, val requireAbsent: Boolean) : LogicalNode
+
+    /**
+     * ClamAV 逻辑签名(.ldb):Name;TargetDesc;逻辑表达式;子签名0;子签名1;…
+     * 子签名以隐藏 ByteSig 进主索引(零额外扫描开销),表达式按命中集合求值。
+     */
+    internal class LogicalSig(
+        val name: String,
+        val targetType: Int,
+        val subNames: List<String>,
+        val expr: LogicalNode,
+        /** 是否含正向引用:无任何子签名命中时可整条跳过 */
+        val hasPositiveRef: Boolean
+    )
 
     /**
      * 不可变签名索引:多字节窗口直接索引 + 位置固定型直接定位。
@@ -160,6 +183,14 @@ object ClamAvSignatures {
     private val hashSigs = HashMap<String, Pair<Long, String>>()
     private val md5Sigs = HashMap<String, Pair<Long, String>>()
     private val byteSigs = mutableListOf<ByteSig>()
+    private val logicalSigs = mutableListOf<LogicalSig>()
+
+    @Volatile
+    private var logicalSnapshot: List<LogicalSig> = emptyList()
+
+    /** 是否存在纯否定(全 =0)逻辑签名:空命中集时也需参与求值 */
+    @Volatile
+    private var logicalNeedsEmptyEval = false
 
     /**
      * 总条数预算(哈希 + MD5 + 字节):官方 daily.cvd 解包可达百万级,
@@ -182,6 +213,8 @@ object ClamAvSignatures {
     /** 重建不可变索引(调用方需持有 lock);整表原子替换,扫描侧无需加锁 */
     private fun rebuildIndex() {
         index = buildIndex()
+        logicalSnapshot = logicalSigs.toList()
+        logicalNeedsEmptyEval = logicalSigs.any { !it.hasPositiveRef }
     }
 
     fun ensureLoaded(context: Context) {
@@ -219,6 +252,7 @@ object ClamAvSignatures {
                 lower.endsWith(".hsb") || lower.endsWith(".hsu") -> parseHashLine(t)
                 lower.endsWith(".hdb") || lower.endsWith(".hdu") -> parseMd5Line(t)
                 lower.endsWith(".ndb") || lower.endsWith(".ndu") -> parseByteLine(t)
+                lower.endsWith(".ldb") || lower.endsWith(".ldu") -> parseLogicalLine(t)
             }
         }
     }
@@ -251,7 +285,7 @@ object ClamAvSignatures {
         }
     }
 
-    /** .hdb:md5:文件大小:名称 */
+        /** .hdb:md5:文件大小:名称 */
     private fun parseMd5Line(t: String) {
         val parts = t.split(':', limit = 3)
         if (parts.size < 3 || parts[0].length != 32) return
@@ -264,6 +298,132 @@ object ClamAvSignatures {
             }
             md5Sigs[parts[0].lowercase()] = Pair(size, parts[2])
         }
+    }
+
+    /**
+     * .ldb 逻辑签名:Name;TargetDesc;逻辑表达式;子签名0;子签名1;…
+     * 官方文档 https://docs.clamav.net/manual/Signatures/LogicalSignatures.html
+     *
+     * 支持子集:索引引用、&、|、括号、`索引=0`(否定,子签名必须不出现)。
+     * 计数语义(`=X`/`>X`/`<X`/`=X,Y` 等)、PCRE 子签名、宏、字节比较、距离修饰
+     * 一律解析期整行拒绝 —— 不支持的语义若强行近似(如忽略计数)会造成误报,
+     * 与其算错不如不载入(漏报面限于这少部分特征,误报面保持为零)。
+     * 子签名要求纯 hex(+? 通配);:: 修饰符 / (N) 偏移后缀同样拒绝。
+     */
+    private fun parseLogicalLine(t: String) {
+        val parts = t.split(';')
+        if (parts.size < 4) return
+        val name = parts[0].trim()
+        if (name.isEmpty()) return
+        // TargetDescriptionBlock:取 Target:N(Engine/FileSize 等其余参数忽略,恒按适用处理)
+        val target = Regex("Target:\\s*(\\d+)").find(parts[1])?.groupValues?.get(1)?.toIntOrNull()
+            ?: return
+        val nibs = mutableListOf<Pair<ByteArray, ByteArray>>()
+        for (raw in parts.drop(3)) {
+            val c = raw.trim()
+            if (c.isEmpty()) return
+            if (c.any { !(it.isDigit() || it in 'a'..'f' || it in 'A'..'F' || it == '?') }) return
+            nibs.add(parseHex(c) ?: return)
+        }
+        if (nibs.isEmpty()) return
+        val expr = try {
+            parseLogicalExpression(parts[2], nibs.size)
+        } catch (_: Exception) {
+            return
+        }
+        synchronized(lock) {
+            if (budgetExhausted()) {
+                truncated = true
+                return
+            }
+            val id = logicalSigs.size
+            val subNames = nibs.mapIndexed { i, p ->
+                val subName = "\u0000log$id#$i"
+                byteSigs.add(ByteSig(subName, p.first, p.second, isHidden = true))
+                subName
+            }
+            logicalSigs.add(LogicalSig(name, target, subNames, expr, hasPositiveRef(expr)))
+        }
+    }
+
+    /** 逻辑表达式递归下降解析:or := and ('|' and)*;and := ref ('&' ref)*;ref := 数字['=0']|'(' or ')' */
+    private fun parseLogicalExpression(expr: String, subCount: Int): LogicalNode =
+        LogicalExprParser(expr.replace(" ", ""), subCount).parse()
+
+    /** 成员函数形式支持 or/unary 互递归(本地函数不允许前向引用) */
+    private class LogicalExprParser(private val s: String, private val subCount: Int) {
+        private var pos = 0
+
+        fun parse(): LogicalNode {
+            val node = or()
+            if (pos != s.length) throw IllegalArgumentException("表达式残留: ${s.substring(pos)}")
+            return node
+        }
+
+        private fun peek(): Char? = if (pos < s.length) s[pos] else null
+
+        private fun index(): Int {
+            val start = pos
+            while (pos < s.length && s[pos].isDigit()) pos++
+            if (pos == start) throw IllegalArgumentException("期望子签名索引")
+            val v = s.substring(start, pos).toIntOrNull()
+                ?: throw IllegalArgumentException("索引过大")
+            if (v >= subCount) throw IllegalArgumentException("索引越界: $v")
+            return v
+        }
+
+        private fun ref(): LogicalNode {
+            val idx = index()
+            if (peek() == '=') {
+                pos++
+                val v = index()
+                if (v != 0) throw IllegalArgumentException("仅支持 =0 否定")
+                return LRef(idx, requireAbsent = true)
+            }
+            return LRef(idx, requireAbsent = false)
+        }
+
+        private fun unary(): LogicalNode {
+            if (peek() == '(') {
+                pos++
+                val n = or()
+                if (peek() != ')') throw IllegalArgumentException("括号不闭合")
+                pos++
+                return n
+            }
+            return ref()
+        }
+
+        private fun and(): LogicalNode {
+            var l = unary()
+            while (peek() == '&') {
+                pos++
+                l = LAnd(l, unary())
+            }
+            return l
+        }
+
+        private fun or(): LogicalNode {
+            var l = and()
+            while (peek() == '|') {
+                pos++
+                l = LOr(l, and())
+            }
+            return l
+        }
+    }
+
+    /** 是否含正向引用(必须命中的子签名):全部为 =0 否定时,空命中集也要参与求值 */
+    private fun hasPositiveRef(node: LogicalNode): Boolean = when (node) {
+        is LAnd -> hasPositiveRef(node.l) || hasPositiveRef(node.r)
+        is LOr -> hasPositiveRef(node.l) || hasPositiveRef(node.r)
+        is LRef -> !node.requireAbsent
+    }
+
+    private fun evalLogical(node: LogicalNode, present: (Int) -> Boolean): Boolean = when (node) {
+        is LAnd -> evalLogical(node.l, present) && evalLogical(node.r, present)
+        is LOr -> evalLogical(node.l, present) || evalLogical(node.r, present)
+        is LRef -> node.requireAbsent != present(node.idx)
     }
 
     /**
@@ -424,9 +584,15 @@ object ClamAvSignatures {
      *    仅窗口命中的少量候选才做半字节级复核;
      * 3. 全通配型(无固定字节):逐位置校验(极少,通常仅演示特征)。
      */
+        /** 命中登记:隐藏子签名(逻辑签名构件)进辅助集合,普通签名直接上报 */
+    private fun report(hits: LinkedHashSet<String>, hidden: HashSet<String>, sig: ByteSig) {
+        if (sig.isHidden) hidden.add(sig.name) else hits.add(sig.name)
+    }
+
     fun scanBytes(data: ByteArray): List<String> {
         val idx = index ?: return emptyList()
         val hits = LinkedHashSet<String>()
+        val hidden = HashSet<String>()
 
         for (sig in idx.positional) {
             val base = when (sig.offsetKind) {
@@ -439,7 +605,7 @@ object ClamAvSignatures {
             while (shift <= sig.maxShift) {
                 val at = base + shift
                 if (at + sig.lo.size <= data.size && matchesAt(data, at, sig)) {
-                    hits.add(sig.name)
+                    report(hits, hidden, sig)
                     break
                 }
                 shift++
@@ -455,7 +621,7 @@ object ClamAvSignatures {
                 val sig = idx.sigOf[id]
                 if (sig != null) {
                     val at = i - idx.offsetOf[id]
-                    if (at >= 0 && at + sig.lo.size <= n && matchesAt(data, at, sig)) hits.add(sig.name)
+                    if (at >= 0 && at + sig.lo.size <= n && matchesAt(data, at, sig)) report(hits, hidden, sig)
                 }
                 id = idx.next[id]
             }
@@ -469,7 +635,7 @@ object ClamAvSignatures {
                     val sig = idx.sigOf[id]
                     if (sig != null) {
                         val at = i - idx.offsetOf[id]
-                        if (at >= 0 && at + sig.lo.size <= n && matchesAt(data, at, sig)) hits.add(sig.name)
+                        if (at >= 0 && at + sig.lo.size <= n && matchesAt(data, at, sig)) report(hits, hidden, sig)
                     }
                     id = idx.next[id]
                 }
@@ -477,7 +643,17 @@ object ClamAvSignatures {
         }
 
         for (sig in idx.loose) {
-            if (contains(data, sig)) hits.add(sig.name)
+            if (contains(data, sig)) report(hits, hidden, sig)
+        }
+
+        // 逻辑签名求值:子签名命中集合驱动;无任何命中且含正向引用时整条跳过
+        val logical = logicalSnapshot
+        if (logical.isNotEmpty() && (hidden.isNotEmpty() || logicalNeedsEmptyEval)) {
+            for (ls in logical) {
+                if (hidden.isEmpty() && ls.hasPositiveRef) continue
+                val matched = ls.subNames.map { hidden.contains(it) }
+                if (evalLogical(ls.expr) { matched[it] }) hits.add(ls.name)
+            }
         }
         return hits.toList()
     }
@@ -487,6 +663,9 @@ object ClamAvSignatures {
     fun md5Count(): Int = synchronized(lock) { md5Sigs.size }
 
     fun byteCount(): Int = synchronized(lock) { byteSigs.size }
+
+    /** 逻辑签名条数(隐藏子签名不计入,归入 byteCount 的索引规模) */
+    fun logicalCount(): Int = synchronized(lock) { logicalSigs.size }
 
     /** 位置固定型签名数量(统计与展示用) */
     fun positionalCount(): Int = synchronized(lock) { byteSigs.count { it.isPositional } }
@@ -504,6 +683,7 @@ object ClamAvSignatures {
                 when {
                     lower.endsWith(".hsb") || lower.endsWith(".hsu") -> parseHashLine(t)
                     lower.endsWith(".hdb") || lower.endsWith(".hdu") -> parseMd5Line(t)
+                    lower.endsWith(".ldb") || lower.endsWith(".ldu") -> parseLogicalLine(t)
                     else -> parseByteLine(t)
                 }
             }
@@ -518,6 +698,7 @@ object ClamAvSignatures {
             hashSigs.clear()
             md5Sigs.clear()
             byteSigs.clear()
+            logicalSigs.clear()
             truncated = false
             rebuildIndex()
             loaded = false
@@ -533,5 +714,5 @@ object ClamAvSignatures {
         ensureLoaded(context)
     }
 
-    fun signatureCount(): Int = synchronized(lock) { hashSigs.size + md5Sigs.size + byteSigs.size }
+    fun signatureCount(): Int = synchronized(lock) { hashSigs.size + md5Sigs.size + byteSigs.size + logicalSigs.size }
 }

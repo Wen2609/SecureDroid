@@ -37,9 +37,7 @@ object ThreatReport {
             ),
             TrojanAdapter.UiItem(
                 "Stats.Signatures", "特征库:内置 " + com.armorlab.securedroid.scan.SignatureDatabase.size() +
-                    " 条 + ClamAV " + (com.armorlab.securedroid.trojan.ClamAvSignatures.hashCount() +
-                    com.armorlab.securedroid.trojan.ClamAvSignatures.md5Count() +
-                    com.armorlab.securedroid.trojan.ClamAvSignatures.byteCount()) + " 条",
+                    " 条 + ClamAV " + com.armorlab.securedroid.trojan.ClamAvSignatures.signatureCount() + " 条",
                 "", ThreatLevel.LOW, null, null
             )
         )

@@ -34,7 +34,45 @@ class ClamAvSignatureEngineTest {
         assertTrue("应加载哈希签名(.hsb)", ClamAvSignatures.hashCount() >= 1)
         assertTrue("应加载 MD5 整文件哈希签名(.hdb)", ClamAvSignatures.md5Count() >= 1)
         assertTrue("应加载字节特征(.ndb)", ClamAvSignatures.byteCount() >= 4)
+        assertTrue("应加载逻辑签名(.ldb)", ClamAvSignatures.logicalCount() >= 1)
         assertTrue("应识别位置固定型签名(绝对偏移 + 文件尾)", ClamAvSignatures.positionalCount() >= 2)
+    }
+
+    @Test
+    fun logicalSignatureRequiresAllSubsignatures() {
+        // 演示 .ldb:0&1 —— 两个子签名(hex 414141414141 / 424242424242)必须同时出现才判定
+        fun hexBytes(hex: String): ByteArray =
+            hex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+        val subA = hexBytes("41".repeat(6))
+        val subB = hexBytes("42".repeat(6))
+
+        assertTrue("双子签名齐备应命中逻辑签名", ClamAvSignatures.scanBytes(subA + subB).contains("Test.Trojan.Logical"))
+
+        assertFalse("缺任一子签名不应命中", ClamAvSignatures.scanBytes(subA).contains("Test.Trojan.Logical"))
+        // 顺序无关:后一个子签名在前也应命中(两处均为任意位置匹配)
+        assertTrue("子签名顺序无关", ClamAvSignatures.scanBytes(subB + subA).contains("Test.Trojan.Logical"))
+        // 隐藏子签名不得作为独立命中上报
+        val hitsA = ClamAvSignatures.scanBytes(subA)
+        assertTrue(
+            "隐藏子签名不应出现在命中列表",
+            hitsA.none { it.startsWith("\u0000") } && !hitsA.contains("Test.Trojan.Logical")
+        )
+    }
+
+    @Test
+    fun unsupportedLogicalSyntaxIsRejectedNotApproximated() {
+        // 计数/PCRE 等不支持的语义必须整行拒绝(近似实现会误报)
+        ClamAvSignatures.importText(
+            "bad.ldb",
+            listOf(
+                "Test.Bad.Count;Target:0;(0>5,2)&1;4141;4242;4343",
+                "Test.Bad.Pcre;Target:0;0&1;4141;/4444/i"
+            ).joinToString("\n")
+        )
+        val data = "AA".repeat(2).chunked(2).map { it.toInt(16).toByte() }.toByteArray() +
+            "BB".repeat(2).chunked(2).map { it.toInt(16).toByte() }.toByteArray() +
+            "CC".repeat(2).chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+        assertTrue("被拒绝的语义不得产生任何命中", ClamAvSignatures.scanBytes(data).isEmpty())
     }
 
     @Test

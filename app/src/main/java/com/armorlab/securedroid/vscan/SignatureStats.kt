@@ -28,6 +28,11 @@ object SignatureStats {
                 ThreatLevel.LOW, null, null
             ),
             TrojanAdapter.UiItem(
+                "Sig.ClamAvLogical", "ClamAV 逻辑签名(.ldb)",
+                "已加载 " + ClamAvSignatures.logicalCount() + " 条(子签名组合判定)",
+                ThreatLevel.LOW, null, null
+            ),
+            TrojanAdapter.UiItem(
                 "Sig.Source", "特征来源",
                 "assets/signatures(内置)+ files/clamav(外部,可经 adb push 或在线更新写入)",
                 ThreatLevel.LOW,
