@@ -1063,6 +1063,22 @@ html[data-theme="dark"] .theme-seg.is-active{background:rgba(255,255,255,.14)}
 }
 .empty-icon svg{width:22px;height:22px}
 
+/* 错误态(空态变体):警示图标 + 重试按钮 */
+.error-hint .retry-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:132px;min-height:48px;
+  margin-top:12px;
+  padding:0 24px;
+  border:none;
+  border-radius:var(--r-pill);
+  background:var(--c-muted);
+  color:var(--c-accent);
+  font-size:14px;font-weight:700;
+  letter-spacing:.01em;
+  transition:transform .12s, background .2s;
+}
+.error-hint .retry-btn:active{transform:scale(.97);background:var(--c-border)}
+
 /* 应用锁搜索框 */
 .search-card{
   display:flex;align-items:center;gap:10px;

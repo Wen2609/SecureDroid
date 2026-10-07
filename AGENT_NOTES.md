@@ -122,6 +122,9 @@
 ## v1.9.22 新增约定
 - **特征库预算**:`ClamAvSignatures.entryBudget`(internal,测试可调)条数预算 + 堆水位双闸门,超限置 `truncated` 并停止载入,`unload()` 重置。`FeatureUpdater` 成功文案带截断提示。新增特征文件解析路径必须走 `budgetExhausted()` 检查。
 - **长列表分页**:app.js 应用锁列表 `LOCK_PAGE=200` 分页 + `.row-more`「加载更多」;新增长列表渲染一律套用此模式(切片渲染,勿一次铺满 DOM)。
+
+## v1.9.23 新增约定
+- **错误态统一降级**:app.js `errorHint(message, onRetry)` 为列表区统一失败组件(警示图标+重试按钮);新数据加载失败必须给可重试出口,不许静默吞错;首页失败必须解除 `.is-loading` 骨架(否则骨架永不消失)。重试按钮触摸目标 ≥48px(项目硬规则)。
 ## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
 - 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
 - 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()

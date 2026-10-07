@@ -318,7 +318,13 @@
   /* ---------------- 首页概览 ---------------- */
 
   function loadDashboard() {
-    api.request('getDashboard').then(function (r) { if (r.ok) store.set('dashboard', r.data); });
+    api.request('getDashboard').then(function (r) {
+      if (r.ok) { store.set('dashboard', r.data); return; }
+      // 失败也要解除骨架,否则首屏骨架永不消失;提示用户下拉重试
+      var home = qs('.panel[data-panel="home"]');
+      if (home) home.classList.remove('is-loading');
+      toast('数据加载失败，下拉可重试');
+    });
   }
 
   function setAct(id, title, time) {
@@ -442,6 +448,27 @@
     return wrap;
   }
 
+  /* 错误态:警示图标 + 文案 + 重试按钮。数据加载失败时列表区的统一降级,
+     与 emptyHint 同视觉体系;有 onRetry 才渲染按钮。 */
+  function errorHint(message, onRetry) {
+    var wrap = el('div', 'empty-hint error-hint');
+    var icon = el('span', 'empty-icon tint-amber');
+    icon.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"' +
+      ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<circle cx="12" cy="12" r="8.6"/><path d="M12 8v4.5M12 16v.01"/></svg>';
+    wrap.appendChild(icon);
+    wrap.appendChild(el('span', null, message));
+    if (onRetry) {
+      var btn = el('button', 'retry-btn');
+      btn.type = 'button';
+      btn.textContent = '重试';
+      btn.addEventListener('click', onRetry);
+      wrap.appendChild(btn);
+    }
+    return wrap;
+  }
+
   /* 结果行点击 → 打开该应用的应用详情页(可改权限 / 卸载) */
   function openApp(pkg) {
     if (!pkg) return;
@@ -560,7 +587,14 @@
   /* ---------------- 应用锁 ---------------- */
 
   function loadLock() {
-    api.request('getLockState').then(function (r) { if (r.ok) store.set('lock', r.data); });
+    api.request('getLockState').then(function (r) {
+      if (r.ok) { store.set('lock', r.data); return; }
+      var card = qs('#lockAppsCard');
+      if (card) {
+        card.innerHTML = '';
+        card.appendChild(errorHint('应用锁数据加载失败', loadLock));
+      }
+    });
   }
 
   /* 应用锁列表:数据缓存 + 搜索过滤。
@@ -648,7 +682,14 @@
   /* ---------------- 权限审计 ---------------- */
 
   function loadAudit() {
-    api.request('getAudit').then(function (r) { if (r.ok) store.set('audit', r.data); });
+    api.request('getAudit').then(function (r) {
+      if (r.ok) { store.set('audit', r.data); return; }
+      var list = qs('#auditList');
+      if (list) {
+        list.innerHTML = '';
+        list.appendChild(errorHint('权限审计数据加载失败', loadAudit));
+      }
+    });
   }
 
   function renderAudit(d) {
@@ -1389,6 +1430,16 @@
     if (spin) spin.classList.toggle('is-hidden', !loading);
   }
 
+  /* 工具页失败降级:状态文案 + 列表区错误卡(带重试) */
+  function listLoadError(pageId, listId, message, retry) {
+    setListStatus(pageId, '检测失败', false);
+    var list = qs('#' + listId);
+    if (list) {
+      list.innerHTML = '';
+      list.appendChild(errorHint(message, retry));
+    }
+  }
+
   function loadNetAudit() {
     setListStatus('net', '正在检测网络安全…', true);
     api.request('getNetAudit').then(function (r) {
@@ -1396,7 +1447,7 @@
         setListStatus('net', '检测完成 · 共 ' + r.data.count + ' 项', false);
         renderResultList('netList', r.data.items);
       } else {
-        setListStatus('net', '检测失败', false);
+        listLoadError('net', 'netList', '网络安全检测失败', loadNetAudit);
       }
     });
   }
@@ -1408,7 +1459,7 @@
         setListStatus('priv', '扫描完成 · 共 ' + r.data.count + ' 项', false);
         renderResultList('privList', r.data.items);
       } else {
-        setListStatus('priv', '扫描失败', false);
+        listLoadError('priv', 'privList', '隐私权限扫描失败', loadPrivacyAudit);
       }
     });
   }
@@ -1420,7 +1471,7 @@
         setListStatus('vuln', '检测完成 · 共 ' + r.data.count + ' 项', false);
         renderResultList('vulnList', r.data.items);
       } else {
-        setListStatus('vuln', '检测失败', false);
+        listLoadError('vuln', 'vulnList', '系统漏洞检测失败', loadVulnScan);
       }
     });
   }
