@@ -247,12 +247,12 @@ JS 桥接到真实原生功能;每个入口都是真实实现,不造空壳。纯
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.9.28-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.9.29-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 5C2BDB2B993B6BDBDC4F15A27A3FBCCAA212B3443FAC2133E530CD8FFE10F94B
-    大小    2,458,475 字节    versionCode 43 / versionName 1.9.28(隔离区恢复 + 原因展示;生物识别解锁;特征库自动更新/断点续传/回滚;恶意链接检测;.ldb 逻辑签名)
+    SHA-256 D907407708220D779B806B4751B0B05B9DC221DF4A8689079597221A594ABF2D
+    大小    2,463,658 字节    versionCode 44 / versionName 1.9.29(DNS 防护 VpnService + 崩溃捕获与导出)
 
-  更早版本 apks/SecureDroid-v1.9.23-release-signed.apk(versionCode 38,统一错误态组件 + 失败可重试;特征库内存兜底;深色三态;ClamAV .hdb MD5)、apks/SecureDroid-v1.9.16-release-signed.apk(versionCode 31,初始化强制模式选择:标准/无线调试/超级用户 + 分区重排 + 系统栏适配)、
+  更早版本 apks/SecureDroid-v1.9.28-release-signed.apk(versionCode 43,隔离区恢复 + 原因展示;生物识别解锁;特征库自动更新/断点续传/回滚;恶意链接检测;.ldb 逻辑签名)、apks/SecureDroid-v1.9.23-release-signed.apk(versionCode 38,统一错误态组件 + 失败可重试;特征库内存兜底;深色三态;ClamAV .hdb MD5)、apks/SecureDroid-v1.9.16-release-signed.apk(versionCode 31,初始化强制模式选择:标准/无线调试/超级用户 + 分区重排 + 系统栏适配)、
   apks/SecureDroid-v1.9.15-release-signed.apk(versionCode 30,全界面 HTML 化:消除全部原生 Activity/对话框,深层工具页改 HTML 子页面 + 异步桥路由微内核)、
   apks/SecureDroid-v1.9.13-release-signed.apk(versionCode 28,WebUI 交互升级:扫描可取消 + 结果按威胁折叠 + 开关整行可点 + 触摸目标达标)、
   apks/SecureDroid-v1.9.12-release-signed.apk(versionCode 27,UI 与 WebView 性能优化:加密存储单例 / 聚合查询 / 进度节流 / 图标懒加载)、
