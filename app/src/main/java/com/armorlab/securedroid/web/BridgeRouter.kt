@@ -91,6 +91,9 @@ class BridgeRouter(
         put("toggleAutoUpdate", Action(false) { json ->
             settings.toggleAutoUpdate(json.optBoolean("on")); null
         })
+        put("toggleDnsGuard", Action(true) { json ->
+            settings.toggleDnsGuard(json.optBoolean("on")); null
+        })
         put("toggleRoot", Action(false) { json ->
             settings.toggleRoot(json.optBoolean("on")); null
         })

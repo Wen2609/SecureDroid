@@ -793,6 +793,7 @@
     setSwitch('swRealtime', d.realtime);
     setSwitch('swBoot', d.boot);
     setSwitch('swAutoUpdate', d.autoUpdate);
+    setSwitch('swDnsGuard', d.dnsGuard);
     setSwitch('swRoot', d.rootMode);
     var sub = qs('#rootSub');
     if (sub) sub.textContent = d.rootSub || (d.rootMode ? '已启用' : '未启用，开启将请求 su 授权');
@@ -820,7 +821,13 @@
   bindNativeSwitch('swRealtime', function (t) { api.send('toggleRealtime', { on: t }); });
   bindNativeSwitch('swBoot', function (t) { api.send('toggleBoot', { on: t }); });
   bindNativeSwitch('swAutoUpdate', function (t) { api.send('toggleAutoUpdate', { on: t }); });
+  bindNativeSwitch('swDnsGuard', function (t) { api.send('toggleDnsGuard', { on: t }); });
   bindNativeSwitch('swRoot', function (t) { api.send('toggleRoot', { on: t }); });
+
+  /* DNS 防护:VpnService 授权结果(同意/拒绝)由原生侧回推,统一纠正开关状态 */
+  on('dnsGuardState', function (d) {
+    setSwitch('swDnsGuard', !!(d && d.on));
+  });
   bindNativeSwitch('swDecoy', function (t) { api.send('toggleDecoy', { on: t }); });
   bindNativeSwitch('swBio', function (t) { api.send('toggleBiometric', { on: t }); });
 
@@ -1106,7 +1113,7 @@
     };
   }
   function demoToggles() {
-    return { realtime: true, boot: false, autoUpdate: true, rootMode: false, rootSub: '未启用，开启将请求 su 授权' };
+    return { realtime: true, boot: false, autoUpdate: true, dnsGuard: false, rootMode: false, rootSub: '未启用，开启将请求 su 授权' };
   }
 
   function demoVirus() {

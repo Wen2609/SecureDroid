@@ -65,6 +65,20 @@
                 android:resource="@xml/app_lock_service_config" />
         </service>
 
+        <!-- DNS 防护 VPN:仅把伪造 DNS /32 路由进隧道,拦截恶意域名解析 -->
+        <service
+            android:name=".feature.DnsGuardVpnService"
+            android:exported="true"
+            android:permission="android.permission.BIND_VPN_SERVICE"
+            android:foregroundServiceType="specialUse">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="dns_guard_vpn" />
+        </service>
+
         <!-- WorkManager 按需初始化:移除默认 startup 初始化器,改由 SecureGuardApp 提供配置 -->
         <provider
             android:name="androidx.startup.InitializationProvider"

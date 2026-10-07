@@ -22,5 +22,12 @@ class BootReceiver : BroadcastReceiver() {
             RealtimeProtectionService.start(context)
         } catch (_: Exception) {
         }
+        // DNS 防护开机恢复:VPN 授权持久有效,直接拉起;失败静默(用户可在应用内重开)
+        if (prefs.getBoolean(com.armorlab.securedroid.feature.DnsGuardState.KEY, false)) {
+            try {
+                com.armorlab.securedroid.feature.DnsGuardVpnService.start(context)
+            } catch (_: Exception) {
+            }
+        }
     }
 }

@@ -142,6 +142,10 @@
 
 ## v1.9.28 新增约定
 - **隔离区**:记录格式 `原路径|隔离路径|时间|原因`(原因可为空,向后兼容);`Item.raw` 保存原始串,移除记录必须用 raw 精确匹配(不许重组)。恢复走 `qrestore <raw>` 内部协议(runFixCommand 拦截,不走裸 su);写入原因时清洗 `|`。新增长列表/记录解析改动跑 `QuarantineRecordTest`。
+
+## v1.9.29 新增约定
+- **DNS 防护 VPN**:`DnsGuardEngine`(纯逻辑,报文解析/NXDOMAIN/校验和,改必须跑 DnsGuardEngineTest)+ `DnsGuardVpnService`(tun 只路由 FAKE_DNS /32;上游取 LinkProperties,回退 223.5.5.5)。FGS 类型用 **specialUse**(systemExempted 还要求精确闹钟权限,lint 会拦);`toggleDnsGuard` 挂主线程 action,授权结果由 MainActivity `vpnConsent` 回调落盘并回推 `dnsGuardState` 事件;pref 键 `dns_guard_enabled`,BootReceiver 开机恢复。新增 FGS 服务必须同步 manifest 类型 + 权限(ManifestInvariantsTest 会拦)。
+- **崩溃捕获**:`CrashReporter.install()` 在 Application.onCreate(先于其他初始化);纯本地落盘 files/crash(保留 10 份),导出走系统分享(病毒中心 crashlogs 工具),**不许加静默网络上报**。
 ## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
 - 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
 - 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()

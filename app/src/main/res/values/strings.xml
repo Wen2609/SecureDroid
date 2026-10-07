@@ -54,11 +54,13 @@
     <string name="vc_update">特征库在线更新</string>
     <string name="vc_phishing">恶意链接检测</string>
     <string name="vc_rollback">特征库回滚</string>
+    <string name="vc_crash">崩溃日志导出</string>
     <string name="vc_quarantine">隔离区管理</string>
     <string name="vc_trust">信任列表管理</string>
     <string name="vc_report">威胁报告导出</string>
     <string name="vc_phase_recent">正在对最近安装应用做综合深扫…</string>
     <string name="vc_phase_rollback">正在回滚特征库…</string>
+    <string name="vc_phase_crash">正在整理崩溃日志…</string>
     <string name="vc_phase_embedded">正在检测嵌入式载荷…</string>
     <string name="vc_phase_diff">正在执行差异快速扫描…</string>
     <string name="vc_phase_residue">正在检查卸载残留…</string>
@@ -79,6 +81,7 @@
     <string name="vc_update_sub">URL 下载 + SHA-256 校验 + 热重载</string>
     <string name="vc_phishing_sub">输入网址检查恶意与仿冒特征</string>
     <string name="vc_rollback_sub">恢复到上一版特征库文件</string>
+    <string name="vc_crash_sub">本地崩溃记录查看与分享</string>
     <string name="vc_trust_sub">查看与移除受信任应用</string>
     <string name="vc_report_sub">全量威胁记录 + 处置审计分享</string>
     <string name="vc_report_title">威胁情报报告</string>
@@ -199,4 +202,10 @@
     <string name="cancel">取消</string>
     <string name="bio_prompt_title">验证生物识别以解锁</string>
     <string name="bio_prompt_subtitle">或输入 PIN 码</string>
+    <string name="dns_guard_session">SecureDroid DNS Guard</string>
+    <string name="dns_guard_notif_title">DNS 防护运行中</string>
+    <string name="dns_guard_notif_text">正在拦截恶意域名解析请求</string>
+    <string name="dns_guard_denied">VPN 授权被拒绝，DNS 防护未开启</string>
+    <string name="dns_guard_enabled">DNS 防护已开启</string>
+    <string name="crash_share_subject">SecureDroid 崩溃报告</string>
 </resources>

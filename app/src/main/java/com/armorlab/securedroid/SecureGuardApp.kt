@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.work.Configuration
+import com.armorlab.securedroid.core.CrashReporter
 import com.armorlab.securedroid.feature.ScanScheduler
 import com.armorlab.securedroid.feature.UpdateScheduler
 import com.armorlab.securedroid.realtime.SecureGuardAppRefs
@@ -23,6 +24,8 @@ class SecureGuardApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        // 崩溃捕获:未捕获异常落盘(本地,保留 10 份),随后交回系统默认崩溃流程
+        CrashReporter.install(this)
         // 主界面是 WebView,提前初始化 Chromium 内核(Application 阶段完成最重的
         // provider 初始化),显著缩短 MainActivity 首屏白屏时间。
         // 创建即销毁的预热 WebView 不参与任何渲染,失败静默(个别设备 WebView 不可用)。

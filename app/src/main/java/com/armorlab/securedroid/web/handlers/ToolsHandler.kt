@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import com.armorlab.securedroid.MainActivity
 import com.armorlab.securedroid.R
+import com.armorlab.securedroid.core.CrashReporter
 import com.armorlab.securedroid.core.PackageSnapshot
 import com.armorlab.securedroid.core.TimeFmt
 import com.armorlab.securedroid.deep.DeepScanEngine
@@ -297,6 +298,7 @@ class ToolsHandler(
             add("autq", R.string.va_autq, R.string.va_autq_sub)
             add("update", R.string.vc_update, R.string.vc_update_sub)
             add("rollback", R.string.vc_rollback, R.string.vc_rollback_sub)
+            add("crashlogs", R.string.vc_crash, R.string.vc_crash_sub)
             add("priv", R.string.va_priv, R.string.va_priv_sub)
             add("integrity", R.string.va_integrity, R.string.va_integrity_sub)
             add("lockfiles", R.string.va_lockfiles, R.string.va_lockfiles_sub)
@@ -361,6 +363,7 @@ class ToolsHandler(
         "stats" -> app.getString(R.string.vc_phase_stats)
         "sig" -> app.getString(R.string.vc_phase_sig)
         "rollback" -> app.getString(R.string.vc_phase_rollback)
+        "crashlogs" -> app.getString(R.string.vc_phase_crash)
         "recent" -> app.getString(R.string.vc_phase_recent)
         "parallel" -> app.getString(R.string.va_phase_parallel)
         "diff" -> app.getString(R.string.vc_phase_diff)
@@ -409,7 +412,42 @@ class ToolsHandler(
         "stats" -> threatStats()
         "sig" -> signatureItems()
         "rollback" -> rollbackItems()
+        "crashlogs" -> crashLogItems()
         else -> listOf(uiItem("Unsupported", "未实现的工具: $actionId", level = "medium"))
+    }
+
+    /** 崩溃日志导出:自动拉起系统分享最新一份,并列出本地记录(纯本地,绝不自动上传) */
+    private suspend fun crashLogItems(): List<JSONObject> {
+        val logs = CrashReporter.logs(app)
+        if (logs.isEmpty()) {
+            return listOf(uiItem(title = "暂无崩溃记录", level = "low"))
+        }
+        val latest = CrashReporter.latestText(app)
+        if (!latest.isNullOrBlank()) {
+            withContext(Dispatchers.Main) {
+                try {
+                    val send = Intent(Intent.ACTION_SEND)
+                        .setType("text/plain")
+                        .putExtra(Intent.EXTRA_SUBJECT, app.getString(R.string.crash_share_subject))
+                        .putExtra(Intent.EXTRA_TEXT, latest)
+                    activity.startActivity(
+                        Intent.createChooser(send, app.getString(R.string.vc_crash))
+                    )
+                } catch (_: Exception) {
+                }
+            }
+        }
+        val items = mutableListOf(
+            uiItem(
+                title = "共 " + logs.size + " 份崩溃记录,已拉起分享最新一份",
+                detail = logs.firstOrNull()?.name ?: "",
+                level = "medium"
+            )
+        )
+        logs.take(5).forEach { f ->
+            items.add(uiItem(title = "崩溃记录 · " + f.name, level = "low"))
+        }
+        return items
     }
 
     /** 特征库回滚:还原上一版特征文件并热重载,附带展示最近更新历史 */

@@ -37,6 +37,7 @@ class SettingsHandler(
             .put("realtime", prefs.getBoolean(BridgeKeys.REALTIME, false))
             .put("boot", prefs.getBoolean(BridgeKeys.BOOT, true))
             .put("autoUpdate", prefs.getBoolean("auto_update_enabled", false))
+            .put("dnsGuard", com.armorlab.securedroid.feature.DnsGuardState.isEnabled(app))
             .put("rootMode", rootMode)
             .put("mode", AppModeStore.current(app).id)
             .put("rootSub", if (rootMode) app.getString(R.string.root_mode_on)
@@ -90,6 +91,23 @@ class SettingsHandler(
             com.armorlab.securedroid.feature.UpdateScheduler.sync(app)
         } catch (_: Exception) {
         }
+    }
+
+    /**
+     * DNS 防护开关:开启走 VpnService 授权流程(MainActivity 回调里决定
+     * 落盘与启动,并经 dnsGuardState 事件回推);关闭直接停服清偏好。
+     */
+    fun toggleDnsGuard(on: Boolean) {
+        if (!on) {
+            com.armorlab.securedroid.feature.DnsGuardState.setEnabled(app, false)
+            try {
+                com.armorlab.securedroid.feature.DnsGuardVpnService.stop(app)
+            } catch (_: Exception) {
+            }
+            sink.sendEvent("dnsGuardState", JSONObject().put("on", false).toString())
+            return
+        }
+        activity.requestVpnConsent()
     }
 
     /** Root 模式:仅超级用户模式可用;开启前先探测 su(可能阻塞等待授权),失败把开关状态回推给页面 */

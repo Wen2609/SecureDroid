@@ -45,6 +45,12 @@ class MainActivity : AppCompatActivity() {
     private val notificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
+    /** DNS 防护:VpnService 用户授权回调(系统授权对话框 → 结果决定开关走向) */
+    private val vpnConsent =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            onVpnConsentResult(result.resultCode == android.app.Activity.RESULT_OK)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 沉浸式:HTML 的毛玻璃/光晕背景延伸到状态栏与系统导航栏之后,
@@ -227,6 +233,44 @@ class MainActivity : AppCompatActivity() {
             )
         } else {
             binding.integrityBanner.visibility = View.GONE
+        }
+    }
+
+    /* ================================================================
+       DNS 防护:VpnService 授权流程(开关经桥进入,结果回推 WebUI)
+       ================================================================ */
+
+    /** 已授权时立即返回;否则拉起系统授权对话框,结果走 vpnConsent 回调 */
+    fun requestVpnConsent() {
+        val intent = com.armorlab.securedroid.feature.DnsGuardVpnService.prepare(this)
+        if (intent == null) {
+            onVpnConsentResult(true)
+        } else {
+            try {
+                vpnConsent.launch(intent)
+            } catch (_: Exception) {
+                onVpnConsentResult(false)
+            }
+        }
+    }
+
+    private fun onVpnConsentResult(granted: Boolean) {
+        if (granted) {
+            com.armorlab.securedroid.feature.DnsGuardState.setEnabled(this, true)
+            try {
+                com.armorlab.securedroid.feature.DnsGuardVpnService.start(this)
+                Toast.makeText(this, R.string.dns_guard_enabled, Toast.LENGTH_SHORT).show()
+            } catch (_: Exception) {
+            }
+        } else {
+            com.armorlab.securedroid.feature.DnsGuardState.setEnabled(this, false)
+            Toast.makeText(this, R.string.dns_guard_denied, Toast.LENGTH_SHORT).show()
+        }
+        try {
+            binding.webView.evaluateJavascript(
+                "window.__sdEvent && window.__sdEvent('dnsGuardState', '{\"on\":$granted}');", null
+            )
+        } catch (_: Exception) {
         }
     }
 
