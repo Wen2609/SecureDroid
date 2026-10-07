@@ -1148,6 +1148,16 @@ button.row:active{background:var(--c-muted)}
   height:1px;
   background:var(--c-border);
 }
+/* 列表尾「加载更多」:分页渲染控制长列表 DOM 量(数百行列表一次铺满会卡滚动) */
+.row-more{
+  justify-content:center;
+  min-height:52px;
+  border:none;
+  background:transparent;
+  color:var(--c-accent);
+  font-size:14px;font-weight:700;
+  letter-spacing:.01em;
+}
 .row-body{flex:1;min-width:0}
 .row-title{
   font-size:16px;line-height:1.45;

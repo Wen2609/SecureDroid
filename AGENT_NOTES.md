@@ -118,6 +118,10 @@
 - **深色三态**:`SettingsHandler.getTheme/setTheme` 持久化 `theme` 键(system/light/dark);CSS 深色令牌统一挂在 `html[data-theme="dark"]`,不再用 `@media (prefers-color-scheme)`(head 内联脚本按 localStorage + 系统偏好首帧前设 `data-theme`,app.js 再以原生偏好校正)。新增主题相关 UI 文案必须确认字符在内置字体子集内(子集源文件 .otf 不在仓库,不能重新子集化,只能复用已有字符)。
 - **WebView 预热**:`SecureGuardApp.onCreate` 创建即销毁一个 WebView,不可在别处再创建常驻 WebView。
 - **ClamAV .hdb/.hdu**:MD5 整文件哈希,`parseMd5Line`(32 hex + 大小 + 名称),`matchMd5` 匹配;TrojanScanner 仅在 `md5Count()>0` 时经 `HashCache.cachedMd5` 取 MD5(与 SHA-256 同一次读盘,缓存值格式 `sha256|md5`,旧格式自动失效重算)。改签名解析后必须跑 `ClamAvSignatureEngineTest`。
+
+## v1.9.22 新增约定
+- **特征库预算**:`ClamAvSignatures.entryBudget`(internal,测试可调)条数预算 + 堆水位双闸门,超限置 `truncated` 并停止载入,`unload()` 重置。`FeatureUpdater` 成功文案带截断提示。新增特征文件解析路径必须走 `budgetExhausted()` 检查。
+- **长列表分页**:app.js 应用锁列表 `LOCK_PAGE=200` 分页 + `.row-more`「加载更多」;新增长列表渲染一律套用此模式(切片渲染,勿一次铺满 DOM)。
 ## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
 - 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
 - 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()

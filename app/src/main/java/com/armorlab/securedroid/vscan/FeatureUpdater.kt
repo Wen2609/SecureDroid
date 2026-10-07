@@ -89,11 +89,12 @@ object FeatureUpdater {
             out.parentFile?.mkdirs()
             out.writeBytes(bytes)
             ClamAvSignatures.reload(context)
+            val truncatedNote = if (ClamAvSignatures.isTruncated()) ";特征库过大,已截断加载" else ""
             return UpdateResult(
                 true,
                 "更新成功:" + name + " (" + bytes.size / 1024 + "KB),当前 ClamAV 签名 " +
                     (ClamAvSignatures.hashCount() + ClamAvSignatures.md5Count()) + " 哈希 / " +
-                    ClamAvSignatures.byteCount() + " 字节"
+                    ClamAvSignatures.byteCount() + " 字节" + truncatedNote
             )
         } catch (e: Exception) {
             return UpdateResult(false, "写入失败: " + e.message)

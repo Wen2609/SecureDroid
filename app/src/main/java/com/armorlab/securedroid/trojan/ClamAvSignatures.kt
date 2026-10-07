@@ -161,6 +161,19 @@ object ClamAvSignatures {
     private val md5Sigs = HashMap<String, Pair<Long, String>>()
     private val byteSigs = mutableListOf<ByteSig>()
 
+    /**
+     * 总条数预算(哈希 + MD5 + 字节):官方 daily.cvd 解包可达百万级,
+     * 全量进 HashMap 在低内存设备会 OOM。超预算即停止载入并置截断标记,
+     * 统计与更新结果会把截断状态亮给用户。测试可调小触发。
+     */
+    internal var entryBudget = 1_500_000
+
+    /** 载入时堆余量(含未分配堆)低于该值即截断:堆水位兜底,防 OOM 崩溃 */
+    private val minFreeBytes = 24L * 1024 * 1024
+
+    @Volatile
+    private var truncated = false
+
     @Volatile
     private var index: SigIndex? = null
 
@@ -210,13 +223,32 @@ object ClamAvSignatures {
         }
     }
 
+    /** 追加预算检查(调用方需持有 lock):超条数上限或堆余量过低即截断 */
+    private fun budgetExhausted(): Boolean {
+        if (truncated) return true
+        if (hashSigs.size + md5Sigs.size + byteSigs.size >= entryBudget) return true
+        val rt = Runtime.getRuntime()
+        if (rt.maxMemory() - rt.totalMemory() + rt.freeMemory() < minFreeBytes) {
+            // 先触发一次回收再判,避免把可回收垃圾当成堆余量不足(只在低水位才会走到,非热路径)
+            System.gc()
+            if (rt.maxMemory() - rt.totalMemory() + rt.freeMemory() < minFreeBytes) return true
+        }
+        return false
+    }
+
     /** .hsb:hash:文件大小:名称 */
     private fun parseHashLine(t: String) {
         val parts = t.split(':', limit = 3)
         if (parts.size < 3 || parts[0].length != 64) return
         if (parts[0].any { Character.digit(it, 16) < 0 }) return
         val size = parts[1].toLongOrNull() ?: 0L
-        synchronized(lock) { hashSigs[parts[0].lowercase()] = Pair(size, parts[2]) }
+        synchronized(lock) {
+            if (budgetExhausted()) {
+                truncated = true
+                return
+            }
+            hashSigs[parts[0].lowercase()] = Pair(size, parts[2])
+        }
     }
 
     /** .hdb:md5:文件大小:名称 */
@@ -225,7 +257,13 @@ object ClamAvSignatures {
         if (parts.size < 3 || parts[0].length != 32) return
         if (parts[0].any { Character.digit(it, 16) < 0 }) return
         val size = parts[1].toLongOrNull() ?: 0L
-        synchronized(lock) { md5Sigs[parts[0].lowercase()] = Pair(size, parts[2]) }
+        synchronized(lock) {
+            if (budgetExhausted()) {
+                truncated = true
+                return
+            }
+            md5Sigs[parts[0].lowercase()] = Pair(size, parts[2])
+        }
     }
 
     /**
@@ -235,11 +273,15 @@ object ClamAvSignatures {
      */
     private fun parseByteLine(t: String) {
         parseOfficialByteLine(t)?.let { sig ->
-            synchronized(lock) { byteSigs.add(sig) }
+            synchronized(lock) {
+                if (budgetExhausted()) truncated = true else byteSigs.add(sig)
+            }
             return
         }
         parseLegacyByteLine(t)?.let { sig ->
-            synchronized(lock) { byteSigs.add(sig) }
+            synchronized(lock) {
+                if (budgetExhausted()) truncated = true else byteSigs.add(sig)
+            }
         }
     }
 
@@ -474,11 +516,16 @@ object ClamAvSignatures {
     fun unload() {
         synchronized(lock) {
             hashSigs.clear()
+            md5Sigs.clear()
             byteSigs.clear()
+            truncated = false
             rebuildIndex()
             loaded = false
         }
     }
+
+    /** 本次载入是否因条数预算/堆水位被截断(统计与更新结果展示用) */
+    fun isTruncated(): Boolean = synchronized(lock) { truncated }
 
     /** 热重载:清空已加载签名并重新从 assets / files/clamav 加载 */
     fun reload(context: Context) {

@@ -141,4 +141,26 @@ class ClamAvSignatureEngineTest {
         assertTrue("同大小应命中", ClamAvSignatures.matchMd5("0123456789abcdef0123456789abcdef", 1234L) != null)
         assertTrue("大小不符不应命中", ClamAvSignatures.matchMd5("0123456789abcdef0123456789abcdef", 1235L) == null)
     }
+
+    @Test
+    fun oversizedLibraryIsTruncatedNotOom() {
+        // 百万级官方库在低内存设备会 OOM:条数超预算必须截断并亮出标记,而不是无限吃内存
+        val saved = ClamAvSignatures.entryBudget
+        ClamAvSignatures.entryBudget = 4
+        try {
+            ClamAvSignatures.unload()
+            val many = (1..50).joinToString("\n") { i ->
+                String.format("%064x:0:Test.Hash.Budget%d", i.toLong(), i)
+            }
+            ClamAvSignatures.importText("budget.hsb", many)
+            assertTrue("超预算应置截断标记", ClamAvSignatures.isTruncated())
+            assertTrue(
+                "载入条数应停在预算内而不是全量 50 条",
+                ClamAvSignatures.hashCount() <= 4
+            )
+        } finally {
+            ClamAvSignatures.entryBudget = saved
+            ClamAvSignatures.unload()
+        }
+    }
 }

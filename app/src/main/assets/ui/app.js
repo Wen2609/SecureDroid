@@ -565,11 +565,17 @@
 
   /* 应用锁列表:数据缓存 + 搜索过滤。
      renderLock 存下完整列表,renderLockRows 按当前关键字渲染,
-     输入过滤时不重新拉桥数据,刷新(loadLock)后过滤状态也保持。 */
+     输入过滤时不重新拉桥数据,刷新(loadLock)后过滤状态也保持。
+     分页渲染:每页 LOCK_PAGE 行,列表尾「加载更多」按需追加,
+     数百行一次铺满 DOM 会卡滚动(性能硬规则)。 */
+  var LOCK_PAGE = 200;
   var lockApps = [];
   var lockQuery = '';
+  var lockShown = LOCK_PAGE;
 
   function renderLock(d) {
+    lockShown = LOCK_PAGE;
+    lockApps = d.apps || [];
     var pin = qs('#swPin');
     if (pin) pin.classList.toggle('is-on', !!d.hasPin);
     var st = qs('#pinState');
@@ -579,10 +585,18 @@
     var acc = qs('#accessibilitySub');
     if (acc) acc.textContent = d.accessibility ? '已开启，应用锁可自动解锁' : '未开启，用于应用锁的自动解锁';
 
-    lockApps = d.apps || [];
     var searchCard = qs('#lockSearchCard');
     if (searchCard) searchCard.classList.toggle('is-hidden', !lockApps.length);
     renderLockRows();
+  }
+
+  /* 列表尾「加载更多」行:点击追加下一页 */
+  function moreRow(remaining, onClick) {
+    var btn = el('button', 'row row-more');
+    btn.type = 'button';
+    btn.appendChild(el('span', 'row-body', '加载更多（还剩 ' + remaining + ' 个）'));
+    btn.addEventListener('click', onClick);
+    return btn;
   }
 
   function renderLockRows() {
@@ -601,9 +615,10 @@
       card.appendChild(emptyHint('没有匹配「' + lockQuery + '」的应用', 'purple'));
       return;
     }
+    var shown = apps.slice(0, lockShown);
     // DocumentFragment 批量插入:数百行逐行 appendChild 每行都触发一次重排
     var frag = document.createDocumentFragment();
-    apps.forEach(function (a) {
+    shown.forEach(function (a) {
       var row = el('div', 'row');
       row.appendChild(iconFor(a.pkg, a.name));
       var body = el('span', 'row-body');
@@ -621,6 +636,12 @@
       row.appendChild(sw);
       frag.appendChild(row);
     });
+    if (apps.length > shown.length) {
+      frag.appendChild(moreRow(apps.length - shown.length, function () {
+        lockShown += LOCK_PAGE;
+        renderLockRows();
+      }));
+    }
     card.appendChild(frag);
   }
 
@@ -797,6 +818,7 @@
   if (lockSearch) {
     lockSearch.addEventListener('input', function () {
       lockQuery = lockSearch.value.trim().toLowerCase();
+      lockShown = LOCK_PAGE;
       renderLockRows();
     });
   }
