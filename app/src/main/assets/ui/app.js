@@ -93,6 +93,8 @@
         demoTheme = (payload && payload.theme) || 'system';
         return { ok: true, theme: demoTheme };
       case 'getDashboard': return demoDashboard();
+      case 'checkUrl':
+        return { level: 'warn', score: 45, findings: ['域名伪装知名品牌', '高风险顶级域'] };
       case 'getLockState': return demoLock();
       case 'getAudit': return demoAudit();
       case 'getToggles': return demoToggles();
@@ -1564,6 +1566,7 @@
   }
 
   function runVirusTool(actionId, title) {
+    if (actionId === 'phishing') { showPhishingDialog(); return; }
     vcRunning = true;
     qs('#vcMenu').classList.add('is-hidden');
     var run = qs('#vcRun');
@@ -1575,6 +1578,26 @@
       toast('已请求取消');
     };
     api.send('runVirusTool', { action: actionId });
+  }
+
+  /* 恶意链接检测:输入网址 → 本地启发式判定(纯字符串分析,不访问目标地址) */
+  function showPhishingDialog() {
+    uiPrompt(
+      '恶意链接检测',
+      [{ name: 'url', label: '网址 URL', type: 'text', value: '' }],
+      function (vals) {
+        if (!vals.url) { toast('请输入网址'); return true; }
+        api.request('checkUrl', { url: vals.url }).then(function (res) {
+          var d = (res && res.data) || {};
+          var titleMap = { danger: '危险', warn: '可疑', clean: '未发现异常', invalid: '网址不是有效格式' };
+          var lines = ['风险评分: ' + (d.score || 0) + ' · 判定: ' + (titleMap[d.level] || d.level)];
+          var f = d.findings || [];
+          for (var i = 0; i < f.length; i++) lines.push('· ' + f[i]);
+          uiAlert('检测结论', lines.join('\n'));
+        });
+      },
+      '检测'
+    );
   }
 
   function showVCMenu() {

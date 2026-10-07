@@ -122,6 +122,9 @@ class BridgeRouter(
             JSONObject().put("ok", tools.markCertGood(json.optString("pkg"))).toString()
         })
         put("getUpdateInfo", Action(false) { tools.getUpdateInfo() })
+        put("checkUrl", Action(false) { json ->
+            tools.checkUrl(json.optString("url"))
+        })
         put("runUpdate", Action(false) { json ->
             tools.runUpdate(json.optString("url"), json.optString("sha").ifBlank { null })
         })

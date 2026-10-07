@@ -32,6 +32,7 @@ import com.armorlab.securedroid.vscan.FeatureUpdater
 import com.armorlab.securedroid.vscan.HashCache
 import com.armorlab.securedroid.vscan.NetKill
 import com.armorlab.securedroid.vscan.ParallelScanner
+import com.armorlab.securedroid.vscan.PhishingDetector
 import com.armorlab.securedroid.vscan.ProcessBaseline
 import com.armorlab.securedroid.vscan.Quarantine
 import com.armorlab.securedroid.vscan.ResidueScanner
@@ -291,6 +292,7 @@ class ToolsHandler(
             add("quarantine", R.string.vc_quarantine, R.string.vc_quarantine_sub)
             add("stats", R.string.vc_stats, R.string.vc_stats_sub)
             add("sig", R.string.vc_sig, R.string.vc_sig_sub)
+            add("phishing", R.string.vc_phishing, R.string.vc_phishing_sub)
             add("policy", R.string.va_policy, R.string.va_policy_sub)
             add("autq", R.string.va_autq, R.string.va_autq_sub)
             add("update", R.string.vc_update, R.string.vc_update_sub)
@@ -748,6 +750,18 @@ class ToolsHandler(
             .put("byteCount", ClamAvSignatures.byteCount())
             .put("url", prefs.getString("update_url", "") ?: "")
             .put("sha", prefs.getString("update_sha", "") ?: "")
+            .toString()
+    }
+
+    /** 恶意链接检测:纯本地启发式,不访问目标地址;纯字符串分析,路由已在 Default 线程 */
+    fun checkUrl(url: String): String {
+        val v = PhishingDetector.check(app, url)
+        val arr = JSONArray()
+        v.findings.forEach { arr.put(it) }
+        return JSONObject()
+            .put("level", v.level)
+            .put("score", v.score)
+            .put("findings", arr)
             .toString()
     }
 
