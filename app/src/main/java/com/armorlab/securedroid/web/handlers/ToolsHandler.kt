@@ -612,17 +612,31 @@ class ToolsHandler(
         if (items.isEmpty()) {
             return listOf(uiItem("Quarantine.Empty", "隔离区为空", level = "low"))
         }
-        return items.map {
-            uiItem(
-                title = "Quarantined · " + it.originalPath.substringAfterLast('/'),
-                sub = it.quarantinedPath,
-                detail = "原路径: " + it.originalPath + " · 隔离于 " + TimeFmt.dateMinute(it.time),
-                level = "medium",
-                suggestion = "隔离文件已脱离执行路径;确认无用可销毁",
-                fixCommand = "rm -f " + ShellBridge.quote(it.quarantinedPath),
-                fixLabel = "销毁"
+        val rows = mutableListOf<JSONObject>()
+        for (it in items) {
+            rows.add(
+                uiItem(
+                    title = "Quarantined · " + it.originalPath.substringAfterLast('/'),
+                    sub = it.quarantinedPath,
+                    detail = "原路径: " + it.originalPath + " · 隔离于 " + TimeFmt.dateMinute(it.time) +
+                        (if (it.reason.isNotBlank()) " · 原因: " + it.reason else ""),
+                    level = "medium",
+                    suggestion = "误报可恢复到原路径;确认无用可销毁",
+                    fixCommand = "qrestore " + it.raw,
+                    fixLabel = "恢复"
+                )
+            )
+            rows.add(
+                uiItem(
+                    title = "销毁 · " + it.originalPath.substringAfterLast('/'),
+                    sub = "确认无用后销毁(不可恢复)",
+                    level = "high",
+                    fixCommand = "rm -f " + ShellBridge.quote(it.quarantinedPath),
+                    fixLabel = "销毁"
+                )
             )
         }
+        return rows
     }
 
     private fun netKillItems(): List<JSONObject> =
@@ -826,7 +840,23 @@ class ToolsHandler(
     }
 
     fun runFixCommand(cmd: String): Boolean {
-        return try { ShellBridge.runSuChecked(cmd) } catch (_: Exception) { false }
+        return try {
+            // 隔离区恢复走内部协议(qrestore <原始记录>),不是普通 shell 命令:
+            // 还原文件 + 清除隔离记录,不能用裸 su 直接执行
+            if (cmd.startsWith("qrestore ")) {
+                val raw = cmd.removePrefix("qrestore ").trim()
+                val f = raw.split('|', limit = 4)
+                val item = Quarantine.Item(
+                    originalPath = f.getOrElse(0) { "" },
+                    quarantinedPath = f.getOrElse(1) { "" },
+                    time = f.getOrElse(2) { "0" }.toLongOrNull() ?: 0L,
+                    reason = f.getOrElse(3) { "" },
+                    raw = raw
+                )
+                return Quarantine.restore(app, item)
+            }
+            ShellBridge.runSuChecked(cmd)
+        } catch (_: Exception) { false }
     }
 
     fun openAppSettings(pkg: String) {

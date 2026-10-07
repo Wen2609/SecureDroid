@@ -139,6 +139,9 @@
 
 ## v1.9.27 新增约定
 - **生物识别解锁**:pref 键 `biometric_enabled`;能力检测 `AppLockStore.canBiometric`(29+ BiometricManager / 28 FingerprintManager,<28 一律 false)。开启前提 = 已设 PIN + 设备可用(LockHandler.toggleBiometric 强制,不满足时拒绝并回推 lockStateChanged)。锁屏生物弹窗在 `LockActivity.maybeShowBiometric`(API 28+,框架 BiometricPrompt,带 @RequiresApi;**新增 API 级框架调用若带匿名对象,lint 需显式 @RequiresApi + 调用点 SDK 守卫**)。manifest 需 USE_BIOMETRIC + USE_FINGERPRINT。
+
+## v1.9.28 新增约定
+- **隔离区**:记录格式 `原路径|隔离路径|时间|原因`(原因可为空,向后兼容);`Item.raw` 保存原始串,移除记录必须用 raw 精确匹配(不许重组)。恢复走 `qrestore <raw>` 内部协议(runFixCommand 拦截,不走裸 su);写入原因时清洗 `|`。新增长列表/记录解析改动跑 `QuarantineRecordTest`。
 ## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
 - 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
 - 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()

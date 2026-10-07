@@ -198,7 +198,11 @@ class RealtimeProtectionService : Service() {
             // 处置阈值策略:低于阈值只报告;隔离模式下文件类处置改为进隔离区
             if (f.level.ordinal < ActionPolicy.level(this).ordinal) continue
             val ok = if (ActionPolicy.autoQuarantine(this) && cmd.startsWith("rm -f ")) {
-                Quarantine.quarantine(this, ShellBridge.unquote(cmd.removePrefix("rm -f ").trim()))
+                Quarantine.quarantine(
+                    this,
+                    ShellBridge.unquote(cmd.removePrefix("rm -f ").trim()),
+                    reason = f.sub
+                )
             } else {
                 ShellBridge.runSuChecked(cmd)
             }
