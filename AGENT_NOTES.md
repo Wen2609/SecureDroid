@@ -136,6 +136,9 @@
 ## v1.9.26 新增约定
 - **自动更新**:`UpdateScheduler.sync()` 在 Application.onCreate 调用;开关 pref 键 `auto_update_enabled`,更新源键 `update_url`/`update_sha`。新增后台 Worker 一律走 ScanScheduler 同款模式(WorkManager 周期 + UPDATE 策略 + 调度异常吞掉)。
 - **更新器**:落盘统一走 `FeatureUpdater.applyUpdate`(备份到 `files/clamav/backup/`、写正式文件、热重载、记历史);`files/clamav/` 下**任何新子目录**都会被 ensureLoaded 跳过(只读 isFile,否则异常中止整个加载循环——已踩过)。改 update/applyUpdate 后必须跑 `FeatureUpdaterHistoryTest`。
+
+## v1.9.27 新增约定
+- **生物识别解锁**:pref 键 `biometric_enabled`;能力检测 `AppLockStore.canBiometric`(29+ BiometricManager / 28 FingerprintManager,<28 一律 false)。开启前提 = 已设 PIN + 设备可用(LockHandler.toggleBiometric 强制,不满足时拒绝并回推 lockStateChanged)。锁屏生物弹窗在 `LockActivity.maybeShowBiometric`(API 28+,框架 BiometricPrompt,带 @RequiresApi;**新增 API 级框架调用若带匿名对象,lint 需显式 @RequiresApi + 调用点 SDK 守卫**)。manifest 需 USE_BIOMETRIC + USE_FINGERPRINT。
 ## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
 - 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
 - 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()

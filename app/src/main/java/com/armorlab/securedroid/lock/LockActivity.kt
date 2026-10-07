@@ -52,12 +52,44 @@ class LockActivity : AppCompatActivity() {
         }
         web.loadUrl("file:///android_asset/ui/lock.html")
 
+        // 生物识别:开启且设备可用时立即弹出系统 BiometricPrompt,
+        // 成功直接解锁;失败/取消仍留在 PIN 键盘(PIN 是唯一兜底路径)
+        if (android.os.Build.VERSION.SDK_INT >= 28) maybeShowBiometric()
+
         // 拦截返回键:锁定期间不允许绕过
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // 故意不执行任何操作:阻止返回键关闭锁屏
             }
         })
+    }
+
+    @androidx.annotation.RequiresApi(28)
+    private fun maybeShowBiometric() {
+        if (!AppLockStore.isBiometricEnabled(this) || !AppLockStore.canBiometric(this)) return
+        try {
+            @Suppress("DEPRECATION")
+            val prompt = android.hardware.biometrics.BiometricPrompt.Builder(this)
+                .setTitle(getString(R.string.bio_prompt_title))
+                .setSubtitle(getString(R.string.bio_prompt_subtitle))
+                .setNegativeButton(getString(R.string.cancel), mainExecutor) { _, _ -> }
+                .build()
+            prompt.authenticate(
+                android.os.CancellationSignal(),
+                mainExecutor,
+                object : android.hardware.biometrics.BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(
+                        result: android.hardware.biometrics.BiometricPrompt.AuthenticationResult?
+                    ) {
+                        AppLockStore.resetAttempts(this@LockActivity)
+                        AppLockStore.markUnlocked(this@LockActivity)
+                        runOnUiThread { finish() }
+                    }
+                }
+            )
+        } catch (_: Exception) {
+            // 生物识别不可用时静默降级到 PIN
+        }
     }
 
     private inner class LockJsBridge {

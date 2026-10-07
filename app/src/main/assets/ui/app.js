@@ -618,6 +618,14 @@
     if (st) st.textContent = d.hasPin ? '已设置，点击下方可修改' : '未设置，点击下方设置';
     var decoy = qs('#swDecoy');
     if (decoy) decoy.classList.toggle('is-on', !!d.decoy);
+    var bio = qs('#swBio');
+    if (bio) bio.classList.toggle('is-on', !!d.biometric);
+    var bioSub = qs('#bioSub');
+    if (bioSub) {
+      bioSub.textContent = d.canBiometric
+        ? 'PIN 之外可用指纹 / 面容解锁'
+        : '设备不支持生物识别';
+    }
     var acc = qs('#accessibilitySub');
     if (acc) acc.textContent = d.accessibility ? '已开启，应用锁可自动解锁' : '未开启，用于应用锁的自动解锁';
 
@@ -814,6 +822,7 @@
   bindNativeSwitch('swAutoUpdate', function (t) { api.send('toggleAutoUpdate', { on: t }); });
   bindNativeSwitch('swRoot', function (t) { api.send('toggleRoot', { on: t }); });
   bindNativeSwitch('swDecoy', function (t) { api.send('toggleDecoy', { on: t }); });
+  bindNativeSwitch('swBio', function (t) { api.send('toggleBiometric', { on: t }); });
 
   on('rootState', function (d) {
     setSwitch('swRoot', d.rootMode);
@@ -1078,7 +1087,7 @@
   }
   function demoLock() {
     return {
-      hasPin: true, decoy: false, accessibility: false,
+      hasPin: true, decoy: false, biometric: true, canBiometric: true, accessibility: false,
       apps: [
         { name: '微信', pkg: 'com.tencent.mm', locked: true },
         { name: '支付宝', pkg: 'com.eg.android.AlipayGphone', locked: false },

@@ -196,4 +196,7 @@
     <string name="threat_critical">极高</string>
 
     <!-- ===== 原生工具页玻璃拟态界面(v1.9.6) ===== -->
+    <string name="cancel">取消</string>
+    <string name="bio_prompt_title">验证生物识别以解锁</string>
+    <string name="bio_prompt_subtitle">或输入 PIN 码</string>
 </resources>

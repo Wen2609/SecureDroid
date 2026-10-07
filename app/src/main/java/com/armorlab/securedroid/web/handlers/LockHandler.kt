@@ -22,7 +22,8 @@ class LockHandler(
     suspend fun getLockState(): String = try {
         withContext(Dispatchers.Default) { buildLockState() }
     } catch (t: Throwable) {
-        JSONObject().put("hasPin", false).put("decoy", false)
+        JSONObject().put("hasPin", false).put("decoy", false).put("biometric", false)
+            .put("canBiometric", false)
             .put("accessibility", false).put("apps", JSONArray()).toString()
     }
 
@@ -43,6 +44,8 @@ class LockHandler(
         return JSONObject()
             .put("hasPin", AppLockStore.hasPin(app))
             .put("decoy", AppLockStore.isDecoyEnabled(app))
+            .put("biometric", AppLockStore.isBiometricEnabled(app))
+            .put("canBiometric", AppLockStore.canBiometric(app))
             .put("accessibility", isAccessibilityEnabled())
             .put("apps", apps)
             .toString()
@@ -60,6 +63,21 @@ class LockHandler(
             AppLockStore.setDecoyEnabled(app, on)
         } catch (_: Exception) {
         }
+    }
+
+    /**
+     * 生物识别开关:开启前提是已设 PIN 且设备具备可用生物识别,
+     * 否则拒绝写入并回推真实状态(前端开关自动回弹)。
+     */
+    fun toggleBiometric(on: Boolean) {
+        val allowed = !on || (AppLockStore.hasPin(app) && AppLockStore.canBiometric(app))
+        if (allowed) {
+            try {
+                AppLockStore.setBiometricEnabled(app, on)
+            } catch (_: Exception) {
+            }
+        }
+        sink.sendEvent("lockStateChanged", JSONObject().toString())
     }
 
     fun showPinDialog() {

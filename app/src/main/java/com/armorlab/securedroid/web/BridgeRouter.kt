@@ -71,6 +71,9 @@ class BridgeRouter(
         put("toggleDecoy", Action(false) { json ->
             lock.toggleDecoy(json.optBoolean("on")); null
         })
+        put("toggleBiometric", Action(false) { json ->
+            lock.toggleBiometric(json.optBoolean("on")); null
+        })
         put("savePin", Action(false) { json ->
             val pin = json.optString("pin")
             val ok = pin.length == 4 && com.armorlab.securedroid.lock.AppLockStore.setPin(activity, pin)

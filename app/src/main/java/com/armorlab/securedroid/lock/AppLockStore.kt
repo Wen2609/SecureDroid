@@ -32,6 +32,7 @@ object AppLockStore {
     private const val KEY_ATTEMPTS = "pin_attempts"
     private const val KEY_LOCKOUT_UNTIL = "pin_lockout_until"
     private const val KEY_DECOY = "decoy_enabled"
+    private const val KEY_BIOMETRIC = "biometric_enabled"
     private const val FAILED_RETRY_MS = 5_000L
 
     /**
@@ -102,6 +103,36 @@ object AppLockStore {
 
     fun setDecoyEnabled(context: Context, value: Boolean) {
         prefs(context)?.edit()?.putBoolean(KEY_DECOY, value)?.apply()
+    }
+
+    /** 生物识别开关(仅作为已设 PIN 的替代解锁路径;能力检测独立于开关) */
+    fun isBiometricEnabled(context: Context): Boolean =
+        prefs(context)?.getBoolean(KEY_BIOMETRIC, false) ?: false
+
+    fun setBiometricEnabled(context: Context, value: Boolean) {
+        prefs(context)?.edit()?.putBoolean(KEY_BIOMETRIC, value)?.apply()
+    }
+
+    /**
+     * 设备是否具备可用生物识别:API 29+ 走 BiometricManager,
+     * API 28 走 FingerprintManager(框架 BiometricPrompt 最低 28)。
+     * 开启生物解锁前必须先通过本检查,避免在无指纹/面容设备上打开后无法解锁。
+     */
+    fun canBiometric(context: Context): Boolean {
+        if (android.os.Build.VERSION.SDK_INT < 28) return false
+        return try {
+            if (android.os.Build.VERSION.SDK_INT >= 29) {
+                val bm = context.getSystemService(android.hardware.biometrics.BiometricManager::class.java)
+                bm?.canAuthenticate() ==
+                    android.hardware.biometrics.BiometricManager.BIOMETRIC_SUCCESS
+            } else {
+                @Suppress("DEPRECATION")
+                val fm = context.getSystemService(android.hardware.fingerprint.FingerprintManager::class.java)
+                fm != null && fm.hasEnrolledFingerprints()
+            }
+        } catch (_: Exception) {
+            false
+        }
     }
 
     /** @return 是否成功持久化(failure 通常意味着安全存储不可用) */
