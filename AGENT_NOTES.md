@@ -22,6 +22,10 @@
 - 父类泛型里引用本类嵌套类必须用限定名:ListAdapter<ToolsAdapter.ToolEntry,...>
 - KeyguardManager 在 android.app 不是 android.os;FileOutputStream 才有 .fd
 
+## 项目定位(规划与功能取舍前必读)
+- **开源 + 离线优先**:GitHub 开源、签名 APK 侧载分发,不上架应用商店,无自有服务端。规划功能时**禁止**提出依赖云端后端(上报/推送/账号)、Play 服务(Play Integrity 等)或商店合规改造的方案;特征库更新 = 用户自配置源(URL+SHA-256),崩溃信息 = 本地留存 + 用户主动分享,完整性 = TOFU + 发布页 SHA-256。
+- CHANGELOG.md 与 README、AGENT_NOTES 三处必须随版本同步更新(2026-10-07 已补齐 v1.9.21–v1.9.29 的 CHANGELOG)。
+
 ## 最高权限层(新增,改动前先读)
 - PrivilegeManager: PrivLevel(NONE/LOCAL_SHELL/ROOT) 分级;probe(ctx) 主动提权(触发 su 授权框),level(ctx) 读缓存
 - 所有防护命令必须走 PrivilegeManager.exec(ctx,cmd) —— 内置 PrivilegedPolicy 拦截灾害级命令(整根删除/格式化/写分区/恢复出厂),并自动审计
