@@ -1,0 +1,3 @@
+# ClamAV 兼容签名(.hdb:整文件 MD5)格式:md5:文件大小:名称
+# 大小为 0 表示忽略大小;演示特征用于自检,真实库可从 ClamAV daily.cvd 解包获取
+d41d8cd98f00b204e9800998ecf8427e:0:Trojan.Test.EmptyMd5

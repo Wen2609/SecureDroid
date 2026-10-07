@@ -80,6 +80,22 @@ object ScannerEngine {
         return toHex(md.digest())
     }
 
+    /** 一次读盘同时计算 SHA-256 与 MD5(ClamAV .hsb/.hdb 双格式匹配,免两次 IO) */
+    fun hashFileDigests(path: String): Pair<String, String> {
+        val sha = MessageDigest.getInstance("SHA-256")
+        val md5 = MessageDigest.getInstance("MD5")
+        FileInputStream(File(path)).use { input ->
+            val buf = ByteArray(65536)
+            while (true) {
+                val n = input.read(buf)
+                if (n <= 0) break
+                sha.update(buf, 0, n)
+                md5.update(buf, 0, n)
+            }
+        }
+        return Pair(toHex(sha.digest()), toHex(md5.digest()))
+    }
+
     fun toHex(bytes: ByteArray): String {
         val digits = "0123456789abcdef"
         val sb = StringBuilder(bytes.size * 2)

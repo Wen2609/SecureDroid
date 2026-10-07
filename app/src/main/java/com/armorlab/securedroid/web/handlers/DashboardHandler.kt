@@ -69,6 +69,7 @@ class DashboardHandler(private val app: Context) {
 internal object BridgeKeys {
     const val REALTIME = "realtime_enabled"
     const val BOOT = "boot_enabled"
+    const val THEME = "theme"
 
     fun settings(context: Context) =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)

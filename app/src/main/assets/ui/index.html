@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SecureDroid · 安全中心</title>
+<script>
+/* 首帧前应用主题(避免深色用户白屏闪烁):优先读本地记忆,
+   否则按系统偏好;app.js 加载后会以原生偏好为准校正。 */
+(function () {
+  try {
+    var t = localStorage.getItem('sd_theme') || 'system';
+    var dark = (typeof matchMedia === 'function') &&
+      matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute(
+      'data-theme',
+      (t === 'dark' || (t === 'system' && dark)) ? 'dark' : 'light'
+    );
+  } catch (e) { }
+})();
+</script>
 <style>
 /* ============================================================
    SecureDroid UI — 毛玻璃 / 柔和流动光晕 / 悬浮胶囊导航
@@ -67,54 +82,52 @@
   --glass-blur:blur(22px) saturate(180%);
 }
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --color-primary:#31D027;
-    --color-primary-hover:#28B820;
-    --color-accent:#4ADE80;
-    --color-on-primary:#06210A;
-    --color-success:#4ADE80;
-    --color-warning:#FBBF24;
-    --color-danger:#FF6B6B;
-    --color-info:#60A5FA;
-    --color-purple:#A78BFA;
-    --color-bg-top:#101711;
-    --color-bg-bottom:#0B0E0C;
-    --color-surface:rgba(23,27,24,.62);
-    --color-surface-solid:#171B18;
-    --color-nav:rgba(25,30,26,.70);
-    --color-muted:#232823;
-    --color-border:#2C332D;
-    --color-border-glass:rgba(255,255,255,.07);
-    --color-ring-disc:#16241A;
-    --color-ring-track:#22301F;
-    --color-text:#EDF2EC;
-    --color-text-secondary:#A9B3A7;
-    --color-text-tertiary:#7A857A;
-    --color-text-section:#7FA383;
+html[data-theme="dark"]{
+  --color-primary:#31D027;
+  --color-primary-hover:#28B820;
+  --color-accent:#4ADE80;
+  --color-on-primary:#06210A;
+  --color-success:#4ADE80;
+  --color-warning:#FBBF24;
+  --color-danger:#FF6B6B;
+  --color-info:#60A5FA;
+  --color-purple:#A78BFA;
+  --color-bg-top:#101711;
+  --color-bg-bottom:#0B0E0C;
+  --color-surface:rgba(23,27,24,.62);
+  --color-surface-solid:#171B18;
+  --color-nav:rgba(25,30,26,.70);
+  --color-muted:#232823;
+  --color-border:#2C332D;
+  --color-border-glass:rgba(255,255,255,.07);
+  --color-ring-disc:#16241A;
+  --color-ring-track:#22301F;
+  --color-text:#EDF2EC;
+  --color-text-secondary:#A9B3A7;
+  --color-text-tertiary:#7A857A;
+  --color-text-section:#7FA383;
 
-    --c-primary:var(--color-primary);
-    --c-ring:#31D027;
-    --c-accent:var(--color-accent);
-    --c-on-primary:var(--color-on-primary);
+  --c-primary:var(--color-primary);
+  --c-ring:#31D027;
+  --c-accent:var(--color-accent);
+  --c-on-primary:var(--color-on-primary);
 
-    --c-bg-top:var(--color-bg-top);
-    --c-bg-bottom:var(--color-bg-bottom);
-    --c-card:var(--color-surface);
-    --c-nav:var(--color-nav);
-    --c-muted:var(--color-muted);
-    --c-border:var(--color-border);
+  --c-bg-top:var(--color-bg-top);
+  --c-bg-bottom:var(--color-bg-bottom);
+  --c-card:var(--color-surface);
+  --c-nav:var(--color-nav);
+  --c-muted:var(--color-muted);
+  --c-border:var(--color-border);
 
-    --c-fg:var(--color-text);
-    --c-fg2:var(--color-text-secondary);
-    --c-fg3:var(--color-text-tertiary);
-    --c-danger:var(--color-danger);
-    --c-gold:var(--color-warning);
-    --c-section:var(--color-text-section);
+  --c-fg:var(--color-text);
+  --c-fg2:var(--color-text-secondary);
+  --c-fg3:var(--color-text-tertiary);
+  --c-danger:var(--color-danger);
+  --c-gold:var(--color-warning);
+  --c-section:var(--color-text-section);
 
-    --shadow-card:0 2px 12px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
-    --shadow-dialog:0 24px 48px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.35);
-  }
+  --shadow-card:0 2px 12px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+  --shadow-dialog:0 24px 48px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.35);
 }
 
 /* ============================================================
@@ -174,12 +187,10 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
 .b3{width:280px;height:280px;bottom:-70px;left:-60px;background:#D9F5C4;opacity:.50;animation:drift3 28s ease-in-out infinite}
 .b4{width:220px;height:220px;bottom:120px;right:-70px;background:#C9E9FF;opacity:.42;animation:drift4 32s ease-in-out infinite}
 
-@media (prefers-color-scheme: dark){
-  .b1{background:#1E5A2A;opacity:.45}
-  .b2{background:#12405C;opacity:.42}
-  .b3{background:#20501E;opacity:.40}
-  .b4{background:#123A55;opacity:.36}
-}
+html[data-theme="dark"] .b1{background:#1E5A2A;opacity:.45}
+html[data-theme="dark"] .b2{background:#12405C;opacity:.42}
+html[data-theme="dark"] .b3{background:#20501E;opacity:.40}
+html[data-theme="dark"] .b4{background:#123A55;opacity:.36}
 
 @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(46px,34px) scale(1.16)}}
 @keyframes drift2{0%,100%{transform:translate(0,0) scale(1.1)}50%{transform:translate(-50px,40px) scale(.9)}}
@@ -230,9 +241,7 @@ button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px;border
   box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.6);
   overflow:hidden;
 }
-@media (prefers-color-scheme: dark){
-  .card{border-color:rgba(255,255,255,.07);box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.05)}
-}
+html[data-theme="dark"] .card{border-color:rgba(255,255,255,.07);box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.05)}
 
 /* 区块标题 */
 .section-head{
@@ -821,12 +830,10 @@ button.stat-cell:active{background:rgba(4,189,25,.06)}
 .tint-amber{background:rgba(161,98,7,.13);color:#A16207}
 .tint-purple{background:rgba(124,108,255,.15);color:#7C6CFF}
 
-@media (prefers-color-scheme: dark){
-  .tint-green{background:rgba(49,208,39,.18);color:#4ADE80}
-  .tint-blue{background:rgba(96,165,250,.18);color:#60A5FA}
-  .tint-amber{background:rgba(251,191,36,.18);color:#FBBF24}
-  .tint-purple{background:rgba(167,139,250,.20);color:#A78BFA}
-}
+html[data-theme="dark"] .tint-green{background:rgba(49,208,39,.18);color:#4ADE80}
+html[data-theme="dark"] .tint-blue{background:rgba(96,165,250,.18);color:#60A5FA}
+html[data-theme="dark"] .tint-amber{background:rgba(251,191,36,.18);color:#FBBF24}
+html[data-theme="dark"] .tint-purple{background:rgba(167,139,250,.20);color:#A78BFA}
 
 .feature-title{
   font-size:15px;font-weight:700;
@@ -919,12 +926,38 @@ button.stat-cell:active{background:rgba(4,189,25,.06)}
   box-shadow:0 2px 10px rgba(31,60,35,.14),
              0 1px 2px rgba(31,60,35,.08);
 }
-@media (prefers-color-scheme: dark){
-  .seg.is-active{background:rgba(255,255,255,.14)}
-}
+html[data-theme="dark"] .seg.is-active{background:rgba(255,255,255,.14)}
 
 .seg-body{display:none}
 .seg-body.is-active{display:block;animation:panelIn .32s cubic-bezier(.2,.8,.3,1) both}
+
+/* 外观主题三态切换:视觉与 .seg 一致,但独立类名,避免被分段控件的
+   seg-body 切换逻辑接管(主题切换不应滚动页面) */
+.theme-card{padding:12px}
+.theme-track{
+  display:flex;
+  gap:2px;
+  padding:3px;
+  background:var(--c-muted);
+  border-radius:var(--r-pill);
+}
+.theme-seg{
+  flex:1;
+  height:48px;
+  border-radius:var(--r-pill);
+  font-size:14px;font-weight:700;
+  letter-spacing:.01em;
+  color:var(--c-fg2);
+  transition:background .28s, color .28s, box-shadow .28s, transform .2s;
+}
+.theme-seg:active{transform:scale(.97)}
+.theme-seg.is-active{
+  background:rgba(255,255,255,.95);
+  color:var(--c-fg);
+  box-shadow:0 2px 10px rgba(31,60,35,.14),
+             0 1px 2px rgba(31,60,35,.08);
+}
+html[data-theme="dark"] .theme-seg.is-active{background:rgba(255,255,255,.14)}
 
 /* ============================================================
    扫描主面板（检测页）
@@ -1349,8 +1382,7 @@ button.row:active{background:var(--c-muted)}
   transform:translateY(-1px);
   filter:drop-shadow(0 0 8px rgba(4,189,25,.45));
 }
-@media (prefers-color-scheme: dark){
-  .dock{
+html[data-theme="dark"] .dock{
     border-color:rgba(255,255,255,.10);
     background:linear-gradient(160deg, rgba(23,27,24,.72), rgba(23,27,24,.46));
     box-shadow:0 20px 50px -16px rgba(0,0,0,.70),
@@ -1358,12 +1390,11 @@ button.row:active{background:var(--c-muted)}
                inset 0 1px 0 rgba(255,255,255,.12),
                inset 0 -1px 0 rgba(255,255,255,.03);
   }
-  .dock-thumb{
+  html[data-theme="dark"] .dock-thumb{
     background:linear-gradient(145deg, rgba(49,208,39,.26), rgba(49,208,39,.08));
     box-shadow:inset 0 1px 0 rgba(255,255,255,.10),
                0 8px 22px -8px rgba(49,208,39,.45);
   }
-}
 
 /* ============================================================
    减少动效
@@ -1873,6 +1904,15 @@ button.row:active{background:var(--c-muted)}
           <span class="switch" data-toggle data-native id="swRoot"></span>
         </div>
 
+      </div>
+
+      <h2 class="section-head">显示设置</h2>
+      <div class="card theme-card">
+        <div class="theme-track">
+          <button class="theme-seg is-active" data-theme-opt="system">跟随系统</button>
+          <button class="theme-seg" data-theme-opt="light">明亮</button>
+          <button class="theme-seg" data-theme-opt="dark">深色</button>
+        </div>
       </div>
 
       <h2 class="section-head">安全设置</h2>

@@ -79,6 +79,14 @@ object TrojanScanner {
                 detections.add(Detection("ClamAV 签名", it.first, ThreatLevel.HIGH, it.second))
             }
 
+            // 引擎 2.5:ClamAV .hdb 整文件 MD5(库中有 MD5 特征才计算,避免无谓读盘)
+            if (ClamAvSignatures.md5Count() > 0) {
+                val md5 = HashCache.cachedMd5(context, apkPath, info.lastUpdateTime, apkFile.length())
+                ClamAvSignatures.matchMd5(md5, apkFile.length())?.let {
+                    detections.add(Detection("ClamAV 签名", it.first, ThreatLevel.HIGH, it.second))
+                }
+            }
+
             if (!isSystemApp) {
                 // 引擎 3:DEX 行为规则(按指纹缓存;系统应用跳过以降噪提速)
                 val cached = DexVerdictCache.cachedHits(context, sha)

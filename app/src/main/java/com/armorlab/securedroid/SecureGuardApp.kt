@@ -22,6 +22,13 @@ class SecureGuardApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        // 主界面是 WebView,提前初始化 Chromium 内核(Application 阶段完成最重的
+        // provider 初始化),显著缩短 MainActivity 首屏白屏时间。
+        // 创建即销毁的预热 WebView 不参与任何渲染,失败静默(个别设备 WebView 不可用)。
+        try {
+            android.webkit.WebView(applicationContext).destroy()
+        } catch (_: Exception) {
+        }
         val nm = getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(
             NotificationChannel(

@@ -78,6 +78,7 @@
 
   /* demo 数据源:与桥同接口,纯 HTML 预览(无 AndroidBridge)时界面依然可用 */
   var demoMode = 'standard';
+  var demoTheme = 'system';
   function demoRequest(action, payload) {
     switch (action) {
       case 'getMode':
@@ -86,6 +87,11 @@
         demoMode = (payload && payload.mode) || 'standard';
         // 演示模式视为权限已全部授予,便于纯 HTML 预览完整流程
         return { ok: true, mode: demoMode, permissions: [{ key: 'notification', label: '通知权限', granted: true }] };
+      case 'getTheme':
+        return { theme: demoTheme };
+      case 'setTheme':
+        demoTheme = (payload && payload.theme) || 'system';
+        return { ok: true, theme: demoTheme };
       case 'getDashboard': return demoDashboard();
       case 'getLockState': return demoLock();
       case 'getAudit': return demoAudit();
@@ -647,6 +653,57 @@
     });
     list.appendChild(frag);
   }
+
+  /* ---------------- 外观主题:跟随系统 / 浅色 / 深色 ---------------- */
+
+  var themePref = 'system';
+  var themeMedia = (typeof window.matchMedia === 'function')
+    ? window.matchMedia('(prefers-color-scheme: dark)')
+    : null;
+
+  function resolveTheme(pref) {
+    if (pref === 'dark' || pref === 'light') return pref;
+    return (themeMedia && themeMedia.matches) ? 'dark' : 'light';
+  }
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', resolveTheme(themePref));
+    try { localStorage.setItem('sd_theme', themePref); } catch (e) { }
+    qsa('.theme-seg').forEach(function (btn) {
+      btn.classList.toggle('is-active', btn.dataset.themeOpt === themePref);
+    });
+  }
+
+  function setThemePref(pref) {
+    themePref = (pref === 'dark' || pref === 'light' || pref === 'system') ? pref : 'system';
+    applyTheme();
+  }
+
+  qsa('.theme-seg').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      hapticTap();
+      setThemePref(btn.dataset.themeOpt || 'system');
+      api.send('setTheme', { theme: themePref });
+    });
+  });
+
+  if (themeMedia && typeof themeMedia.addEventListener === 'function') {
+    themeMedia.addEventListener('change', function () {
+      if (themePref === 'system') applyTheme();
+    });
+  } else if (themeMedia && typeof themeMedia.addListener === 'function') {
+    themeMedia.addListener(function () {
+      if (themePref === 'system') applyTheme();
+    });
+  }
+
+  function loadTheme() {
+    api.request('getTheme').then(function (r) {
+      if (r.ok && r.data && r.data.theme) setThemePref(r.data.theme);
+    });
+  }
+
+  loadTheme();
 
   /* ---------------- 工具箱开关 ---------------- */
 

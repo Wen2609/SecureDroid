@@ -32,6 +32,7 @@ class ClamAvSignatureEngineTest {
     @Test
     fun loadsBundledSignatures() {
         assertTrue("应加载哈希签名(.hsb)", ClamAvSignatures.hashCount() >= 1)
+        assertTrue("应加载 MD5 整文件哈希签名(.hdb)", ClamAvSignatures.md5Count() >= 1)
         assertTrue("应加载字节特征(.ndb)", ClamAvSignatures.byteCount() >= 4)
         assertTrue("应识别位置固定型签名(绝对偏移 + 文件尾)", ClamAvSignatures.positionalCount() >= 2)
     }
@@ -118,5 +119,26 @@ class ClamAvSignatureEngineTest {
         val hit = ClamAvSignatures.matchHash(emptySha, 0L)
         assertTrue("整文件哈希签名应按 SHA-256 命中", hit != null)
         assertTrue("命中名称应来自特征库", hit!!.first.contains("Trojan.Test.EmptySha256"))
+    }
+
+    @Test
+    fun md5SignatureMatchesByExactMd5() {
+        // 演示库中登记的是空文件 MD5(d41d8cd9…),大小为 0 表示忽略长度
+        val emptyMd5 = "d41d8cd98f00b204e9800998ecf8427e"
+        val hit = ClamAvSignatures.matchMd5(emptyMd5, 0L)
+        assertTrue("整文件 MD5 哈希签名应按 MD5 命中", hit != null)
+        assertTrue("命中名称应来自特征库", hit!!.first.contains("Trojan.Test.EmptyMd5"))
+    }
+
+    @Test
+    fun md5SignatureIgnoresWrongHashOrSize() {
+        assertTrue("错误 MD5 不应命中", ClamAvSignatures.matchMd5("00000000000000000000000000000000", 0L) == null)
+        // 演示库登记大小为 0(忽略大小),但真实库会带大小;此处直接注入一条带大小的特征验证
+        ClamAvSignatures.importText(
+            "test.hdb",
+            "0123456789abcdef0123456789abcdef:1234:Test.Md5.Sized"
+        )
+        assertTrue("同大小应命中", ClamAvSignatures.matchMd5("0123456789abcdef0123456789abcdef", 1234L) != null)
+        assertTrue("大小不符不应命中", ClamAvSignatures.matchMd5("0123456789abcdef0123456789abcdef", 1235L) == null)
     }
 }

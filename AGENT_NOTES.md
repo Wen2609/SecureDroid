@@ -113,6 +113,11 @@
 - 用 pwsh 工具时不支持 && 和 call;跑 gradle 用 Start-Process + 文件重定向,别用 Out-File(按行截断)
 - 编译错误集中修完再编译,别一轮一修
 - 读大文件用 offset/limit;build 日志读 build_err.log 里 ^e: 开头的行即可
+
+## v1.9.21 新增约定
+- **深色三态**:`SettingsHandler.getTheme/setTheme` 持久化 `theme` 键(system/light/dark);CSS 深色令牌统一挂在 `html[data-theme="dark"]`,不再用 `@media (prefers-color-scheme)`(head 内联脚本按 localStorage + 系统偏好首帧前设 `data-theme`,app.js 再以原生偏好校正)。新增主题相关 UI 文案必须确认字符在内置字体子集内(子集源文件 .otf 不在仓库,不能重新子集化,只能复用已有字符)。
+- **WebView 预热**:`SecureGuardApp.onCreate` 创建即销毁一个 WebView,不可在别处再创建常驻 WebView。
+- **ClamAV .hdb/.hdu**:MD5 整文件哈希,`parseMd5Line`(32 hex + 大小 + 名称),`matchMd5` 匹配;TrojanScanner 仅在 `md5Count()>0` 时经 `HashCache.cachedMd5` 取 MD5(与 SHA-256 同一次读盘,缓存值格式 `sha256|md5`,旧格式自动失效重算)。改签名解析后必须跑 `ClamAvSignatureEngineTest`。
 ## 性能不变量(v1.7.0 起 · PerfGuardTest 会拦)
 - 热路径不许随手 new Regex / SimpleDateFormat:统一走 core/Re 与 core/TimeFmt(ThreadLocal 缓存 + Locale 变更重建)
 - 所有 PackageManager 枚举与 loadLabel 一律经 core/PackageSnapshot(默认 30s TTL);安装/卸载广播后调 PackageSnapshot.invalidate()

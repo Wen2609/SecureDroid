@@ -46,6 +46,22 @@ class SettingsHandler(
             .put("rootMode", false).put("mode", AppModeStore.current(app).id).put("rootSub", "").toString()
     }
 
+    /** 外观主题:跟随系统 / 浅色 / 深色(默认跟随系统) */
+    fun getTheme(): String = try {
+        val theme = BridgeKeys.settings(app).getString(BridgeKeys.THEME, "system")
+        JSONObject().put("theme", theme).toString()
+    } catch (t: Throwable) {
+        JSONObject().put("theme", "system").toString()
+    }
+
+    fun setTheme(theme: String) {
+        if (theme != "system" && theme != "light" && theme != "dark") return
+        try {
+            BridgeKeys.settings(app).edit().putString(BridgeKeys.THEME, theme).apply()
+        } catch (_: Exception) {
+        }
+    }
+
     fun toggleRealtime(on: Boolean) {
         try {
             if (on) RealtimeProtectionService.start(app) else RealtimeProtectionService.stop(app)

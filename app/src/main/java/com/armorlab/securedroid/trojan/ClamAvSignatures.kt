@@ -16,11 +16,11 @@ import java.util.zip.ZipFile
  *
  * 支持的数据库文件:
  * - .hsb / .hsu : 整文件 SHA-256 哈希签名,行格式  hash:文件大小:名称  (大小为 0 表示忽略大小);
+ * - .hdb / .hdu : 整文件 MD5 哈希签名,行格式  md5:文件大小:名称(大小为 0 表示忽略大小);
  * - .ndb / .ndu : 扩展字节特征签名,行格式
  *     名称:目标类型:偏移:HEX特征[:min_flevel[:max_flevel]]
  *   其中偏移支持 * (任意位置)、绝对偏移 n、(EOF-n)(文件尾往前 n 字节)
- *   以及浮动偏移 n,MaxShift(表示 n..n+MaxShift 区间内匹配);
- * - .hdb (MD5 整文件哈希)暂不支持:本引擎按 SHA-256 计算文件指纹。
+ *   以及浮动偏移 n,MaxShift(表示 n..n+MaxShift 区间内匹配)。
  *
  * 特征来源:
  * 1. assets/signatures/ 内置演示签名;
@@ -158,6 +158,7 @@ object ClamAvSignatures {
     }
     private val lock = Any()
     private val hashSigs = HashMap<String, Pair<Long, String>>()
+    private val md5Sigs = HashMap<String, Pair<Long, String>>()
     private val byteSigs = mutableListOf<ByteSig>()
 
     @Volatile
@@ -203,8 +204,8 @@ object ClamAvSignatures {
             if (t.isEmpty() || t.startsWith("#")) return@forEachLine
             when {
                 lower.endsWith(".hsb") || lower.endsWith(".hsu") -> parseHashLine(t)
+                lower.endsWith(".hdb") || lower.endsWith(".hdu") -> parseMd5Line(t)
                 lower.endsWith(".ndb") || lower.endsWith(".ndu") -> parseByteLine(t)
-                // .hdb 为 MD5 整文件哈希,当前引擎计算 SHA-256,不加载
             }
         }
     }
@@ -216,6 +217,15 @@ object ClamAvSignatures {
         if (parts[0].any { Character.digit(it, 16) < 0 }) return
         val size = parts[1].toLongOrNull() ?: 0L
         synchronized(lock) { hashSigs[parts[0].lowercase()] = Pair(size, parts[2]) }
+    }
+
+    /** .hdb:md5:文件大小:名称 */
+    private fun parseMd5Line(t: String) {
+        val parts = t.split(':', limit = 3)
+        if (parts.size < 3 || parts[0].length != 32) return
+        if (parts[0].any { Character.digit(it, 16) < 0 }) return
+        val size = parts[1].toLongOrNull() ?: 0L
+        synchronized(lock) { md5Sigs[parts[0].lowercase()] = Pair(size, parts[2]) }
     }
 
     /**
@@ -298,6 +308,15 @@ object ClamAvSignatures {
             hashSigs[sha256.lowercase()]?.let { (wantSize, name) ->
                 if (wantSize == 0L || wantSize == fileSize)
                     Pair(name, "APK 整文件 SHA-256 命中 ClamAV 特征")
+                else null
+            }
+        }
+
+    fun matchMd5(md5: String, fileSize: Long): Pair<String, String>? =
+        synchronized(lock) {
+            md5Sigs[md5.lowercase()]?.let { (wantSize, name) ->
+                if (wantSize == 0L || wantSize == fileSize)
+                    Pair(name, "APK 整文件 MD5 命中 ClamAV 特征")
                 else null
             }
         }
@@ -423,6 +442,8 @@ object ClamAvSignatures {
 
     fun hashCount(): Int = synchronized(lock) { hashSigs.size }
 
+    fun md5Count(): Int = synchronized(lock) { md5Sigs.size }
+
     fun byteCount(): Int = synchronized(lock) { byteSigs.size }
 
     /** 位置固定型签名数量(统计与展示用) */
@@ -440,6 +461,7 @@ object ClamAvSignatures {
                 if (t.isEmpty() || t.startsWith("#")) return@forEach
                 when {
                     lower.endsWith(".hsb") || lower.endsWith(".hsu") -> parseHashLine(t)
+                    lower.endsWith(".hdb") || lower.endsWith(".hdu") -> parseMd5Line(t)
                     else -> parseByteLine(t)
                 }
             }
@@ -464,5 +486,5 @@ object ClamAvSignatures {
         ensureLoaded(context)
     }
 
-    fun signatureCount(): Int = synchronized(lock) { hashSigs.size + byteSigs.size }
+    fun signatureCount(): Int = synchronized(lock) { hashSigs.size + md5Sigs.size + byteSigs.size }
 }

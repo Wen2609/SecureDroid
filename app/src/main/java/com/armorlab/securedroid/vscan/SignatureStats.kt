@@ -18,8 +18,8 @@ object SignatureStats {
                 ThreatLevel.LOW, null, null
             ),
             TrojanAdapter.UiItem(
-                "Sig.ClamAvHash", "ClamAV 整文件哈希签名(.hsb)",
-                "已加载 " + ClamAvSignatures.hashCount() + " 条",
+                "Sig.ClamAvHash", "ClamAV 整文件哈希签名(.hsb/.hdb)",
+                "已加载 " + (ClamAvSignatures.hashCount() + ClamAvSignatures.md5Count()) + " 条",
                 ThreatLevel.LOW, null, null
             ),
             TrojanAdapter.UiItem(
@@ -31,7 +31,7 @@ object SignatureStats {
                 "Sig.Source", "特征来源",
                 "assets/signatures(内置)+ files/clamav(外部,可经 adb push 或在线更新写入)",
                 ThreatLevel.LOW,
-                "在\"特征库在线更新\"中配置 URL 可自动拉取 daily.cvd 解包出的 .hsb/.ndb",
+                "在\"特征库在线更新\"中配置 URL 可自动拉取 daily.cvd 解包出的 .hsb/.hdb/.ndb",
                 null
             )
         )

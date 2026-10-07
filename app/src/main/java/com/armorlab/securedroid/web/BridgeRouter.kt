@@ -50,6 +50,10 @@ class BridgeRouter(
         put("getAudit", Action(false) { dashboard.getAudit() })
         put("getLockState", Action(false) { lock.getLockState() })
         put("getToggles", Action(false) { settings.getToggles() })
+        put("getTheme", Action(false) { settings.getTheme() })
+        put("setTheme", Action(false) { json ->
+            settings.setTheme(json.optString("theme")); null
+        })
         put("getScanState", Action(false) { scan.scanState() })
 
         // 扫描(启动即返回,进度/结果走事件)

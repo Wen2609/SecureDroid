@@ -67,23 +67,41 @@ object HashCache {
         }
     }
 
-    fun cachedSha256(context: Context, path: String, lastUpdate: Long, size: Long): String {
+    fun cachedSha256(context: Context, path: String, lastUpdate: Long, size: Long): String =
+        cachedDigests(context, path, lastUpdate, size).first
+
+    /** 仅取 MD5(与 SHA-256 同一次读盘,不增加 IO) */
+    fun cachedMd5(context: Context, path: String, lastUpdate: Long, size: Long): String =
+        cachedDigests(context, path, lastUpdate, size).second
+
+    /**
+     * 一次读盘计算并缓存 SHA-256 + MD5(ClamAV .hsb/.hdb 双格式需要)。
+     * 旧缓存值是纯 SHA-256(无 '|'),检测到即视为未命中重新计算,保证 MD5 可用。
+     */
+    fun cachedDigests(context: Context, path: String, lastUpdate: Long, size: Long): Pair<String, String> {
         ensureLoaded(context)
         val k = key(path, lastUpdate, size)
         synchronized(lock) {
-            mem[k]?.let { return it }
-            prefs?.getString(k, null)?.let {
-                mem[k] = it
-                return it
+            mem[k]?.let { v ->
+                val sep = v.indexOf('|')
+                if (sep > 0) return Pair(v.substring(0, sep), v.substring(sep + 1))
+            }
+            prefs?.getString(k, null)?.let { v ->
+                val sep = v.indexOf('|')
+                if (sep > 0) {
+                    mem[k] = v
+                    return Pair(v.substring(0, sep), v.substring(sep + 1))
+                }
             }
         }
-        val sha = com.armorlab.securedroid.scan.ScannerEngine.hashFile(path)
+        val digests = com.armorlab.securedroid.scan.ScannerEngine.hashFileDigests(path)
+        val combined = digests.first + "|" + digests.second
         synchronized(lock) {
-            mem[k] = sha
-            pending[k] = sha
+            mem[k] = combined
+            pending[k] = combined
         }
         if (pendingSize() >= FLUSH_THRESHOLD) flush(context)
-        return sha
+        return digests
     }
 
     private fun pendingSize(): Int = synchronized(lock) { pending.size }
