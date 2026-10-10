@@ -42,8 +42,11 @@ class MainActivity : AppCompatActivity() {
     private var backPressedAt = 0L
     private var splashShown = true
 
+    /** 通知权限运行时申请:结果回推 WebUI 刷新模式权限引导 */
     private val notificationPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            onNotificationPermissionResult(granted)
+        }
 
     /** DNS 防护:VpnService 用户授权回调(系统授权对话框 → 结果决定开关走向) */
     private val vpnConsent =
@@ -58,13 +61,6 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        if (Build.VERSION.SDK_INT >= 33 &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
 
         checkIntegrity()
 
@@ -90,20 +86,6 @@ class MainActivity : AppCompatActivity() {
         // 退后台无需保留渲染进程(仅不可见时降级,前台行为不变)
         web.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_WAIVED, true)
         web.addJavascriptInterface(bridge, "AndroidBridge")
-        // 下拉刷新:重新拉取当前面板数据;转圈固定时长后收起
-        // (数据加载走同步桥调用,时长足够覆盖,无需等待回调)
-        binding.swipeRefresh.setColorSchemeColors(
-            ContextCompat.getColor(this, R.color.c_primary)
-        )
-        binding.swipeRefresh.setOnRefreshListener {
-            try {
-                binding.webView.evaluateJavascript("window.__sdReady && window.__sdReady();", null)
-            } catch (_: Exception) {
-            }
-            binding.swipeRefresh.postDelayed(
-                { binding.swipeRefresh.isRefreshing = false }, 650L
-            )
-        }
         // UI 滚动交给页面自绘,隐藏系统滚动条与边缘光晕,避免与毛玻璃风格冲突
         web.isVerticalScrollBarEnabled = false
         web.isHorizontalScrollBarEnabled = false
@@ -198,6 +180,10 @@ class MainActivity : AppCompatActivity() {
                 "document.documentElement.classList.remove('page-hidden');", null
             )
             binding.webView.evaluateJavascript("window.__sdReady && window.__sdReady();", null)
+            // 从系统设置(权限页)返回:回推事件让模式权限引导自动复查
+            binding.webView.evaluateJavascript(
+                "window.__sdEvent && window.__sdEvent('modePermissions', '{}');", null
+            )
         } catch (_: Exception) {
         }
     }
@@ -276,6 +262,67 @@ class MainActivity : AppCompatActivity() {
                 "window.__sdEvent && window.__sdEvent('dnsGuardState', '{\"on\":$granted}');", null
             )
         } catch (_: Exception) {
+        }
+    }
+
+    /* ================================================================
+       通知权限:运行时对话框申请(优先)→ 系统设置页兜底
+       ================================================================ */
+
+    /** 权限引导入口(用户点「去授权」):未授予先弹系统对话框;
+     *  被永久拒绝("不再询问")时对话框不会再弹,直接转跳系统设置 */
+    fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT < 33 ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            notifyModePermissionsChanged()
+            return
+        }
+        try {
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } catch (_: Exception) {
+            openNotificationSettings()
+        }
+    }
+
+    private fun onNotificationPermissionResult(granted: Boolean) {
+        // 拒绝后 shouldShowRequestPermissionRationale 为 false = 用户勾了"不再询问":
+        // 对话框不会再弹,转跳系统设置(本回调只在用户点「去授权」后的申请路径触发)
+        if (!granted &&
+            !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+        ) {
+            openNotificationSettings()
+        }
+        notifyModePermissionsChanged()
+    }
+
+    /** 回推模式权限事件:WebUI 重新拉取 getMode,刷新引导页/进入主界面 */
+    private fun notifyModePermissionsChanged() {
+        try {
+            binding.webView.evaluateJavascript(
+                "window.__sdEvent && window.__sdEvent('modePermissions', '{}');", null
+            )
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun openNotificationSettings() {
+        try {
+            startActivity(
+                android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, packageName)
+            )
+        } catch (_: Exception) {
+            try {
+                startActivity(
+                    android.content.Intent(
+                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        android.net.Uri.parse("package:$packageName")
+                    )
+                )
+            } catch (_: Exception) {
+            }
         }
     }
 

@@ -992,16 +992,21 @@
     var permsWrap = qs('#modePerms');
     if (permsWrap) permsWrap.hidden = allOk;
     if (!allOk) {
+      // 权限引导形态:隐藏模式选择卡与确认按钮(#modePerms 自带"授予所需权限"标题)
       var opts = qs('#modeOptions');
       if (opts) opts.hidden = true;
       var confirmBtn = qs('#btnModeConfirm');
       if (confirmBtn) confirmBtn.hidden = true;
-      var title = qs('#modeTitle');
-      if (title) title.textContent = '授予所需权限';
-      var sub = qs('.mode-subtitle');
-      if (sub) sub.textContent = '当前模式需要以下权限才能正常工作';
     }
     return allOk;
+  }
+
+  /* 权限齐备但模式尚未确认(如初始化弹的授权对话框先完成):恢复模式选择形态 */
+  function restoreModeSelection() {
+    var opts = qs('#modeOptions');
+    if (opts) opts.hidden = false;
+    var confirmBtn = qs('#btnModeConfirm');
+    if (confirmBtn) confirmBtn.hidden = false;
   }
 
   function finishModeSetup(mode) {
@@ -1053,11 +1058,15 @@
     }
   }
 
-  /* Root 授权结果回推后自动重新检查权限 */
+  /* 权限状态变化(授权对话框结果 / 从系统设置返回)后复查:
+     不足则留在引导页;齐备时已选模式直接进入,未选模式回到选择卡 */
   on('modePermissions', function () {
     api.request('getMode').then(function (r) {
-      if (r.ok && r.data && r.data.permissions && !renderModePerms(r.data.permissions)) return;
-      if (r.ok && r.data) finishModeSetup(r.data.mode || 'standard');
+      if (!r.ok || !r.data) return;
+      var perms = r.data.permissions;
+      if (perms && !renderModePerms(perms)) return;
+      if (r.data.selected) finishModeSetup(r.data.mode || 'standard');
+      else restoreModeSelection();
     });
   });
 
@@ -1073,17 +1082,16 @@
     }
     hookNavRefresh();
     bindModeOverlay();
-    // 强制初始化模式选择:未选择前不进入主界面
+    // 强制初始化模式选择:未选择前不进入主界面;
+    // 已选择过的老用户每次启动同样复查模式所需权限,不足则回到权限引导
     api.request('getMode').then(function (r) {
-      if (r.ok && r.data) {
-        if (!r.data.selected) {
-          var ov = qs('#modeOverlay');
-          if (ov) ov.hidden = false;
-        } else {
-          applyMode(r.data.mode);
-        }
-      } else {
-        applyMode('standard');
+      if (!r.ok || !r.data) { applyMode('standard'); return; }
+      applyMode(r.data.mode);
+      selectedMode = r.data.mode || 'standard';
+      var needGuide = !!(r.data.permissions) && !renderModePerms(r.data.permissions);
+      if (!r.data.selected || needGuide) {
+        var ov = qs('#modeOverlay');
+        if (ov) ov.hidden = false;
       }
     });
     // 渲染订阅:数据到 → 对应面板重绘(渲染与取数解耦)

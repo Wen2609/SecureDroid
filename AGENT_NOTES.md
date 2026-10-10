@@ -98,7 +98,7 @@
 - `陷阱`:限定符目录必须与 values 平级 —— 写成 res/values/night/ 会被 AAPT 静默忽略,
   构建/Lint/测试全绿但深色模式失效;NightThemeTokenTest 已盯住这一点
 - **主题结构(v1.9.16)**:`Theme.SecureDroid` 已拆为 `Theme.SecureDroid.Base`(全部令牌)+ 薄包装 `Theme.SecureDroid`;`windowLightNavigationBar` 是 API 27+ 属性,必须放 `values-v27/themes.xml` / `values-night-v27/themes.xml`,放默认 values 会被 lint NewApi 拦(minSdk 26)。新增 API 级属性遵循同样做法。
-- 布局里 View ID 经 `ActivityMainBinding` 引用(webView / swipeRefresh / splashOverlay / integrityBanner),重排 activity_main.xml 时这些 ID 不能改
+- 布局里 View ID 经 `ActivityMainBinding` 引用(webView / splashOverlay / integrityBanner;swipeRefresh 已于 v1.0.2 随下拉刷新移除),重排 activity_main.xml 时这些 ID 不能改
 - 装饰性图标必须 importantForAccessibility="no";列表分隔线已随原生列表删除(HTML 列表用 CSS 分隔线)
 
 ## v1.9.17 工程注意事项
@@ -200,3 +200,9 @@
 - **备份规则**:manifest 同时声明 `fullBackupContent`(API≤30,res/xml/backup_rules.xml)与 `dataExtractionRules`(API 31+,全排除)。allowBackup=false + 两套显式排除是安全应用姿态,lint DataExtractionRules 已消;改备份策略前先想清楚 files/ 里有隔离区与崩溃栈,不许参与备份。
 - **漏洞扫描基线**:`INSTALL_NON_MARKET_APPS`(API 26 废弃)已弃用;未知来源检查 = 审计声明 `REQUEST_INSTALL_PACKAGES` 的第三方应用(PackageSnapshot + GET_PERMISSIONS)。别再读那个全局设置(恒 0)。
 - **评估否决记录**:Gradle configuration cache 不启用(KSP1 支持不完整 + 构建堆 1.5GB 内存受限,详见 CHANGELOG 1.0.1);Kotlin/KSP 升 2.x 后可重评。
+
+## v1.0.2 新增约定
+- **下拉刷新已移除**(用户决策):布局无 SwipeRefreshLayout、MainActivity 无 setOnRefreshListener、swiperefreshlayout 依赖已删;WebUiGuardTest 反向守卫,别加回去。数据刷新入口 = 导航切换 + onResume(__sdReady)。
+- **权限申请与校验不变量**:通知权限申请 = 系统运行时对话框(仅由权限引导「去授权」按钮触发,不在冷启动自动弹),回调回推 `modePermissions` 事件;勾"不再询问"后转跳系统设置兜底(MainActivity.openNotificationSettings)。`openPermissionSettings("notification")` 走 `activity.requestNotificationPermission()`,不许改回纯跳设置页。
+- **启动权限复查**:app.js `init()` 对已选模式的老用户同样复查 `permissions`,不足即显示 `#modeOverlay` 权限引导;`modePermissions` 事件处理区分 `selected` —— 未选模式只恢复选择卡(restoreModeSelection),不许直接 finishModeSetup(否则新装用户授权后会被默认塞进标准模式)。
+- renderModePerms 不改写外层 #modeTitle/.mode-subtitle(选择页文案靠 #modePerms 自带头部)。

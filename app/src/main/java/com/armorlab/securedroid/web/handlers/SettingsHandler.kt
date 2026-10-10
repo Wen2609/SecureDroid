@@ -215,24 +215,8 @@ class SettingsHandler(
     /** 跳转对应权限设置页;root 键触发 su 授权探测并把结果回推页面 */
     fun openPermissionSettings(key: String) {
         when (key) {
-            "notification" -> {
-                try {
-                    activity.startActivity(
-                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                            .putExtra(Settings.EXTRA_APP_PACKAGE, app.packageName)
-                    )
-                } catch (_: Exception) {
-                    try {
-                        activity.startActivity(
-                            Intent(
-                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                android.net.Uri.parse("package:${app.packageName}")
-                            )
-                        )
-                    } catch (_: Exception) {
-                    }
-                }
-            }
+            // 通知权限:优先弹系统运行时对话框,拒绝/永久拒绝时在 Activity 侧转跳系统设置
+            "notification" -> activity.requestNotificationPermission()
             "usage_stats" -> {
                 try {
                     activity.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))

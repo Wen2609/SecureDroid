@@ -104,19 +104,21 @@ class WebUiGuardTest {
     }
 
     @Test
-    fun pullRefreshMustBeWired() {
+    fun pullRefreshMustStayRemoved() {
+        // 用户决策(v1.0.2):下拉刷新已移除 —— 页面滚动自绘,数据刷新走导航/生命周期;
+        // 守卫防止 SwipeRefreshLayout 被无意加回(与毛玻璃滚动冲突的旧交互)
         val module = moduleDir()
         val layout = File(module, "src/main/res/layout/activity_main.xml")
         assertTrue("缺少 activity_main.xml", layout.isFile)
         assertTrue(
-            "主布局必须用 SwipeRefreshLayout 包裹 WebView 支持下拉刷新",
-            layout.readText().contains("SwipeRefreshLayout")
+            "主布局不应再用 SwipeRefreshLayout 包裹 WebView(下拉刷新已移除)",
+            !layout.readText().contains("SwipeRefreshLayout")
         )
         val activity = File(module, "src/main/java/com/armorlab/securedroid/MainActivity.kt")
         assertTrue("缺少 MainActivity.kt", activity.isFile)
         assertTrue(
-            "MainActivity 必须接 setOnRefreshListener 触发 __sdReady",
-            activity.readText().contains("setOnRefreshListener")
+            "MainActivity 不应再接 setOnRefreshListener(下拉刷新已移除)",
+            !activity.readText().contains("setOnRefreshListener")
         )
     }
 

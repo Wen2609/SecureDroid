@@ -5,19 +5,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <!-- 下拉刷新:触发 WebUI 重新拉取当前面板数据(与页面内部滚动不冲突,
-         SwipeRefreshLayout 依据 WebView canScrollVertically 判定是否拦截) -->
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefresh"
+    <!-- 主界面 WebView(下拉刷新已按需求移除:页面滚动自绘,数据刷新走导航/生命周期) -->
+    <WebView
+            android:id="@+id/webView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <WebView
-                android:id="@+id/webView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent" />
 
     <TextView
             android:id="@+id/integrityBanner"
