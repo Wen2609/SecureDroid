@@ -1,8 +1,12 @@
 # Changelog
 
-本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
+本文件记录各版本的重要变化。格式参考 Keep a Changelog。
 
-## [1.9.30] - 2026-10-11
+> **版本方案(2026-10-11 起)**:版本号采用 **1.0.x** 方案,1.0.0 为新方案首个正式版;此前沿用的 1.9.x 迭代序号**停用**,完整历史保留在下方「旧版本方案」小节仅作存档。`versionCode` 保持全局单调递增、不随方案切换重置,保证已安装旧版设备可直接覆盖升级。
+
+## [1.0.0] - 2026-10-11
+
+(即原 1.9.30 的全部内容;版本方案切换后的第一个正式版)
 
 ### Fixed(安全检测有效性)
 
@@ -46,6 +50,10 @@
 - 修复 `CrashReporterTest` 永真断言(`X || logs.size == 10`);补隔离区写入侧测试(原因 `|` 清洗 + raw 精确往返);`FamilyClassifierTest` 自比断言改为真实优先级行为断言。
 - `PerfGuardTest`/`ShellHardeningTest`/`FalsePositiveTest`/`ManifestInvariantsTest` 同步适配:按类型取消的新 API、NetKill 处置改道 fixCommand、缓存版本号机制化断言(不钉死具体数值,正当升级不再误拦)、清单组件校验支持 `.java` 与全限定名。
 - lintDebug 0 errors。
+
+---
+
+## 旧版本方案(1.9.x,已停用,仅存档)
 
 ## [1.9.29] - 2026-10-07
 

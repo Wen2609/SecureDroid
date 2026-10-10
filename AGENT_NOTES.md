@@ -24,7 +24,8 @@
 
 ## 项目定位(规划与功能取舍前必读)
 - **开源 + 离线优先**:GitHub 开源、签名 APK 侧载分发,不上架应用商店,无自有服务端。规划功能时**禁止**提出依赖云端后端(上报/推送/账号)、Play 服务(Play Integrity 等)或商店合规改造的方案;特征库更新 = 用户自配置源(URL+SHA-256),崩溃信息 = 本地留存 + 用户主动分享,完整性 = TOFU + 发布页 SHA-256。
-- CHANGELOG.md 与 README、AGENT_NOTES 三处必须随版本同步更新(2026-10-07 补齐 v1.9.21–v1.9.29,2026-10-11 补齐 v1.9.30 的 CHANGELOG)。
+- CHANGELOG.md 与 README、AGENT_NOTES 三处必须随版本同步更新(2026-10-07 补齐 v1.9.21–v1.9.29;2026-10-11 起版本方案切换为 1.0.x,当前版本 1.0.0)。
+- **版本方案(2026-10-11 起)**:对外版本号一律用 1.0.x(当前 1.0.0),1.9.x 序号已停用;`versionCode` 全局单调递增(1.0.0 = 46),不要重置,否则老设备无法覆盖安装。
 
 ## 最高权限层(新增,改动前先读)
 - PrivilegeManager: PrivLevel(NONE/LOCAL_SHELL/ROOT) 分级;probe(ctx) 主动提权(触发 su 授权框),level(ctx) 读缓存
@@ -184,7 +185,7 @@
   (并同步 `KEY_VERSION` 的期望值),否则老设备继续沿用旧判定,修复无效。
 
 
-## v1.9.30 新增约定
+## v1.0.0 新增约定(原 1.9.30 方案,版本已重写)
 - **扫描取消按类型隔离**:`ScanControl` 的全局 `cancelled` 已删,改为 `reset(kind)` / `requestCancel(kind)` / `isCancelled(kind)` / `requestCancelAll()`。`ParallelScanner.scanReports` 第二个参数是 kind(调用方传自身 action:"virus"/"trojan"/"parallel"/"family"/"resultdiff"/"daily");病毒中心工具经 `runToolAction` 透传 actionId;木马查杀用 "trojan"。新增扫描类型必须传 kind,否则取消串扰回归(PerfGuardTest 会拦源码模式)。
 - **ClamAvSignatures 原子快照**:字节索引与逻辑签名状态打包在 `Published` 快照一次 volatile 发布(`rebuildIndex` 内),`scanBytes` 只读一次快照;不要再拆成多个 @Volatile 字段分次写(热重载并发会读到混合态)。`byteCount()`/`signatureCount()` 不计隐藏子签名;`budgetExhausted(extra)` 的 extra 用于逻辑签名一次加入的子签名数。改签名解析后跑 `ClamAvSignatureEngineTest` + `SignatureMatchIndexTest`。
 - **UiItem 已是 8 参**(evidence 死字段已删):按位置传参的旧调用点已全部清理,新增调用一律具名传参。
@@ -192,4 +193,4 @@
 - **崩溃文件名**:`crash-<millis>-<3位序号>`,同毫秒不覆盖且字典序即时间序;`logs()` 按文件名排序,别改成 lastModified(FS 粒度秒级会打乱同秒记录)。
 - **隔离区记录同步落盘**:`quarantine`/`removeRecord` 用 `commit()`(文件已移动,记录丢失 = 幽灵文件);lint 的 ApplySharedPref 警告在此处是有意保留,勿"修"回 apply。记录构造走 `Quarantine.buildRecord`(原因 `|` 清洗,QuarantineRecordTest 会拦)。
 - **FeatureUpdater 自动回滚**:`applyUpdate` 热重载后若 `signatureCount() == 0` 且有备份,自动还原备份并重载、记 ok:false 历史;改这里必须跑 `FeatureUpdaterHistoryTest`。
-- **死代码基线**:v1.9.30 已清理全部无调用点公开函数与死桥接;`PrivilegeManager.exec`(架构入口,DatabaseAndManagersTest 引用)、`TtlCache.invalidate` 等仅测试引用的成员是测试锚点,不删。旧 `signatures.txt` 本地更新通道已删,特征更新唯一通道 = URL+SHA-256 → files/clamav。
+- **死代码基线**:v1.0.0 已清理全部无调用点公开函数与死桥接;`PrivilegeManager.exec`(架构入口,DatabaseAndManagersTest 引用)、`TtlCache.invalidate` 等仅测试引用的成员是测试锚点,不删。旧 `signatures.txt` 本地更新通道已删,特征更新唯一通道 = URL+SHA-256 → files/clamav。
