@@ -35,16 +35,8 @@ object RootGuard {
     fun isAutoDisinfect(context: Context): Boolean =
         prefs(context).getBoolean(KEY_AUTO_DISINFECT, false)
 
-    fun setAutoDisinfect(context: Context, value: Boolean) {
-        prefs(context).edit().putBoolean(KEY_AUTO_DISINFECT, value).apply()
-    }
-
     fun isAutoUninstall(context: Context): Boolean =
         prefs(context).getBoolean(KEY_AUTO_UNINSTALL, false)
-
-    fun setAutoUninstall(context: Context, value: Boolean) {
-        prefs(context).edit().putBoolean(KEY_AUTO_UNINSTALL, value).apply()
-    }
 
     /**
      * 探测最高权限:统一走 PrivilegeManager(缓存层级 + 能力矩阵),
@@ -52,10 +44,6 @@ object RootGuard {
      */
     fun probeRoot(context: Context): Boolean =
         PrivilegeManager.probe(context) == PrivLevel.ROOT
-
-    /** 删除恶意 su 脚本 */
-    fun removeScript(path: String): Boolean =
-        ShellBridge.runSuChecked("rm -f " + ShellBridge.quote(path))
 
     /** root 卸载应用(当前用户) */
     fun uninstallApp(pkg: String): Boolean {

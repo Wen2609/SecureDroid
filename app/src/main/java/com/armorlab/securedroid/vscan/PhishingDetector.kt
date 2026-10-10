@@ -113,7 +113,8 @@ object PhishingDetector {
         for ((brand, official) in brands) {
             if (!h.contains(brand)) continue
             val d = h.substringBefore(':')
-            if (d == official || d.endsWith(".$official") || d.endsWith(official)) continue
+            // 只放行官方域名本身及其子域;notgoogle.com 这类"以官方域名结尾"的仿冒不在此列
+            if (d == official || d.endsWith(".$official")) continue
             score += 45
             findings.add("域名伪装知名品牌")
             break

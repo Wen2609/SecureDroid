@@ -50,7 +50,7 @@ object ResultDiff {
                 TrojanAdapter.UiItem(
                     "ResultDiff.NewThreat · " + r.appName, r.packageName,
                     "本次新发现: " + r.detections.joinToString("; ") { it.name },
-                    r.worstLevel ?: ThreatLevel.HIGH, null, null, null, null
+                    r.worstLevel ?: ThreatLevel.HIGH, null, null, null
                 )
             )
         }
@@ -58,7 +58,7 @@ object ResultDiff {
             items.add(
                 TrojanAdapter.UiItem(
                     "ResultDiff.Resolved · " + pkg, pkg,
-                    "相比上次扫描威胁已消除", ThreatLevel.LOW, null, null, null, null
+                    "相比上次扫描威胁已消除", ThreatLevel.LOW, null, null, null
                 )
             )
         }

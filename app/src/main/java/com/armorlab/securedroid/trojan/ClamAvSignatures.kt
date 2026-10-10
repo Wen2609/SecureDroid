@@ -185,13 +185,6 @@ object ClamAvSignatures {
     private val byteSigs = mutableListOf<ByteSig>()
     private val logicalSigs = mutableListOf<LogicalSig>()
 
-    @Volatile
-    private var logicalSnapshot: List<LogicalSig> = emptyList()
-
-    /** 是否存在纯否定(全 =0)逻辑签名:空命中集时也需参与求值 */
-    @Volatile
-    private var logicalNeedsEmptyEval = false
-
     /**
      * 总条数预算(哈希 + MD5 + 字节):官方 daily.cvd 解包可达百万级,
      * 全量进 HashMap 在低内存设备会 OOM。超预算即停止载入并置截断标记,
@@ -205,16 +198,25 @@ object ClamAvSignatures {
     @Volatile
     private var truncated = false
 
+    /**
+     * 已发布快照:字节索引与逻辑签名状态(列表 + 是否需空命中求值)一体发布。
+     * 热重载(importText/reload)与扫描并发时,扫描侧一次 volatile 读拿到完全一致的状态,
+     * 不会出现"新索引 + 旧逻辑表"的中间态。
+     */
+    private class Published(val idx: SigIndex, val logical: List<LogicalSig>, val needsEmptyEval: Boolean)
+
     @Volatile
-    private var index: SigIndex? = null
+    private var published: Published? = null
 
     private var loaded = false
 
-    /** 重建不可变索引(调用方需持有 lock);整表原子替换,扫描侧无需加锁 */
+    /** 重建不可变索引并原子发布(调用方需持有 lock) */
     private fun rebuildIndex() {
-        index = buildIndex()
-        logicalSnapshot = logicalSigs.toList()
-        logicalNeedsEmptyEval = logicalSigs.any { !it.hasPositiveRef }
+        published = Published(
+            buildIndex(),
+            logicalSigs.toList(),
+            logicalSigs.any { !it.hasPositiveRef }
+        )
     }
 
     fun ensureLoaded(context: Context) {
@@ -258,10 +260,10 @@ object ClamAvSignatures {
         }
     }
 
-    /** 追加预算检查(调用方需持有 lock):超条数上限或堆余量过低即截断 */
-    private fun budgetExhausted(): Boolean {
+    /** 追加预算检查(调用方需持有 lock):超条数上限或堆余量过低即截断;extra 为本次将要追加的条数 */
+    private fun budgetExhausted(extra: Int = 0): Boolean {
         if (truncated) return true
-        if (hashSigs.size + md5Sigs.size + byteSigs.size >= entryBudget) return true
+        if (hashSigs.size + md5Sigs.size + byteSigs.size + extra >= entryBudget) return true
         val rt = Runtime.getRuntime()
         if (rt.maxMemory() - rt.totalMemory() + rt.freeMemory() < minFreeBytes) {
             // 先触发一次回收再判,避免把可回收垃圾当成堆余量不足(只在低水位才会走到,非热路径)
@@ -333,7 +335,8 @@ object ClamAvSignatures {
             return
         }
         synchronized(lock) {
-            if (budgetExhausted()) {
+            // 逻辑签名一次加入 nibs.size 条隐藏子签名,预算检查必须把它们计入
+            if (budgetExhausted(nibs.size)) {
                 truncated = true
                 return
             }
@@ -499,7 +502,9 @@ object ClamAvSignatures {
             val b = s[i + 1]
             val loV = if (a == '?') -1 else Character.digit(a, 16)
             val hiV = if (b == '?') -1 else Character.digit(b, 16)
-            if (loV > 15 || hiV > 15) return null
+            // 非法字符(digit 返回 -1)必须整行拒绝,否则会解析成全通配签名导致误报;仅显式 '?' 是通配
+            if (a != '?' && loV < 0) return null
+            if (b != '?' && hiV < 0) return null
             lo[i / 2] = loV.toByte()
             hi[i / 2] = hiV.toByte()
         }
@@ -585,17 +590,17 @@ object ClamAvSignatures {
      *    仅窗口命中的少量候选才做半字节级复核;
      * 3. 全通配型(无固定字节):逐位置校验(极少,通常仅演示特征)。
      */
-        /** 命中登记:隐藏子签名(逻辑签名构件)进辅助集合,普通签名直接上报 */
+    /** 命中登记:隐藏子签名(逻辑签名构件)进辅助集合,普通签名直接上报 */
     private fun report(hits: LinkedHashSet<String>, hidden: HashSet<String>, sig: ByteSig) {
         if (sig.isHidden) hidden.add(sig.name) else hits.add(sig.name)
     }
 
     fun scanBytes(data: ByteArray): List<String> {
-        val idx = index ?: return emptyList()
+        val snap = published ?: return emptyList()
         val hits = LinkedHashSet<String>()
         val hidden = HashSet<String>()
 
-        for (sig in idx.positional) {
+        for (sig in snap.idx.positional) {
             val base = when (sig.offsetKind) {
                 OffsetKind.ABS -> sig.offset
                 OffsetKind.EOF -> data.size - sig.offset
@@ -617,39 +622,39 @@ object ClamAvSignatures {
         // 任意偏移型(有 ≥2 字节固定窗口):按窗口值直接命中候选链表
         for (i in 0 until n - 1) {
             val key = ((data[i].toInt() and 0xFF) shl 8) or (data[i + 1].toInt() and 0xFF)
-            var id = idx.pairHead[key]
+            var id = snap.idx.pairHead[key]
             while (id >= 0) {
-                val sig = idx.sigOf[id]
+                val sig = snap.idx.sigOf[id]
                 if (sig != null) {
-                    val at = i - idx.offsetOf[id]
+                    val at = i - snap.idx.offsetOf[id]
                     if (at >= 0 && at + sig.lo.size <= n && matchesAt(data, at, sig)) report(hits, hidden, sig)
                 }
-                id = idx.next[id]
+                id = snap.idx.next[id]
             }
         }
 
         // 固定窗口只有 1 字节的签名(如 4?4?4?):单独一趟,通常为空
-        if (idx.hasByte) {
+        if (snap.idx.hasByte) {
             for (i in data.indices) {
-                var id = idx.byteHead[data[i].toInt() and 0xFF]
+                var id = snap.idx.byteHead[data[i].toInt() and 0xFF]
                 while (id >= 0) {
-                    val sig = idx.sigOf[id]
+                    val sig = snap.idx.sigOf[id]
                     if (sig != null) {
-                        val at = i - idx.offsetOf[id]
+                        val at = i - snap.idx.offsetOf[id]
                         if (at >= 0 && at + sig.lo.size <= n && matchesAt(data, at, sig)) report(hits, hidden, sig)
                     }
-                    id = idx.next[id]
+                    id = snap.idx.next[id]
                 }
             }
         }
 
-        for (sig in idx.loose) {
+        for (sig in snap.idx.loose) {
             if (contains(data, sig)) report(hits, hidden, sig)
         }
 
         // 逻辑签名求值:子签名命中集合驱动;无任何命中且含正向引用时整条跳过
-        val logical = logicalSnapshot
-        if (logical.isNotEmpty() && (hidden.isNotEmpty() || logicalNeedsEmptyEval)) {
+        val logical = snap.logical
+        if (logical.isNotEmpty() && (hidden.isNotEmpty() || snap.needsEmptyEval)) {
             for (ls in logical) {
                 if (hidden.isEmpty() && ls.hasPositiveRef) continue
                 val matched = ls.subNames.map { hidden.contains(it) }
@@ -663,7 +668,8 @@ object ClamAvSignatures {
 
     fun md5Count(): Int = synchronized(lock) { md5Sigs.size }
 
-    fun byteCount(): Int = synchronized(lock) { byteSigs.size }
+    /** 普通字节签名条数(隐藏子签名归入逻辑签名,不计入展示规模) */
+    fun byteCount(): Int = synchronized(lock) { byteSigs.count { !it.isHidden } }
 
     /** 逻辑签名条数(隐藏子签名不计入,归入 byteCount 的索引规模) */
     fun logicalCount(): Int = synchronized(lock) { logicalSigs.size }
@@ -715,5 +721,7 @@ object ClamAvSignatures {
         ensureLoaded(context)
     }
 
-    fun signatureCount(): Int = synchronized(lock) { hashSigs.size + md5Sigs.size + byteSigs.size + logicalSigs.size }
+    fun signatureCount(): Int = synchronized(lock) {
+        hashSigs.size + md5Sigs.size + byteSigs.count { !it.isHidden } + logicalSigs.size
+    }
 }

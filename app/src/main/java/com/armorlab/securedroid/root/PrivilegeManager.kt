@@ -141,10 +141,6 @@ object PrivilegeManager {
         return level
     }
 
-    fun invalidate(context: Context) {
-        prefs(context).edit().remove(KEY_TS).apply()
-    }
-
     /** 本地 shell(非提权)是否可用,用于 find / grep 管道 */
     private fun localShellWorks(): Boolean = try {
         val p = ProcessBuilder("sh", "-c", "echo __sd_shell__").redirectErrorStream(true).start()
@@ -154,7 +150,6 @@ object PrivilegeManager {
     } catch (_: Exception) {
         false
     }
-
     /** 当前层级可用的能力集合 */
     fun capabilities(context: Context): Set<Capability> {
         val lv = level(context)
@@ -191,7 +186,8 @@ object PrivilegeManager {
         }
         val result = ShellBridge.runSuResult(cmd, timeoutMs)
         val out = result?.output
-        val ok = result != null && result.exitCode == 0
+        // redirectErrorStream 下退出码为 0 仍可能实际失败(输出带 permission denied 等),必须复查
+        val ok = result != null && result.exitCode == 0 && !ShellBridge.outputHasDenyHints(out ?: "")
         record(PrivLevel.ROOT, cmd, ok, false, System.currentTimeMillis() - started)
         return PrivResult(ok, out, false, if (ok) null else "执行失败或未授权", System.currentTimeMillis() - started)
     }

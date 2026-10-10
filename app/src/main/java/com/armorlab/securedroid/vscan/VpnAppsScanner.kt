@@ -32,7 +32,7 @@ object VpnAppsScanner {
                 "该应用可建立 VPN 截获全部网络流量",
                 if (isSystem) ThreatLevel.LOW else ThreatLevel.MEDIUM,
                 if (!isSystem) "确认是否本人安装的 VPN/代理;非本人安装的 VPN 是流量劫持最强形态" else null,
-                null, null, null, null
+                null, null, null
             )
         }
     }

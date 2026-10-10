@@ -86,11 +86,16 @@ object SystemBaseline {
         } catch (_: Exception) {
             val out = HashMap<String, String>()
             for (n in names) {
+                var p: Process? = null
                 try {
-                    val p = ProcessBuilder("getprop", n).start()
-                    out[n] = p.inputStream.bufferedReader().readText().trim()
-                    p.waitFor()
-                } catch (_: Exception) { out[n] = "" }
+                    p = ProcessBuilder("getprop", n).start()
+                    val text = p.inputStream.bufferedReader().use { it.readText() }
+                    if (p.waitFor(3, java.util.concurrent.TimeUnit.SECONDS)) out[n] = text.trim()
+                    else { p.destroy(); out[n] = "" }
+                } catch (_: Exception) {
+                    out[n] = ""
+                    p?.destroy()
+                }
             }
             out
         }

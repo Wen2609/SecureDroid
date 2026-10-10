@@ -61,6 +61,7 @@
 - **生物识别解锁(v1.9.27)**:应用锁新增**生物识别解锁开关**(已设 PIN 且设备具备指纹/面容时可开)—— 锁屏弹出系统 `BiometricPrompt`(API 28+,框架组件零新依赖),生物验证成功直接解锁,失败/取消回退 PIN 键盘;PIN 仍是唯一兜底路径,防暴力破解/假崩溃/FLAG_SECURE 逻辑不变。共 183 项 JVM 测试。
 - **隔离区增强(v1.9.28)**:**一键恢复** —— 隔离文件可还原到原路径(`qrestore` 内部协议:还原 + 清记录,不裸奔 shell);**原因展示** —— 自动隔离记录处置原因(记录格式向后兼容旧 3 字段);每条隔离项提供恢复 / 销毁两个操作。共 184 项 JVM 测试。
 - **DNS 防护与崩溃捕获(v1.9.29)**:**DNS 防护(实验)** —— 基于 VpnService 的本地 DNS 过滤:只把伪造 DNS 地址(/32)路由进隧道,其余流量零感知;捕获系统 DNS 查询做黑名单判定,命中回 NXDOMAIN,未命经受保护 socket 转发真实上游;系统授权对话框 + 开机自动恢复,**不读取/不记录/不上传任何用户流量**;**崩溃捕获** —— 未捕获异常落盘本地(保留 10 份),病毒中心新增「崩溃日志导出」查看并经系统分享导出,绝不做静默网络上报。共 189 项 JVM 测试。
+- **安全审计修复与死代码清理(v1.9.30)**:全量代码审计修复 18 处缺陷 —— **网络审计远端 IP 字节序反转**(黑名单匹配被系统性绕过)、**仿冒域名漏报**(`notgoogle.com` 类被放行)、**畸形特征行被当全通配**(误报面)、**特征库索引热重载竞态**(原子快照发布)、**关键文件解锁假成功**、**坏更新自动回滚**、**DNS 防护有界线程池**(防流量洪泛耗尽资源)、**扫描取消按类型隔离**(并发扫描不再互相踩踏)、VPN 停止改 `stopService`、隔离记录同步落盘等;前端修复三个工具页加载转圈永不消失、病毒中心 7 个无实现菜单入口(「特征库更新」接入更新对话框,其余 6 项移除)、专项检测按钮置灰与状态重放;清理 32 个无调用点函数/死桥接/孤儿字符串。共 184 项 JVM 测试(2 项无签名环境显式跳过)。
 
 ## 技术栈
 
@@ -249,12 +250,12 @@ JS 桥接到真实原生功能;每个入口都是真实实现,不造空壳。纯
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.9.29-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.9.30-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 D907407708220D779B806B4751B0B05B9DC221DF4A8689079597221A594ABF2D
-    大小    2,463,658 字节    versionCode 44 / versionName 1.9.29(DNS 防护 VpnService + 崩溃捕获与导出)
+    SHA-256 8936B96EC4FF3ACF283B238B578A42E502815D8978239B5A041D2BADD62AE79C
+    大小    2,459,365 字节    versionCode 45 / versionName 1.9.30(安全审计修复 + 死代码清理)
 
-  更早版本 apks/SecureDroid-v1.9.28-release-signed.apk(versionCode 43,隔离区恢复 + 原因展示;生物识别解锁;特征库自动更新/断点续传/回滚;恶意链接检测;.ldb 逻辑签名)、apks/SecureDroid-v1.9.23-release-signed.apk(versionCode 38,统一错误态组件 + 失败可重试;特征库内存兜底;深色三态;ClamAV .hdb MD5)、apks/SecureDroid-v1.9.16-release-signed.apk(versionCode 31,初始化强制模式选择:标准/无线调试/超级用户 + 分区重排 + 系统栏适配)、
+  更早版本 apks/SecureDroid-v1.9.29-release-signed.apk(versionCode 44,DNS 防护 VpnService + 崩溃捕获与导出)、apks/SecureDroid-v1.9.28-release-signed.apk(versionCode 43,隔离区恢复 + 原因展示;生物识别解锁;特征库自动更新/断点续传/回滚;恶意链接检测;.ldb 逻辑签名)、apks/SecureDroid-v1.9.23-release-signed.apk(versionCode 38,统一错误态组件 + 失败可重试;特征库内存兜底;深色三态;ClamAV .hdb MD5)、apks/SecureDroid-v1.9.16-release-signed.apk(versionCode 31,初始化强制模式选择:标准/无线调试/超级用户 + 分区重排 + 系统栏适配)、
   apks/SecureDroid-v1.9.15-release-signed.apk(versionCode 30,全界面 HTML 化:消除全部原生 Activity/对话框,深层工具页改 HTML 子页面 + 异步桥路由微内核)、
   apks/SecureDroid-v1.9.13-release-signed.apk(versionCode 28,WebUI 交互升级:扫描可取消 + 结果按威胁折叠 + 开关整行可点 + 触摸目标达标)、
   apks/SecureDroid-v1.9.12-release-signed.apk(versionCode 27,UI 与 WebView 性能优化:加密存储单例 / 聚合查询 / 进度节流 / 图标懒加载)、
@@ -323,4 +324,4 @@ JS 桥接到真实原生功能;每个入口都是真实实现,不造空壳。纯
 - ClamAV 签名索引 atom 按字节频率择优(在真实特征库上进一步压低误命中率);
 - 特征库增量差分更新(可选;当前为整包下载 + SHA-256 强校验,离线语义已闭环)。
 
-已完成备查(v1.9.21–v1.9.29):深色三态切换、大特征库内存兜底、ClamAV `.hdb`/`.ldb` 格式、恶意链接检测、特征库定时自动更新(断点续传 + 历史回滚)、生物识别解锁、隔离区恢复与原因展示、DNS 防护(VpnService)、崩溃本地捕获与导出。
+已完成备查(v1.9.21–v1.9.30):深色三态切换、大特征库内存兜底、ClamAV `.hdb`/`.ldb` 格式、恶意链接检测、特征库定时自动更新(断点续传 + 历史回滚)、生物识别解锁、隔离区恢复与原因展示、DNS 防护(VpnService)、崩溃本地捕获与导出。

@@ -55,11 +55,10 @@ class FamilyClassifierTest {
 
     @Test
     fun familyPriorityIsDeterministicForMixedSignals() {
-        // 混合信号必须稳定返回同一家族,避免同一应用在不同扫描轮次被归入不同家族
+        // 混合信号按规则表顺序取首个命中家族(Sms 优先于 Ransom),
+        // 且与检测项顺序无关 —— 同一应用不同扫描轮次必须归入同一家族
         val mixed = listOf("SmsSend", "RansomNote")
-        val first = FamilyClassifier.classify(mixed)
-        val second = FamilyClassifier.classify(mixed)
-        assertEquals(first, second)
-        assertTrue(first.contains("扣费"))
+        assertEquals("扣费/银行木马家族(Banker/SmsTrojan)", FamilyClassifier.classify(mixed))
+        assertEquals(FamilyClassifier.classify(mixed), FamilyClassifier.classify(mixed.reversed()))
     }
 }

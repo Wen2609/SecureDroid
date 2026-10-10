@@ -219,7 +219,14 @@ class FalsePositiveTest {
         val auditor = src("permissions/PermissionAuditor.kt")
         assertTrue("风险应用统计必须排除本应用", auditor.contains("it.packageName != app.packageName"))
         val cache = src("vscan/DexVerdictCache.kt")
-        assertTrue("判定缓存必须带语义版本号(否则老设备继续沿用旧误报)", cache.contains("KEY_VERSION") && cache.contains("VERSION = 2"))
+        // 机制守卫:缓存键必须带语义版本号并与判定逻辑绑定(改规则时手动自增 VERSION,
+        // 不钉死具体数值,避免正当升级版本号被本测试误拦)
+        assertTrue(
+            "判定缓存必须带语义版本号(否则老设备继续沿用旧误报)",
+            cache.contains("KEY_VERSION") &&
+                Regex("VERSION\\s*=\\s*\\d+").containsMatchIn(cache) &&
+                cache.contains("KEY_VERSION, 0) != VERSION")
+        )
     }
 
     // ---------------- 源码定位 ----------------

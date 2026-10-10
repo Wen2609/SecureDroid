@@ -28,6 +28,8 @@ object HashCache {
 
     private val pending = LinkedHashMap<String, String>()
     private var prefs: SharedPreferences? = null
+
+    @Volatile
     private var loaded = false
 
     private fun key(path: String, lastUpdate: Long, size: Long) =
@@ -114,19 +116,5 @@ object HashCache {
             if (mem.containsKey(k)) return false
             return prefs?.getString(k, null) == null
         }
-    }
-
-    fun clear(context: Context) {
-        synchronized(lock) {
-            mem.clear()
-            pending.clear()
-        }
-        context.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().clear().apply()
-    }
-
-    /** 已缓存条目数(统计用) */
-    fun size(context: Context): Int {
-        ensureLoaded(context)
-        return synchronized(lock) { mem.size }
     }
 }

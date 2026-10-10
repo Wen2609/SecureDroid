@@ -36,8 +36,8 @@ class CrashReporterTest {
         assertTrue("记录应包含调用栈", latest.contains("IllegalStateException"))
         assertTrue("记录应包含线程名", latest.contains("线程: main"))
         assertTrue(
-            "被裁掉的旧记录不应存在",
-            logs.none { it.name.contains("boom-0") } || logs.size == 10
+            "被裁掉的旧记录不应存在(boom-0 只会出现在已被裁剪的首份记录里)",
+            logs.none { runCatching { it.readText() }.getOrDefault("").contains("boom-0") }
         )
     }
 

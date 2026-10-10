@@ -2,6 +2,51 @@
 
 本文件记录各版本的重要变化。格式参考 Keep a Changelog,版本号遵循语义化版本。
 
+## [1.9.30] - 2026-10-11
+
+### Fixed(安全检测有效性)
+
+- **网络审计远端 IP 字节序错误**:`/proc/net/tcp` 地址为小端序,原实现按顺序解析导致 `127.0.0.1` 显示为 `1.0.0.127`,回环过滤失效,黑名单模式匹配被系统性绕过;现按小端序反转字节并补长度防御。
+- **恶意链接检测仿冒域名漏报**:品牌伪装判定中 `endsWith(官方域名)` 会把 `notgoogle.com` 这类"以官方域名结尾"的仿冒域当合法放行;现只放行官方域名本身及其子域。
+- **ClamAV 特征解析把非法 hex 当通配**:`parseHex` 中 `Character.digit` 返回 -1 与 `?` 通配哨兵同值,畸形行(如含 `g/z`)被解析成全通配签名造成误报;现非法字符整行拒绝。
+- **特征库索引与逻辑签名非原子发布**:`rebuildIndex` 分三次写 `index`/`logicalSnapshot`/`logicalNeedsEmptyEval`,热重载与扫描并发时可能出现"新索引 + 旧逻辑表"中间态;现打包为不可变快照一次 volatile 发布。
+- **关键文件解锁假成功**:`unlockCriticalFiles` 用 `;` 串联命令,`chattr -i`/`chmod` 失败时 `echo __DONE__` 仍执行导致误报成功;改为 `&&` 链,任一步失败即报失败。
+- **特征库更新无自动回滚**:热重载后整个签名库为空(新文件解析全失败)时旧签名全部丢失;现在自动从备份还原并重载,更新被拒绝并提示。
+- **DNS 防护线程池无界**:每包一个任务的 `newCachedThreadPool` 可被恶意流量洪泛耗尽线程/FD;改为有界线程池(2-4 线程 + 128 队列),积压丢弃最旧任务(DNS 可重试)。
+- **VPN 停止走 `startService`**:后台状态会抛异常致停止静默失败;改用 `stopService`。
+- **扫描取消全局串扰**:`ScanControl` 全局单一取消标志,并发扫描互相踩踏(一个 reset 清掉另一个的取消、一个 cancel 停掉所有);改为按扫描类型隔离的取消标志,全局取消入口改为 `requestCancelAll`。
+- **DoH 探测连接泄漏**:输入流未关闭、`disconnect` 不在 finally;已修复。
+- **哈希缓存双重检查锁的 `loaded` 非 volatile**:并发首访极窄窗口下缓存不落盘;已标 `@Volatile`。
+- **隔离区记录异步落盘**:文件已移动后记录用 `apply()` 丢失会产生"幽灵文件";改为 `commit()` 同步落盘(移除记录同理)。
+- **本地特征行缺级别默认 CRITICAL**:格式错误行被当最高危放大误报;默认改为 LOW(宁漏不误)。
+- **崩溃记录同毫秒互相覆盖**:文件名追加零填充自增序号(字典序即时间序,排序语义不变)。
+- **`getprop` 回退分支无超时**:系统属性服务异常会卡死漏洞扫描;加 3 秒超时并关闭流。
+- **`PrivilegeManager.exec` 成功判定不滤拒绝标记**:`redirectErrorStream` 下退出码 0 仍可能实际失败;现复查输出拒绝标记(与 `runSuChecked` 一致)。
+- **`MultiPatternMatcher.matchesAny("")` 语义与文档不符**:空模式等价 `contains("")` 应恒命中;已修正。
+- **逻辑签名隐藏子签名越过条数预算**:预算检查现计入单条逻辑签名一次加入的子签名数;`byteCount`/`signatureCount` 不再把隐藏子签名重复计入展示规模。
+
+### Fixed(前端)
+
+- 网络审计/隐私检测/漏洞扫描三个子页的加载转圈在完成后**永不消失**(`setListStatus` 用不存在的 `#net` 等选择器查进度环);改按 `data-subpage` 定位。
+- 病毒中心菜单 7 个无实现入口(信任列表/威胁报告/处置策略/自动隔离/管理黑名单/标记证书/特征库更新)点击报"未实现的工具":`特征库更新` 接入更新对话框(真实功能),其余 6 项连同 10 个无前端调用的桥接 action 一并移除。
+- Rootkit/模块/锁机专项检测按钮扫描期间不再可重复点击且无反馈(置灰 + 恢复);扫描状态重放补充这三类专项检测。
+- `toggleRoot` 的 Toast 改为主线程弹出(原在 Default 调度器直接调用)。
+- `renderLock(null)` 空数据访问已被调用方 try/catch 吞掉的隐患;入口加空守卫。
+- demo 数据源补 `mode` 字段;lock.js 移除不可达的 demo 解锁分支;`__sdEvent` 注释与实现矛盾已更正(原生仍经它注入 `dnsGuardState`)。
+
+### Removed(死代码清理)
+
+- 移除 32 个无调用点的公开函数/属性(`ScannerEngine.scanAll`/`hashFile`、`SignatureDatabase.add`/`loadLocalUpdate` 及 signatures.txt 遗留通道、`RootGuard.setAutoDisinfect/setAutoUninstall/removeScript`、`suBinaryExists`、`scanBatched`、各存储类的死增删方法、`UiItem.evidence` 死字段等)与 6 个未使用 import、1 个未使用私有成员。
+- 同步清理孤儿字符串资源 13 条(菜单移除后无引用)与死 JS(`uiListDialog`/`__sdHandlers`)。
+- `PrivilegeManager.exec` 与 `TtlCache.invalidate` 等仅测试引用的成员按测试锚点保留。
+
+### Test
+
+- 全量 184 项 JVM 测试通过,0 失败;2 项在无签名环境显式跳过(`assumeTrue`,不再静默空转)。
+- 修复 `CrashReporterTest` 永真断言(`X || logs.size == 10`);补隔离区写入侧测试(原因 `|` 清洗 + raw 精确往返);`FamilyClassifierTest` 自比断言改为真实优先级行为断言。
+- `PerfGuardTest`/`ShellHardeningTest`/`FalsePositiveTest`/`ManifestInvariantsTest` 同步适配:按类型取消的新 API、NetKill 处置改道 fixCommand、缓存版本号机制化断言(不钉死具体数值,正当升级不再误拦)、清单组件校验支持 `.java` 与全限定名。
+- lintDebug 0 errors。
+
 ## [1.9.29] - 2026-10-07
 
 ### Added

@@ -4,6 +4,8 @@ import android.content.Context
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.Locale
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * 崩溃捕获:接管未捕获异常,把线程与调用栈落到 files/crash/(保留最近 10 份),
@@ -16,6 +18,9 @@ object CrashReporter {
 
     private const val DIR = "crash"
     private const val KEEP = 10
+
+    /** 同毫秒内的崩溃序号(零填充 3 位):文件名同毫秒不互相覆盖,且字典序即时间序 */
+    private val seq = AtomicInteger(0)
 
     fun install(context: Context) {
         val appContext = context.applicationContext
@@ -47,11 +52,15 @@ object CrashReporter {
                 .append(throwable.message ?: "").append("\n\n")
             append(stack)
         }
-        File(dir, "crash-" + System.currentTimeMillis() + ".txt").writeText(text)
+        File(
+            dir,
+            "crash-" + System.currentTimeMillis() + "-" +
+                String.format(Locale.US, "%03d", seq.incrementAndGet()) + ".txt"
+        ).writeText(text)
         trim(dir)
     }
 
-    /** 崩溃记录文件(新→旧) */
+    /** 崩溃记录文件(新→旧,文件名内嵌时间戳,字典序即时间序) */
     fun logs(context: Context): List<File> {
         val dir = File(context.filesDir, DIR)
         return dir.listFiles()?.filter { it.isFile && it.name.startsWith("crash-") }

@@ -93,18 +93,17 @@ class IntegrityGuardTest {
     @Test
     fun signingDigestIsSha256Shaped() {
         val d = IntegrityGuard.signingDigest(ctx)
-        if (d != null) {
-            assertEquals("证书指纹应为 64 位十六进制", 64, d.length)
-            assertTrue("指纹应全为小写十六进制", d.all { it in "0123456789abcdef" })
-            assertNotNull(IntegrityGuard.check(ctx).currentDigest)
-        }
-        // d == null 时不做断言:该环境不提供签名信息,已由上面的用例覆盖
+        // 运行环境不提供签名信息时显式跳过(而非静默通过):CI 报告里能看到真实覆盖情况
+        org.junit.Assume.assumeTrue("环境未提供签名信息,跳过指纹格式断言", d != null)
+        assertEquals("证书指纹应为 64 位十六进制", 64, d!!.length)
+        assertTrue("指纹应全为小写十六进制", d.all { it in "0123456789abcdef" })
+        assertNotNull(IntegrityGuard.check(ctx).currentDigest)
     }
 
     @Test
     fun resetPinForcesNextCheckToFirstSeen() {
         val first = IntegrityGuard.check(ctx)
-        if (first.currentDigest == null) return
+        org.junit.Assume.assumeTrue("环境未提供签名信息,跳过 TOFU 重置断言", first.currentDigest != null)
         IntegrityGuard.resetPin(ctx)
         assertEquals(IntegrityGuard.Verdict.FIRST_SEEN, IntegrityGuard.check(ctx).verdict)
     }

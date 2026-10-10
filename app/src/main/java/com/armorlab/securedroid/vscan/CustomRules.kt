@@ -7,8 +7,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * 自定义行为规则编辑器:用户自建 YARA 风格规则(名称/级别/模式/最小命中),
- * 持久化为 JSON,并在 TrojanScanner 扫描链路中与内置规则合并生效。
+ * 自定义行为规则(读取侧):YARA 风格规则(名称/级别/模式/最小命中)持久化为 JSON,
+ * 在 TrojanScanner 扫描链路中与内置规则合并生效。当前无编辑入口,历史版本写入的规则仍生效。
  */
 object CustomRules {
 
@@ -51,49 +51,6 @@ object CustomRules {
         cacheVersion = version
         cacheList = parsed
         return parsed
-    }
-
-    private fun bump(context: Context) {
-        val p = prefs(context)
-        p.edit().putInt(KEY_VERSION, p.getInt(KEY_VERSION, 0) + 1).apply()
-    }
-
-    fun add(context: Context, name: String, level: ThreatLevel, patterns: List<String>, minHits: Int): Boolean {
-        if (name.isBlank() || patterns.isEmpty()) return false
-        val arr = JSONArray()
-        for (r in list(context)) {
-            if (r.name == name) return false
-            val o = JSONObject()
-            o.put("name", r.name)
-            o.put("level", r.level.ordinal)
-            o.put("patterns", JSONArray(r.patterns))
-            o.put("minHits", r.minHits)
-            arr.put(o)
-        }
-        val o = JSONObject()
-        o.put("name", name)
-        o.put("level", level.ordinal)
-        o.put("patterns", JSONArray(patterns))
-        o.put("minHits", minHits)
-        arr.put(o)
-        prefs(context).edit().putString(KEY, arr.toString()).apply()
-        bump(context)
-        return true
-    }
-
-    fun remove(context: Context, name: String) {
-        val arr = JSONArray()
-        for (r in list(context)) {
-            if (r.name == name) continue
-            val o = JSONObject()
-            o.put("name", r.name)
-            o.put("level", r.level.ordinal)
-            o.put("patterns", JSONArray(r.patterns))
-            o.put("minHits", r.minHits)
-            arr.put(o)
-        }
-        prefs(context).edit().putString(KEY, arr.toString()).apply()
-        bump(context)
     }
 
     @Volatile private var cacheRulesVersion = -1

@@ -85,11 +85,12 @@ object ParallelScanner {
     /** 核心扫描:返回原始报告(供 ResultDiff / FamilyClassifier 等数据层复用) */
     fun scanReports(
         context: Context,
+        kind: String,
         workers: Int = defaultWorkers(),
         onProgress: (done: Int, total: Int) -> Unit,
         onEachResult: ((TrojanScanner.Report) -> Unit)? = null
     ): Outcome {
-        ScanControl.reset()
+        ScanControl.reset(kind)
         val trusted = TrustStore.trusted(context)
         val pkgs = scanTargets(PackageSnapshot.packageNames(context), trusted, context.packageName)
         val total = pkgs.size
@@ -105,12 +106,12 @@ object ParallelScanner {
         var submitted = 0
         for (pkg in pkgs) {
             // 已取消:停止投递剩余任务,不再让线程池排空无意义的扫描
-            if (ScanControl.cancelled) {
+            if (ScanControl.isCancelled(kind)) {
                 cancelled = true
                 break
             }
             pool.execute {
-                if (ScanControl.cancelled) {
+                if (ScanControl.isCancelled(kind)) {
                     done.incrementAndGet()
                     latch.countDown()
                     return@execute
@@ -136,7 +137,7 @@ object ParallelScanner {
         }
 
         while (!latch.await(400, TimeUnit.MILLISECONDS)) {
-            if (ScanControl.cancelled) {
+            if (ScanControl.isCancelled(kind)) {
                 cancelled = true
                 break
             }
@@ -191,13 +192,4 @@ object ParallelScanner {
         )
         return items
     }
-
-    /** 兼容旧调用:直接返回 UI 列表 */
-    fun scanAll(
-        context: Context,
-        workers: Int = defaultWorkers(),
-        onProgress: (done: Int, total: Int) -> Unit,
-        onEachResult: ((TrojanScanner.Report) -> Unit)? = null
-    ): List<TrojanAdapter.UiItem> =
-        toUiItems(scanReports(context, workers, onProgress, onEachResult))
 }

@@ -45,4 +45,32 @@ class QuarantineRecordTest {
         // 原因里的 '|' 必须在写入侧清洗,否则解析错位
         assertEquals(4, withReason.raw.split('|', limit = 4).size)
     }
+
+    @Test
+    fun writeSideSanitizesPipeInReasonAndRoundTrips() {
+        // 写入侧不变量(AGENT_NOTES v1.9.28):原因含 '|' 必须被清洗,记录可被 items() 无损读回
+        val raw = Quarantine.buildRecord(
+            "/data/evil", "/data/data/x/files/quarantine/evil.125.qtn",
+            1700000002000L, "原因A|原因B"
+        )
+        assertEquals(
+            "/data/evil|/data/data/x/files/quarantine/evil.125.qtn|1700000002000|原因A 原因B",
+            raw
+        )
+
+        val ctx: Context = ApplicationProvider.getApplicationContext()
+        ctx.getSharedPreferences("settings", Context.MODE_PRIVATE).edit()
+            .putStringSet("quarantine_items", setOf(raw))
+            .commit()
+
+        val items = Quarantine.items(ctx)
+        assertEquals(1, items.size)
+        val it = items[0]
+        assertEquals("原因A 原因B", it.reason)
+        assertEquals("/data/evil", it.originalPath)
+        assertEquals(1700000002000L, it.time)
+        // raw 精确往返:恢复/销毁按 raw 匹配移除记录,字段重组不一致会清错记录
+        assertEquals(raw, it.raw)
+        assertEquals(4, it.raw.split('|', limit = 4).size)
+    }
 }

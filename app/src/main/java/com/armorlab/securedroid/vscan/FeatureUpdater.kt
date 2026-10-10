@@ -152,14 +152,31 @@ object FeatureUpdater {
         return try {
             val out = File(clamavDir(context), name)
             out.parentFile?.mkdirs()
-            if (out.isFile) {
+            val backup = if (out.isFile) {
                 val bdir = backupDir(context)
                 bdir.mkdirs()
-                out.copyTo(File(bdir, name), overwrite = true)
-            }
+                val b = File(bdir, name)
+                out.copyTo(b, overwrite = true)
+                b
+            } else null
             out.writeBytes(data)
             clearPart(context, name)
             ClamAvSignatures.reload(context)
+            // 热重载兜底:整个签名库为空(新文件解析全失败/预算耗尽)时自动从备份还原,
+            // 不让一次坏更新把查杀能力清零
+            if (ClamAvSignatures.signatureCount() == 0 && backup != null) {
+                try {
+                    backup.copyTo(out, overwrite = true)
+                    ClamAvSignatures.reload(context)
+                } catch (_: Exception) {
+                }
+                addHistory(context, JSONObject()
+                    .put("time", System.currentTimeMillis())
+                    .put("file", name)
+                    .put("size", data.size)
+                    .put("ok", false))
+                return UpdateResult(false, "更新被拒绝: 新特征库载入后为空,已自动回滚到上一版")
+            }
             val truncatedNote = if (ClamAvSignatures.isTruncated()) ";特征库过大,已截断加载" else ""
             val message = "更新成功:" + name + " (" + data.size / 1024 + "KB" +
                 (if (resumed) ",断点续传" else "") + "),当前 ClamAV 签名 " +

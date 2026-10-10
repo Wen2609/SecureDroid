@@ -32,14 +32,16 @@ object DnsGuard {
     private fun dohQuery(host: String): Set<String> {
         val conn = URL("https://223.5.5.5/resolve?name=" + host + "&type=A")
             .openConnection() as HttpURLConnection
-        conn.connectTimeout = 5000
-        conn.readTimeout = 5000
-        conn.setRequestProperty("accept", "application/dns-json")
-        val body = conn.inputStream.bufferedReader().readText()
-        conn.disconnect()
-        val result = HashSet<String>()
-        val rex = Re.DNS_A_RECORD
-        for (m in rex.findAll(body)) result.add(m.groupValues[1])
-        return result
+        try {
+            conn.connectTimeout = 5000
+            conn.readTimeout = 5000
+            conn.setRequestProperty("accept", "application/dns-json")
+            val body = conn.inputStream.bufferedReader().use { it.readText() }
+            val result = HashSet<String>()
+            for (m in Re.DNS_A_RECORD.findAll(body)) result.add(m.groupValues[1])
+            return result
+        } finally {
+            conn.disconnect()
+        }
     }
 }

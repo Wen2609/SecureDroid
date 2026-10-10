@@ -40,7 +40,7 @@ object AttackSurface {
                     "exported 组件 " + exported + " 个" + (if (providers > 0) ",其中 Provider " + providers + " 个(数据泄露面)" else ""),
                     if (providers > 0) ThreatLevel.MEDIUM else ThreatLevel.LOW,
                     if (providers > 0) "exported Provider 可被任意应用读写,确认是否收紧导出" else null,
-                    null, null, null, null
+                    null, null, null
                 )
             )
         }

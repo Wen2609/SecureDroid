@@ -57,7 +57,7 @@ class PerfGuardTest {
     @Test
     fun parallelScanStopsSubmittingAfterCancelAndFlushesCaches() {
         val src = codeOnly("com/armorlab/securedroid/vscan/ParallelScanner.kt")
-        assertTrue("取消后必须停止投递剩余任务", src.contains("ScanControl.cancelled"))
+        assertTrue("取消后必须停止投递剩余任务", src.contains("ScanControl.isCancelled(kind)"))
         assertTrue("扫描结束必须批量落盘 DEX 判定缓存", src.contains("DexVerdictCache.flush"))
         assertTrue("不得再把 TrustStore 结果整集复制一份", !src.contains(".toHashSet()"))
     }
@@ -190,12 +190,12 @@ class PerfGuardTest {
     fun bridgeMustExposeCancelScan() {
         val scan = codeOnly("com/armorlab/securedroid/web/handlers/ScanHandler.kt")
         assertTrue(
-            "桥层必须提供 cancelScan()(WebUI 取消按钮依赖 ScanControl.requestCancel)",
-            scan.contains("fun cancelScan(") && scan.contains("ScanControl.requestCancel()")
+            "桥层必须提供 cancelScan()(WebUI 取消按钮依赖 ScanControl.requestCancelAll)",
+            scan.contains("fun cancelScan(") && scan.contains("ScanControl.requestCancelAll()")
         )
         assertTrue(
-            "木马查杀循环必须响应取消(循环内检查 ScanControl.cancelled)",
-            scan.contains("if (ScanControl.cancelled) break")
+            "木马查杀循环必须响应取消(循环内检查自身类型的取消标记)",
+            scan.contains("if (ScanControl.isCancelled(\"trojan\")) break")
         )
     }
 }

@@ -46,13 +46,14 @@ object NetAudit {
         return out
     }
 
-    /** "0100007F:1F90" → "127.0.0.1:8080"(小端序) */
+    /** "0100007F:1F90" → "127.0.0.1:8080"(/proc/net/tcp 地址为小端序,需反转字节) */
     private fun hexIpPort(field: String): String {
         val parts = field.split(':')
         val hex = parts[0]
         val port = parts.getOrNull(1)?.toIntOrNull(16) ?: 0
+        if (hex.length < 8) return "0.0.0.0:$port"
         val b = ByteArray(4)
-        for (i in 0..3) b[i] = hex.substring(i * 2, i * 2 + 2).toInt(16).toByte()
+        for (i in 0..3) b[i] = hex.substring((3 - i) * 2, (3 - i) * 2 + 2).toInt(16).toByte()
         return InetAddress.getByAddress(b).hostAddress + ":" + port
     }
 }

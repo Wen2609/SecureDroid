@@ -18,7 +18,8 @@ import java.io.FileOutputStream
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
-import java.util.concurrent.Executors
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 /**
@@ -38,7 +39,12 @@ class DnsGuardVpnService : VpnService() {
     @Volatile
     private var running = false
 
-    private val executor = Executors.newCachedThreadPool()
+    // 有界线程池:防恶意应用洪泛 DNS 查询耗尽线程/FD;积压时丢弃最旧任务(DNS 可重试,不误伤)
+    private val executor = ThreadPoolExecutor(
+        2, 4, 60L, TimeUnit.SECONDS,
+        ArrayBlockingQueue(128),
+        ThreadPoolExecutor.DiscardOldestPolicy()
+    )
     private var blockPatterns: List<String> = emptyList()
     private var upstreamDns = FALLBACK_DNS
 
@@ -50,10 +56,6 @@ class DnsGuardVpnService : VpnService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == ACTION_STOP) {
-            stopSelf()
-            return START_NOT_STICKY
-        }
         if (!running) {
             running = true
             Thread({ tunLoop() }, "dns-guard-tun").start()
@@ -204,7 +206,6 @@ class DnsGuardVpnService : VpnService() {
         private const val PROTO_UDP = 17
         private const val FALLBACK_DNS = "223.5.5.5"
         private const val NOTIF_ID = 3001
-        const val ACTION_STOP = "com.armorlab.securedroid.dnsguard.STOP"
 
         fun start(context: Context) {
             ContextCompat.startForegroundService(
@@ -212,10 +213,9 @@ class DnsGuardVpnService : VpnService() {
             )
         }
 
+        /** 停止 VPN:stopService 触发 onDestroy,后台状态亦可调用(无 startService 后台限制) */
         fun stop(context: Context) {
-            context.startService(
-                Intent(context, DnsGuardVpnService::class.java).setAction(ACTION_STOP)
-            )
+            context.stopService(Intent(context, DnsGuardVpnService::class.java))
         }
 
         /** 已授权且无 prepare 弹窗时返回 null;需要授权时返回待启动的 Intent */

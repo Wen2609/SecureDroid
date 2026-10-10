@@ -60,7 +60,7 @@ class MultiPatternMatcher(patterns: Collection<String>) {
 
     /** 单段文本是否命中任意模式 */
     fun matchesAny(text: String): Boolean {
-        if (hasBlank && text.isNotEmpty()) return true
+        if (hasBlank) return true
         val hits = BooleanArray(keys.size)
         hitIn(text, hits)
         for (h in hits) if (h) return true
@@ -70,7 +70,7 @@ class MultiPatternMatcher(patterns: Collection<String>) {
     /** 命中某模式的全部文本位置(测试与调试用) */
     fun matchAt(text: String): BooleanArray {
         val hits = BooleanArray(keys.size)
-        if (text.isNotEmpty() && hasBlank) {
+        if (hasBlank) {
             for (i in keys.indices) if (keys[i].isEmpty()) hits[i] = true
         }
         hitIn(text, hits)

@@ -13,29 +13,11 @@ import com.armorlab.securedroid.ui.TrojanAdapter
  */
 object NetKill {
 
-    private fun uidOf(context: Context, pkg: String): Int? = try {
-        context.packageManager.getApplicationInfo(pkg, 0).uid
-    } catch (_: Exception) { null }
-
     private fun blockedUids(): Set<Int>? {
         val out = ShellBridge.runSu("iptables -S OUTPUT 2>/dev/null") ?: return null
         return Re.UID_OWNER.findAll(out)
             .mapNotNull { it.groupValues[1].toIntOrNull() }
             .toSet()
-    }
-
-    fun block(context: Context, pkg: String): Boolean {
-        val uid = uidOf(context, pkg) ?: return false
-        val cmd = "iptables -I OUTPUT 1 -m owner --uid-owner " + uid + " -j DROP"
-        if (!ShellBridge.runSuChecked(cmd)) return false
-        return blockedUids()?.contains(uid) == true
-    }
-
-    fun unblock(context: Context, pkg: String): Boolean {
-        val uid = uidOf(context, pkg) ?: return false
-        val cmd = "iptables -D OUTPUT -m owner --uid-owner " + uid + " -j DROP"
-        if (!ShellBridge.runSuChecked(cmd)) return false
-        return blockedUids()?.contains(uid) != true
     }
 
     fun items(context: Context): List<TrojanAdapter.UiItem> {
@@ -54,7 +36,7 @@ object NetKill {
                     info.packageName,
                     if (blocked) "该应用已被 iptables 切断联网" else "正常联网",
                     if (blocked) ThreatLevel.HIGH else ThreatLevel.LOW,
-                    null, null,
+                    null,
                     if (blocked) "iptables -D OUTPUT -m owner --uid-owner " + info.uid + " -j DROP"
                     else "iptables -I OUTPUT 1 -m owner --uid-owner " + info.uid + " -j DROP",
                     if (blocked) "恢复联网" else "切断联网"

@@ -89,15 +89,14 @@ object ShellBridge {
         if (verdict is PolicyVerdict.Deny) return false
         val result = run(cmd, timeoutMs) ?: return false
         if (result.exitCode != 0) return false
-        val lower = result.output.lowercase()
-        return DENY_HINTS.none { lower.contains(it) }
+        return !outputHasDenyHints(result.output)
     }
 
-    /** 检测设备上是否存在可用的 su(不触发授权弹窗,仅探测二进制) */
-    fun suBinaryExists(): Boolean = listOf(
-        "/system/bin/su", "/system/xbin/su", "/sbin/su", "/vendor/bin/su",
-        "/su/bin/su", "/data/local/xbin/su", "/data/adb/ksu/bin/su", "/data/adb/ap/bin/su"
-    ).any { p -> try { File(p).exists() } catch (_: Exception) { false } }
+    /** 输出里是否带拒绝标记(redirectErrorStream 下退出码为 0 也可能实际失败,调用方需复查) */
+    fun outputHasDenyHints(output: String): Boolean {
+        val lower = output.lowercase()
+        return DENY_HINTS.any { lower.contains(it) }
+    }
 
     /** 读文件:直接读 → su cat 兜底 */
     fun readFileBestEffort(path: String): String? {

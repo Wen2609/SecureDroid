@@ -82,7 +82,7 @@ object PartitionScanner {
                         "Part.ClamAvHit · " + sig, p.name + " (" + p.path + ")",
                         "分区原始数据命中 ClamAV 字节码特征",
                         ThreatLevel.CRITICAL, "底层分区命中病毒特征,建议备份后重刷该分区镜像",
-                        null, null, null, null
+                        null, null, null
                     )
                 )
             }

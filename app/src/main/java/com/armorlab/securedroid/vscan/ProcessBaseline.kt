@@ -45,8 +45,4 @@ object ProcessBaseline {
         val base = prefs(context).getStringSet(KEY, null) ?: return emptyList()
         return (currentNames() - base).sorted()
     }
-
-    fun clear(context: Context) {
-        prefs(context).edit().remove(KEY).apply()
-    }
 }

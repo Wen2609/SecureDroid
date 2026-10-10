@@ -45,7 +45,7 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
             withContext(Dispatchers.Default) {
                 ClamAvSignatures.ensureLoaded(app)
                 val outcome = ParallelScanner.scanReports(
-                    app, 4,
+                    app, "virus", 4,
                     onProgress = { done, total ->
                         emitProgress("virus", "virusProgress", done, total)
                     }
@@ -98,7 +98,7 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
 
     suspend fun startTrojanScan() {
         if (!ScanSessions.start("trojan")) return
-        ScanControl.reset()
+        ScanControl.reset("trojan")
         try {
             withContext(Dispatchers.Default) {
                 ClamAvSignatures.ensureLoaded(app)
@@ -110,7 +110,7 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
                 // 进度条平滑度只取决于 CSS transition,300ms 一帧绰绰有余
                 var lastPost = 0L
                 for (info in pkgs) {
-                    if (ScanControl.cancelled) break
+                    if (ScanControl.isCancelled("trojan")) break
                     val report = TrojanScanner.scanPackage(app, info.packageName)
                     scanned++
                     if (report.isInfected) {
@@ -123,7 +123,7 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
                         emitProgress("trojan", "trojanProgress", scanned, pkgs.size)
                     }
                 }
-                val cancelled = ScanControl.cancelled && scanned < pkgs.size
+                val cancelled = ScanControl.isCancelled("trojan") && scanned < pkgs.size
                 val summary = when {
                     cancelled -> app.getString(R.string.trojan_done, scanned, infected) +
                         "(已取消，仅含已扫描部分)"
@@ -222,7 +222,7 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
     /* ---------------- 取消与状态重放 ---------------- */
 
     fun cancelScan() {
-        ScanControl.requestCancel()
+        ScanControl.requestCancelAll()
     }
 
     /** 新页面上线时重放进行中的扫描(virus/trojan 有进度 UI) */

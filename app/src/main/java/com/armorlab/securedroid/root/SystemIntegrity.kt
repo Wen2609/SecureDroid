@@ -159,7 +159,8 @@ object SystemIntegrity {
             .split(',').filter { it.isNotEmpty() }
         if (locked.isEmpty()) return true
         val quoted = locked.joinToString(" ") { ShellBridge.quote(it) }
-        val out = ShellBridge.runSu("chattr -i " + quoted + " 2>/dev/null; chmod 0644 " + quoted + " 2>/dev/null; echo __DONE__", 20_000L)
+        // && 链:任一步失败(e.g. 只读分区/SELinux 拒绝)都不会输出 __DONE__,避免假成功
+        val out = ShellBridge.runSu("chattr -i " + quoted + " 2>/dev/null && chmod 0644 " + quoted + " 2>/dev/null && echo __DONE__", 20_000L)
         val ok = out?.contains("__DONE__") == true
         if (ok) prefs(context).edit().putString(KEY_LOCKED, "").apply()
         return ok
@@ -226,7 +227,7 @@ object SystemIntegrity {
                     if (critical) ThreatLevel.CRITICAL else ThreatLevel.HIGH,
                     "对比该文件的来源与用途;确认被篡改可从基线时间点回溯变更",
                     null, null,
-                    null, null
+                    null
                 )
             )
         }
@@ -236,7 +237,7 @@ object SystemIntegrity {
                     "Integrity.Added · " + p.substringAfterLast('/'), p,
                     "基线之外新增的系统文件(常见于模块注入 / 脚本落地)",
                     ThreatLevel.HIGH, "确认来源;可疑文件可用『删除文件』处置",
-                    null, null, "rm -f " + ShellBridge.quote(p), "删除文件"
+                    null, "rm -f " + ShellBridge.quote(p), "删除文件"
                 )
             )
         }
@@ -246,7 +247,7 @@ object SystemIntegrity {
                     "Integrity.Removed · " + p.substringAfterLast('/'), p,
                     "基线中的系统文件已消失(可能是删除安全组件以绕过检测)",
                     ThreatLevel.HIGH, "确认是否本人操作;异常删除需恢复官方镜像",
-                    null, null, null, null
+                    null, null, null
                 )
             )
         }

@@ -7,7 +7,7 @@ import com.armorlab.securedroid.ui.TrojanAdapter
 
 /**
  * 黑名单连接检测:当前 TCP 连接与恶意 IP/域名模式列表交叉比对。
- * 预置演示条目 + 用户可扩展(持久化)。
+ * 预置条目;旧版本用户自添加过的条目(持久化)仍参与匹配。
  */
 object BlocklistEngine {
 
@@ -22,22 +22,6 @@ object BlocklistEngine {
 
     fun patterns(context: Context): List<String> =
         preset + (prefs(context).getStringSet(KEY, emptySet()) ?: emptySet())
-
-    fun add(context: Context, pattern: String): Boolean {
-        if (pattern.isBlank()) return false
-        val p = prefs(context)
-        val set = LinkedHashSet(p.getStringSet(KEY, emptySet()) ?: emptySet())
-        val ok = set.add(pattern.trim())
-        if (ok) p.edit().putStringSet(KEY, set).apply()
-        return ok
-    }
-
-    fun remove(context: Context, pattern: String) {
-        val p = prefs(context)
-        val set = LinkedHashSet(p.getStringSet(KEY, emptySet()) ?: emptySet())
-        set.remove(pattern)
-        p.edit().putStringSet(KEY, set).apply()
-    }
 
     fun items(context: Context): List<TrojanAdapter.UiItem> {
         val pats = patterns(context)
@@ -55,7 +39,7 @@ object BlocklistEngine {
                         "命中黑名单模式: " + matched,
                         ThreatLevel.HIGH,
                         "连接命中恶意模式,建议断网应急或卸载该应用",
-                        null, null, null, null
+                        null, null, null
                     )
                 )
             }
@@ -64,7 +48,7 @@ object BlocklistEngine {
             TrojanAdapter.UiItem(
                 "Net.BlacklistSummary",
                 "已比对 " + checked + " 条连接 × " + pats.size + " 个黑名单模式",
-                "命中 " + hits.size + " 条;黑名单可在\"管理黑名单\"中扩展",
+                "命中 " + hits.size + " 条",
                 if (hits.isEmpty()) ThreatLevel.LOW else ThreatLevel.HIGH, null, null
             )
         )

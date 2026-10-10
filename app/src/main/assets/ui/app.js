@@ -20,7 +20,6 @@
   /* ---------------- 通道:原生 → 页面 ---------------- */
 
   var handlers = {};
-  window.__sdHandlers = handlers;
   function on(type, fn) { handlers[type] = fn; }
 
   /* 所有跨桥消息的信封:
@@ -39,7 +38,7 @@
     var h = handlers[msg.type];
     if (h) { try { h(msg.data); } catch (e) { } }
   };
-  /* 兼容入口:demo 数据源仍以事件形式注入(原生不再注入 __sdEvent) */
+  /* 兼容入口:原生仍有直达注入(__sdEvent,如 vpnConsent 回调的 dnsGuardState) */
   window.__sdEvent = function (type, payload) {
     var d = payload;
     if (typeof payload === 'string') {
@@ -252,6 +251,9 @@
       setScanUi(s.done, s.total, '木马查杀中 ' + s.done + ' / ' + s.total + '（' + scanPct(s.done, s.total) + '%）');
       setScanBusy('#btnTrojanScan', true);
       showCancel('#btnTrojanCancel', s.total > 0 && s.done < s.total);
+    } else if (s.action === 'rootkit' || s.action === 'modules' || s.action === 'locker') {
+      setToolScanBusy(true);
+      setScanUi(0, 0, '专项检测进行中…');
     }
   }
 
@@ -550,15 +552,25 @@
     api.send('startTrojanScan');
   }
 
+  /* 专项检测按钮(Rootkit/模块/锁机)统一置灰与恢复,防止扫描期间重复点击无反馈 */
+  function setToolScanBusy(busy) {
+    setScanBusy('#btnRootkit', busy);
+    setScanBusy('#btnModules', busy);
+    setScanBusy('#btnLocker', busy);
+  }
+
   function runToolScan(label, action) {
     setScanUi(0, 0, label);
     var box = qs('#trojanResults');
     if (box) box.textContent = '';
+    setToolScanBusy(true);
+    hapticTap();
     api.send(action);
   }
 
   function renderTrojan(d) {
     setScanBusy('#btnTrojanScan', false);
+    setToolScanBusy(false);
     showCancel('#btnTrojanCancel', false);
     var total = d.total || (d.items || []).length;
     setScanUi(total, total, d.summary || '检测完成');
@@ -610,6 +622,7 @@
   var lockShown = LOCK_PAGE;
 
   function renderLock(d) {
+    if (!d) return;
     lockShown = LOCK_PAGE;
     lockApps = d.apps || [];
     var pin = qs('#swPin');
@@ -1113,7 +1126,7 @@
     };
   }
   function demoToggles() {
-    return { realtime: true, boot: false, autoUpdate: true, dnsGuard: false, rootMode: false, rootSub: '未启用，开启将请求 su 授权' };
+    return { realtime: true, boot: false, autoUpdate: true, dnsGuard: false, rootMode: false, mode: 'standard', rootSub: '未启用，开启将请求 su 授权' };
   }
 
   function demoVirus() {
@@ -1329,27 +1342,6 @@
     });
   }
 
-  function uiListDialog(title, items, onSelect) {
-    // items: [{label, value}]
-    var list = document.createElement('div');
-    list.className = 'modal-list';
-    items.forEach(function (it) {
-      var btn = document.createElement('button');
-      btn.className = 'modal-list-item';
-      btn.textContent = it.label;
-      btn.addEventListener('click', function () {
-        if (onSelect) onSelect(it.value, it);
-        closeModal();
-      });
-      list.appendChild(btn);
-    });
-    showModal({
-      title: title,
-      body: list,
-      buttons: [{ label: '取消' }]
-    });
-  }
-
   /* 点击遮罩关闭最上层模态框 */
   document.addEventListener('click', function (e) {
     if (e.target && e.target.id === 'modalOverlay') closeModal();
@@ -1445,7 +1437,7 @@
 
   function setListStatus(pageId, text, loading) {
     var statusEl = qs('#' + pageId + 'Status');
-    var spin = qs('#' + pageId + ' .progress-ring');
+    var spin = qs('[data-subpage="' + pageId + '"] .progress-ring');
     if (statusEl) statusEl.textContent = text;
     if (spin) spin.classList.toggle('is-hidden', !loading);
   }
@@ -1585,6 +1577,7 @@
 
   function runVirusTool(actionId, title) {
     if (actionId === 'phishing') { showPhishingDialog(); return; }
+    if (actionId === 'update') { showUpdateDialog(); return; }
     vcRunning = true;
     qs('#vcMenu').classList.add('is-hidden');
     var run = qs('#vcRun');

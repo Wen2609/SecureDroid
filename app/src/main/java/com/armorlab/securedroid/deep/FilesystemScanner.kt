@@ -72,7 +72,7 @@ object FilesystemScanner {
                     "FS." + (if (critical) "TmpPayload" else "TmpHidden") + " · " + f.path.substringAfterLast('/'),
                     f.path, f.reason, f.level,
                     if (critical) "临时目录中的载荷文件是木马投递的典型形态,确认后删除" else null,
-                    null, null,
+                    null,
                     if (critical) "rm -f " + ShellBridge.quote(f.path) else null,
                     if (critical) "删除文件" else null
                 )
@@ -94,7 +94,7 @@ object FilesystemScanner {
                         "FS.RawDex", t, "全盘扫描发现可执行 dex/jar 文件",
                         ThreatLevel.CRITICAL,
                         "系统与正常应用目录之外的可执行 dex 是注入/免杀常见形态",
-                        null, null, "rm -f " + ShellBridge.quote(t), "删除文件"
+                        null, "rm -f " + ShellBridge.quote(t), "删除文件"
                     )
                 )
             }
@@ -112,7 +112,7 @@ object FilesystemScanner {
                     "风险评分 " + v.score + "/100 — " + v.hits.joinToString("; ") { it.label },
                     v.level,
                     if (v.isMalicious) "脚本包含恶意行为组合,确认后删除" else "脚本包含可疑行为,建议人工审查",
-                    null, null,
+                    null,
                     if (v.isMalicious) "rm -f " + ShellBridge.quote(p) else null,
                     if (v.isMalicious) "删除文件" else null
                 )
@@ -130,7 +130,7 @@ object FilesystemScanner {
                 TrojanAdapter.UiItem(
                     "FS.WorldWritable", path, "系统分区文件对全局可写,可被任意进程篡改",
                     ThreatLevel.HIGH, "建议修复为 644 并排查篡改来源",
-                    null, null, "chmod 644 " + ShellBridge.quote(path), "修复权限"
+                    null, "chmod 644 " + ShellBridge.quote(path), "修复权限"
                 )
             )
         }
@@ -145,7 +145,7 @@ object FilesystemScanner {
                 TrojanAdapter.UiItem(
                     "FS.SuRemnant", path, "发现历史 root 方案残留文件",
                     ThreatLevel.MEDIUM, "废弃 root 方案残留是提权后门常见入口,确认后删除",
-                    null, null, "rm -f " + ShellBridge.quote(path), "删除文件"
+                    null, "rm -f " + ShellBridge.quote(path), "删除文件"
                 )
             )
         }
@@ -160,7 +160,7 @@ object FilesystemScanner {
                 TrojanAdapter.UiItem(
                     "FS.SuspiciousName", path, "文件名命中可疑关键词",
                     ThreatLevel.HIGH, "结合文件内容与来源确认是否恶意",
-                    null, null, null, null
+                    null, null, null
                 )
             )
         }
@@ -174,7 +174,7 @@ object FilesystemScanner {
                         TrojanAdapter.UiItem(
                             "FS.IocMatch", p, "文件名命中自定义 IOC 模式",
                             ThreatLevel.HIGH, "命中用户自定义 IOC,请人工确认",
-                            null, null, null, null
+                            null, null, null
                         )
                     )
                 }
@@ -192,7 +192,7 @@ object FilesystemScanner {
                     TrojanAdapter.UiItem(
                         "FS.ClamAvHit · " + sig, p, "文件命中 ClamAV 字节码特征",
                         ThreatLevel.CRITICAL, "命中病毒特征库,建议立即删除",
-                        null, null, "rm -f " + ShellBridge.quote(p), "删除文件"
+                        null, "rm -f " + ShellBridge.quote(p), "删除文件"
                     )
                 )
             }

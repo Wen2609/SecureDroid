@@ -129,9 +129,10 @@ class ShellHardeningTest {
     @Test
     fun mutationCallSitesGoThroughCheckedRunner() {
         val root = mainSourceRoot()
+        // NetKill 的 iptables 处置命令已改为经 fixCommand → ToolsHandler.runFixCommand 执行(受本清单守卫),
+        // 文件内只剩只读 iptables -S 查询,不再列入
         val files = listOf(
             "com/armorlab/securedroid/vscan/Quarantine.kt",
-            "com/armorlab/securedroid/vscan/NetKill.kt",
             "com/armorlab/securedroid/root/RootGuard.kt",
             "com/armorlab/securedroid/realtime/RealtimeProtectionService.kt",
             "com/armorlab/securedroid/web/handlers/ToolsHandler.kt",

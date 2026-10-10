@@ -87,10 +87,16 @@ class ManifestInvariantsTest {
         val missing = mutableListOf<String>()
         for (m in componentRe.findAll(manifest)) {
             val name = m.groupValues[2]
-            if (!name.startsWith(".")) continue // 系统组件或全限定名跳过
-            val rel = name.removePrefix(".").replace('.', '/') + ".kt"
-            val javaFile = File(manifestFile().parentFile, "java/com/armorlab/securedroid/" + rel)
-            if (!javaFile.isFile) missing.add(name)
+            // 本项目组件:.相对名 → 项目包下;com.armorlab.securedroid.* 全限定名同样校验
+            val rel = when {
+                name.startsWith(".") -> "com/armorlab/securedroid/" + name.removePrefix(".").replace('.', '/')
+                name.startsWith("com.armorlab.securedroid.") -> name.replace('.', '/')
+                else -> continue // 系统组件 / 第三方库
+            }
+            val base = File(manifestFile().parentFile, "java/" + rel)
+            if (!base.isFile && !File(base.path + ".kt").isFile && !File(base.path + ".java").isFile) {
+                missing.add(name)
+            }
         }
         assertTrue(
             "清单声明了不存在的组件类(清单与代码漂移): " + missing.joinToString(", "),

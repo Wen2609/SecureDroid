@@ -1,7 +1,5 @@
 package com.armorlab.securedroid.web
 
-import android.os.Handler
-import android.os.Looper
 import com.armorlab.securedroid.MainActivity
 import com.armorlab.securedroid.web.handlers.DashboardHandler
 import com.armorlab.securedroid.web.handlers.LockHandler
@@ -25,8 +23,6 @@ class BridgeRouter(
     activity: MainActivity,
     private val sink: WebEventSink
 ) {
-
-    private val main = Handler(Looper.getMainLooper())
 
     private class Action(val onMain: Boolean, val run: suspend (JSONObject) -> String?)
 
@@ -111,25 +107,6 @@ class BridgeRouter(
         })
         put("cancelVirusTool", Action(false) { tools.cancelVirusTool(); null })
 
-        put("getTrustList", Action(false) { tools.getTrustList() })
-        put("removeTrust", Action(false) { json ->
-            tools.removeTrust(json.optString("pkg")); null
-        })
-        put("getBlocklist", Action(false) { tools.getBlocklist() })
-        put("addBlocklist", Action(false) { json ->
-            JSONObject().put("ok", tools.addBlocklist(json.optString("pattern"))).toString()
-        })
-        put("getPolicy", Action(false) { tools.getPolicy() })
-        put("setPolicyLevel", Action(false) { json ->
-            tools.setPolicyLevel(json.optString("level")); null
-        })
-        put("setAutoQuarantine", Action(false) { json ->
-            tools.setAutoQuarantine(json.optBoolean("on")); null
-        })
-        put("getCertMarkApps", Action(false) { tools.certMarkApps() })
-        put("markCertGood", Action(false) { json ->
-            JSONObject().put("ok", tools.markCertGood(json.optString("pkg"))).toString()
-        })
         put("getUpdateInfo", Action(false) { tools.getUpdateInfo() })
         put("checkUrl", Action(false) { json ->
             tools.checkUrl(json.optString("url"))
@@ -138,7 +115,6 @@ class BridgeRouter(
             tools.runUpdate(json.optString("url"), json.optString("sha").ifBlank { null })
         })
         put("getAbout", Action(false) { tools.getAbout() })
-        put("exportReport", Action(false) { tools.exportReport(); null })
         put("runFixCommand", Action(false) { json ->
             JSONObject().put("ok", tools.runFixCommand(json.optString("cmd"))).toString()
         })

@@ -14,7 +14,6 @@ object ScriptAnalyzer {
     data class Verdict(val score: Int, val hits: List<Hit>) {
         val hasFindings: Boolean get() = score >= 8
         val isMalicious: Boolean get() = score >= 45
-        val isSuspicious: Boolean get() = score in 20..44
         val level: ThreatLevel
             get() = when {
                 score >= 45 -> ThreatLevel.CRITICAL

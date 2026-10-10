@@ -112,10 +112,4 @@ object PermissionAuditor {
                 .count { it.packageName != app.packageName && scoreFor(it).first >= threshold }
         }
     }
-
-    /** 应用安装 / 卸载后调用,保证审计结果不过期太久 */
-    fun invalidate() {
-        auditCache.clear()
-        countCache.clear()
-    }
 }

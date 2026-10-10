@@ -30,7 +30,7 @@ object DailyScanRunner {
         val dao = AppDatabase.get(context).scanRecordDao()
         val now = System.currentTimeMillis()
         val entities = ConcurrentLinkedQueue<ScanRecordEntity>()
-        ParallelScanner.scanReports(context, ParallelScanner.defaultWorkers(), { _, _ -> }, { r ->
+        ParallelScanner.scanReports(context, "daily", ParallelScanner.defaultWorkers(), { _, _ -> }, { r ->
             entities.add(
                 ScanRecordEntity(
                     packageName = r.packageName,

@@ -4,7 +4,6 @@ import com.armorlab.securedroid.core.PackageSnapshot
 import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import com.armorlab.securedroid.scan.MultiPatternMatcher
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.scan.TokenMatch

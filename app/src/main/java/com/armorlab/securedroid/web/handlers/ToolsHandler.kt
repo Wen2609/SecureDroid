@@ -23,7 +23,6 @@ import com.armorlab.securedroid.scan.SignatureDatabase
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.trojan.ClamAvSignatures
 import com.armorlab.securedroid.trojan.TrojanScanner
-import com.armorlab.securedroid.vscan.ActionPolicy
 import com.armorlab.securedroid.vscan.AttackSurface
 import com.armorlab.securedroid.vscan.BlocklistEngine
 import com.armorlab.securedroid.vscan.CertStore
@@ -42,7 +41,6 @@ import com.armorlab.securedroid.vscan.ScanControl
 import com.armorlab.securedroid.vscan.SignatureStats
 import com.armorlab.securedroid.vscan.ThreatReport
 import com.armorlab.securedroid.vscan.Timeline
-import com.armorlab.securedroid.vscan.TrustStore
 import com.armorlab.securedroid.vscan.VerdictArbiter
 import com.armorlab.securedroid.web.AppMode
 import com.armorlab.securedroid.web.AppModeStore
@@ -206,7 +204,7 @@ class ToolsHandler(
 
     fun startDeepScan() {
         BridgeScope.default.launch {
-            ScanControl.reset()
+            ScanControl.reset("deep")
             sink.sendEvent("deepscan.progress",
                 JSONObject().put("phase", "深度扫描启动中…").put("running", true).toString())
             val items = try {
@@ -282,20 +280,16 @@ class ToolsHandler(
             add("newproc", R.string.vc_newproc, R.string.vc_newproc_sub)
             add("learn", R.string.vc_learn, R.string.vc_learn_sub)
             add("netblock", R.string.va_netblock, R.string.va_netblock_sub)
-            add("netblockmgr", R.string.va_netblockmgr, R.string.va_netblockmgr_sub)
             add("netkill", R.string.va_netkill, R.string.va_netkill_sub)
             add("vpnapps", R.string.va_vpn, R.string.va_vpn_sub)
             add("attack", R.string.va_attack, R.string.va_attack_sub)
             add("origin", R.string.va_origin, R.string.va_origin_sub)
             add("certaudit", R.string.va_cert, R.string.va_cert_sub)
-            add("certmark", R.string.va_certmark, R.string.va_certmark_sub)
             add("residue", R.string.vc_residue, R.string.vc_residue_sub)
             add("quarantine", R.string.vc_quarantine, R.string.vc_quarantine_sub)
             add("stats", R.string.vc_stats, R.string.vc_stats_sub)
             add("sig", R.string.vc_sig, R.string.vc_sig_sub)
             add("phishing", R.string.vc_phishing, R.string.vc_phishing_sub)
-            add("policy", R.string.va_policy, R.string.va_policy_sub)
-            add("autq", R.string.va_autq, R.string.va_autq_sub)
             add("update", R.string.vc_update, R.string.vc_update_sub)
             add("rollback", R.string.vc_rollback, R.string.vc_rollback_sub)
             add("crashlogs", R.string.vc_crash, R.string.vc_crash_sub)
@@ -303,8 +297,6 @@ class ToolsHandler(
             add("integrity", R.string.va_integrity, R.string.va_integrity_sub)
             add("lockfiles", R.string.va_lockfiles, R.string.va_lockfiles_sub)
             add("unlockfiles", R.string.va_unlockfiles, R.string.va_unlockfiles_sub)
-            add("trust", R.string.vc_trust, R.string.vc_trust_sub)
-            add("report", R.string.vc_report, R.string.vc_report_sub)
         }
         val json = JSONObject().put("menu", menu).toString()
         menuCacheMode = mode
@@ -316,7 +308,8 @@ class ToolsHandler(
 
     private var virusToolRunning = false
 
-    fun isVirusToolRunning(): Boolean = virusToolRunning
+    /** 当前正在运行的病毒中心工具 id(供取消精确定位) */
+    private var currentVirusToolKind: String? = null
 
     fun runVirusTool(actionId: String) {
         if (virusToolRunning) return
@@ -331,8 +324,9 @@ class ToolsHandler(
             return
         }
         virusToolRunning = true
+        currentVirusToolKind = actionId
         BridgeScope.default.launch {
-            ScanControl.reset()
+            ScanControl.reset(actionId)
             val phase = phaseFor(actionId)
             sink.sendEvent("virustool.progress",
                 JSONObject().put("phase", phase).put("running", true).put("action", actionId).toString())
@@ -355,7 +349,7 @@ class ToolsHandler(
     }
 
     fun cancelVirusTool() {
-        ScanControl.requestCancel()
+        currentVirusToolKind?.let { ScanControl.requestCancel(it) }
     }
 
     private fun phaseFor(actionId: String): String = when (actionId) {
@@ -388,12 +382,12 @@ class ToolsHandler(
     }
 
     private suspend fun runToolAction(actionId: String): List<JSONObject> = when (actionId) {
-        "recent" -> recentDeepScan()
-        "parallel" -> parallelScan()
-        "diff" -> diffScan()
-        "embedded" -> embeddedScan()
-        "resultdiff" -> resultDiff()
-        "family" -> familyClassify()
+        "recent" -> recentDeepScan(actionId)
+        "parallel" -> parallelScan(actionId)
+        "diff" -> diffScan(actionId)
+        "embedded" -> embeddedScan(actionId)
+        "resultdiff" -> resultDiff(actionId)
+        "family" -> familyClassify(actionId)
         "timeline" -> timelineItems()
         "netblock" -> blocklistItems()
         "vpnapps" -> vpnAppsItems()
@@ -475,7 +469,7 @@ class ToolsHandler(
         items
     }
 
-    private fun recentDeepScan(): List<JSONObject> {
+    private fun recentDeepScan(kind: String): List<JSONObject> {
         val weekAgo = System.currentTimeMillis() - 7L * 24 * 3600 * 1000
         val recent = PackageSnapshot.installedPackages(app, 0).filter { it.firstInstallTime > weekAgo }
         if (recent.isEmpty()) {
@@ -483,7 +477,7 @@ class ToolsHandler(
         }
         val items = mutableListOf<JSONObject>()
         for (info in recent) {
-            if (ScanControl.cancelled) break
+            if (ScanControl.isCancelled(kind)) break
             val pkg = info.packageName
             val name = info.applicationInfo?.let { PackageSnapshot.label(app, it) } ?: pkg
             val score = CombinedScore.evaluate(app, pkg)
@@ -510,20 +504,20 @@ class ToolsHandler(
         return items
     }
 
-    private suspend fun parallelScan(): List<JSONObject> {
-        val outcome = ParallelScanner.scanReports(app, workers = 4, onProgress = { done, total ->
+    private suspend fun parallelScan(kind: String): List<JSONObject> {
+        val outcome = ParallelScanner.scanReports(app, kind, workers = 4, onProgress = { done, total ->
             sink.sendEvent("virustool.progress",
-                JSONObject().put("phase", "并行查杀中… $done/$total").put("running", true).put("action", "parallel").toString())
+                JSONObject().put("phase", "并行查杀中… $done/$total").put("running", true).put("action", kind).toString())
         })
         ResultDiff.save(app, outcome.reports)
         return ParallelScanner.toUiItems(outcome).map { toUiItemJson(it) }
     }
 
-    private fun diffScan(): List<JSONObject> {
+    private fun diffScan(kind: String): List<JSONObject> {
         val all = PackageSnapshot.installedPackages(app, 0)
         val changed = mutableListOf<android.content.pm.PackageInfo>()
         for (info in all) {
-            if (ScanControl.cancelled) break
+            if (ScanControl.isCancelled(kind)) break
             val path = info.applicationInfo?.sourceDir ?: continue
             if (HashCache.isChanged(app, path, info.lastUpdateTime, java.io.File(path).length())) {
                 changed.add(info)
@@ -537,7 +531,7 @@ class ToolsHandler(
         )
         var infected = 0
         for (info in changed) {
-            if (ScanControl.cancelled) break
+            if (ScanControl.isCancelled(kind)) break
             val r = TrojanScanner.scanPackage(app, info.packageName)
             if (r.isInfected) {
                 infected++
@@ -565,10 +559,10 @@ class ToolsHandler(
         return items
     }
 
-    private fun embeddedScan(): List<JSONObject> {
+    private fun embeddedScan(kind: String): List<JSONObject> {
         val items = mutableListOf<JSONObject>()
         for (info in PackageSnapshot.installedPackages(app, 0)) {
-            if (ScanControl.cancelled) break
+            if (ScanControl.isCancelled(kind)) break
             val name = info.applicationInfo?.let { PackageSnapshot.label(app, it) } ?: info.packageName
             for (f in com.armorlab.securedroid.vscan.ApkInsights.analyze(app, info.packageName)) {
                 if (f.level == ThreatLevel.LOW) continue
@@ -581,18 +575,18 @@ class ToolsHandler(
         return items
     }
 
-    private suspend fun familyClassify(): List<JSONObject> {
-        val outcome = ParallelScanner.scanReports(app, workers = 4, onProgress = { done, total ->
+    private suspend fun familyClassify(kind: String): List<JSONObject> {
+        val outcome = ParallelScanner.scanReports(app, kind, workers = 4, onProgress = { done, total ->
             sink.sendEvent("virustool.progress",
-                JSONObject().put("phase", "家族分类扫描中… $done/$total").put("running", true).put("action", "family").toString())
+                JSONObject().put("phase", "家族分类扫描中… $done/$total").put("running", true).put("action", kind).toString())
         })
         return FamilyClassifier.items(app, outcome.reports).map { toUiItemJson(it) }
     }
 
-    private suspend fun resultDiff(): List<JSONObject> {
-        val outcome = ParallelScanner.scanReports(app, workers = 4, onProgress = { done, total ->
+    private suspend fun resultDiff(kind: String): List<JSONObject> {
+        val outcome = ParallelScanner.scanReports(app, kind, workers = 4, onProgress = { done, total ->
             sink.sendEvent("virustool.progress",
-                JSONObject().put("phase", "对比扫描中… $done/$total").put("running", true).put("action", "resultdiff").toString())
+                JSONObject().put("phase", "对比扫描中… $done/$total").put("running", true).put("action", kind).toString())
         })
         return ResultDiff.compare(app, outcome.reports).map { toUiItemJson(it) }
     }
@@ -751,75 +745,7 @@ class ToolsHandler(
     private fun signatureItems(): List<JSONObject> =
         SignatureStats.items(app).map { toUiItemJson(it) }
 
-    /* ---------- 信任列表 / 黑名单 / 策略 / 更新 ---------- */
-
-    suspend fun getTrustList(): String = withContext(Dispatchers.Default) {
-        val trusted = TrustStore.trusted(app)
-        val arr = JSONArray()
-        for (t in trusted) arr.put(t)
-        JSONObject().put("items", arr).toString()
-    }
-
-    fun removeTrust(pkg: String) {
-        try { TrustStore.setTrusted(app, pkg, false) } catch (_: Exception) {}
-    }
-
-    suspend fun getBlocklist(): String = withContext(Dispatchers.Default) {
-        val patterns = BlocklistEngine.patterns(app)
-        val arr = JSONArray()
-        for (p in patterns) arr.put(p)
-        JSONObject().put("items", arr).toString()
-    }
-
-    fun addBlocklist(pattern: String): Boolean {
-        return try { BlocklistEngine.add(app, pattern) } catch (_: Exception) { false }
-    }
-
-    suspend fun getPolicy(): String = withContext(Dispatchers.Default) {
-        JSONObject()
-            .put("level", actionPolicyToStr(ActionPolicy.level(app)))
-            .put("autoQuarantine", ActionPolicy.autoQuarantine(app))
-            .toString()
-    }
-
-    fun setPolicyLevel(levelStr: String) {
-        val level = when (levelStr) {
-            "critical" -> ThreatLevel.CRITICAL
-            "high" -> ThreatLevel.HIGH
-            else -> ThreatLevel.MEDIUM
-        }
-        ActionPolicy.setLevel(app, level)
-    }
-
-    fun setAutoQuarantine(on: Boolean) {
-        ActionPolicy.setAutoQuarantine(app, on)
-    }
-
-    suspend fun certMarkApps(): String = withContext(Dispatchers.Default) {
-        val thirdParty = try {
-            PackageSnapshot.installedApplications(app, 0)
-                .filter { (it.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0 }
-                .take(80)
-        } catch (_: Exception) { emptyList() }
-        val arr = JSONArray()
-        for (info in thirdParty) {
-            val name = PackageSnapshot.label(app, info)
-            arr.put(JSONObject()
-                .put("pkg", info.packageName)
-                .put("name", name))
-        }
-        JSONObject().put("apps", arr).toString()
-    }
-
-    fun markCertGood(pkg: String): Boolean {
-        return try {
-            val hash = CertStore.certHash(app, pkg)
-            if (hash != null) {
-                CertStore.markGood(app, hash)
-                true
-            } else false
-        } catch (_: Exception) { false }
-    }
+    /* ---------- 更新 / 恶意链接 ---------- */
 
     suspend fun getUpdateInfo(): String = withContext(Dispatchers.Default) {
         try { ClamAvSignatures.ensureLoaded(app) } catch (_: Exception) {}
@@ -860,21 +786,6 @@ class ToolsHandler(
         prefs.edit().putString("update_url", url).putString("update_sha", sha ?: "").apply()
         val r = FeatureUpdater.update(app, url, sha?.ifEmpty { null })
         JSONObject().put("ok", r.ok).put("message", r.message).toString()
-    }
-
-    fun exportReport() {
-        BridgeScope.default.launch {
-            val text = ThreatReport.build(app)
-            withContext(Dispatchers.Main) {
-                try {
-                    val send = Intent(Intent.ACTION_SEND)
-                        .setType("text/plain")
-                        .putExtra(Intent.EXTRA_SUBJECT, app.getString(R.string.vc_report_title))
-                        .putExtra(Intent.EXTRA_TEXT, text)
-                    activity.startActivity(Intent.createChooser(send, app.getString(R.string.vc_report_title)))
-                } catch (_: Exception) {}
-            }
-        }
     }
 
     fun runFixCommand(cmd: String): Boolean {
@@ -990,12 +901,6 @@ class ToolsHandler(
             else -> R.string.threat_low
         }
     )
-
-    private fun actionPolicyToStr(level: ThreatLevel): String = when (level) {
-        ThreatLevel.CRITICAL -> "critical"
-        ThreatLevel.HIGH -> "high"
-        else -> "medium"
-    }
 
     private fun permLabel(basename: String): String {
         val res = when (basename) {

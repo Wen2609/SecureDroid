@@ -2,7 +2,6 @@ package com.armorlab.securedroid.vscan
 
 import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
-import com.armorlab.securedroid.R
 import com.armorlab.securedroid.root.ShellBridge
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
@@ -32,7 +31,7 @@ object ResidueScanner {
                     "已卸载应用残留数据目录,可能包含历史敏感数据或恶意载荷",
                     ThreatLevel.MEDIUM,
                     "确认应用确实已卸载后可清理残留",
-                    null, null,
+                    null,
                     "rm -rf " + ShellBridge.quote("/data/data/" + t),
                     "清理残留"
                 )

@@ -15,7 +15,6 @@ object TrojanAdapter {
         val level: ThreatLevel?,
         val suggestion: String?,
         val uninstallPkg: String? = null,
-        val evidence: String? = null,
         val fixCommand: String? = null,
         val fixLabel: String? = null
     )

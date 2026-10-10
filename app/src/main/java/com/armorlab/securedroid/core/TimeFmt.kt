@@ -10,7 +10,7 @@ import java.util.Locale
  *   这里用 ThreadLocal 缓存实例,避免热路径反复编译模式;
  * - 同时跟踪 Locale 变化:用户在系统里切换语言后格式立即跟随新语言,
  *   不会像"静态缓存一个 Formatter"那样停留在旧语言(原 ThreatReport 的注释诉求);
- * - 需要新格式时用 [of] 取一个共享实例,不要在调用点 new SimpleDateFormat。
+ * - 需要新格式时在 object 内加一个 Holder 字段,不要在调用点 new SimpleDateFormat。
  */
 object TimeFmt {
 
@@ -23,9 +23,6 @@ object TimeFmt {
     fun dateSecond(ms: Long): String = second.format(ms)
 
     fun dateDay(ms: Long): String = day.format(ms)
-
-    /** 自定义模式:同一 pattern 复用同一实例 */
-    fun of(pattern: String): Holder = Holder(pattern)
 
     /** 每个 pattern 一份 ThreadLocal 实例,Locale 变化时自动重建 */
     class Holder internal constructor(private val pattern: String) {
@@ -46,7 +43,5 @@ object TimeFmt {
             }
             return impl.fmt.format(Date(ms))
         }
-
-        fun format(date: Date): String = format(date.time)
     }
 }

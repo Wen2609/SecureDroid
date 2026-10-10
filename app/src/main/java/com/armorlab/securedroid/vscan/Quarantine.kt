@@ -39,11 +39,16 @@ object Quarantine {
         if (ok) {
             val p = prefs(context)
             val set = LinkedHashSet(p.getStringSet(KEY, emptySet()) ?: emptySet())
-            set.add(path + "|" + dst + "|" + System.currentTimeMillis() + "|" + reason.replace('|', ' '))
-            p.edit().putStringSet(KEY, set).apply()
+            set.add(buildRecord(path, dst, System.currentTimeMillis(), reason))
+            // 文件已移动,记录必须同步落盘(commit):apply 异步丢失会产生不可恢复的"幽灵文件"
+            p.edit().putStringSet(KEY, set).commit()
         }
         return ok
     }
+
+    /** 构造记录串:原路径|隔离路径|时间|原因 —— 原因中的 '|' 清洗为空格,防解析错位 */
+    internal fun buildRecord(originalPath: String, quarantinedPath: String, time: Long, reason: String): String =
+        originalPath + "|" + quarantinedPath + "|" + time + "|" + reason.replace('|', ' ')
 
     fun items(context: Context): List<Item> {
         return (prefs(context).getStringSet(KEY, emptySet()) ?: emptySet()).map { raw ->
@@ -78,6 +83,7 @@ object Quarantine {
         val p = prefs(context)
         val set = LinkedHashSet(p.getStringSet(KEY, emptySet()) ?: emptySet())
         set.remove(raw)
-        p.edit().putStringSet(KEY, set).apply()
+        // 文件已还原/销毁,记录必须同步落盘,避免崩溃后留下指向不存在文件的记录
+        p.edit().putStringSet(KEY, set).commit()
     }
 }

@@ -30,15 +30,7 @@
   }
 
   function checkPin() {
-    if (!bridge) {
-      // demo 模式:任意 4 位通过
-      setTimeout(function () {
-        showMsg('Demo 模式解锁成功');
-        input = '';
-        refresh();
-      }, 200);
-      return;
-    }
+    // 本页仅由 LockActivity 加载,AndroidBridge 必然注入;注入异常走 catch 提示
     try {
       bridge.post('verifyPin', JSON.stringify({ pin: input }));
     } catch (e) {

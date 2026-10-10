@@ -2,7 +2,6 @@ package com.armorlab.securedroid.vscan
 
 import com.armorlab.securedroid.core.PackageSnapshot
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
@@ -35,7 +34,7 @@ object InstallerOrigin {
                         "安装来源不明(非应用商店安装)",
                         ThreatLevel.MEDIUM,
                         "侧载是木马绕过商店审核的主要通道,确认 APK 来源",
-                        null, null, null, null
+                        null, null, null
                     )
                 )
             } else if (installer != "com.android.vending") {
@@ -43,7 +42,7 @@ object InstallerOrigin {
                     TrojanAdapter.UiItem(
                         "Virus.ThirdPartyStore · " + label, pkg,
                         "安装来源: " + installer,
-                        ThreatLevel.LOW, null, null, null, null
+                        ThreatLevel.LOW, null, null, null
                     )
                 )
             }

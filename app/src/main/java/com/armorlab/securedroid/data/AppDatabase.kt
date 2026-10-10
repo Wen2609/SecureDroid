@@ -14,7 +14,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
-// packageName/scannedAt 索引:latestFor(pkg) 与 trim/lastScannedAt 的排序过滤走索引,
+// packageName/scannedAt 索引:trim/lastScannedAt 的排序过滤走索引,
 // 2000 行历史下查询由全表扫描降为索引定位
 @Entity(
     tableName = "scan_records",
@@ -41,9 +41,6 @@ interface ScanRecordDao {
 
     @Query("DELETE FROM scan_records")
     suspend fun clear()
-
-    @Query("SELECT * FROM scan_records WHERE packageName = :pkg ORDER BY scannedAt DESC LIMIT 1")
-    suspend fun latestFor(pkg: String): ScanRecordEntity?
 
     @Query("SELECT * FROM scan_records ORDER BY scannedAt DESC")
     suspend fun getAll(): List<ScanRecordEntity>
@@ -85,9 +82,6 @@ interface AutoActionDao {
 
     @Query("SELECT * FROM auto_actions ORDER BY actedAt DESC LIMIT 100")
     fun observeRecent(): Flow<List<AutoActionEntity>>
-
-    @Query("SELECT COUNT(*) FROM auto_actions WHERE success = 1")
-    suspend fun successCount(): Int
 }
 
 @Database(entities = [ScanRecordEntity::class, AutoActionEntity::class], version = 3, exportSchema = false)

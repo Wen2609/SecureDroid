@@ -5,7 +5,6 @@ import android.content.Context
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.scan.ThreatLevel
 import com.armorlab.securedroid.ui.TrojanAdapter
-import kotlinx.coroutines.flow.first
 
 /** 查杀历史时间线:扫描记录按日期分组,回溯每天的扫描量与威胁数 */
 object Timeline {

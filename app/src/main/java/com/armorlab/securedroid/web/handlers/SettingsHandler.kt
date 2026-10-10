@@ -147,7 +147,10 @@ class SettingsHandler(
     }
 
     private fun postToast(res: Int) {
-        Toast.makeText(activity, res, Toast.LENGTH_SHORT).show()
+        // Toast 必须在主线程:本 handler 的动作可能运行在 Default 调度器上
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            Toast.makeText(activity, res, Toast.LENGTH_SHORT).show()
+        }
     }
 
     /* ---------------- 安全设置:关于 / 检查更新(改为HTML模态框事件) ---------------- */

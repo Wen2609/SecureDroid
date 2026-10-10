@@ -14,7 +14,7 @@ object SignatureStats {
         return listOf(
             TrojanAdapter.UiItem(
                 "Sig.Builtin", "内置哈希特征库",
-                "当前 " + SignatureDatabase.size() + " 条(含演示特征,可经 signatures.txt 扩充)",
+                "当前 " + SignatureDatabase.size() + " 条(含演示特征)",
                 ThreatLevel.LOW, null, null
             ),
             TrojanAdapter.UiItem(
