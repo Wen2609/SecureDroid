@@ -194,3 +194,9 @@
 - **隔离区记录同步落盘**:`quarantine`/`removeRecord` 用 `commit()`(文件已移动,记录丢失 = 幽灵文件);lint 的 ApplySharedPref 警告在此处是有意保留,勿"修"回 apply。记录构造走 `Quarantine.buildRecord`(原因 `|` 清洗,QuarantineRecordTest 会拦)。
 - **FeatureUpdater 自动回滚**:`applyUpdate` 热重载后若 `signatureCount() == 0` 且有备份,自动还原备份并重载、记 ok:false 历史;改这里必须跑 `FeatureUpdaterHistoryTest`。
 - **死代码基线**:v1.0.0 已清理全部无调用点公开函数与死桥接;`PrivilegeManager.exec`(架构入口,DatabaseAndManagersTest 引用)、`TtlCache.invalidate` 等仅测试引用的成员是测试锚点,不删。旧 `signatures.txt` 本地更新通道已删,特征更新唯一通道 = URL+SHA-256 → files/clamav。
+
+## v1.0.1 新增约定(依据官方文档的加固)
+- **WebView 设置不变量**(MainActivity + LockActivity):`allowFileAccess=false`、`allowContentAccess=false`。依据官方 WebSettings 文档:这两项只影响文件系统/content:// 访问,`file:///android_asset` 加载不受影响 —— 界面资源全在 assets,别"顺手"改回 true(会重新打开本地文件攻击面)。MainActivity 另设 `setRendererPriorityPolicy(RENDERER_PRIORITY_WAIVED, true)`(渲染器后台可回收,扫描全在原生侧);**LockActivity 有意不设**(锁屏可靠性优先),别补。
+- **备份规则**:manifest 同时声明 `fullBackupContent`(API≤30,res/xml/backup_rules.xml)与 `dataExtractionRules`(API 31+,全排除)。allowBackup=false + 两套显式排除是安全应用姿态,lint DataExtractionRules 已消;改备份策略前先想清楚 files/ 里有隔离区与崩溃栈,不许参与备份。
+- **漏洞扫描基线**:`INSTALL_NON_MARKET_APPS`(API 26 废弃)已弃用;未知来源检查 = 审计声明 `REQUEST_INSTALL_PACKAGES` 的第三方应用(PackageSnapshot + GET_PERMISSIONS)。别再读那个全局设置(恒 0)。
+- **评估否决记录**:Gradle configuration cache 不启用(KSP1 支持不完整 + 构建堆 1.5GB 内存受限,详见 CHANGELOG 1.0.1);Kotlin/KSP 升 2.x 后可重评。

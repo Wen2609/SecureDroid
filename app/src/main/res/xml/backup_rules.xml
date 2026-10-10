@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto Backup 规则(Android 11 及以下,API ≤ 30;Android 12+ 走 data_extraction_rules):
+     安全应用不参与任何备份,显式全量排除,与 data_extraction_rules 姿态一致 -->
+<full-backup-content>
+    <exclude domain="root" />
+    <exclude domain="file" />
+    <exclude domain="database" />
+    <exclude domain="sharedpref" />
+    <exclude domain="external" />
+</full-backup-content>

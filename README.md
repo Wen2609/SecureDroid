@@ -63,6 +63,7 @@
 - **DNS 防护与崩溃捕获(v1.9.29)**:**DNS 防护(实验)** —— 基于 VpnService 的本地 DNS 过滤:只把伪造 DNS 地址(/32)路由进隧道,其余流量零感知;捕获系统 DNS 查询做黑名单判定,命中回 NXDOMAIN,未命经受保护 socket 转发真实上游;系统授权对话框 + 开机自动恢复,**不读取/不记录/不上传任何用户流量**;**崩溃捕获** —— 未捕获异常落盘本地(保留 10 份),病毒中心新增「崩溃日志导出」查看并经系统分享导出,绝不做静默网络上报。共 189 项 JVM 测试。
 - **安全审计修复与死代码清理,正式版(v1.0.0)**:全量代码审计修复 18 处缺陷 —— **网络审计远端 IP 字节序反转**(黑名单匹配被系统性绕过)、**仿冒域名漏报**(`notgoogle.com` 类被放行)、**畸形特征行被当全通配**(误报面)、**特征库索引热重载竞态**(原子快照发布)、**关键文件解锁假成功**、**坏更新自动回滚**、**DNS 防护有界线程池**(防流量洪泛耗尽资源)、**扫描取消按类型隔离**(并发扫描不再互相踩踏)、VPN 停止改 `stopService`、隔离记录同步落盘等;前端修复三个工具页加载转圈永不消失、病毒中心 7 个无实现菜单入口(「特征库更新」接入更新对话框,其余 6 项移除)、专项检测按钮置灰与状态重放;清理 32 个无调用点函数/死桥接/孤儿字符串。共 184 项 JVM 测试(2 项无签名环境显式跳过)。
 - **版本方案(2026-10-11 起)**:版本号切换为 **1.0.x** 方案,1.0.0 为首个正式版;此前 1.9.x 迭代序号停用(历史记录存档于 CHANGELOG「旧版本方案」小节)。`versionCode` 保持单调递增(1.0.0 = 46),已装旧版可直接覆盖升级。
+- **依据官方文档的加固与优化(v1.0.1)**:WebView 攻击面收紧(两个 WebView 的 `allowFileAccess`/`allowContentAccess` 显式关闭,assets 加载不受影响,依据 WebSettings 官方语义);主界面 WebView 渲染器后台可回收(`RENDERER_PRIORITY_WAIVED`,扫描任务全在原生侧);备份规则补齐 API 26–30 显式全排除(`fullBackupContent`,与 Android 12+ 规则同姿态);漏洞扫描"未知来源"检查重写 —— 废弃 API `INSTALL_NON_MARKET_APPS`(恒读 0)改为审计声明 `REQUEST_INSTALL_PACKAGES` 的第三方应用。Gradle configuration cache 经评估否决(KSP1 支持不完整 + 构建内存受限),决策记录于 CHANGELOG。共 184 项 JVM 测试。
 
 ## 技术栈
 
@@ -251,12 +252,12 @@ JS 桥接到真实原生功能;每个入口都是真实实现,不造空壳。纯
       keyPassword=******
 
 - 该文件缺失时 release 自动回退为未签名构建,保证 CI 与协作者无需密钥也能构建;
-- 已产出的可安装签名包见 apks/SecureDroid-v1.0.0-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
+- 已产出的可安装签名包见 apks/SecureDroid-v1.0.1-release-signed.apk(APK Signature Scheme v2 + v3,RSA 4096):
 
-    SHA-256 3C0126F363998F40799050E1BF58FDB5D8E71A52F72A98B773BAD813B197CE6B
-    大小    2,459,360 字节    versionCode 46 / versionName 1.0.0(新版本方案首个正式版:安全审计修复 + 死代码清理)
+    SHA-256 7615DBE026D069B95E72329768895EA645594CBA621F3B4949FC0E90123AE980
+    大小    2,460,058 字节    versionCode 47 / versionName 1.0.1(依据官方文档的 WebView 加固 + 备份规则补齐 + 未知来源审计重写)
 
-  更早版本 apks/SecureDroid-v1.9.29-release-signed.apk(versionCode 44,DNS 防护 VpnService + 崩溃捕获与导出)、apks/SecureDroid-v1.9.28-release-signed.apk(versionCode 43,隔离区恢复 + 原因展示;生物识别解锁;特征库自动更新/断点续传/回滚;恶意链接检测;.ldb 逻辑签名)、apks/SecureDroid-v1.9.23-release-signed.apk(versionCode 38,统一错误态组件 + 失败可重试;特征库内存兜底;深色三态;ClamAV .hdb MD5)、apks/SecureDroid-v1.9.16-release-signed.apk(versionCode 31,初始化强制模式选择:标准/无线调试/超级用户 + 分区重排 + 系统栏适配)、
+  更早版本 apks/SecureDroid-v1.0.0-release-signed.apk(versionCode 46,新版本方案首个正式版:安全审计修复 + 死代码清理)、apks/SecureDroid-v1.9.29-release-signed.apk(versionCode 44,DNS 防护 VpnService + 崩溃捕获与导出)、apks/SecureDroid-v1.9.28-release-signed.apk(versionCode 43,隔离区恢复 + 原因展示;生物识别解锁;特征库自动更新/断点续传/回滚;恶意链接检测;.ldb 逻辑签名)、apks/SecureDroid-v1.9.23-release-signed.apk(versionCode 38,统一错误态组件 + 失败可重试;特征库内存兜底;深色三态;ClamAV .hdb MD5)、apks/SecureDroid-v1.9.16-release-signed.apk(versionCode 31,初始化强制模式选择:标准/无线调试/超级用户 + 分区重排 + 系统栏适配)、
   apks/SecureDroid-v1.9.15-release-signed.apk(versionCode 30,全界面 HTML 化:消除全部原生 Activity/对话框,深层工具页改 HTML 子页面 + 异步桥路由微内核)、
   apks/SecureDroid-v1.9.13-release-signed.apk(versionCode 28,WebUI 交互升级:扫描可取消 + 结果按威胁折叠 + 开关整行可点 + 触摸目标达标)、
   apks/SecureDroid-v1.9.12-release-signed.apk(versionCode 27,UI 与 WebView 性能优化:加密存储单例 / 聚合查询 / 进度节流 / 图标懒加载)、

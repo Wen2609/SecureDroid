@@ -4,6 +4,24 @@
 
 > **版本方案(2026-10-11 起)**:版本号采用 **1.0.x** 方案,1.0.0 为新方案首个正式版;此前沿用的 1.9.x 迭代序号**停用**,完整历史保留在下方「旧版本方案」小节仅作存档。`versionCode` 保持全局单调递增、不随方案切换重置,保证已安装旧版设备可直接覆盖升级。
 
+## [1.0.1] - 2026-10-11
+
+### Changed(优化,全部经官方文档核实后实施)
+
+- **WebView 攻击面收紧**(MainActivity + LockActivity):`allowFileAccess` 置 `false`、`allowContentAccess` 置 `false`。依据:官方 [WebSettings 文档](https://developer.android.com/reference/android/webkit/WebSettings#setAllowFileAccess(boolean)) 明确 `setAllowFileAccess(false)` 仅禁文件系统访问,`file:///android_asset` 与 `file:///android_res` 仍可访问(本项目界面资源全部来自 assets,不受影响);`setAllowContentAccess` 默认开启,允许 WebView 读取设备上任意 content provider,本项目 WebView 不加载 `content://`,显式关闭消除该攻击面(OWASP MASTG 对 WebView 文件/内容访问的加固建议)。
+- **主界面 WebView 渲染器后台可回收**:`setRendererPriorityPolicy(RENDERER_PRIORITY_WAIVED, true)` —— 应用退到后台时渲染进程可被系统回收,省内存省电;扫描/防护任务全在原生协程侧,不依赖后台 JS。依据:[WebView API 参考](https://developer.android.com/reference/android/webkit/WebView#setRendererPriorityPolicy(int,%20boolean))(API 25+,minSdk 26 覆盖)。锁屏页**有意不设**:锁屏可靠性优先,避免引入渲染器重载变数。
+- **备份规则补齐 API 26–30 显式全排除**:清单新增 `android:fullBackupContent="@xml/backup_rules"`(与 Android 12+ 的 `data_extraction_rules` 同姿态:安全应用不参与任何备份)。依据:官方 [Auto Backup 指南](https://developer.android.com/identity/data/autobackup) —— `fullBackupContent` 适用于 Android 11 及以下、`dataExtractionRules` 适用于 Android 12+;同时消除 lint `DataExtractionRules` 警告。
+- **漏洞扫描"未知来源"检查重写**:`Settings.Secure.INSTALL_NON_MARKET_APPS` 已在 API 26 废弃(Android 8.0 起全局开关移除,改为按应用授予 `REQUEST_INSTALL_PACKAGES`),旧检查在 minSdk 26 上恒读 0、形同虚设;改为审计声明 `REQUEST_INSTALL_PACKAGES` 的第三方应用(数量 + 前 3 个应用名,给出核减建议)。依据:[Settings.Secure 参考](https://developer.android.com/reference/android/provider/Settings.Secure#INSTALL_NON_MARKET_APPS)(API 26 废弃)与 [REQUEST_INSTALL_PACKAGES 权限文档](https://developer.android.com/reference/android/Manifest.permission#REQUEST_INSTALL_PACKAGES)。
+
+### 评估后否决(记录决策依据,防后人盲改)
+
+- **Gradle configuration cache**:AGP 8.x 基本兼容,但 KSP1(Kotlin 1.9.24 对应)对 configuration cache 支持不完整,且本机构建堆仅 1.5GB、曾因内存压力关闭并行(见 gradle.properties),稳定性优先,不启用;Kotlin/KSP 升级到 2.x 后可重评。
+- 其余候选已确认"无需做":资源收缩/代码收缩已开启、`font-display: swap` 已存在、`BridgeScope` 已是 SupervisorJob、WorkManager 约束(网络 + 电池)已符合官方建议。
+
+### Test
+
+- 全量 184 项 JVM 测试通过,0 失败;lintDebug 0 errors(DataExtractionRules 警告消除,无新增警告)。
+
 ## [1.0.0] - 2026-10-11
 
 (即原 1.9.30 的全部内容;版本方案切换后的第一个正式版)

@@ -39,7 +39,10 @@ class LockActivity : AppCompatActivity() {
         web.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
-            allowFileAccess = true
+            // 加固同 MainActivity:文件系统与 content:// 访问关闭(资源经 android_asset 加载不受影响);
+            // 锁屏可靠性优先,不设渲染器 WAIVED(避免后台渲染器被回收引入重载变数)
+            allowFileAccess = false
+            allowContentAccess = false
             builtInZoomControls = false
             displayZoomControls = false
         }

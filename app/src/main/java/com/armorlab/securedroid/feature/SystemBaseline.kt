@@ -3,7 +3,9 @@ package com.armorlab.securedroid.feature
 import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.app.KeyguardManager
+import android.content.pm.PackageManager
 import android.provider.Settings
+import com.armorlab.securedroid.core.PackageSnapshot
 import com.armorlab.securedroid.scan.ThreatLevel
 import java.io.File
 
@@ -69,11 +71,29 @@ object SystemBaseline {
             if (encrypted) ThreatLevel.LOW else ThreatLevel.MEDIUM,
             "加密状态 = " + encStatus, "现代设备默认开启,如未开启请加密存储"))
 
-        val unknown = Settings.Secure.getInt(context.contentResolver, "install_non_market_apps", 0) == 1
-        list.add(Check("未放宽未知来源安装", !unknown,
-            if (unknown) ThreatLevel.MEDIUM else ThreatLevel.LOW,
-            "未知来源 = " + (if (unknown) "允许" else "禁止"),
-            if (unknown) "按应用粒度授予安装权限,避免全局放开" else "保持现状"))
+        // Android 8.0(API 26)起全局"未知来源"开关已移除,安装未知应用改为按应用授予
+        // REQUEST_INSTALL_PACKAGES;全局设置 INSTALL_NON_MARKET_APPS 同版废弃(恒读 0,
+        // 旧检查在 minSdk 26 上形同虚设)。改为审计声明该权限的第三方应用面。
+        val installers = PackageSnapshot.installedPackages(context, PackageManager.GET_PERMISSIONS)
+            .filter { info ->
+                val app = info.applicationInfo ?: return@filter false
+                (app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0 &&
+                    info.requestedPermissions?.contains(
+                        android.Manifest.permission.REQUEST_INSTALL_PACKAGES
+                    ) == true
+            }
+        val installerNames = installers.take(3)
+            .mapNotNull { it.applicationInfo?.let { app -> PackageSnapshot.label(context, app) } }
+        list.add(
+            Check(
+                "安装未知应用权限收口", installers.isEmpty(),
+                if (installers.isEmpty()) ThreatLevel.LOW else ThreatLevel.MEDIUM,
+                "声明 REQUEST_INSTALL_PACKAGES 的第三方应用 " + installers.size + " 个" +
+                    (if (installerNames.isEmpty()) "" else ":" + installerNames.joinToString("、")),
+                if (installers.isEmpty()) "保持现状"
+                else "持有该权限的应用可绕过商店直接安装 APK,是恶意软件常见投递通道;在 系统设置 → 应用 → 特殊权限 中逐个核减"
+            )
+        )
 
         return list
     }

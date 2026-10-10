@@ -79,11 +79,16 @@ class MainActivity : AppCompatActivity() {
         web.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
-            allowFileAccess = true
-            allowContentAccess = true
+            // 加固(WebSettings 官方语义):文件系统与 content:// 访问关闭;
+            // 界面资源经 file:///android_asset 加载,不受这两项影响
+            allowFileAccess = false
+            allowContentAccess = false
             builtInZoomControls = false
             displayZoomControls = false
         }
+        // 渲染器后台可回收(WAIVED):界面全部在 WebView,扫描/防护任务全在原生协程侧,
+        // 退后台无需保留渲染进程(仅不可见时降级,前台行为不变)
+        web.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_WAIVED, true)
         web.addJavascriptInterface(bridge, "AndroidBridge")
         // 下拉刷新:重新拉取当前面板数据;转圈固定时长后收起
         // (数据加载走同步桥调用,时长足够覆盖,无需等待回调)

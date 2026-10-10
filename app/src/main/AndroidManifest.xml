@@ -19,6 +19,7 @@
     <application
         android:name=".SecureGuardApp"
         android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules"
         tools:targetApi="s"
         android:networkSecurityConfig="@xml/network_security_config"
