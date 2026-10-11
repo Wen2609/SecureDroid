@@ -54,7 +54,6 @@ class BridgeRouter(
 
         // 扫描(启动即返回,进度/结果走事件)
         put("startVirusScan", Action(false) { scan.startVirusScan(); null })
-        put("startTrojanScan", Action(false) { scan.startTrojanScan(); null })
         put("startRootkit", Action(false) { scan.startRootkitScan(); null })
         put("startModuleScan", Action(false) { scan.startModuleScan(); null })
         put("startLockerScan", Action(false) { scan.startLockerScan(); null })

@@ -177,12 +177,13 @@ class PerfGuardTest {
     }
 
     @Test
-    fun trojanProgressEventsMustBeThrottled() {
-        val scan = codeOnly("com/armorlab/securedroid/web/handlers/ScanHandler.kt")
+    fun progressEventsMustBeThrottled() {
+        // v1.0.3 合并后唯一全盘查杀走 ParallelScanner:进度经 400ms latch 等待循环节流,
+        // 逐包推送会让 UI 线程执行上百次 JS 注入
+        val parallel = codeOnly("com/armorlab/securedroid/vscan/ParallelScanner.kt")
         assertTrue(
-            "木马查杀进度必须按 PROGRESS_INTERVAL_MS 节流:逐包 evaluateJavascript " +
-                "会让 UI 线程执行上百次 JS 注入",
-            scan.contains("PROGRESS_INTERVAL_MS") && scan.contains("SystemClock.elapsedRealtime")
+            "并行查杀进度必须经 latch await 超时节流(不得逐包推送)",
+            parallel.contains("latch.await(400, TimeUnit.MILLISECONDS)")
         )
     }
 
@@ -192,10 +193,6 @@ class PerfGuardTest {
         assertTrue(
             "桥层必须提供 cancelScan()(WebUI 取消按钮依赖 ScanControl.requestCancelAll)",
             scan.contains("fun cancelScan(") && scan.contains("ScanControl.requestCancelAll()")
-        )
-        assertTrue(
-            "木马查杀循环必须响应取消(循环内检查自身类型的取消标记)",
-            scan.contains("if (ScanControl.isCancelled(\"trojan\")) break")
         )
     }
 }

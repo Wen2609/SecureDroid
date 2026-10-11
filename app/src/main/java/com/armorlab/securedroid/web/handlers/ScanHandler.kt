@@ -1,9 +1,7 @@
 package com.armorlab.securedroid.web.handlers
 
 import android.content.Context
-import android.os.SystemClock
 import com.armorlab.securedroid.R
-import com.armorlab.securedroid.core.PackageSnapshot
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.root.LockerDetector
@@ -21,7 +19,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * 扫描会话:病毒/木马/专项检测的启动、进度推送与取消。
+ * 扫描会话:病毒查杀(多引擎并行,唯一的全盘查杀入口)与专项检测的启动、进度推送与取消。
  *
  * 会话状态在进程级 [ScanSessions],本 handler 随 Activity 重建而重建,
  * 但"哪些扫描在跑"只有一份真相;新页面经 getScanState 重放进度。
@@ -37,7 +35,7 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
         sink.sendEvent(event, progressEvent(kind, done, total))
     }
 
-    /* ---------------- 全盘病毒扫描(并行多引擎) ---------------- */
+    /* ---------------- 病毒查杀(唯一全盘查杀入口:并行多引擎,含木马/恶意软件) ---------------- */
 
     suspend fun startVirusScan() {
         if (!ScanSessions.start("virus")) return
@@ -92,60 +90,6 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
         } finally {
             ScanSessions.finish("virus")
         }
-    }
-
-    /* ---------------- 木马查杀(逐包多引擎,支持取消) ---------------- */
-
-    suspend fun startTrojanScan() {
-        if (!ScanSessions.start("trojan")) return
-        ScanControl.reset("trojan")
-        try {
-            withContext(Dispatchers.Default) {
-                ClamAvSignatures.ensureLoaded(app)
-                val pkgs = PackageSnapshot.installedPackages(app, 0)
-                val items = JSONArray()
-                var infected = 0
-                var scanned = 0
-                // 进度事件节流:逐包推送会让 UI 线程执行上百次 evaluateJavascript,
-                // 进度条平滑度只取决于 CSS transition,300ms 一帧绰绰有余
-                var lastPost = 0L
-                for (info in pkgs) {
-                    if (ScanControl.isCancelled("trojan")) break
-                    val report = TrojanScanner.scanPackage(app, info.packageName)
-                    scanned++
-                    if (report.isInfected) {
-                        infected++
-                        items.put(reportToJson(report))
-                    }
-                    val now = SystemClock.elapsedRealtime()
-                    if (now - lastPost >= PROGRESS_INTERVAL_MS) {
-                        lastPost = now
-                        emitProgress("trojan", "trojanProgress", scanned, pkgs.size)
-                    }
-                }
-                val cancelled = ScanControl.isCancelled("trojan") && scanned < pkgs.size
-                val summary = when {
-                    cancelled -> app.getString(R.string.trojan_done, scanned, infected) +
-                        "(已取消，仅含已扫描部分)"
-                    else -> app.getString(R.string.trojan_done, pkgs.size, infected)
-                }
-                emitProgress("trojan", "trojanProgress", scanned, pkgs.size)
-                sink.sendEvent("trojanDone", JSONObject().put("items", items)
-                    .put("total", pkgs.size).put("summary", summary).toString())
-            }
-        } catch (t: Throwable) {
-            sink.sendEvent("trojanDone", JSONObject().put("items", JSONArray())
-                .put("total", 0).put("summary", "查杀失败：" + (t.message ?: "未知错误")).toString())
-        } finally {
-            ScanSessions.finish("trojan")
-        }
-    }
-
-    private fun reportToJson(r: TrojanScanner.Report): JSONObject {
-        val detail = r.detections.joinToString("；") { "[" + it.engine + "] " + it.name }
-        return JSONObject().put("title", r.appName).put("sub", r.packageName)
-            .put("detail", detail)
-            .put("level", r.worstLevel?.name)
     }
 
     /* ---------------- 专项检测:Rootkit / 恶意模块 / 锁机 ---------------- */
@@ -225,17 +169,12 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
         ScanControl.requestCancelAll()
     }
 
-    /** 新页面上线时重放进行中的扫描(virus/trojan 有进度 UI) */
+    /** 新页面上线时重放进行中的扫描(virus 有进度 UI,专项检测有按钮置灰态) */
     suspend fun scanState(): String {
         val arr = JSONArray()
         ScanSessions.snapshot().forEach { (kind, done, total) ->
             arr.put(JSONObject().put("action", kind).put("done", done).put("total", total))
         }
         return JSONObject().put("active", arr).toString()
-    }
-
-    companion object {
-        /** 木马查杀进度事件最小间隔(毫秒) */
-        const val PROGRESS_INTERVAL_MS = 300L
     }
 }

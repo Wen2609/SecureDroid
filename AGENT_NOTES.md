@@ -79,7 +79,7 @@
 - 深层工具页(VirusCenter/DeepScan/NetworkAudit/Privacy/Vulnerability)是 index.html 内嵌的 **HTML 子页面**,经 BridgeRouter 的 openSubPage 事件切换;数据由 `web/handlers/ToolsHandler.kt` 桥接。新增工具页 = index.html 加子页面 DOM + app.js 渲染/路由 + BridgeRouter 注册 action + ToolsHandler 提供数据
 - **运行模式(v1.9.16)**:首次启动必须经 `modeOverlay` 强制选择 **标准模式 / 无线调试模式 / 超级用户模式**(名称不可改)。`web/AppMode.kt` 定义三档,`AppModeStore` 持久化,`ModeHandler` 提供 getMode/setMode。**各模式只可用有权限功能**:Root 级工具仅超级用户,Shell 级工具需无线调试/超级用户,ToolsHandler 的 `toolAllowed()` 统一门控,`getVirusCenterMenu` 按模式过滤并缓存;Root 开关仅超级用户模式可见(SettingsHandler.toggleRoot 后端拒绝非超级用户)。
 - **模式权限强制(v1.9.17)**:选择模式后必须授予该模式所需权限才能进入主界面 —— 标准=通知;无线调试=通知+使用情况访问(`PACKAGE_USAGE_STATS`);超级用户=通知+Root。`ModeHandler` 返回 `permissions` 数组,前端 `renderModePerms` 引导;`openPermissionSettings` 桥接跳转系统设置,root 键触发 su 授权并把结果经 `modePermissions` 事件回推。
-- **分区布局**:隐私检测/漏洞扫描入口在应用防护→权限审计页(应用与系统检测区);扩展功能只放防护开关/网络审计/安全设置,页标题 `#modeBadge` 显示当前模式。
+- **分区布局(v1.0.3 重排)**:隐私检测/漏洞扫描入口在应用防护→权限审计页(应用与系统检测区);安全防护 = 病毒查杀 + 专项检测 两段(病毒扫描与木马查杀已合并为单一入口 startVirusScan);扩展功能 = 防护开关 / 工具(深度查杀+病毒中心+网络审计)/ 设置(主题+检查更新+关于),页标题 `#modeBadge` 显示当前模式。主页四磁贴 = 病毒查杀/专项检测/权限审计/应用锁。
 - **Pad 适配(v1.9.17)**:index.html CSS 有 `@media (min-width:600px/960px)` 把 `.app` 放宽到 720/880px、快捷网格改 4 列。改大屏布局时同步维护媒体查询,勿把手机单列布局写死。
 - 布局属性是 android:layoutAnimation(不是 layout_animation);ResourceReferenceTest 已加断言拦截
 
@@ -206,3 +206,8 @@
 - **权限申请与校验不变量**:通知权限申请 = 系统运行时对话框(仅由权限引导「去授权」按钮触发,不在冷启动自动弹),回调回推 `modePermissions` 事件;勾"不再询问"后转跳系统设置兜底(MainActivity.openNotificationSettings)。`openPermissionSettings("notification")` 走 `activity.requestNotificationPermission()`,不许改回纯跳设置页。
 - **启动权限复查**:app.js `init()` 对已选模式的老用户同样复查 `permissions`,不足即显示 `#modeOverlay` 权限引导;`modePermissions` 事件处理区分 `selected` —— 未选模式只恢复选择卡(restoreModeSelection),不许直接 finishModeSetup(否则新装用户授权后会被默认塞进标准模式)。
 - renderModePerms 不改写外层 #modeTitle/.mode-subtitle(选择页文案靠 #modePerms 自带头部)。
+
+## v1.0.3 新增约定
+- **查杀合并**:病毒扫描与木马查杀合并为单一「病毒查杀」——唯一后端入口 `startVirusScan`(ParallelScanner 并行多引擎 + Room 落库 + kind="virus" 取消)。`startTrojanScan` 桥接/trojanProgress/trojanDone 事件/trojan_done 文案/PROGRESS_INTERVAL_MS 已删,勿复活;ScanSessions 不再有 "trojan" kind。
+- **专项检测段**:安全防护面板第二段 data-seg="special"(btnRootkit/btnModules/btnLocker → 结果卡 specialHead/specialResults,JS renderSpecial);深度查杀/病毒中心入口移至扩展功能→工具区(btnDeepScan/btnVirusCenter 绑定不变)。
+- **守卫同步**:PerfGuardTest 进度节流断言改指 ParallelScanner latch 400ms;WebUiGuardTest 取消按钮断言只查 btnVirusCancel;改扫描相关 DOM/事件前先 grep app/src/test。

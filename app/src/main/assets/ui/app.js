@@ -7,7 +7,7 @@
                                        无 AndroidBridge(纯 HTML 预览)时由
                                        demoRequest 数据源适配器接住
      Store store.set/subscribe       — 面板状态单一来源,渲染函数只吃数据
-   覆盖功能:首页概览 / 病毒扫描 / 木马查杀 / Rootkit / 恶意模块 / 锁机检测 /
+   覆盖功能:首页概览 / 病毒查杀(合并原木马查杀)/ Rootkit / 恶意模块 / 锁机检测 /
    应用锁(搜索过滤 + PIN 弹窗 + 无障碍)/ 权限审计 / 工具箱开关 / 扫描进度重放
    ============================================================ */
 (function () {
@@ -98,8 +98,8 @@
       case 'getAudit': return demoAudit();
       case 'getToggles': return demoToggles();
       case 'startVirusScan': demoVirus(); return {};
-      case 'startTrojanScan': case 'startRootkit':
-      case 'startModuleScan': case 'startLockerScan': demoTrojan(); return {};
+      case 'startRootkit':
+      case 'startModuleScan': case 'startLockerScan': demoSpecial(); return {};
       default: return {};
     }
   }
@@ -208,7 +208,7 @@
     api.send('haptic');
   }
 
-  /* 更新卡头计数(扫描结果/木马检测结果) */
+  /* 更新卡头计数(查杀结果/专项检测结果) */
   function setCardHeadCount(id, label, count) {
     var h = qs(id);
     if (!h) return;
@@ -244,13 +244,9 @@
   function applyScanState(s) {
     if (!s || !s.action) return;
     if (s.action === 'virus') {
-      setScanUi(s.done, s.total, '全盘扫描中 ' + s.done + ' / ' + s.total + '（' + scanPct(s.done, s.total) + '%）');
+      setScanUi(s.done, s.total, '全盘查杀中 ' + s.done + ' / ' + s.total + '（' + scanPct(s.done, s.total) + '%）');
       setScanBusy('#btnVirusScan', true);
       showCancel('#btnVirusCancel', s.total > 0 && s.done < s.total);
-    } else if (s.action === 'trojan') {
-      setScanUi(s.done, s.total, '木马查杀中 ' + s.done + ' / ' + s.total + '（' + scanPct(s.done, s.total) + '%）');
-      setScanBusy('#btnTrojanScan', true);
-      showCancel('#btnTrojanCancel', s.total > 0 && s.done < s.total);
     } else if (s.action === 'rootkit' || s.action === 'modules' || s.action === 'locker') {
       setToolScanBusy(true);
       setScanUi(0, 0, '专项检测进行中…');
@@ -365,7 +361,7 @@
     if (pr) pr.textContent = (d.protected || 0) + ' 项';
 
     setAct('#actScan', '病毒扫描完成',
-      d.lastScanAt ? fmtTime(d.lastScanAt) + ((d.threats || 0) > 0 ? ' · 发现 ' + d.threats + ' 个威胁' : ' · 未发现威胁') : '点击「立即扫描」开始全盘扫描');
+      d.lastScanAt ? fmtTime(d.lastScanAt) + ((d.threats || 0) > 0 ? ' · 发现 ' + d.threats + ' 个威胁' : ' · 未发现威胁') : '点击「立即扫描」开始全盘查杀');
     setAct('#actClean', '隐私权限审计',
       (d.risky || 0) > 0 ? '高风险应用 ' + d.risky + ' 个，建议前往权限审计' : '未发现高风险权限应用');
     setAct('#actRisk', '应用锁',
@@ -497,7 +493,7 @@
   }
 
   on('virusProgress', function (d) {
-    setScanUi(d.done, d.total, '全盘扫描中 ' + d.done + ' / ' + d.total + '（' + scanPct(d.done, d.total) + '%）');
+    setScanUi(d.done, d.total, '全盘查杀中 ' + d.done + ' / ' + d.total + '（' + scanPct(d.done, d.total) + '%）');
     showCancel('#btnVirusCancel', true);
   });
 
@@ -509,7 +505,7 @@
     if (!box) return;
     box.textContent = '';
     var rows = d.results || [];
-    setCardHeadCount('#virusHead', '扫描结果', rows.length);
+    setCardHeadCount('#virusHead', '查杀结果', rows.length);
     // 只渲染感染/可疑项;全部干净时不再铺几百行"安全",直接给摘要
     var hits = rows.filter(function (r) { return r.infected; });
     if (!hits.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现威胁，设备安全。', 'green')); loadDashboard(); return; }
@@ -540,19 +536,9 @@
     loadDashboard();
   });
 
-  /* ---------------- 木马查杀 / 专项检测 ---------------- */
+  /* ---------------- 专项检测(Rootkit / 恶意模块 / 锁机) ---------------- */
 
-  function startTrojanScan() {
-    setScanUi(0, 0, '正在加载签名库…');
-    var box = qs('#trojanResults');
-    if (box) box.textContent = '';
-    setScanBusy('#btnTrojanScan', true);
-    showCancel('#btnTrojanCancel', false);
-    hapticTap();
-    api.send('startTrojanScan');
-  }
-
-  /* 专项检测按钮(Rootkit/模块/锁机)统一置灰与恢复,防止扫描期间重复点击无反馈 */
+  /* 专项检测按钮统一置灰与恢复,防止扫描期间重复点击无反馈 */
   function setToolScanBusy(busy) {
     setScanBusy('#btnRootkit', busy);
     setScanBusy('#btnModules', busy);
@@ -561,25 +547,23 @@
 
   function runToolScan(label, action) {
     setScanUi(0, 0, label);
-    var box = qs('#trojanResults');
+    var box = qs('#specialResults');
     if (box) box.textContent = '';
     setToolScanBusy(true);
     hapticTap();
     api.send(action);
   }
 
-  function renderTrojan(d) {
-    setScanBusy('#btnTrojanScan', false);
+  function renderSpecial(d) {
     setToolScanBusy(false);
-    showCancel('#btnTrojanCancel', false);
     var total = d.total || (d.items || []).length;
     setScanUi(total, total, d.summary || '检测完成');
-    var box = qs('#trojanResults');
+    var box = qs('#specialResults');
     if (!box) return;
     box.textContent = '';
     var items = d.items || [];
-    setCardHeadCount('#trojanHead', '木马检测结果', items.length);
-    if (!items.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现木马。', 'green')); loadDashboard(); return; }
+    setCardHeadCount('#specialHead', '专项检测结果', items.length);
+    if (!items.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现风险。', 'green')); loadDashboard(); return; }
     var frag = document.createDocumentFragment();
     items.forEach(function (it) {
       frag.appendChild(resultRow(it.title, it.sub + (it.detail ? ' · ' + it.detail : ''), levelText(it.level), levelCls(it.level),
@@ -589,14 +573,9 @@
     loadDashboard();
   }
 
-  on('trojanProgress', function (d) {
-    setScanUi(d.done, d.total, '木马查杀中 ' + d.done + ' / ' + d.total + '（' + scanPct(d.done, d.total) + '%）');
-    showCancel('#btnTrojanCancel', true);
-  });
-  on('trojanDone', renderTrojan);
-  on('rootkitDone', renderTrojan);
-  on('modulesDone', renderTrojan);
-  on('lockerDone', renderTrojan);
+  on('rootkitDone', renderSpecial);
+  on('modulesDone', renderSpecial);
+  on('lockerDone', renderSpecial);
 
   /* ---------------- 应用锁 ---------------- */
 
@@ -862,9 +841,7 @@
 
   bind('btnHeroScan', function () { hapticTap(); window.__sdGoto('security', 'scan'); });
   bind('btnVirusScan', startVirusScan);
-  bind('btnTrojanScan', startTrojanScan);
   bind('btnVirusCancel', function () { requestCancelScan('#btnVirusCancel'); });
-  bind('btnTrojanCancel', function () { requestCancelScan('#btnTrojanCancel'); });
   bind('btnRootkit', function () { runToolScan('正在检测 Rootkit / 提权后门…', 'startRootkit'); });
   bind('btnModules', function () { runToolScan('正在检测恶意模块 / SU 脚本…', 'startModuleScan'); });
   bind('btnLocker', function () { runToolScan('正在检测锁机软件…', 'startLockerScan'); });
@@ -1150,9 +1127,9 @@
       }
     }, 60);
   }
-  function demoTrojan() {
-    window.__sdEvent('trojanDone', JSON.stringify({
-      total: 1, items: [], summary: '木马查杀完成，未发现木马。'
+  function demoSpecial() {
+    window.__sdEvent('rootkitDone', JSON.stringify({
+      total: 1, items: [], summary: '专项检测完成，未发现风险。'
     }));
   }
 

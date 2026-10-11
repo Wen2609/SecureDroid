@@ -200,10 +200,11 @@ class WebUiGuardTest {
 
     @Test
     fun scanMustBeCancellableFromWebUi() {
+        // v1.0.3 起病毒查杀与木马查杀合并为单一入口,取消按钮只保留 btnVirusCancel
         val js = asset("ui/app.js")
         assertTrue(
-            "病毒/木马扫描必须提供取消按钮与取消流程(btnVirusCancel / btnTrojanCancel / requestCancelScan)",
-            js.contains("btnVirusCancel") && js.contains("btnTrojanCancel") && js.contains("requestCancelScan")
+            "全盘查杀必须提供取消按钮与取消流程(btnVirusCancel / requestCancelScan)",
+            js.contains("btnVirusCancel") && js.contains("requestCancelScan")
         )
     }
 
