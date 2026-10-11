@@ -472,6 +472,7 @@ html[data-theme="dark"] .card{border-color:rgba(255,255,255,.07);box-shadow:var(
 
 /* 病毒中心菜单 */
 .vc-menu .card-list{padding:4px 0}
+.vc-group{padding:14px 20px 6px;font-size:12px;font-weight:700;color:var(--c-muted);letter-spacing:.04em}
 
 /* ============================================================
    HTML 模态框(替代原生 AlertDialog)
@@ -1533,16 +1534,16 @@ html[data-theme="dark"] .dock{
         <span class="feature-sub">全盘多引擎查杀</span>
       </button>
 
-      <button class="card feature-tile" data-goto="security" data-seg="special">
-        <span class="feature-icon tint-amber">
+      <button class="card feature-tile" id="tileVc">
+        <span class="feature-icon tint-green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="7.5" y="8.5" width="9" height="11" rx="4.5"/>
-            <path d="M12 8.5V6.2M9.3 6.6 7.6 4.9M14.7 6.6l1.7-1.7M7.5 12H4.2M7.5 16H4.6M16.5 12h3.3M16.5 16h2.9"/>
+            <path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>
+            <path d="m9 12 2.2 2.2L15.4 10"/>
           </svg>
         </span>
-        <span class="feature-title">专项检测</span>
-        <span class="feature-sub">Rootkit · 模块 · 锁机</span>
+        <span class="feature-title">病毒风险中心</span>
+        <span class="feature-sub">签名库 · 隔离区 · 更新</span>
       </button>
 
       <button class="card feature-tile" data-goto="app" data-seg="audit">
@@ -1624,12 +1625,7 @@ html[data-theme="dark"] .dock{
 
     <h1 class="page-title standalone">安全防护</h1>
 
-    <div class="seg-track">
-      <button class="seg is-active" data-seg="scan">病毒查杀</button>
-      <button class="seg" data-seg="special">专项检测</button>
-    </div>
-
-    <!-- 病毒查杀(合并原「病毒扫描」与「木马查杀」:同一套多引擎并行查杀) -->
+    <!-- 病毒查杀(唯一查杀入口:应用多引擎 + Rootkit/恶意模块/锁机 专项一并执行) -->
     <div class="seg-body is-active" data-body="scan">
       <div class="card scan-card">
         <div class="scan-circle">
@@ -1638,7 +1634,7 @@ html[data-theme="dark"] .dock{
             <circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/>
           </svg>
         </div>
-        <p class="scan-hint" aria-live="polite">多引擎全盘查杀恶意软件与木马</p>
+        <p class="scan-hint" aria-live="polite">一键查杀:多引擎应用扫描 + Rootkit/恶意模块/锁机专项</p>
         <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i style="width:0%"></i></div>
         <button class="btn btn-primary btn-block" id="btnVirusScan">开始全盘查杀</button>
         <button class="btn btn-ghost btn-block is-hidden" id="btnVirusCancel" data-label="取消查杀">取消查杀</button>
@@ -1647,67 +1643,6 @@ html[data-theme="dark"] .dock{
       <div class="card result-card" id="virusCard">
         <h3 class="card-head" id="virusHead">查杀结果</h3>
         <div class="empty-hint" id="virusResults">暂无查杀结果</div>
-      </div>
-    </div>
-
-    <!-- 专项检测(Rootkit / 恶意模块 / 锁机) -->
-    <div class="seg-body" data-body="special">
-      <div class="card scan-card">
-        <div class="scan-circle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="7.5" y="8.5" width="9" height="11" rx="4.5"/>
-            <path d="M12 8.5V6.2M9.3 6.6 7.6 4.9M14.7 6.6l1.7-1.7M7.5 12H4.2M7.5 16H4.6M16.5 12h3.3M16.5 16h2.9"/>
-          </svg>
-        </div>
-        <p class="scan-hint" aria-live="polite">点击下方检测项开始,结果在此展示</p>
-        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i style="width:0%"></i></div>
-      </div>
-
-      <div class="card card-list result-card">
-        <button class="row" id="btnRootkit">
-          <span class="row-tool-icon tint-green">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3.2 5 6v5.4c0 4.2 2.9 8 7 9.4 4.1-1.4 7-5.2 7-9.4V6z"/>
-              <path d="M12 8v5M12 16.5v.01"/>
-            </svg>
-          </span>
-          <span class="row-body"><span class="row-title">Rootkit / 提权后门检测</span></span>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </button>
-        <button class="row" id="btnModules">
-          <span class="row-tool-icon tint-purple">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3.6" y="3.6" width="7" height="7" rx="2.2"/>
-              <rect x="13.4" y="3.6" width="7" height="7" rx="2.2"/>
-              <rect x="3.6" y="13.4" width="7" height="7" rx="2.2"/>
-              <rect x="13.4" y="13.4" width="7" height="7" rx="2.2"/>
-            </svg>
-          </span>
-          <span class="row-body"><span class="row-title">恶意模块 / SU 脚本检测</span></span>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </button>
-        <button class="row" id="btnLocker">
-          <span class="row-tool-icon tint-amber">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/>
-              <path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>
-            </svg>
-          </span>
-          <span class="row-body"><span class="row-title">锁机软件检测</span></span>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </button>
-      </div>
-
-      <div class="card result-card">
-        <h3 class="card-head" id="specialHead">专项检测结果</h3>
-        <div class="empty-hint" id="specialResults">暂无检测结果</div>
       </div>
     </div>
   </main>
@@ -1844,14 +1779,6 @@ html[data-theme="dark"] .dock{
 
       <h3 class="card-head section-head">应用与系统检测</h3>
       <div class="card card-list">
-        <button class="row" id="btnPrivacy">
-          <span class="row-body">
-            <span class="row-title">隐私检测</span>
-            <span class="row-sub">扫描敏感权限调用</span>
-          </span>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
-        </button>
         <button class="row" id="btnVuln">
           <span class="row-body">
             <span class="row-title">漏洞扫描</span>
@@ -2035,28 +1962,6 @@ html[data-theme="dark"] .dock{
           <div class="progress-ring"><div class="progress-spinner"></div></div>
         </div>
         <div class="result-list" id="netList"></div>
-      </div>
-    </section>
-
-    <!-- 隐私检测 -->
-    <section class="subpage-body" data-subpage="privacy">
-      <header class="subpage-header">
-        <button class="subpage-back" aria-label="返回">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
-        </button>
-        <div class="subpage-title-wrap">
-          <h1 class="subpage-title">隐私检测</h1>
-          <p class="subpage-subtitle">扫描应用敏感权限使用</p>
-        </div>
-      </header>
-      <div class="subpage-content">
-        <div class="card status-card">
-          <div class="status-indicator"></div>
-          <span class="status-text skeleton-text" id="privStatus">加载中…</span>
-          <div class="progress-ring"><div class="progress-spinner"></div></div>
-        </div>
-        <div class="result-list" id="privList"></div>
       </div>
     </section>
 

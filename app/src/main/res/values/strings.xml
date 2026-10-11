@@ -20,11 +20,6 @@
     <string name="realtime_text">正在监控应用安装与更新</string>
     <string name="threat_found_title">发现恶意应用!</string>
     <string name="accessibility_desc">安卫应用锁使用无障碍服务检测前台应用,在受保护应用启动时要求输入 PIN 码。</string>
-    <string name="rootkit_done">Rootkit 检测完成:发现 %1$d 项可疑痕迹</string>
-    <string name="rootkit_clean">未发现 Rootkit 痕迹</string>
-    <string name="modules_done">模块扫描完成:发现 %1$d 项可疑 / 恶意</string>
-    <string name="modules_clean">模块与 su 脚本未发现恶意行为</string>
-    <string name="modules_no_access">未检测到可读的模块目录;如已 root,请在 KernelSU / APatch / SukiSU / Magisk 管理器中为本应用授予 su 权限</string>
     <string name="root_mode_on">Root 模式:已启用(即时检测 + 自动杀毒可用)</string>
     <string name="root_mode_off">Root 模式:未启用(开启下方开关将请求 su 授权)</string>
     <string name="toast_root_enabled">Root 模式已启用,自动杀毒生效中</string>
@@ -38,8 +33,6 @@
     <string name="perm_root_label">Root 授权</string>
     <string name="perm_root_desc">用于自动杀毒、关键文件锁定、断网应急等超级用户功能</string>
     <string name="auto_disinfect_title">自动杀毒</string>
-    <string name="locker_done">锁机检测完成:发现 %1$d 项风险</string>
-    <string name="locker_clean">未发现锁机软件与可疑设备管理员</string>
     <string name="lock_too_many_attempts">尝试次数过多,请等待 %1$d 秒后再试</string>
     <string name="lock_alarm_triggered">检测到暴力破解尝试,已鸣响警报!</string>
     <string name="vc_recent">综合深扫(最近 7 天安装)</string>
@@ -79,8 +72,6 @@
     <string name="vc_phishing_sub">输入网址检查恶意与仿冒特征</string>
     <string name="vc_rollback_sub">恢复到上一版特征库文件</string>
     <string name="vc_crash_sub">本地崩溃记录查看与分享</string>
-    <string name="va_parallel">并行全盘查杀</string>
-    <string name="va_parallel_sub">4 线程并发多引擎扫描,可取消</string>
     <string name="va_resultdiff">与上次结果对比</string>
     <string name="va_resultdiff_sub">新增威胁 / 已消除威胁快照对比</string>
     <string name="va_family">木马家族分类</string>
@@ -93,19 +84,15 @@
     <string name="va_netkill_sub">iptables 按 UID 切断/恢复应用联网</string>
     <string name="va_vpn">VPN / 流量劫持面检测</string>
     <string name="va_vpn_sub">枚举可截获全部流量的应用</string>
-    <string name="va_attack">组件暴露面分析</string>
-    <string name="va_attack_sub">exported 组件与 Provider 泄露面</string>
     <string name="va_origin">安装来源检测</string>
     <string name="va_origin_sub">侧载(来源不明)应用告警</string>
     <string name="va_cert">证书信任审计</string>
     <string name="va_cert_sub">签名指纹白名单与严格模式</string>
-    <string name="va_phase_parallel">并行查杀中…</string>
     <string name="va_phase_resultdiff">对比扫描中…</string>
     <string name="va_phase_family">家族分类扫描中…</string>
     <string name="va_phase_timeline">正在生成时间线…</string>
     <string name="va_phase_netblock">正在比对黑名单…</string>
     <string name="va_phase_vpn">正在枚举 VPN 应用…</string>
-    <string name="va_phase_attack">正在分析组件暴露面…</string>
     <string name="va_phase_origin">正在检测安装来源…</string>
     <string name="va_phase_cert">正在审计证书指纹…</string>
     <string name="va_phase_netkill">正在读取断网状态…</string>
@@ -143,40 +130,12 @@
     <string name="about_license">仅用于安全研究;请勿用于非法用途</string>
 
     <!-- 隐私检测结果 -->
-    <string name="privacy_summary_fmt">共 %1$d 个应用持有敏感权限,最高风险 %2$s</string>
-    <string name="privacy_clean">未发现持有敏感权限的应用</string>
 
     <!-- 漏洞扫描结果 -->
     <string name="vuln_summary_fmt">系统检查 %1$d 项,通过 %2$d 项</string>
     <string name="vuln_surface_head">组件暴露面</string>
 
     <!-- 敏感权限中文名(隐私检测用,与 PermissionAuditor 的权重表对应) -->
-    <string name="perm_read_sms">读取短信</string>
-    <string name="perm_send_sms">发送短信</string>
-    <string name="perm_receive_sms">接收短信</string>
-    <string name="perm_receive_mms">接收彩信</string>
-    <string name="perm_read_contacts">读取通讯录</string>
-    <string name="perm_write_contacts">写入通讯录</string>
-    <string name="perm_read_call_log">读取通话记录</string>
-    <string name="perm_write_call_log">写入通话记录</string>
-    <string name="perm_call_phone">拨打电话</string>
-    <string name="perm_record_audio">录音</string>
-    <string name="perm_camera">相机</string>
-    <string name="perm_fine_location">精确定位</string>
-    <string name="perm_coarse_location">粗略定位</string>
-    <string name="perm_bg_location">后台定位</string>
-    <string name="perm_read_storage">读取存储</string>
-    <string name="perm_write_storage">写入存储</string>
-    <string name="perm_read_media_images">读取图片</string>
-    <string name="perm_read_media_video">读取视频</string>
-    <string name="perm_read_phone_state">读取设备信息</string>
-    <string name="perm_read_phone_numbers">读取手机号</string>
-    <string name="perm_body_sensors">身体传感器</string>
-    <string name="perm_system_alert">悬浮窗</string>
-    <string name="perm_get_accounts">读取账户</string>
-    <string name="perm_request_install">安装应用</string>
-    <string name="perm_query_all">查询全部应用</string>
-    <string name="perm_usage_stats">使用情况统计</string>
 
     <!-- 威胁等级中文名 -->
     <string name="threat_low">低</string>

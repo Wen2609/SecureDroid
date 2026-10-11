@@ -98,8 +98,6 @@
       case 'getAudit': return demoAudit();
       case 'getToggles': return demoToggles();
       case 'startVirusScan': demoVirus(); return {};
-      case 'startRootkit':
-      case 'startModuleScan': case 'startLockerScan': demoSpecial(); return {};
       default: return {};
     }
   }
@@ -247,9 +245,6 @@
       setScanUi(s.done, s.total, '全盘查杀中 ' + s.done + ' / ' + s.total + '（' + scanPct(s.done, s.total) + '%）');
       setScanBusy('#btnVirusScan', true);
       showCancel('#btnVirusCancel', s.total > 0 && s.done < s.total);
-    } else if (s.action === 'rootkit' || s.action === 'modules' || s.action === 'locker') {
-      setToolScanBusy(true);
-      setScanUi(0, 0, '专项检测进行中…');
     }
   }
 
@@ -500,20 +495,26 @@
   on('virusDone', function (d) {
     setScanBusy('#btnVirusScan', false);
     showCancel('#btnVirusCancel', false);
-    setScanUi(d.total || 0, d.total || 0, d.summary || '扫描完成');
+    setScanUi(d.total || 0, d.total || 0, d.summary || '查杀完成');
     var box = qs('#virusResults');
     if (!box) return;
     box.textContent = '';
     var rows = d.results || [];
-    setCardHeadCount('#virusHead', '查杀结果', rows.length);
+    var special = d.special || [];
+    setCardHeadCount('#virusHead', '查杀结果', rows.length + special.length);
     // 只渲染感染/可疑项;全部干净时不再铺几百行"安全",直接给摘要
     var hits = rows.filter(function (r) { return r.infected; });
-    if (!hits.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现威胁，设备安全。', 'green')); loadDashboard(); return; }
+    if (!hits.length && !special.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现威胁，设备安全。', 'green')); loadDashboard(); return; }
     var frag = document.createDocumentFragment();
     hits.forEach(function (r) {
       var detail = (r.detections || []).map(function (x) { return '[' + x.engine + '] ' + x.name; }).join('；');
       frag.appendChild(resultRow(r.name || r.pkg, r.pkg + (detail ? ' · ' + detail : ''), levelText(r.worst), levelCls(r.worst),
         function () { openApp(r.pkg); }, r.pkg, r.name));
+    });
+    // 专项检测发现(Rootkit / 恶意模块 / 锁机)直接跟在感染项之后
+    special.forEach(function (it) {
+      frag.appendChild(resultRow(it.title, it.sub + (it.detail ? ' · ' + it.detail : ''), levelText(it.level), levelCls(it.level),
+        null, null, it.title));
     });
     // 干净应用默认折叠,点击展开(避免一次插入数百行 DOM)
     var rest = rows.length - hits.length;
@@ -536,46 +537,7 @@
     loadDashboard();
   });
 
-  /* ---------------- 专项检测(Rootkit / 恶意模块 / 锁机) ---------------- */
-
-  /* 专项检测按钮统一置灰与恢复,防止扫描期间重复点击无反馈 */
-  function setToolScanBusy(busy) {
-    setScanBusy('#btnRootkit', busy);
-    setScanBusy('#btnModules', busy);
-    setScanBusy('#btnLocker', busy);
-  }
-
-  function runToolScan(label, action) {
-    setScanUi(0, 0, label);
-    var box = qs('#specialResults');
-    if (box) box.textContent = '';
-    setToolScanBusy(true);
-    hapticTap();
-    api.send(action);
-  }
-
-  function renderSpecial(d) {
-    setToolScanBusy(false);
-    var total = d.total || (d.items || []).length;
-    setScanUi(total, total, d.summary || '检测完成');
-    var box = qs('#specialResults');
-    if (!box) return;
-    box.textContent = '';
-    var items = d.items || [];
-    setCardHeadCount('#specialHead', '专项检测结果', items.length);
-    if (!items.length) { box.textContent = ''; box.appendChild(emptyHint(d.summary || '未发现风险。', 'green')); loadDashboard(); return; }
-    var frag = document.createDocumentFragment();
-    items.forEach(function (it) {
-      frag.appendChild(resultRow(it.title, it.sub + (it.detail ? ' · ' + it.detail : ''), levelText(it.level), levelCls(it.level),
-        function () { openApp(it.pkg); }, it.pkg, it.title));
-    });
-    box.appendChild(frag);
-    loadDashboard();
-  }
-
-  on('rootkitDone', renderSpecial);
-  on('modulesDone', renderSpecial);
-  on('lockerDone', renderSpecial);
+  /* ---------------- 全盘查杀(应用多引擎 + 专项检测已并入 startVirusScan) ---------------- */
 
   /* ---------------- 应用锁 ---------------- */
 
@@ -842,9 +804,7 @@
   bind('btnHeroScan', function () { hapticTap(); window.__sdGoto('security', 'scan'); });
   bind('btnVirusScan', startVirusScan);
   bind('btnVirusCancel', function () { requestCancelScan('#btnVirusCancel'); });
-  bind('btnRootkit', function () { runToolScan('正在检测 Rootkit / 提权后门…', 'startRootkit'); });
-  bind('btnModules', function () { runToolScan('正在检测恶意模块 / SU 脚本…', 'startModuleScan'); });
-  bind('btnLocker', function () { runToolScan('正在检测锁机软件…', 'startLockerScan'); });
+  bind('tileVc', function () { api.send('openVirusCenter'); });
   bind('btnDeepScan', function () { api.send('openDeepScan'); });
   bind('btnVirusCenter', function () { api.send('openVirusCenter'); });
 
@@ -855,7 +815,6 @@
   bind('btnUpdate', function () { api.send('checkUpdate'); });
   bind('btnAbout', function () { api.send('showAbout'); });
   bind('btnNetwork', function () { api.send('openNetworkAudit'); });
-  bind('btnPrivacy', function () { api.send('openPrivacy'); });
   bind('btnVuln', function () { api.send('openVulnerability'); });
 
   /* 统计格「已扫描」→ 病毒查杀中心(原生页);病毒库 / 防护中两格走 data-goto */
@@ -1127,11 +1086,6 @@
       }
     }, 60);
   }
-  function demoSpecial() {
-    window.__sdEvent('rootkitDone', JSON.stringify({
-      total: 1, items: [], summary: '专项检测完成，未发现风险。'
-    }));
-  }
 
   /* ============================================================
      子页面路由(深层工具全HTML化)
@@ -1154,7 +1108,6 @@
 
     // 页面载入时触发对应加载
     if (name === 'netaudit') loadNetAudit();
-    else if (name === 'privacy') loadPrivacyAudit();
     else if (name === 'vuln') loadVulnScan();
     else if (name === 'deepscan') loadDeepScan();
     else if (name === 'viruscenter') loadVirusCenter();
@@ -1449,18 +1402,6 @@
     });
   }
 
-  function loadPrivacyAudit() {
-    setListStatus('priv', '正在扫描隐私权限…', true);
-    api.request('getPrivacyAudit').then(function (r) {
-      if (r && r.ok && r.data) {
-        setListStatus('priv', '扫描完成 · 共 ' + r.data.count + ' 项', false);
-        renderResultList('privList', r.data.items);
-      } else {
-        listLoadError('priv', 'privList', '隐私权限扫描失败', loadPrivacyAudit);
-      }
-    });
-  }
-
   function loadVulnScan() {
     setListStatus('vuln', '正在检测系统漏洞…', true);
     api.request('getVulnScan').then(function (r) {
@@ -1540,8 +1481,17 @@
     var list = qs('#vcMenuList');
     if (!list) return;
     list.innerHTML = '';
+    var lastGroup = null;
     for (var i = 0; i < menu.length; i++) {
       var item = menu[i];
+      // 分组小标题:菜单按功能域分组(扫描分析/网络防护/…),组间插入标题行
+      if (item.group && item.group !== lastGroup) {
+        lastGroup = item.group;
+        var head = document.createElement('div');
+        head.className = 'vc-group';
+        head.textContent = item.group;
+        list.appendChild(head);
+      }
       var row = document.createElement('button');
       row.className = 'row';
       row.innerHTML =
@@ -1736,7 +1686,6 @@
   demoRequest = function (action, payload) {
     switch (action) {
       case 'getNetAudit':
-      case 'getPrivacyAudit':
       case 'getVulnScan':
         return { items: demoResultItems(), count: 3 };
       case 'getVirusCenterMenu':

@@ -54,9 +54,6 @@ class BridgeRouter(
 
         // 扫描(启动即返回,进度/结果走事件)
         put("startVirusScan", Action(false) { scan.startVirusScan(); null })
-        put("startRootkit", Action(false) { scan.startRootkitScan(); null })
-        put("startModuleScan", Action(false) { scan.startModuleScan(); null })
-        put("startLockerScan", Action(false) { scan.startLockerScan(); null })
         put("cancelScan", Action(false) { scan.cancelScan(); null })
 
         // 应用锁
@@ -95,7 +92,6 @@ class BridgeRouter(
 
         // --- 深层工具(HTML化) ---
         put("getNetAudit", Action(false) { tools.getNetAudit() })
-        put("getPrivacyAudit", Action(false) { tools.getPrivacyAudit() })
         put("getVulnScan", Action(false) { tools.getVulnScan() })
 
         put("startDeepScan", Action(false) { tools.startDeepScan(); null })
@@ -126,7 +122,6 @@ class BridgeRouter(
         put("openDeepScan", Action(true) { settings.openDeepScan(); null })
         put("openVirusCenter", Action(true) { settings.openVirusCenter(); null })
         put("openNetworkAudit", Action(true) { settings.openNetworkAudit(); null })
-        put("openPrivacy", Action(true) { settings.openPrivacy(); null })
         put("openVulnerability", Action(true) { settings.openVulnerability(); null })
         put("openAppSettings", Action(true) { json ->
             settings.openAppSettings(json.optString("pkg")); null

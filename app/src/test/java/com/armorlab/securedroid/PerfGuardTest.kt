@@ -131,7 +131,6 @@ class PerfGuardTest {
         val bridge = codeOnly("com/armorlab/securedroid/web/BridgeRouter.kt")
         for (action in listOf(
             "getNetAudit",
-            "getPrivacyAudit",
             "getVulnScan",
             "startDeepScan",
             "getVirusCenterMenu",

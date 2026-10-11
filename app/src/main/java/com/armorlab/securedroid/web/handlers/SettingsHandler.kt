@@ -168,7 +168,6 @@ class SettingsHandler(
     fun openDeepScan() = openSubPage("deepscan")
     fun openVirusCenter() = openSubPage("viruscenter")
     fun openNetworkAudit() = openSubPage("netaudit")
-    fun openPrivacy() = openSubPage("privacy")
     fun openVulnerability() = openSubPage("vuln")
 
     private fun openSubPage(page: String) {

@@ -13,7 +13,6 @@ import com.armorlab.securedroid.feature.DnsGuard
 import com.armorlab.securedroid.feature.HostsGuard
 import com.armorlab.securedroid.feature.NetAudit
 import com.armorlab.securedroid.feature.SystemBaseline
-import com.armorlab.securedroid.permissions.PermissionAuditor
 import com.armorlab.securedroid.root.Capability
 import com.armorlab.securedroid.root.PrivLevel
 import com.armorlab.securedroid.root.PrivilegeManager
@@ -107,44 +106,6 @@ class ToolsHandler(
                     title = "Net.Conn · " + c.appLabel,
                     sub = c.pkg + " → " + c.remote,
                     level = "low"
-                )
-            )
-        }
-
-        resultJson(items)
-    }
-
-    /* ---------- 隐私检测 ---------- */
-
-    suspend fun getPrivacyAudit(): String = withContext(Dispatchers.Default) {
-        val self = app.packageName
-        val results = PermissionAuditor.audit(app).filter { it.packageName != self }
-        val items = mutableListOf<JSONObject>()
-
-        if (results.isEmpty()) {
-            items.add(uiItem("Privacy.Clean", app.getString(R.string.privacy_clean), level = "low"))
-            return@withContext resultJson(items)
-        }
-
-        val highest = results.maxByOrNull { it.score }?.level ?: ThreatLevel.LOW
-        items.add(
-            uiItem(
-                title = "Privacy.Summary",
-                sub = app.getString(R.string.privacy_summary_fmt, results.size, levelLabel(highest)),
-                detail = "敏感权限按权重累加评分,分数越高越危险",
-                level = if (highest == ThreatLevel.CRITICAL || highest == ThreatLevel.HIGH) "medium" else "low"
-            )
-        )
-        for (r in results) {
-            val perms = r.risky.map { permLabel(it) }.distinct()
-            items.add(
-                uiItem(
-                    title = r.appName,
-                    sub = r.packageName,
-                    detail = perms.joinToString(" · "),
-                    level = threatToStr(r.level),
-                    suggestion = if (r.level.ordinal >= ThreatLevel.HIGH.ordinal) "在系统设置中撤销其敏感权限,或卸载" else null,
-                    uninstallPkg = r.packageName
                 )
             )
         }
@@ -266,37 +227,43 @@ class ToolsHandler(
         val mode = currentMode()
         val cached = menuCacheJson
         if (menuCacheMode == mode && cached != null) return@withContext cached
+        // 分组标题随菜单下发,前端按组渲染小标题(字体子集已覆盖这些汉字)
+        val gScan = "扫描分析"
+        val gProc = "进程基线"
+        val gNet = "网络防护"
+        val gApp = "应用暴露"
+        val gDeal = "处置状态"
+        val gUtil = "实用工具"
+        val gRoot = "最高权限"
         val menu = JSONArray().apply {
-            fun add(id: String, title: Int, sub: Int) {
-                if (toolAllowed(id)) put(menuItem(id, app.getString(title), app.getString(sub)))
+            fun add(id: String, title: Int, sub: Int, group: String) {
+                if (toolAllowed(id)) put(menuItem(id, app.getString(title), app.getString(sub), group))
             }
-            add("recent", R.string.vc_recent, R.string.vc_recent_sub)
-            add("parallel", R.string.va_parallel, R.string.va_parallel_sub)
-            add("diff", R.string.vc_diff, R.string.vc_diff_sub)
-            add("embedded", R.string.vc_embedded, R.string.vc_embedded_sub)
-            add("resultdiff", R.string.va_resultdiff, R.string.va_resultdiff_sub)
-            add("family", R.string.va_family, R.string.va_family_sub)
-            add("timeline", R.string.va_timeline, R.string.va_timeline_sub)
-            add("newproc", R.string.vc_newproc, R.string.vc_newproc_sub)
-            add("learn", R.string.vc_learn, R.string.vc_learn_sub)
-            add("netblock", R.string.va_netblock, R.string.va_netblock_sub)
-            add("netkill", R.string.va_netkill, R.string.va_netkill_sub)
-            add("vpnapps", R.string.va_vpn, R.string.va_vpn_sub)
-            add("attack", R.string.va_attack, R.string.va_attack_sub)
-            add("origin", R.string.va_origin, R.string.va_origin_sub)
-            add("certaudit", R.string.va_cert, R.string.va_cert_sub)
-            add("residue", R.string.vc_residue, R.string.vc_residue_sub)
-            add("quarantine", R.string.vc_quarantine, R.string.vc_quarantine_sub)
-            add("stats", R.string.vc_stats, R.string.vc_stats_sub)
-            add("sig", R.string.vc_sig, R.string.vc_sig_sub)
-            add("phishing", R.string.vc_phishing, R.string.vc_phishing_sub)
-            add("update", R.string.vc_update, R.string.vc_update_sub)
-            add("rollback", R.string.vc_rollback, R.string.vc_rollback_sub)
-            add("crashlogs", R.string.vc_crash, R.string.vc_crash_sub)
-            add("priv", R.string.va_priv, R.string.va_priv_sub)
-            add("integrity", R.string.va_integrity, R.string.va_integrity_sub)
-            add("lockfiles", R.string.va_lockfiles, R.string.va_lockfiles_sub)
-            add("unlockfiles", R.string.va_unlockfiles, R.string.va_unlockfiles_sub)
+            add("recent", R.string.vc_recent, R.string.vc_recent_sub, gScan)
+            add("diff", R.string.vc_diff, R.string.vc_diff_sub, gScan)
+            add("embedded", R.string.vc_embedded, R.string.vc_embedded_sub, gScan)
+            add("resultdiff", R.string.va_resultdiff, R.string.va_resultdiff_sub, gScan)
+            add("family", R.string.va_family, R.string.va_family_sub, gScan)
+            add("timeline", R.string.va_timeline, R.string.va_timeline_sub, gScan)
+            add("newproc", R.string.vc_newproc, R.string.vc_newproc_sub, gProc)
+            add("learn", R.string.vc_learn, R.string.vc_learn_sub, gProc)
+            add("netblock", R.string.va_netblock, R.string.va_netblock_sub, gNet)
+            add("netkill", R.string.va_netkill, R.string.va_netkill_sub, gNet)
+            add("vpnapps", R.string.va_vpn, R.string.va_vpn_sub, gNet)
+            add("origin", R.string.va_origin, R.string.va_origin_sub, gApp)
+            add("certaudit", R.string.va_cert, R.string.va_cert_sub, gApp)
+            add("residue", R.string.vc_residue, R.string.vc_residue_sub, gDeal)
+            add("quarantine", R.string.vc_quarantine, R.string.vc_quarantine_sub, gDeal)
+            add("stats", R.string.vc_stats, R.string.vc_stats_sub, gDeal)
+            add("sig", R.string.vc_sig, R.string.vc_sig_sub, gDeal)
+            add("phishing", R.string.vc_phishing, R.string.vc_phishing_sub, gUtil)
+            add("update", R.string.vc_update, R.string.vc_update_sub, gUtil)
+            add("rollback", R.string.vc_rollback, R.string.vc_rollback_sub, gUtil)
+            add("crashlogs", R.string.vc_crash, R.string.vc_crash_sub, gUtil)
+            add("priv", R.string.va_priv, R.string.va_priv_sub, gRoot)
+            add("integrity", R.string.va_integrity, R.string.va_integrity_sub, gRoot)
+            add("lockfiles", R.string.va_lockfiles, R.string.va_lockfiles_sub, gRoot)
+            add("unlockfiles", R.string.va_unlockfiles, R.string.va_unlockfiles_sub, gRoot)
         }
         val json = JSONObject().put("menu", menu).toString()
         menuCacheMode = mode
@@ -359,7 +326,6 @@ class ToolsHandler(
         "rollback" -> app.getString(R.string.vc_phase_rollback)
         "crashlogs" -> app.getString(R.string.vc_phase_crash)
         "recent" -> app.getString(R.string.vc_phase_recent)
-        "parallel" -> app.getString(R.string.va_phase_parallel)
         "diff" -> app.getString(R.string.vc_phase_diff)
         "embedded" -> app.getString(R.string.vc_phase_embedded)
         "resultdiff" -> app.getString(R.string.va_phase_resultdiff)
@@ -367,7 +333,6 @@ class ToolsHandler(
         "timeline" -> app.getString(R.string.va_phase_timeline)
         "netblock" -> app.getString(R.string.va_phase_netblock)
         "vpnapps" -> app.getString(R.string.va_phase_vpn)
-        "attack" -> app.getString(R.string.va_phase_attack)
         "origin" -> app.getString(R.string.va_phase_origin)
         "certaudit" -> app.getString(R.string.va_phase_cert)
         "residue" -> app.getString(R.string.vc_phase_residue)
@@ -383,7 +348,6 @@ class ToolsHandler(
 
     private suspend fun runToolAction(actionId: String): List<JSONObject> = when (actionId) {
         "recent" -> recentDeepScan(actionId)
-        "parallel" -> parallelScan(actionId)
         "diff" -> diffScan(actionId)
         "embedded" -> embeddedScan(actionId)
         "resultdiff" -> resultDiff(actionId)
@@ -391,7 +355,6 @@ class ToolsHandler(
         "timeline" -> timelineItems()
         "netblock" -> blocklistItems()
         "vpnapps" -> vpnAppsItems()
-        "attack" -> attackSurfaceItems()
         "origin" -> installerOriginItems()
         "certaudit" -> certAuditItems()
         "residue" -> residueScan()
@@ -504,15 +467,6 @@ class ToolsHandler(
         return items
     }
 
-    private suspend fun parallelScan(kind: String): List<JSONObject> {
-        val outcome = ParallelScanner.scanReports(app, kind, workers = 4, onProgress = { done, total ->
-            sink.sendEvent("virustool.progress",
-                JSONObject().put("phase", "并行查杀中… $done/$total").put("running", true).put("action", kind).toString())
-        })
-        ResultDiff.save(app, outcome.reports)
-        return ParallelScanner.toUiItems(outcome).map { toUiItemJson(it) }
-    }
-
     private fun diffScan(kind: String): List<JSONObject> {
         val all = PackageSnapshot.installedPackages(app, 0)
         val changed = mutableListOf<android.content.pm.PackageInfo>()
@@ -599,9 +553,6 @@ class ToolsHandler(
 
     private fun vpnAppsItems(): List<JSONObject> =
         com.armorlab.securedroid.vscan.VpnAppsScanner.items(app).map { toUiItemJson(it) }
-
-    private fun attackSurfaceItems(): List<JSONObject> =
-        AttackSurface.items(app).map { toUiItemJson(it) }
 
     private fun installerOriginItems(): List<JSONObject> =
         com.armorlab.securedroid.vscan.InstallerOrigin.items(app).map { toUiItemJson(it) }
@@ -873,8 +824,8 @@ class ToolsHandler(
             fixLabel = item.fixLabel
         )
 
-    private fun menuItem(id: String, title: String, sub: String): JSONObject =
-        JSONObject().put("id", id).put("title", title).put("sub", sub)
+    private fun menuItem(id: String, title: String, sub: String, group: String): JSONObject =
+        JSONObject().put("id", id).put("title", title).put("sub", sub).put("group", group)
 
     private fun resultJson(items: List<JSONObject>): String =
         JSONObject().put("items", JSONArray(items)).put("count", items.size).toString()
@@ -902,36 +853,4 @@ class ToolsHandler(
         }
     )
 
-    private fun permLabel(basename: String): String {
-        val res = when (basename) {
-            "READ_SMS" -> R.string.perm_read_sms
-            "SEND_SMS" -> R.string.perm_send_sms
-            "RECEIVE_SMS" -> R.string.perm_receive_sms
-            "RECEIVE_MMS" -> R.string.perm_receive_mms
-            "READ_CONTACTS" -> R.string.perm_read_contacts
-            "WRITE_CONTACTS" -> R.string.perm_write_contacts
-            "READ_CALL_LOG" -> R.string.perm_read_call_log
-            "WRITE_CALL_LOG" -> R.string.perm_write_call_log
-            "CALL_PHONE" -> R.string.perm_call_phone
-            "RECORD_AUDIO" -> R.string.perm_record_audio
-            "CAMERA" -> R.string.perm_camera
-            "ACCESS_FINE_LOCATION" -> R.string.perm_fine_location
-            "ACCESS_COARSE_LOCATION" -> R.string.perm_coarse_location
-            "ACCESS_BACKGROUND_LOCATION" -> R.string.perm_bg_location
-            "READ_EXTERNAL_STORAGE" -> R.string.perm_read_storage
-            "WRITE_EXTERNAL_STORAGE" -> R.string.perm_write_storage
-            "READ_MEDIA_IMAGES" -> R.string.perm_read_media_images
-            "READ_MEDIA_VIDEO" -> R.string.perm_read_media_video
-            "READ_PHONE_STATE" -> R.string.perm_read_phone_state
-            "READ_PHONE_NUMBERS" -> R.string.perm_read_phone_numbers
-            "BODY_SENSORS" -> R.string.perm_body_sensors
-            "SYSTEM_ALERT_WINDOW" -> R.string.perm_system_alert
-            "GET_ACCOUNTS" -> R.string.perm_get_accounts
-            "REQUEST_INSTALL_PACKAGES" -> R.string.perm_request_install
-            "QUERY_ALL_PACKAGES" -> R.string.perm_query_all
-            "PACKAGE_USAGE_STATS" -> R.string.perm_usage_stats
-            else -> return basename
-        }
-        return app.getString(res)
-    }
 }

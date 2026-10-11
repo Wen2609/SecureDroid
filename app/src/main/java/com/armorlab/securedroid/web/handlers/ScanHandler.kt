@@ -1,7 +1,6 @@
 package com.armorlab.securedroid.web.handlers
 
 import android.content.Context
-import com.armorlab.securedroid.R
 import com.armorlab.securedroid.data.AppDatabase
 import com.armorlab.securedroid.data.ScanRecordEntity
 import com.armorlab.securedroid.root.LockerDetector
@@ -35,13 +34,14 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
         sink.sendEvent(event, progressEvent(kind, done, total))
     }
 
-    /* ---------------- 病毒查杀(唯一全盘查杀入口:并行多引擎,含木马/恶意软件) ---------------- */
+    /* ---------------- 病毒查杀(唯一查杀入口:应用多引擎 + Rootkit/模块/锁机 专项一并执行) ---------------- */
 
     suspend fun startVirusScan() {
         if (!ScanSessions.start("virus")) return
         try {
             withContext(Dispatchers.Default) {
                 ClamAvSignatures.ensureLoaded(app)
+                // 阶段一:全盘多引擎应用查杀
                 val outcome = ParallelScanner.scanReports(
                     app, "virus", 4,
                     onProgress = { done, total ->
@@ -65,6 +65,28 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
                     )
                 })
                 dao.trim()
+
+                // 阶段二:专项检测并入同一份结果(用户取消则跳过剩余阶段)
+                val special = JSONArray()
+                if (!ScanControl.isCancelled("virus")) {
+                    RootkitDetector.detect(app).forEach {
+                        special.put(JSONObject().put("title", it.name).put("sub", it.detail)
+                            .put("level", it.level.name))
+                    }
+                }
+                if (!ScanControl.isCancelled("virus")) {
+                    ModuleScanner.scan(app).findings.forEach {
+                        special.put(JSONObject().put("title", it.title).put("sub", it.sub)
+                            .put("detail", it.detail).put("level", it.level.name))
+                    }
+                }
+                if (!ScanControl.isCancelled("virus")) {
+                    LockerDetector.scan(app).forEach {
+                        special.put(JSONObject().put("title", it.title).put("sub", it.sub)
+                            .put("detail", it.detail).put("level", it.level.name))
+                    }
+                }
+
                 val arr = JSONArray()
                 results.forEach { r ->
                     val det = JSONArray()
@@ -77,89 +99,20 @@ class ScanHandler(private val app: Context, private val sink: WebEventSink) {
                         .put("worst", r.worstLevel?.name).put("detections", det))
                 }
                 val infected = results.count { it.isInfected }
-                val summary = "扫描完成，共 ${results.size} 项" +
-                    (if (infected > 0) "，发现 $infected 个威胁" else "，未发现威胁") +
+                val summary = "查杀完成：应用 " + results.size + " 项，感染 " + infected +
+                    (if (special.length() > 0) "；专项发现 " + special.length() + " 项" else "；专项未发现风险") +
                     (if (outcome.cancelled) "(已取消，仅含已扫描部分)" else "")
                 sink.sendEvent("virusDone", JSONObject().put("results", arr)
+                    .put("special", special)
                     .put("total", results.size).put("infected", infected).put("summary", summary).toString())
             }
         } catch (t: Throwable) {
             sink.sendEvent("virusDone", JSONObject().put("results", JSONArray())
+                .put("special", JSONArray())
                 .put("total", 0).put("infected", 0)
-                .put("summary", "扫描失败：" + (t.message ?: "未知错误")).toString())
+                .put("summary", "查杀失败：" + (t.message ?: "未知错误")).toString())
         } finally {
             ScanSessions.finish("virus")
-        }
-    }
-
-    /* ---------------- 专项检测:Rootkit / 恶意模块 / 锁机 ---------------- */
-
-    suspend fun startRootkitScan() {
-        if (!ScanSessions.start("rootkit")) return
-        try {
-            withContext(Dispatchers.Default) {
-                val findings = RootkitDetector.detect(app)
-                val items = JSONArray()
-                findings.forEach {
-                    items.put(JSONObject().put("title", it.name).put("sub", it.detail)
-                        .put("detail", "").put("level", it.level.name))
-                }
-                val summary = if (findings.isEmpty()) app.getString(R.string.rootkit_clean)
-                else app.getString(R.string.rootkit_done, findings.size)
-                sink.sendEvent("rootkitDone", JSONObject().put("items", items).put("summary", summary).toString())
-            }
-        } catch (t: Throwable) {
-            sink.sendEvent("rootkitDone", JSONObject().put("items", JSONArray())
-                .put("summary", "检测失败：" + (t.message ?: "未知错误")).toString())
-        } finally {
-            ScanSessions.finish("rootkit")
-        }
-    }
-
-    suspend fun startModuleScan() {
-        if (!ScanSessions.start("modules")) return
-        try {
-            withContext(Dispatchers.Default) {
-                val result = ModuleScanner.scan(app)
-                val items = JSONArray()
-                result.findings.forEach {
-                    items.put(JSONObject().put("title", it.title).put("sub", it.sub)
-                        .put("detail", it.detail).put("level", it.level.name))
-                }
-                val summary = when {
-                    items.length() > 0 -> app.getString(R.string.modules_done, items.length())
-                    result.scannedRoots == 0 -> app.getString(R.string.modules_no_access)
-                    else -> app.getString(R.string.modules_clean)
-                }
-                sink.sendEvent("modulesDone", JSONObject().put("items", items).put("summary", summary).toString())
-            }
-        } catch (t: Throwable) {
-            sink.sendEvent("modulesDone", JSONObject().put("items", JSONArray())
-                .put("summary", "检测失败：" + (t.message ?: "未知错误")).toString())
-        } finally {
-            ScanSessions.finish("modules")
-        }
-    }
-
-    suspend fun startLockerScan() {
-        if (!ScanSessions.start("locker")) return
-        try {
-            withContext(Dispatchers.Default) {
-                val findings = LockerDetector.scan(app)
-                val items = JSONArray()
-                findings.forEach {
-                    items.put(JSONObject().put("title", it.title).put("sub", it.sub)
-                        .put("detail", it.detail).put("level", it.level.name))
-                }
-                val summary = if (findings.isEmpty()) app.getString(R.string.locker_clean)
-                else app.getString(R.string.locker_done, findings.size)
-                sink.sendEvent("lockerDone", JSONObject().put("items", items).put("summary", summary).toString())
-            }
-        } catch (t: Throwable) {
-            sink.sendEvent("lockerDone", JSONObject().put("items", JSONArray())
-                .put("summary", "检测失败：" + (t.message ?: "未知错误")).toString())
-        } finally {
-            ScanSessions.finish("locker")
         }
     }
 
